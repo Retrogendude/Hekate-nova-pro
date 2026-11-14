@@ -5,9 +5,11 @@
 #include <libs/lvgl/lv_draw/lv_draw_vbasic.h>
 #include <string.h>
 #define REFLECTION_TARGETS 32
-#define REFLECTION_PERIOD 50
-#define REFLECTION_STRIPS 4
-#define REFLECTION_HALF 23
+#define REFLECTION_PERIOD 40
+#define REFLECTION_SWEEP 20
+#define REFLECTION_CYCLE 80
+#define REFLECTION_STRIPS 6
+#define REFLECTION_HALF 64
 typedef struct {
     lv_obj_t *target,*overlay;
     lv_area_t dirty[REFLECTION_STRIPS];
@@ -50,17 +52,40 @@ static bool reflection_visible(lv_obj_t *target, lv_area_t *visible)
 
 
 
+
+/* One reusable 129-pixel row. Raised-cosine opacity reaches zero at both
+ * edges. Only this 516-byte constant is sampled; no tile-sized image. */
+static const u32 reflection_gradient_row[]={
+    0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,0x02FFFFFF,0x02FFFFFF,0x02FFFFFF,
+    0x02FFFFFF,0x03FFFFFF,0x03FFFFFF,0x04FFFFFF,0x04FFFFFF,0x05FFFFFF,0x05FFFFFF,0x06FFFFFF,
+    0x06FFFFFF,0x07FFFFFF,0x08FFFFFF,0x08FFFFFF,0x09FFFFFF,0x0AFFFFFF,0x0BFFFFFF,0x0BFFFFFF,
+    0x0CFFFFFF,0x0DFFFFFF,0x0EFFFFFF,0x0FFFFFFF,0x0FFFFFFF,0x10FFFFFF,0x11FFFFFF,0x12FFFFFF,
+    0x13FFFFFF,0x14FFFFFF,0x15FFFFFF,0x16FFFFFF,0x17FFFFFF,0x17FFFFFF,0x18FFFFFF,0x19FFFFFF,
+    0x1AFFFFFF,0x1BFFFFFF,0x1BFFFFFF,0x1CFFFFFF,0x1DFFFFFF,0x1EFFFFFF,0x1EFFFFFF,0x1FFFFFFF,
+    0x20FFFFFF,0x20FFFFFF,0x21FFFFFF,0x21FFFFFF,0x22FFFFFF,0x22FFFFFF,0x23FFFFFF,0x23FFFFFF,
+    0x24FFFFFF,0x24FFFFFF,0x24FFFFFF,0x24FFFFFF,0x25FFFFFF,0x25FFFFFF,0x25FFFFFF,0x25FFFFFF,
+    0x25FFFFFF,0x25FFFFFF,0x25FFFFFF,0x25FFFFFF,0x25FFFFFF,0x24FFFFFF,0x24FFFFFF,0x24FFFFFF,
+    0x24FFFFFF,0x23FFFFFF,0x23FFFFFF,0x22FFFFFF,0x22FFFFFF,0x21FFFFFF,0x21FFFFFF,0x20FFFFFF,
+    0x20FFFFFF,0x1FFFFFFF,0x1EFFFFFF,0x1EFFFFFF,0x1DFFFFFF,0x1CFFFFFF,0x1BFFFFFF,0x1BFFFFFF,
+    0x1AFFFFFF,0x19FFFFFF,0x18FFFFFF,0x17FFFFFF,0x17FFFFFF,0x16FFFFFF,0x15FFFFFF,0x14FFFFFF,
+    0x13FFFFFF,0x12FFFFFF,0x11FFFFFF,0x10FFFFFF,0x0FFFFFFF,0x0FFFFFFF,0x0EFFFFFF,0x0DFFFFFF,
+    0x0CFFFFFF,0x0BFFFFFF,0x0BFFFFFF,0x0AFFFFFF,0x09FFFFFF,0x08FFFFFF,0x08FFFFFF,0x07FFFFFF,
+    0x06FFFFFF,0x06FFFFFF,0x05FFFFFF,0x05FFFFFF,0x04FFFFFF,0x04FFFFFF,0x03FFFFFF,0x03FFFFFF,
+    0x02FFFFFF,0x02FFFFFF,0x02FFFFFF,0x02FFFFFF,0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,
+    0x00FFFFFF,
+};
+
 static int reflection_center(const reflection_target *target)
 {
     int width=lv_obj_get_width(target->target),height=lv_obj_get_height(target->target);
-    return -REFLECTION_HALF+(int)(target->phase%72)*(width+height/2+2*REFLECTION_HALF)/23;
+    return -REFLECTION_HALF+(int)(target->phase%REFLECTION_CYCLE)*(width+height/2+2*REFLECTION_HALF)/(REFLECTION_SWEEP-1);
 }
 static void reflection_bounds(reflection_target *target)
 {
     lv_area_t coords;lv_obj_get_coords(target->target,&coords);
     int height=lv_obj_get_height(target->target),center=reflection_center(target);
     target->dirty_count=0;
-    /* Four bounded strips avoid a full-tile rectangle or overflowing LVGL's
+    /* Six bounded strips avoid a full-tile rectangle or overflowing LVGL's
      * 32-entry invalidation queue. Only the old/new diagonal bands redraw. */
     for(u32 i=0;i<REFLECTION_STRIPS;++i){
         int top=i*height/REFLECTION_STRIPS,bottom=(i+1)*height/REFLECTION_STRIPS-1;
@@ -85,7 +110,6 @@ static bool reflection_design(lv_obj_t *object,const lv_area_t *mask,lv_design_m
     lv_area_t coords,clip;lv_obj_get_coords(object,&coords);
     if(!lv_area_intersect(&clip,&coords,mask))return true;
     int center=reflection_center(target),height=lv_obj_get_height(object);
-    static const u8 opacities[]={3,8,16,26,36,26,16,8,3};
     static const u8 corner_inset[]={7,5,4,3,2,2,2,2};
     /* Direct row spans: no large alpha image, no raster buffer, no per-frame
      * allocation. The border and the rounded corners remain untouched. */
@@ -95,12 +119,12 @@ static bool reflection_design(lv_obj_t *object,const lv_area_t *mask,lv_design_m
         int inset=edge<8?corner_inset[edge]:2;
         lv_area_t row_clip={coords.x1+inset,y,coords.x2-inset,y},effective;
         if(!lv_area_intersect(&effective,&row_clip,&clip))continue;
-        int left=coords.x1+center-row/2-22;
-        for(u32 band=0;band<9;++band){
-            lv_area_t span={left+(int)band*5,y,left+(int)band*5+4,y};
-            if(span.x2<effective.x1||span.x1>effective.x2)continue;
-            lv_vfill(&span,&effective,LV_COLOR_WHITE,opacities[band]);
-        }
+        int left=coords.x1+center-row/2-REFLECTION_HALF;
+        lv_area_t span={left,y,left+2*REFLECTION_HALF,y};
+        if(span.x2<effective.x1||span.x1>effective.x2)continue;
+        /* Per-pixel alpha retains the transparent fade below 16/255. */
+        lv_vmap(&span,&effective,(const u8 *)reflection_gradient_row,
+            LV_OPA_COVER,false,true,LV_COLOR_WHITE,LV_OPA_TRANSP);
     }
     return true;
 }
@@ -121,7 +145,7 @@ static void reflection_frame(void *unused)
         lv_area_t visible;
         if(!reflection_visible(target->target,&visible)){target->painted=false;continue;}
         if(target->painted)reflection_invalidate(target,&visible);
-        target->phase=reflection_phase;target->painted=reflection_phase%72<24;
+        target->phase=reflection_phase;target->painted=reflection_phase%REFLECTION_CYCLE<REFLECTION_SWEEP;
         if(!target->painted)continue;
         reflection_bounds(target);reflection_invalidate(target,&visible);
     }
@@ -141,7 +165,7 @@ void nyx_nova_reflect(lv_obj_t *object,bool selected)
     lv_obj_set_style(overlay,&lv_style_transp_tight);lv_obj_set_click(overlay,false);
     lv_obj_set_protect(overlay,LV_PROTECT_PARENT);
     lv_obj_set_size(overlay,lv_obj_get_width(object),lv_obj_get_height(object));lv_obj_set_pos(overlay,0,0);
-    vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_phase%72<24;
+    vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_phase%REFLECTION_CYCLE<REFLECTION_SWEEP;
     reflection_bounds(vacant);lv_obj_set_free_ptr(overlay,vacant);
     if(!reflection_base_signal)reflection_base_signal=lv_obj_get_signal_func(overlay);
     lv_obj_set_signal_func(overlay,reflection_signal);lv_obj_set_design_func(overlay,reflection_design);

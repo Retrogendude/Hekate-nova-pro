@@ -15,7 +15,7 @@ from PIL import Image
 
 work=Path(__file__).resolve().parent
 project=work/'hekate-6.5.4'
-directory=work/'lvgl-preview-v13';directory.mkdir(exist_ok=True)
+directory=work/'lvgl-preview-v14';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -433,20 +433,28 @@ if(diagnostic_last_holder){diag_tiles_ext*ext=lv_obj_get_ext_attr(diagnostic_las
 
 if(nova_wallpaper){lv_obj_t *back=lv_obj_get_child_back(lv_scr_act(),NULL);assert(type_is(back,"lv_img")&&!lv_obj_get_click(back)&&lv_obj_is_protected(back,LV_PROTECT_PARENT));assert(lv_img_get_src(back)==nova_wallpaper);}
 if(getenv("NYX_TEST_NAVIGATION"))verify_wallpaper_navigation();
+
+if(getenv("NYX_TEST_SHEEN_PROFILE")){
+ assert(!strcmp(argv[3],"home"));nyx_nova_reflection_pause(true);lv_refr_now();dump("sheen-baseline.ppm");nyx_nova_reflection_pause(false);
+ reflection_target *target=NULL;for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].target==nova_home_cards[0])target=&reflection_targets[i];assert(target);
+ target->phase=(REFLECTION_SWEEP-1)/2;target->painted=true;reflection_bounds(target);lv_obj_invalidate(target->overlay);lv_refr_now();dump("sheen-profile.ppm");
+ lv_area_t tile;lv_obj_get_coords(target->target,&tile);int row=lv_obj_get_height(target->target)/2;
+ printf("PROFILE center=%d row=%d half=%d sweep=%d cycle=%d period=%d\n",tile.x1+reflection_center(target)-row/2,tile.y1+row,REFLECTION_HALF,REFLECTION_SWEEP,REFLECTION_CYCLE,REFLECTION_PERIOD);
+}
 if(!getenv("NYX_PREVIEW_NO_DUMP"))dump("preview.ppm");
 if(getenv("NYX_CAPTURE_REFLECTION")){
  FILE*frames=fopen("reflection.bgrx","wb");assert(frames&&sizeof(lv_color_t)==4);
- for(u32 frame=0;frame<72;++frame){lv_tick_inc(50);lv_task_handler();lv_refr_now();assert(fwrite(screen_pixels,sizeof(lv_color_t),LV_HOR_RES*LV_VER_RES,frames)==LV_HOR_RES*LV_VER_RES);}
+ for(u32 frame=0;frame<REFLECTION_CYCLE;++frame){lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();lv_refr_now();assert(fwrite(screen_pixels,sizeof(lv_color_t),LV_HOR_RES*LV_VER_RES,frames)==LV_HOR_RES*LV_VER_RES);}
  fclose(frames);
 }
 if((!strcmp(argv[3],"tools")||!strcmp(argv[3],"home")||!strcmp(argv[3],"carousel"))&&!strcmp(argv[4],"0")&&!strcmp(argv[5],"30")){
- nyx_background_pause(true);for(int i=0;i<20;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();
- rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
+ nyx_background_pause(true);for(int i=0;i<20;i++){lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();}lv_refr_now();
+ rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
  nyx_background_pause(false);rendered_pixels=0;unsigned long maximum=0,total=0;
- for(int i=0;i<72;i++){unsigned long before=rendered_pixels;lv_tick_inc(50);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
+ for(int i=0;i<REFLECTION_CYCLE;i++){unsigned long before=rendered_pixels;lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
  assert(total>0&&maximum<100000);
- printf("PASS: Nova reflection max=%lu total=%lu pixels over 3600ms; pause=0\n",maximum,total);
- nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
+ printf("PASS: Nova reflection max=%lu total=%lu pixels over 3200ms; pause=0\n",maximum,total);
+ nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
 
 }
 printf("PASS UI %s language=%s size=%s tab=%s controls=%u\n",argv[3],argv[4],argv[5],argv[6],geometry_checks);return 0;}
@@ -484,11 +492,11 @@ for screen,language,size,tab in jobs:
     if run.returncode:raise RuntimeError(f'{screen} {language} {size} {tab}: '+run.stdout+run.stderr)
     performance=re.search(r'Nova reflection max=(\d+) total=(\d+)',run.stdout)
     if performance:
-        result={'reflection_period_ms':50,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_3600ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
+        result={'reflection_period_ms':40,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_3200ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-v13-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-v14-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

@@ -2,8 +2,8 @@
 from pathlib import Path
 from PIL import Image
 import os,subprocess
-work=Path(__file__).resolve().parent;project=work/'hekate-6.5.4';renderer=work/'lvgl-preview-v13';outputs=work.parent/'outputs'
-destination=work/'nova-pro-preview-export-v13';destination.mkdir(exist_ok=True)
+work=Path(__file__).resolve().parent;project=work/'hekate-6.5.4';renderer=work/'lvgl-preview-v14';outputs=work.parent/'outputs'
+destination=work/'nova-pro-preview-export-v14';destination.mkdir(exist_ok=True)
 modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0),('setup',0),('backup',0),('restore',0),('usb',0),('emummc',0),('diagnostic-results',0),('ram-service',0)]+[('diagnostic-group',i)for i in range(1,11)]
 names={'setup':'premiere-installation','home':'accueil','carousel':'carrousel','tools':'outils','info':'informations','options':'reglages','diagnostics':'diagnostic','about':'credits','backup':'sauvegarde','usb':'usb','emummc':'emummc','diagnostic-results':'resultats','colors':'couleurs'}
 def render(screen,tab,extra=None):
@@ -17,19 +17,19 @@ def render(screen,tab,extra=None):
     if result.returncode:raise RuntimeError(result.stdout+result.stderr)
     return Image.open(destination/'preview.ppm').convert('RGB')
 for screen,tab in modes:
-    image=render(screen,tab);image.save(destination/f'preview-v13-{screen}-1-30-{tab}.png')
-    if screen in names and tab==0:image.save(outputs/f'apercu-nova-pro-{names[screen]}-v13.png')
-    if screen=='colors'and tab==1:image.save(outputs/'apercu-nova-pro-fond-et-transparence-v13.png')
+    image=render(screen,tab);image.save(destination/f'preview-v14-{screen}-1-30-{tab}.png')
+    if screen in names and tab==0:image.save(outputs/f'apercu-nova-pro-{names[screen]}-v14.png')
+    if screen=='colors'and tab==1:image.save(outputs/'apercu-nova-pro-fond-et-transparence-v14.png')
 image=render('home',0,{'NYX_PREVIEW_WALLPAPER':'Nova-Carbon.bmp','NYX_PREVIEW_MENU_OPACITY':'50','NYX_PREVIEW_ICON_OPACITY':'25'})
-image.save(outputs/'apercu-nova-pro-fond-ecran-v13.png');image.save(destination/'preview-v13-wallpaper.png')
+image.save(outputs/'apercu-nova-pro-fond-ecran-v14.png');image.save(destination/'preview-v14-wallpaper.png')
 image=render('home',0,{'NYX_RGB_BACKGROUND':'080B11','NYX_RGB_TEXT':'E2E6EE','NYX_RGB_BORDER':'B3BCCB','NYX_RGB_REFLECTION':'FFAE4D','NYX_RGB_LOGO':'D49AF1','NYX_RGB_ICONS':'FFAE4D','NYX_RGB_SELECTION':'302846'})
-image.save(outputs/'apercu-nova-pro-palette-v13.png');image.save(destination/'preview-v13-palette.png')
-image=render('colors',0,{'NYX_PREVIEW_WALLPAPER':'Nova-Carbon.bmp','NYX_PREVIEW_MENU_OPACITY':'50'});image.save(outputs/'apercu-nova-pro-couleurs-avec-fond-v13.png');image.save(destination/'preview-v13-colors-wallpaper.png')
+image.save(outputs/'apercu-nova-pro-palette-v14.png');image.save(destination/'preview-v14-palette.png')
+image=render('colors',0,{'NYX_PREVIEW_WALLPAPER':'Nova-Carbon.bmp','NYX_PREVIEW_MENU_OPACITY':'50'});image.save(outputs/'apercu-nova-pro-couleurs-avec-fond-v14.png');image.save(destination/'preview-v14-colors-wallpaper.png')
 render('home',0,{'NYX_CAPTURE_REFLECTION':'1','NYX_PREVIEW_WALLPAPER':'Nova-Carbon.bmp','NYX_PREVIEW_MENU_OPACITY':'50','NYX_PREVIEW_ICON_OPACITY':'25'})
-raw=destination/'reflection.bgrx';stride=1280*720*4;data=raw.read_bytes();assert len(data)==72*stride
+raw=destination/'reflection.bgrx';stride=1280*720*4;data=raw.read_bytes();assert len(data)==80*stride
 first=Image.frombytes('RGB',(1280,720),data[:stride],'raw','BGRX');palette=first.quantize(colors=256)
 frames=[]
-for i in range(72):frames.append(Image.frombytes('RGB',(1280,720),data[i*stride:(i+1)*stride],'raw','BGRX').quantize(palette=palette,dither=Image.Dither.NONE))
-frames[0].save(outputs/'reflet-nova-pro-v13.gif',save_all=True,append_images=frames[1:],duration=50,loop=0,optimize=True)
+for i in range(80):frames.append(Image.frombytes('RGB',(1280,720),data[i*stride:(i+1)*stride],'raw','BGRX').quantize(palette=palette,dither=Image.Dither.NONE))
+frames[0].save(outputs/'reflet-nova-pro-v14.gif',save_all=True,append_images=frames[1:],duration=40,loop=0,optimize=True)
 assert raw.resolve().parent==destination.resolve();raw.unlink()
-print(f'Exported {len(modes)} final native views, wallpaper/palette examples and the actual 72-frame full-tile reflection.')
+print(f'Exported {len(modes)} final native views, wallpaper/palette examples and the actual 80-frame full-tile reflection.')
