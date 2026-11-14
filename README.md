@@ -4,7 +4,7 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Bêta v32 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v32)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md)
+**[Bêta v32 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v32)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
 La v32 améliore le partitionnement expert et la reprise d’un Joy-Con silencieux. Les essais PC et la compilation sont vérifiés ; **la portée sans fil de 2–3 mètres reste à valider sur console**. Les premières versions sont conservées pour l’historique et ne sont pas des mises à jour recommandées.
 
@@ -21,6 +21,8 @@ La v32 améliore le partitionnement expert et la reprise d’un Joy-Con silencie
 - Joy-Con Bluetooth : lecture des appairages, sauvegarde privée SD, chargement automatique sans Joy-Con sur les rails et traitement en arrière-plan. Connexion et portée restent expérimentales.
 
 ## Installation
+
+**[Ouvrir la notice complète](docs/NOTICE-UTILISATION.md)** : installation, premiers réglages, fonds d’écran, polices, icônes, diagnostics, dock et Joy-Con sans fil.
 
 Télécharger le paquet compilé de la version choisie dans Releases. Console arrêtée, conserver une copie de bootloader puis fusionner les dossiers fournis avec la racine de la SD en remplaçant uniquement les fichiers livrés. Garder les configurations et appairages personnels. Utiliser le payload correspondant à la version, ou le bootloader/update.bin fourni selon la méthode de démarrage.
 
