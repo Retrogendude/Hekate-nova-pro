@@ -196,6 +196,7 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 {
     emmc_btn_ctxt.restore=lv_obj_get_free_num(btn)==1;
     lv_obj_t *win=nyx_create_standard_window(emmc_btn_ctxt.restore?SYMBOL_SD" Restore":SYMBOL_SD" Backup",NULL);
+    nyx_nova_fixed_page(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page);
     const char *descriptions[]={
         "Partitions BOOT0/BOOT1, à conserver avec RAW GPP.",
         "Stockage complet : CAL0, SYSTEM, USER et fichiers de démarrage.",

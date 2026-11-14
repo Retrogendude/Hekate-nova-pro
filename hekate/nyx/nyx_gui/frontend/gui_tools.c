@@ -20,6 +20,7 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include "../fonts/font_manager.h"
 #include "gui_layout.h"
 #include "gui_tools.h"
 #include "gui_tools_partition_manager.h"
@@ -658,14 +659,15 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
 {
     (void)parent;
     lv_obj_t *win=nyx_create_standard_window(SYMBOL_USB" USB Tools",NULL);
-    lv_obj_t *panel=nyx_nova_panel(win,34,14,1212,72);
+    nyx_nova_fixed_page(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page);
+    lv_obj_t *panel=nyx_nova_panel(win,34,22,1212,72);
     lv_obj_t *readonly=nyx_nova_switch_row(panel,"Read-Only","eMMC / emuMMC : accès protégé en lecture seule par défaut.","shield-check",_emmc_read_only_toggle,!n_cfg.ums_emmc_rw,20,0,1172,72);
     _emmc_read_only_toggle(readonly);
     static const char *titles[]={"SD Card","eMMC RAW GPP","eMMC BOOT0","eMMC BOOT1","emuMMC RAW GPP","emuMMC BOOT0","emuMMC BOOT1","Gamepad"};
     static const char *icons[]={"card-sim","hard-drive","memory-stick","memory-stick","database","memory-stick","memory-stick","gamepad-2"};
     lv_action_t actions[]={action_ums_sd,_action_ums_emmc_gpp,_action_ums_emmc_boot0,_action_ums_emmc_boot1,_action_ums_emuemmc_gpp,_action_ums_emuemmc_boot0,_action_ums_emuemmc_boot1,_action_hid_jc};
     int height=(lv_obj_get_height(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page)-128)/2;
-    for(u32 i=0;i<8;++i)nyx_nova_action(win,titles[i],i==0?"Connexion au PC ou téléphone : lecture et écriture.":i==7?"Connectez les deux Joy-Con pour utiliser la console comme manette USB.":"Monter cette partition par USB.",icons[i],actions[i],0,34+(i%4)*307,102+(i/4)*(height+16),291,height);
+    for(u32 i=0;i<8;++i)nyx_nova_action(win,titles[i],i==0?"Connexion au PC ou téléphone : lecture et écriture.":i==7?"Connectez les deux Joy-Con pour utiliser la console comme manette USB.":"Monter cette partition par USB.",icons[i],actions[i],0,34+(i%4)*307,110+(i/4)*(height+16),291,height-4);
     return LV_RES_OK;
 }
 
@@ -751,75 +753,33 @@ out:
 
 static lv_res_t _create_window_unset_abit_tool(lv_obj_t *btn)
 {
-	lv_obj_t *win = nyx_create_standard_window(SYMBOL_COPY" Fix Archive Bit (All folders)", NULL);
-
-	// Disable buttons.
-	nyx_window_toggle_buttons(win, true);
-
-	lv_obj_t *desc = lv_cont_create(win, NULL);
-	lv_obj_set_size(desc, LV_HOR_RES * 10 / 11, LV_VER_RES - (LV_DPI * 11 / 7) * 4);
-
-	lv_obj_t * lb_desc = lv_label_create(desc, NULL);
-	lv_label_set_long_mode(lb_desc, LV_LABEL_LONG_BREAK);
-	lv_label_set_recolor(lb_desc, true);
-
-	if (sd_mount())
-	{
-		lv_label_set_text(lb_desc, "#FFDD00 Failed to init SD!#");
-		lv_obj_set_width(lb_desc, lv_obj_get_width(desc));
-	}
-	else
-	{
-		lv_label_set_text(lb_desc, "#00DDFF Traversing all SD card files!#\nThis may take some time...");
-		lv_obj_set_width(lb_desc, lv_obj_get_width(desc));
-
-		lv_obj_t *val = lv_cont_create(win, NULL);
-		lv_obj_set_size(val, LV_HOR_RES * 10 / 11, LV_VER_RES - (LV_DPI * 11 / 7) * 4);
-
-		lv_obj_t * lb_val = lv_label_create(val, lb_desc);
-
-		char *path = malloc(0x1000);
-		path[0] = 0;
-
-		lv_label_set_text(lb_val, "");
-		lv_obj_set_width(lb_val, lv_obj_get_width(val));
-		lv_obj_align(val, desc, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
-
-		u32 total[4] = { 0 };
-		_fix_attributes(lb_val, path, total);
-
-		sd_unmount();
-
-		lv_obj_t *desc2 = lv_cont_create(win, NULL);
-		lv_obj_set_size(desc2, LV_HOR_RES * 10 / 11, LV_VER_RES - (LV_DPI * 11 / 7) * 4);
-		lv_obj_t * lb_desc2 = lv_label_create(desc2, lb_desc);
-
-		char *txt_buf = (char *)malloc(0x500);
-
-		if (!total[0] && !total[1])
-			s_printf(txt_buf, "#96FF00 Done! No change was needed.#");
-		else
-			s_printf(txt_buf, "#96FF00 Done! Archive bits fixed:# #FF8000 %d unset and %d set!#", total[1], total[0]);
-
-		// Check errors.
-		if (total[2] || total[3])
-		{
-			s_printf(txt_buf, "\n\n#FFDD00 Errors: folder accesses: %d, arc bit fixes: %d!#\n"
-					          "#FFDD00 Filesystem should be checked for errors.#",
-					          total[2], total[3]);
-		}
-
-		lv_label_set_text(lb_desc2, txt_buf);
-		lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
-		lv_obj_align(desc2, val, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 0);
-
-		free(path);
-	}
-
-	// Enable buttons.
-	nyx_window_toggle_buttons(win, false);
-
-	return LV_RES_OK;
+    (void)btn;
+    lv_obj_t *win=nyx_create_standard_window(SYMBOL_COPY" Fix Archive Bit (All folders)",NULL);
+    nyx_window_toggle_buttons(win,true);
+    lv_obj_t *labels[3];nyx_nova_archive_view(win,labels);
+    lv_obj_t *status=labels[0],*current=labels[1],*result=labels[2];
+    int height=lv_obj_get_height(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page);
+    if(sd_mount())lv_label_set_text(status,"#FFDD00 Failed to init SD!#");
+    else{
+        lv_label_set_text(status,"#00DDFF Traversing all SD card files!#\nThis may take some time...");
+        char *path=malloc(0x1000);
+        if(!path){lv_label_set_text(result,"Not enough memory.");sd_unmount();}
+        else{
+            path[0]=0;u32 total[4]={0};
+            int traversal_result=_fix_attributes(current,path,total);
+            sd_unmount();
+            char text[1280];
+            if(!total[0]&&!total[1])s_printf(text,"#96FF00 Done! No change was needed.#");
+            else s_printf(text,nyx_tr("#96FF00 Done! Archive bits fixed:# #FF8000 %d unset and %d set!#"),total[1],total[0]);
+            if(traversal_result||total[2]||total[3]){
+                s_printf(text+strlen(text),nyx_tr("\n\n#FFDD00 Errors: folder accesses: %d, arc bit fixes: %d!#\n#FFDD00 Filesystem should be checked for errors.#"),total[2]+(traversal_result?1:0),total[3]);
+            }
+            lv_label_set_text(result,text);nyx_nova_fit_text(result,height-326);
+            lv_label_set_text(current,"");free(path);
+        }
+    }
+    nyx_window_toggle_buttons(win,false);
+    return LV_RES_OK;
 }
 
 static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
@@ -948,23 +908,8 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 	// Disable buttons.
 	nyx_window_toggle_buttons(win, true);
 
-	lv_obj_t *desc = lv_cont_create(win, NULL);
-	lv_obj_set_size(desc, LV_HOR_RES * 10 / 11, LV_VER_RES - (LV_DPI * 12 / 7));
-
-	lv_obj_t *lb_desc = lv_label_create(desc, NULL);
-	lv_obj_set_style(lb_desc, &monospace_text);
-	lv_label_set_long_mode(lb_desc, LV_LABEL_LONG_BREAK);
-	lv_label_set_recolor(lb_desc, true);
-	lv_obj_set_width(lb_desc, lv_obj_get_width(desc) / 2);
-
-	lv_obj_t *lb_desc2 = lv_label_create(desc, NULL);
-	lv_obj_set_style(lb_desc2, &monospace_text);
-	lv_label_set_long_mode(lb_desc2, LV_LABEL_LONG_BREAK);
-	lv_label_set_recolor(lb_desc2, true);
-	lv_obj_set_width(lb_desc2, lv_obj_get_width(desc) / 2);
-	lv_label_set_text(lb_desc2, " ");
-
-	lv_obj_align(lb_desc2, lb_desc, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
+	lv_obj_t *logs[2];nyx_nova_package_logs(win,logs);
+	lv_obj_t *lb_desc=logs[0],*lb_desc2=logs[1];
 
 	if (sd_mount())
 	{

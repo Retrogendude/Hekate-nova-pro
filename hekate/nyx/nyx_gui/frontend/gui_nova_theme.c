@@ -280,11 +280,13 @@ static lv_res_t theme_close(lv_obj_t *button)
 }
 static lv_res_t theme_reset(lv_obj_t *button)
 {
-    (void)button;nova_theme.pending.theme_bg=0x141A19;nova_theme.pending.nova_text_color=0xF2F5FA;
+    (void)button;nova_theme.pending.theme_bg=0x10151D;nova_theme.pending.nova_text_color=0xF2F5FA;
     nova_theme.pending.nova_border_color=0x334050;nova_theme.pending.nova_reflection_color=0x55C9F1;
     nova_theme.pending.nova_logo_color=nova_theme.pending.nova_icon_color=0x55C9F1;nova_theme.pending.nova_selection_color=0x1C2937;
-    nova_theme.pending.nova_menu_opacity=nova_theme.pending.nova_icon_opacity=100;nova_theme.pending.wallpaper_file[0]=0;nova_theme.wallpaper=0;
-    nyx_choices_set_selected(nova_theme.menu_choices,4);nyx_choices_set_selected(nova_theme.icon_choices,4);
+    nova_theme.pending.nova_menu_opacity=25;nova_theme.pending.nova_icon_opacity=100;
+    strcpy(nova_theme.pending.wallpaper_file,"Nova-Carbon.bmp");nova_theme.wallpaper=0;
+    for(u32 i=0;i<wallpaper_count;++i)if(!strcmp(wallpaper_names[i],"Nova-Carbon.bmp"))nova_theme.wallpaper=i+1;
+    nyx_choices_set_selected(nova_theme.menu_choices,1);nyx_choices_set_selected(nova_theme.icon_choices,4);
     theme_controls_refresh();wallpaper_preview_refresh();return LV_RES_OK;
 }
 static void theme_page(lv_obj_t *page)

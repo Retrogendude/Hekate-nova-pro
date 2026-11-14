@@ -1,6 +1,7 @@
 /* Native implementation of the selected Nova reference. */
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "gui_nova.h"
+#include "../nova_version.h"
 #include "gui.h"
 #include "gui_choices.h"
 #include "gui_options.h"
@@ -178,14 +179,14 @@ lv_obj_t *nyx_nova_icon_box(lv_obj_t *parent, const char *name, int x, int y, in
     lv_cont_set_style(frame, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
     u32 pixels = size >= 70 ? 40 : 24;
     nyx_nova_glyph(frame, name, (size - pixels) / 2, (size - pixels) / 2, pixels);
-    /* Static icon frame; the selected tile owns the diagonal sheen. */
+    nyx_nova_reflect(frame,selected);
     return frame;
 }
 
 void nyx_nova_icon_select(lv_obj_t *icon, bool selected)
 {
     lv_cont_set_style(icon, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
-
+    nyx_nova_reflect(icon,selected);
 }
 
 static lv_res_t nova_navigate(lv_obj_t *button)
@@ -209,7 +210,7 @@ void nyx_nova_navigation_select(u32 tab)
     for (u32 i = 1; i < 6; ++i) if (nova_nav_buttons[i]) {
         lv_label_set_style(nova_nav_labels[i], i == tab&&!nova_navigation_locks ? &nova_white : &nova_dim);
         lv_img_set_style(nova_nav_icons[i], i == tab&&!nova_navigation_locks ? &nova_image_white : &nova_image_dim);
-        /* Navigation borders remain static; only selected card glyphs shimmer. */
+        nyx_nova_reflect(nova_nav_buttons[i],i==tab&&!nova_navigation_locks);
     }
     if (!nova_underline) return;
     lv_obj_set_hidden(nova_underline, !tab || tab >= 6);
@@ -503,6 +504,7 @@ void nyx_nova_diagnostic_result(void)
 
 void nyx_nova_refresh_halos(void)
 {
+    if(nova_tabs)nyx_nova_navigation_select(lv_tabview_get_tab_act(nova_tabs));
     for (u32 i = 0; i < 3; ++i) if (nova_grid_pages[i]) {
         nova_grid_ext *ext = lv_obj_get_ext_attr(nova_grid_pages[i]); nova_grid_select(nova_grid_pages[i], ext->selected);
     }
@@ -750,13 +752,20 @@ void nyx_nova_about(lv_obj_t *page)
         "derrek, nedwill, plutoo\nshuffle2, smea, thexyz\nyellows8\n\nfincs, hexkyz, SciresM\nShiny Quagsire, WinterMute\nswitchbrew",
         "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw"
     };
-    for(u32 i=0;i<3;++i){
-        lv_obj_t *card=nyx_nova_panel(page,34+i*410,140,392,350);
-        nyx_nova_glyph(card,icons[i],24,24,24);
-        lv_obj_t *title=nyx_nova_text(card,titles[i],64,24,304,NOVA_TITLE);nyx_nova_fit_text(title,40);
-        lv_obj_t *text=nyx_nova_text(card,credits[i],24,86,344,NOVA_KICKER);
-        static lv_style_t credits_style;lv_style_copy(&credits_style,&nova_text[NOVA_KICKER]);credits_style.text.letter_space=0;credits_style.text.line_space=2;credits_style.text.color=nova_text[NOVA_BODY].text.color;
-        lv_label_set_style(text,&credits_style);nyx_nova_fit_text(text,250);
+    (void)icons;
+    lv_obj_t *tabs=lv_tabview_create(page,NULL);
+    lv_obj_set_size(tabs,1212,366);lv_obj_set_pos(tabs,34,140);lv_tabview_set_sliding(tabs,false);
+    for(u32 i=0;i<4;++i){
+        lv_obj_t *section=lv_tabview_add_tab(tabs,i?titles[i-1]:"Nova Pro");
+        nyx_nova_fixed_page(section);
+        const char *text=i?credits[i-1]:
+            "Hekate Nova Pro " NYX_NOVA_VERSION "\n\n"
+            "Retrogen : conception et adaptation\n"
+            "ChatGPT : assistance à la conception et à l'adaptation\n\n"
+            "Basé sur Hekate 6.5.4 / Nyx 1.9.4\n"
+            "Les crédits et licences d'origine sont conservés dans les autres onglets.";
+        lv_obj_t *report=nyx_nova_report(section,text,0,8,1212,lv_obj_get_height(section)-16);
+        nyx_nova_report_style(report,nyx_nova_text_style(NOVA_SMALL));
     }
     lv_obj_t *resources=nyx_nova_text(page,"HWTest-RCM 0.15 · Noto Sans (OFL) · Lucide (ISC) · Nova Pro (GPL)",34,520,1212,NOVA_SMALL);nyx_nova_fit_text(resources,44);
 }

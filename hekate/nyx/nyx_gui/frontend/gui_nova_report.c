@@ -101,6 +101,13 @@ lv_obj_t *nyx_nova_report(lv_obj_t *parent,const char *text,int x,int y,int widt
     report_fill(panel);return panel;
 }
 
+void nyx_nova_report_style(lv_obj_t *panel,const lv_style_t *style)
+{
+    report_ext *ext=lv_obj_get_ext_attr(panel);
+    if(!ext->text||!ext->slice)return;
+    lv_label_set_style(ext->label,(lv_style_t *)style);ext->page=0;report_fill(panel);
+}
+
 static int property_rows(lv_obj_t *parent,const char *labels,const char *values,int width)
 {
     int y=20;
@@ -148,4 +155,49 @@ void nyx_nova_transfer(lv_obj_t *win,emmc_tool_gui_t *context)
     lv_style_copy(&orange_bg,&background);lv_style_copy(&orange_ind,&indicator);orange_ind.body.main_color=orange_ind.body.grad_color=LV_COLOR_HEX(0xF4A261);
     lv_style_copy(&white,&indicator);white.body.main_color=white.body.grad_color=LV_COLOR_HEX(0xF2F5FA);
     context->bar_teal_bg=&background;context->bar_teal_ind=&indicator;context->bar_orange_bg=&orange_bg;context->bar_orange_ind=&orange_ind;context->bar_white_bg=&background;context->bar_white_ind=&white;
+}
+
+void nyx_nova_package_logs(lv_obj_t *win,lv_obj_t **logs)
+{
+	lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;
+	nyx_nova_fixed_page(page);
+	lv_obj_t *tabs=lv_tabview_create(page,NULL);
+	lv_obj_set_size(tabs,lv_obj_get_width(page),lv_obj_get_height(page));
+	lv_obj_set_pos(tabs,0,0);lv_tabview_set_sliding(tabs,false);
+	lv_obj_t *main_page=lv_tabview_add_tab(tabs,"Main");
+	lv_obj_t *safe_page=lv_tabview_add_tab(tabs,"Safe");
+	lv_obj_t *log_pages[]={main_page,safe_page};
+	for(u32 i=0;i<2;++i){
+		lv_page_set_style(log_pages[i],LV_PAGE_STYLE_BG,&lv_style_transp_tight);
+		lv_page_set_style(log_pages[i],LV_PAGE_STYLE_SCRL,&lv_style_transp_tight);
+		lv_page_set_scrl_fit(log_pages[i],false,true);
+		lv_page_set_scrl_width(log_pages[i],lv_obj_get_width(log_pages[i]));
+		lv_page_set_sb_mode(log_pages[i],LV_SB_MODE_AUTO);
+		logs[i]=lv_label_create(log_pages[i],NULL);
+		lv_label_set_style(logs[i],&monospace_text);
+		lv_label_set_long_mode(logs[i],LV_LABEL_LONG_BREAK);
+		lv_label_set_recolor(logs[i],true);
+		lv_obj_set_width(logs[i],lv_obj_get_width(log_pages[i])-68);
+		lv_obj_set_pos(logs[i],34,20);lv_label_set_text(logs[i]," ");
+	}
+}
+
+void nyx_nova_archive_view(lv_obj_t *win,lv_obj_t **labels)
+{
+    lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;
+    nyx_nova_fixed_page(page);
+    int height=lv_obj_get_height(page);
+    lv_obj_t *panel=nyx_nova_panel(page,34,22,1212,height-44);
+    nyx_nova_icon_box(panel,"folder-open",574,20,64,false);
+    lv_obj_t *status=nyx_nova_text(panel,"",36,102,1140,NOVA_BODY);
+    lv_label_set_align(status,LV_LABEL_ALIGN_CENTER);lv_label_set_recolor(status,true);
+    lv_obj_t *current=nyx_nova_text(panel,"",36,180,1140,NOVA_SMALL);
+    lv_label_set_align(current,LV_LABEL_ALIGN_CENTER);
+    /* The complete path remains in the traversal buffer. A single-line
+     * marquee prevents even a 1024-character path hiding the result below. */
+    lv_label_set_long_mode(current,LV_LABEL_LONG_ROLL);
+    lv_obj_set_height(current,nyx_font_small()->h_px);
+    lv_obj_t *result=nyx_nova_text(panel,"",36,260,1140,NOVA_BODY);
+    lv_label_set_align(result,LV_LABEL_ALIGN_CENTER);lv_label_set_recolor(result,true);
+    labels[0]=status;labels[1]=current;labels[2]=result;
 }

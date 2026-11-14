@@ -54,7 +54,10 @@ lv_obj_t *nyx_nova_action(lv_obj_t *parent, const char *title, const char *descr
 struct _emmc_tool_gui_t;
 void nyx_nova_fixed_page(lv_obj_t *page);
 lv_obj_t *nyx_nova_report(lv_obj_t *parent,const char *text,int x,int y,int width,int height);
+void nyx_nova_report_style(lv_obj_t *panel,const lv_style_t *style);
 lv_obj_t *nyx_nova_emmc_summary(lv_obj_t *win,const char *values);
 void nyx_nova_transfer(lv_obj_t *win,struct _emmc_tool_gui_t *context);
 void nyx_nova_align(lv_obj_t *object,const lv_obj_t *base,lv_align_t alignment,lv_coord_t x,lv_coord_t y);
+void nyx_nova_package_logs(lv_obj_t *win,lv_obj_t **logs);
+void nyx_nova_archive_view(lv_obj_t *win,lv_obj_t **labels);
 #endif

@@ -1,8 +1,9 @@
-Sources Hekate/Nyx et compagnon HWTest-RCM avec dependances RAM incluses.
-Construire Hekate a sa racine avec make -j4 (devkitARM, devkitA64, Python3, GCC natif).
-Construire ensuite HWTest-RCM-0.15/ramtest avec make -j4 (devkitARM, Python3, Git).
-Les scripts build-tools sont les references de construction et verification
-du workspace Windows utilise ici ; ils attendent sa disposition work/.
-Les icones Nova sont deja compilees dans nova_icons.inc : Node.js est
-uniquement utile pour les regenerer, avec Lucide 1.8.0 et Sharp.
-Ne pas utiliser les sorties intermediaires *_unc.bin comme payloads.
+Hekate Nova Pro 16 : sources Hekate/Nyx et compagnon HWTest-RCM.
+Construire hekate-6.5.4 avec make -j4 : devkitARM, devkitA64, Python3
+et un compilateur GCC natif sont necessaires. Les icones sont deja generees.
+Le service RAM se construit dans HWTest-RCM-0.15/ramtest.
+Les scripts build-tools documentent la construction et les tests du
+workspace Windows : ils attendent work/hekate-6.5.4, work/HWTest-RCM-0.15,
+work/toolchains/w64devkit et les ressources de test de ce workspace.
+Le dossier resources contient les sept packs de langue du service RAM.
+Aucun test PC ne remplace une validation sur console.

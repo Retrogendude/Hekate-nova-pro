@@ -1,14 +1,14 @@
-/* Soft white diagonal sheen over the complete selected tile.
+/* Fast white diagonal sheen and a bounded blue/violet selection border.
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "gui_nova.h"
 #include "../config.h"
 #include <libs/lvgl/lv_draw/lv_draw_vbasic.h>
 #include <string.h>
 #define REFLECTION_TARGETS 32
-#define REFLECTION_PERIOD 40
+#define REFLECTION_PERIOD 20
 #define REFLECTION_SWEEP 12
-#define REFLECTION_CYCLE 72
-#define REFLECTION_STRIPS 10
+#define REFLECTION_CYCLE 36
+#define REFLECTION_STRIPS 16
 #define REFLECTION_HALF 64
 typedef struct {
     lv_obj_t *target,*overlay;
@@ -85,8 +85,8 @@ static void reflection_bounds(reflection_target *target)
     lv_area_t coords;lv_obj_get_coords(target->target,&coords);
     int height=lv_obj_get_height(target->target),center=reflection_center(target);
     target->dirty_count=0;
-    /* Ten bounded strips avoid a full-tile rectangle or overflowing LVGL's
-     * 32-entry invalidation queue. Only the old/new diagonal bands redraw. */
+    /* Bounded strips avoid a full-tile rectangle. Transitions merge the
+     * old/new spans before using LVGL's 32-entry invalidation queue. */
     for(u32 i=0;i<REFLECTION_STRIPS;++i){
         int top=i*height/REFLECTION_STRIPS,bottom=(i+1)*height/REFLECTION_STRIPS-1;
         lv_area_t band={coords.x1+center-bottom/2-REFLECTION_HALF-2,coords.y1+top,
@@ -101,14 +101,73 @@ static void reflection_invalidate(const reflection_target *target,const lv_area_
         if(lv_area_intersect(&clipped,&target->dirty[i],visible))lv_inv_area(&clipped);
     }
 }
+static void reflection_transition(const reflection_target *before,const reflection_target *after,const lv_area_t *visible)
+{
+    bool merged[REFLECTION_STRIPS]={false};
+    for(u32 i=0;before->painted&&i<before->dirty_count;++i){
+        lv_area_t area=before->dirty[i],clip;
+        for(u32 j=0;after->painted&&j<after->dirty_count;++j){
+            if(after->dirty[j].y1!=area.y1||after->dirty[j].y2!=area.y2)continue;
+            if(after->dirty[j].x1<area.x1)area.x1=after->dirty[j].x1;
+            if(after->dirty[j].x2>area.x2)area.x2=after->dirty[j].x2;
+            merged[j]=true;break;
+        }
+        if(lv_area_intersect(&clip,&area,visible))lv_inv_area(&clip);
+    }
+    for(u32 j=0;after->painted&&j<after->dirty_count;++j)if(!merged[j]){
+        lv_area_t clip;if(lv_area_intersect(&clip,&after->dirty[j],visible))lv_inv_area(&clip);
+    }
+}
+static void reflection_border_invalidate(const reflection_target *target,const lv_area_t *visible)
+{
+    lv_area_t c;lv_obj_get_coords(target->target,&c);
+    const lv_area_t edges[]={
+        {c.x1,c.y1,c.x2,c.y1+1},{c.x1,c.y2-1,c.x2,c.y2},
+        {c.x1,c.y1+2,c.x1+7,c.y2-2},{c.x2-7,c.y1+2,c.x2,c.y2-2}
+    };
+    for(u32 i=0;i<4;++i){lv_area_t clip;if(lv_area_intersect(&clip,&edges[i],visible))lv_inv_area(&clip);}
+}
+
+static void reflection_border_draw(const reflection_target *target,const lv_area_t *coords,const lv_area_t *clip)
+{
+    /* A 1-KiB palette and two-pixel row spans; no texture, heap allocation
+     * or full-window invalidation. Fixed-point perimeter positions avoid
+     * integer division for each pixel on Tegra's ARM control processor. */
+    static lv_color_t palette[256];static bool ready;
+    if(!ready){for(u32 i=0;i<256;++i){u32 t=i<128?i:255-i;palette[i]=LV_COLOR_MAKE(53+((103*t)>>7),144-((45*t)>>7),255);}ready=true;}
+    int width=coords->x2-coords->x1+1,height=coords->y2-coords->y1+1;
+    u32 step=(256u<<16)/(2u*(width+height)),phase=target->phase*4u;
+    static const u8 rounded[]={7,5,4,3,2,1,1,0};
+    for(int y=clip->y1;y<=clip->y2;++y){
+        int row=y-coords->y1,edge=row<height-1-row?row:height-1-row;
+        int inset=edge<8?rounded[edge]:0;
+        if(edge<2){
+            int left=coords->x1+inset,right=coords->x2-inset;
+            if(left<clip->x1)left=clip->x1;if(right>clip->x2)right=clip->x2;
+            for(int x=left;x<=right;x+=4){
+                u32 pos=row<height/2?x-coords->x1:2*width+height-1-(x-coords->x1);
+                lv_area_t span={x,y,x+3>right?right:x+3,y};
+                lv_vfill(&span,clip,palette[(((pos*step)>>16)+phase)&255u],LV_OPA_COVER);
+            }
+        }else{
+            lv_area_t left={coords->x1+inset,y,coords->x1+inset+1,y};
+            lv_area_t right={coords->x2-inset-1,y,coords->x2-inset,y};
+            u32 lp=2*width+2*height-1-row,rp=width+row;
+            lv_vfill(&left,clip,palette[(((lp*step)>>16)+phase)&255u],LV_OPA_COVER);
+            lv_vfill(&right,clip,palette[(((rp*step)>>16)+phase)&255u],LV_OPA_COVER);
+        }
+    }
+}
 static bool reflection_design(lv_obj_t *object,const lv_area_t *mask,lv_design_mode_t mode)
 {
     if(mode==LV_DESIGN_COVER_CHK)return false;
     if(mode!=LV_DESIGN_DRAW_MAIN||!n_cfg.nova_halo||reflection_pause_depth)return true;
     reflection_target *target=lv_obj_get_free_ptr(object);
-    if(!target||!target->painted)return true;
+    if(!target)return true;
     lv_area_t coords,clip;lv_obj_get_coords(object,&coords);
     if(!lv_area_intersect(&clip,&coords,mask))return true;
+    reflection_border_draw(target,&coords,&clip);
+    if(!target->painted||lv_obj_get_width(object)<100||lv_obj_get_height(object)<64)return true;
     int center=reflection_center(target),height=lv_obj_get_height(object);
     static const u8 corner_inset[]={7,5,4,3,2,2,2,2};
     /* Direct row spans: no large alpha image, no raster buffer, no per-frame
@@ -144,10 +203,12 @@ static void reflection_frame(void *unused)
         reflection_target *target=&reflection_targets[i];if(!target->target)continue;
         lv_area_t visible;
         if(!reflection_visible(target->target,&visible)){target->painted=false;continue;}
-        if(target->painted)reflection_invalidate(target,&visible);
+        reflection_target before=*target;
+        reflection_border_invalidate(target,&visible);
         target->phase=reflection_phase;target->painted=reflection_phase%REFLECTION_CYCLE<REFLECTION_SWEEP;
-        if(!target->painted)continue;
-        reflection_bounds(target);reflection_invalidate(target,&visible);
+        if(lv_obj_get_width(target->target)<100||lv_obj_get_height(target->target)<64)target->painted=false;
+        if(target->painted)reflection_bounds(target);
+        reflection_transition(&before,target,&visible);
     }
 }
 void nyx_nova_reflect(lv_obj_t *object,bool selected)
@@ -160,7 +221,7 @@ void nyx_nova_reflect(lv_obj_t *object,bool selected)
         if(target->target==object){if(!selected)lv_obj_del(target->overlay);return;}
         if(!target->target&&!vacant)vacant=target;
     }
-    if(!selected||!vacant||lv_obj_get_width(object)<100||lv_obj_get_height(object)<50)return;
+    if(!selected||!vacant||lv_obj_get_width(object)<24||lv_obj_get_height(object)<24)return;
     lv_obj_t *overlay=lv_obj_create(object,NULL);if(!overlay)return;
     lv_obj_set_style(overlay,&lv_style_transp_tight);lv_obj_set_click(overlay,false);
     lv_obj_set_protect(overlay,LV_PROTECT_PARENT);
@@ -182,7 +243,10 @@ void nyx_nova_reflection_pause(bool pause)
 {
     if(pause)++reflection_pause_depth;else if(reflection_pause_depth)--reflection_pause_depth;
     lv_area_t screen={0,0,LV_HOR_RES-1,LV_VER_RES-1};
-    for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].painted){reflection_invalidate(&reflection_targets[i],&screen);reflection_targets[i].painted=false;}
+    for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].target){
+        if(reflection_targets[i].painted)reflection_invalidate(&reflection_targets[i],&screen);
+        reflection_border_invalidate(&reflection_targets[i],&screen);reflection_targets[i].painted=false;
+    }
     if(reflection_task)lv_task_set_prio(reflection_task,reflection_pause_depth?LV_TASK_PRIO_OFF:LV_TASK_PRIO_LOWEST);
 }
 void nyx_nova_reflection_interaction(void)

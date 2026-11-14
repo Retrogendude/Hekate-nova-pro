@@ -49,7 +49,7 @@ void set_default_configuration()
 
 void set_nyx_default_configuration()
 {
-	n_cfg.theme_bg       = 0x141A19;
+	n_cfg.theme_bg       = 0x10151D;
 	n_cfg.theme_color    = 0;
 	n_cfg.entries_5_col  = 0;
 	n_cfg.timeoffset     = 0;
@@ -66,9 +66,9 @@ void set_nyx_default_configuration()
 	n_cfg.nova_text_color = 0xF2F5FA;
 	n_cfg.nova_border_color = 0x334050;
 	n_cfg.nova_reflection_color = 0x55C9F1;
-	n_cfg.nova_menu_opacity = 100;
+	n_cfg.nova_menu_opacity = 25;
 	n_cfg.nova_icon_opacity = 100;
-	n_cfg.wallpaper_file[0] = 0;
+	strcpy(n_cfg.wallpaper_file, "Nova-Carbon.bmp");
 	n_cfg.nova_logo_color = 0x55C9F1;
 	n_cfg.nova_icon_color = 0x55C9F1;
 	n_cfg.nova_selection_color = 0x1C2937;

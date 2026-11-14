@@ -758,8 +758,8 @@ static void tabview_init(void)
 	indic.body.grad_color = indic.body.main_color;
 	indic.body.radius = 0;
 	indic.body.border.width = 0;
-	indic.body.padding.inner = LV_DPI / 20;
-	indic.body.opa = LV_OPA_0;
+	indic.body.padding.inner = 3;
+	indic.body.opa = LV_OPA_COVER;
 
 	lv_style_copy(&btn_bg, &def);
 	btn_bg.body.main_color = COLOR_BG;
@@ -781,13 +781,15 @@ static void tabview_init(void)
 	lv_style_copy(&rel, &lv_style_transp);
 	rel.body.padding.ver = LV_DPI * 4 / 23;
 	rel.text.font = _font;
+	rel.text.color = COLOR_INACTIVE;
+	rel.text.letter_space = 0;
 
 	lv_style_copy(&pr, &def);
 	pr.body.main_color = COLOR_BG_LIGHT;
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.border.width = 1;
 	pr.body.empty = 0;
-	pr.body.radius = 8;
+	pr.body.radius = 3;
 	pr.body.border.color = COLOR_OUTLINE;
 	pr.body.border.part = LV_BORDER_BOTTOM;
 	pr.body.border.opa = LV_OPA_COVER;
@@ -796,26 +798,19 @@ static void tabview_init(void)
 	lv_style_copy(&tgl_rel, &lv_style_transp);
 	tgl_rel.glass = 0;
 	tgl_rel.body.empty = 0;
-	rel.body.opa = theme_panel_opacity * 255 / 100;
-	tgl_rel.body.border.width = 1;
+	tgl_rel.body.opa = LV_OPA_COVER;
+	tgl_rel.body.border.width = 2;
 	tgl_rel.body.border.color = COLOR_HOS_TURQUOISE;
 	tgl_rel.body.border.part = LV_BORDER_BOTTOM;
 	tgl_rel.body.border.opa = LV_OPA_COVER;
-	tgl_rel.body.radius = 8;
+	tgl_rel.body.radius = 3;
 	tgl_rel.body.main_color = COLOR_PRESS;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
 	tgl_rel.text.font = _font;
 	tgl_rel.text.color = COLOR_HOS_TXT_WHITE;
+	tgl_rel.text.letter_space = 0;
 
-	lv_style_copy(&tgl_pr, &def);
-	tgl_pr.body.main_color = COLOR_BG_LIGHT;
-	tgl_pr.body.grad_color = tgl_pr.body.main_color;
-	tgl_pr.body.border.width = 1;
-	tgl_pr.body.border.color = COLOR_OUTLINE;
-	tgl_pr.body.border.part = LV_BORDER_BOTTOM;
-	tgl_pr.body.empty = 0;
-	tgl_pr.body.radius = 8;
-	tgl_pr.text.color = COLOR_HOS_TXT_WHITE;
+	lv_style_copy(&tgl_pr, &tgl_rel);
 
 	theme.tabview.bg = theme.bg;
 	theme.tabview.indic = &indic;

@@ -1,0 +1,308 @@
+{
+  "Mode simplifié": [
+    "Simple mode",
+    "Mode simplifié",
+    "Modo sencillo",
+    "Modalità semplice",
+    "Простой режим",
+    "Einfacher Modus",
+    "Modo simples"
+  ],
+  "Mode expert": [
+    "Expert mode",
+    "Mode expert",
+    "Modo experto",
+    "Modalità esperto",
+    "Экспертный режим",
+    "Expertenmodus",
+    "Modo avançado"
+  ],
+  "Mode expert — eMMC interne": [
+    "Expert mode — internal eMMC",
+    "Mode expert — eMMC interne",
+    "Modo experto — eMMC interna",
+    "Esperto — eMMC interna",
+    "Экспертный режим — eMMC",
+    "Expertenmodus — interne eMMC",
+    "Modo avançado — eMMC interna"
+  ],
+  "Modèle de console": [
+    "Console model",
+    "Modèle de console",
+    "Modelo de consola",
+    "Modello console",
+    "Модель консоли",
+    "Konsolenmodell",
+    "Modelo da consola"
+  ],
+  "Installer Linux ?": [
+    "Install Linux?",
+    "Installer Linux ?",
+    "¿Instalar Linux?",
+    "Installare Linux?",
+    "Установить Linux?",
+    "Linux installieren?",
+    "Instalar Linux?"
+  ],
+  "Installer Android ?": [
+    "Install Android?",
+    "Installer Android ?",
+    "¿Instalar Android?",
+    "Installare Android?",
+    "Установить Android?",
+    "Android installieren?",
+    "Instalar Android?"
+  ],
+  "16 Go": [
+    "16 GiB",
+    "16 Go",
+    "16 GiB",
+    "16 GiB",
+    "16 ГиБ",
+    "16 GiB",
+    "16 GiB"
+  ],
+  "32 Go": [
+    "32 GiB",
+    "32 Go",
+    "32 GiB",
+    "32 GiB",
+    "32 ГиБ",
+    "32 GiB",
+    "32 GiB"
+  ],
+  "Android (total)": [
+    "Android (total)",
+    "Android (total)",
+    "Android (total)",
+    "Android (totale)",
+    "Android (всего)",
+    "Android (gesamt)",
+    "Android (total)"
+  ],
+  "Récapitulatif": [
+    "Summary",
+    "Récapitulatif",
+    "Resumen",
+    "Riepilogo",
+    "Сводка",
+    "Übersicht",
+    "Resumo"
+  ],
+  "Capacité : %d MiB · réserves : %d MiB": [
+    "Capacity: %d MiB · reserved: %d MiB",
+    "Capacité : %d MiB · réserves : %d MiB",
+    "Capacidad: %d MiB · reserva: %d MiB",
+    "Capacità: %d MiB · riserva: %d MiB",
+    "Ёмкость: %d МиБ · резерв: %d МиБ",
+    "Kapazität: %d MiB · Reserve: %d MiB",
+    "Capacidade: %d MiB · reserva: %d MiB"
+  ],
+  "Disposition valide. Les réserves techniques sont incluses.": [
+    "Valid layout. Technical reserves are included.",
+    "Disposition valide. Les réserves techniques sont incluses.",
+    "Distribución válida. Reservas técnicas incluidas.",
+    "Schema valido. Riserve tecniche incluse.",
+    "Схема допустима. Служебный резерв учтён.",
+    "Gültige Aufteilung. Technische Reserven enthalten.",
+    "Esquema válido. Reservas técnicas incluídas."
+  ],
+  "Capacité insuffisante : conserver l'espace minimum pour FAT32 / USER.": [
+    "Insufficient capacity: keep the minimum FAT32 / USER space.",
+    "Capacité insuffisante : conserver l'espace minimum pour FAT32 / USER.",
+    "Capacidad insuficiente: conserve el mínimo para FAT32 / USER.",
+    "Capacità insufficiente: mantenere lo spazio minimo FAT32 / USER.",
+    "Недостаточно места: нужен минимум для FAT32 / USER.",
+    "Zu wenig Platz: Mindestgröße für FAT32 / USER einhalten.",
+    "Capacidade insuficiente: manter o mínimo para FAT32 / USER."
+  ],
+  "Le modèle sélectionné ne correspond pas à cette console.": [
+    "The selected model does not match this console.",
+    "Le modèle sélectionné ne correspond pas à cette console.",
+    "El modelo seleccionado no coincide con esta consola.",
+    "Il modello selezionato non corrisponde alla console.",
+    "Выбранная модель не соответствует консоли.",
+    "Das gewählte Modell entspricht nicht dieser Konsole.",
+    "O modelo selecionado não corresponde à consola."
+  ],
+  "eMMC indisponible : sa taille ne peut pas être vérifiée.": [
+    "eMMC unavailable: its size cannot be verified.",
+    "eMMC indisponible : sa taille ne peut pas être vérifiée.",
+    "eMMC no disponible: no se puede verificar su tamaño.",
+    "eMMC non disponibile: impossibile verificarne la capacità.",
+    "eMMC недоступна: размер не удалось проверить.",
+    "eMMC nicht verfügbar: Größe nicht überprüfbar.",
+    "eMMC indisponível: não é possível verificar o tamanho."
+  ],
+  "eMMC modifiée : utiliser le mode expert pour cette console.": [
+    "Modified eMMC: use expert mode for this console.",
+    "eMMC modifiée : utiliser le mode expert pour cette console.",
+    "eMMC modificada: use el modo experto.",
+    "eMMC modificata: usare la modalità esperto.",
+    "eMMC изменена: используйте экспертный режим.",
+    "Geänderte eMMC: Expertenmodus verwenden.",
+    "eMMC modificada: usar o modo avançado."
+  ],
+  "La partition Linux est trop petite.": [
+    "The Linux partition is too small.",
+    "La partition Linux est trop petite.",
+    "La partición Linux es demasiado pequeña.",
+    "La partizione Linux è troppo piccola.",
+    "Раздел Linux слишком мал.",
+    "Die Linux-Partition ist zu klein.",
+    "A partição Linux é demasiado pequena."
+  ],
+  "Android doit inclure ses partitions système et ses données.": [
+    "Android must include its system partitions and data.",
+    "Android doit inclure ses partitions système et ses données.",
+    "Android debe incluir sistema y datos.",
+    "Android deve includere sistema e dati.",
+    "Android должен включать систему и данные.",
+    "Android muss Systempartitionen und Daten umfassen.",
+    "Android deve incluir sistema e dados."
+  ],
+  "Disposition incompatible. Vérifier les tailles avant de continuer.": [
+    "Incompatible layout. Check sizes before continuing.",
+    "Disposition incompatible. Vérifier les tailles avant de continuer.",
+    "Distribución incompatible. Revise los tamaños.",
+    "Schema incompatibile. Controllare le dimensioni.",
+    "Несовместимая схема. Проверьте размеры.",
+    "Unzulässige Aufteilung. Größen prüfen.",
+    "Esquema incompatível. Verificar os tamanhos."
+  ],
+  "Support indisponible ou capacité modifiée. Rouvrir le gestionnaire de partitions.": [
+    "Storage unavailable or capacity changed. Reopen the partition manager.",
+    "Support indisponible ou capacité modifiée. Rouvrir le gestionnaire de partitions.",
+    "Almacenamiento no disponible o capacidad cambiada. Abra de nuevo el gestor.",
+    "Memoria non disponibile o capacità cambiata. Riaprire il gestore partizioni.",
+    "Носитель недоступен или ёмкость изменилась. Откройте менеджер заново.",
+    "Datenträger fehlt oder Kapazität geändert. Partitionsmanager erneut öffnen.",
+    "Armazenamento indisponível ou capacidade alterada. Reabrir o gestor."
+  ],
+  "Vérifier la disposition": [
+    "Review layout",
+    "Vérifier la disposition",
+    "Revisar distribución",
+    "Verificare lo schema",
+    "Проверить схему",
+    "Aufteilung prüfen",
+    "Rever esquema"
+  ],
+  "La confirmation d'effacement existante sera affichée à l'étape suivante.": [
+    "The existing erase confirmation appears at the next step.",
+    "La confirmation d'effacement existante sera affichée à l'étape suivante.",
+    "La confirmación de borrado aparecerá en el siguiente paso.",
+    "La conferma di cancellazione apparirà al passaggio successivo.",
+    "Подтверждение стирания появится на следующем шаге.",
+    "Die bisherige Löschbestätigung folgt im nächsten Schritt.",
+    "A confirmação de eliminação aparece no passo seguinte."
+  ],
+  "Réserves : 16 MiB + alignement": [
+    "Reserved: 16 MiB + alignment",
+    "Réserves : 16 MiB + alignement",
+    "Reserva: 16 MiB + alineación",
+    "Riserva: 16 MiB + allineamento",
+    "Резерв: 16 МиБ + выравнивание",
+    "Reserve: 16 MiB + Ausrichtung",
+    "Reserva: 16 MiB + alinhamento"
+  ],
+  "Retrogen : conception et adaptation": [
+    "Retrogen: design and adaptation",
+    "Retrogen : conception et adaptation",
+    "Retrogen: diseño y adaptación",
+    "Retrogen: progettazione e adattamento",
+    "Retrogen: проектирование и адаптация",
+    "Retrogen: Gestaltung und Anpassung",
+    "Retrogen: conceção e adaptação"
+  ],
+  "ChatGPT : assistance à la conception et à l'adaptation": [
+    "ChatGPT: design and adaptation assistance",
+    "ChatGPT : assistance à la conception et à l'adaptation",
+    "ChatGPT: asistencia en diseño y adaptación",
+    "ChatGPT: assistenza alla progettazione e adattamento",
+    "ChatGPT: помощь в проектировании и адаптации",
+    "ChatGPT: Unterstützung bei Gestaltung und Anpassung",
+    "ChatGPT: assistência na conceção e adaptação"
+  ],
+  "Basé sur Hekate 6.5.4 / Nyx 1.9.4": [
+    "Based on Hekate 6.5.4 / Nyx 1.9.4",
+    "Basé sur Hekate 6.5.4 / Nyx 1.9.4",
+    "Basado en Hekate 6.5.4 / Nyx 1.9.4",
+    "Basato su Hekate 6.5.4 / Nyx 1.9.4",
+    "На основе Hekate 6.5.4 / Nyx 1.9.4",
+    "Basiert auf Hekate 6.5.4 / Nyx 1.9.4",
+    "Baseado em Hekate 6.5.4 / Nyx 1.9.4"
+  ],
+  "Les crédits et licences d'origine sont conservés dans les autres onglets.": [
+    "Original credits and licenses are preserved in the other tabs.",
+    "Les crédits et licences d'origine sont conservés dans les autres onglets.",
+    "Créditos y licencias originales en las otras pestañas.",
+    "Crediti e licenze originali nelle altre schede.",
+    "Исходные авторы и лицензии сохранены в других вкладках.",
+    "Originale Mitwirkende und Lizenzen stehen in den weiteren Reitern.",
+    "Créditos e licenças originais nos outros separadores."
+  ],
+  "Le mode expert conserve le partitionnement manuel. La partition USER sera formatée après confirmation.": [
+    "Expert mode keeps manual partitioning. USER is formatted after confirmation.",
+    "Le mode expert conserve le partitionnement manuel. La partition USER sera formatée après confirmation.",
+    "El modo experto conserva el particionado manual. USER se formatea tras confirmar.",
+    "La modalità esperto mantiene le partizioni manuali. USER viene formattata dopo conferma.",
+    "Экспертный режим сохраняет ручную настройку. USER форматируется после подтверждения.",
+    "Im Expertenmodus bleibt die manuelle Aufteilung. USER wird nach Bestätigung formatiert.",
+    "O modo avançado mantém a divisão manual. USER é formatada após confirmação."
+  ],
+  "Les fonctions d'installation Linux et Android restent disponibles.": [
+    "Linux and Android installation tools remain available.",
+    "Les fonctions d'installation Linux et Android restent disponibles.",
+    "Las herramientas de instalación Linux y Android siguen disponibles.",
+    "Gli strumenti di installazione Linux e Android restano disponibili.",
+    "Инструменты установки Linux и Android остаются доступны.",
+    "Die Installationswerkzeuge für Linux und Android bleiben verfügbar.",
+    "As ferramentas de instalação Linux e Android continuam disponíveis."
+  ],
+  "Le mode simplifié utilise une emuMMC complète : 29 Go pour V1/V2/Lite, 58 Go pour OLED (valeurs arrondies).": [
+    "Simple mode uses a full emuMMC: 29 GiB for V1/V2/Lite, 58 GiB for OLED (rounded values).",
+    "Le mode simplifié utilise une emuMMC complète : 29 Go pour V1/V2/Lite, 58 Go pour OLED (valeurs arrondies).",
+    "Modo sencillo: emuMMC completa de 29 GiB para V1/V2/Lite y 58 GiB para OLED (redondeado).",
+    "Modalità semplice: emuMMC completa da 29 GiB per V1/V2/Lite, 58 GiB per OLED (arrotondati).",
+    "Простой режим: полная emuMMC, 29 ГиБ для V1/V2/Lite, 58 ГиБ для OLED (округлённо).",
+    "Einfacher Modus: volle emuMMC, 29 GiB bei V1/V2/Lite, 58 GiB bei OLED (gerundet).",
+    "Modo simples: emuMMC completa de 29 GiB para V1/V2/Lite, 58 GiB para OLED (arredondado)."
+  ],
+  "Linux et Android sont indépendants : Minimal = 16 Go, Recommandé = 32 Go par système. Android inclut ses partitions système.": [
+    "Linux and Android are independent: Minimum = 16 GiB, Recommended = 32 GiB each. Android includes system partitions.",
+    "Linux et Android sont indépendants : Minimal = 16 Go, Recommandé = 32 Go par système. Android inclut ses partitions système.",
+    "Linux y Android independientes: mínimo 16 GiB, recomendado 32 GiB cada uno. Android incluye sistema.",
+    "Linux e Android indipendenti: minimo 16 GiB, consigliato 32 GiB ciascuno. Android include il sistema.",
+    "Linux и Android независимы: минимум 16 ГиБ, рекомендуется 32 ГиБ для каждого. Система Android включена.",
+    "Linux und Android sind unabhängig: mindestens 16 GiB, empfohlen 32 GiB je System. Android-Systempartitionen inklusive.",
+    "Linux e Android independentes: mínimo 16 GiB, recomendado 32 GiB por sistema. Android inclui o sistema."
+  ],
+  "Au moins 2 Go restent pour FAT32. Les alignements et réserves techniques sont comptés.": [
+    "At least 2 GiB remain for FAT32. Alignment and technical reserves are included.",
+    "Au moins 2 Go restent pour FAT32. Les alignements et réserves techniques sont comptés.",
+    "Al menos 2 GiB para FAT32. Alineación y reservas incluidas.",
+    "Almeno 2 GiB per FAT32. Allineamento e riserve inclusi.",
+    "Для FAT32 остаётся не менее 2 ГиБ. Выравнивание и резервы учтены.",
+    "Für FAT32 bleiben mindestens 2 GiB. Ausrichtung und Reserven sind enthalten.",
+    "Pelo menos 2 GiB para FAT32. Alinhamento e reservas incluídos."
+  ],
+  "L'emuMMC ne sera créée qu'avec l'outil dédié après le partitionnement. Réserver Linux/Android n'installe pas leurs fichiers.": [
+    "Create emuMMC with its dedicated tool after partitioning. Reserving Linux/Android does not install their files.",
+    "L'emuMMC ne sera créée qu'avec l'outil dédié après le partitionnement. Réserver Linux/Android n'installe pas leurs fichiers.",
+    "Cree emuMMC con su herramienta tras particionar. Reservar Linux/Android no instala sus archivos.",
+    "Creare emuMMC con lo strumento dedicato dopo le partizioni. Riservare Linux/Android non ne installa i file.",
+    "После разметки создайте emuMMC отдельным инструментом. Разметка Linux/Android не устанавливает файлы.",
+    "emuMMC nach der Aufteilung mit dem eigenen Werkzeug erstellen. Reservierter Linux/Android-Platz installiert keine Dateien.",
+    "Criar emuMMC na ferramenta própria após dividir. Reservar Linux/Android não instala os ficheiros."
+  ],
+  "La sauvegarde automatique existante est limitée à 1,2 Go ; au-delà, une copie manuelle sera demandée. Une emuMMC redimensionnée reformate USER.": [
+    "Automatic backup is limited to 1.2 GiB; larger backups require a manual copy. Resizing emuMMC reformats USER.",
+    "La sauvegarde automatique existante est limitée à 1,2 Go ; au-delà, une copie manuelle sera demandée. Une emuMMC redimensionnée reformate USER.",
+    "Copia automática limitada a 1,2 GiB; después se requiere copia manual. Redimensionar emuMMC formatea USER.",
+    "Backup automatico limitato a 1,2 GiB; oltre serve una copia manuale. Ridimensionare emuMMC formatta USER.",
+    "Автокопия ограничена 1,2 ГиБ; далее нужна ручная копия. Изменение размера emuMMC форматирует USER.",
+    "Automatische Sicherung bis 1,2 GiB; darüber ist eine manuelle Kopie nötig. emuMMC-Größenänderung formatiert USER.",
+    "Cópia automática até 1,2 GiB; acima disso é necessária cópia manual. Redimensionar emuMMC formata USER."
+  ]
+}

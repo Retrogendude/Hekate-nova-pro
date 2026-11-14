@@ -358,23 +358,7 @@ static lv_res_t _entries_columns_action(lv_obj_t *btn)
 
 static lv_res_t _save_nyx_options_action(lv_obj_t *btn)
 {
-	static const char * mbox_btn_map[] = {"\251", "\222OK!", "\251", ""};
-	lv_obj_t * mbox = lv_mbox_create(lv_scr_act(), NULL);
-	lv_mbox_set_recolor_text(mbox, true);
-
-	int res = !create_nyx_config_entry(true);
-
-	nyx_changes_made = false;
-
-	if (res)
-		lv_mbox_set_text(mbox, "#FF8000 Nyx Configuration#\n\n#96FF00 The configuration was saved to sd card!#");
-	else
-		lv_mbox_set_text(mbox, "#FF8000 Nyx Configuration#\n\n#FFDD00 Failed to save the configuration#\n#FFDD00 to sd card!#");
-	lv_mbox_add_btns(mbox, mbox_btn_map, NULL);
-	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
-	lv_obj_set_top(mbox, true);
-
-	return LV_RES_OK;
+	return nyx_options_save_all(btn);
 }
 
 static const u16 theme_colors[18] = {
@@ -1183,7 +1167,7 @@ static lv_res_t _action_nyx_options_save(lv_obj_t *btns, const char * txt)
 
 static void _check_nyx_changes()
 {
-	if (nyx_changes_made)
+	if (nyx_options_has_changes())
 	{
 		lv_obj_t *dark_bg = lv_obj_create(lv_scr_act(), NULL);
 		lv_obj_set_style(dark_bg, &mbox_darken);
@@ -1203,17 +1187,18 @@ static void _check_nyx_changes()
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_top(mbox, true);
 
-		nyx_changes_made = false;
 	}
 }
 
 static lv_res_t _action_win_nyx_options_close(lv_obj_t *btn)
 {
-	// Hide status bar options save button.
-	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_0);
-	lv_obj_set_click(status_bar.mid, false);
-
 	lv_res_t res = nyx_win_close_action(btn);
+	// Brightness is stored in hekate_ipl.ini; keep both kinds of changes
+	// available after closing or canceling the save prompt.
+	lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, nyx_options_save_all);
+	bool pending = nyx_options_has_changes();
+	lv_obj_set_opa_scale(status_bar.mid, pending ? LV_OPA_COVER : LV_OPA_TRANSP);
+	lv_obj_set_click(status_bar.mid, pending);
 
 	_check_nyx_changes();
 
@@ -1357,6 +1342,14 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     card = _settings_card(system, 2, 2);
     _settings_button(card, SYMBOL_CLOCK" Clock (Offset)", _create_mbox_clock_edit);
     _settings_help(card, "Change the clock offset manually. The date and time are also used for SD card operations.");
+    card = _settings_card(system, 3, 2);
+    lv_obj_t *heading = _settings_heading(card, SYMBOL_BRIGHTNESS" Backlight");
+    lv_obj_t *brightness = lv_slider_create(card, NULL);
+    lv_obj_set_size(brightness, lv_obj_get_width(card) - 48, 40);
+    lv_obj_set_pos(brightness, 24, lv_obj_get_height(heading) + 40);
+    lv_bar_set_range(brightness, 30, 220); lv_bar_set_value(brightness, h_cfg.backlight);
+    lv_slider_set_action(brightness, _slider_brightness_action);
+    _settings_help(card, "Set backlight brightness.");
     lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_nyx_options_action);
     lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER); lv_obj_set_click(status_bar.mid, true);
     return LV_RES_OK;
