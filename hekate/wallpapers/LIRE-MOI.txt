@@ -1,0 +1,11 @@
+FONDS D ECRAN NOVA PRO
+
+Copier les fichiers BMP dans wallpapers a la racine de la carte SD.
+Choisir ensuite Reglages Nyx > Themes et couleurs > Fond et transparence.
+
+Formats : BMP non compresse, 24 ou 32 bits, jusqu a 1920 x 1080.
+Les images sont recadrees et mises a l echelle une seule fois au chargement.
+Utiliser un nom simple (lettres sans accents, chiffres, espaces, - ou _).
+Jusqu a 32 fonds sont presentes dans le selecteur. Aucun fond anime.
+
+Nova-Carbon est une creation originale incluse dans ce projet sous GPL-2.0-or-later.

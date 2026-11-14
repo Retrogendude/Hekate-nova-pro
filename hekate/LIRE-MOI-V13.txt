@@ -1,0 +1,27 @@
+HEKATE NOVA PRO - CORRECTIF 13
+Hekate 6.5.4 / Nyx 1.9.4
+
+- Correction de l'ordre interne des fenetres avec un fond d'ecran actif.
+  Les boutons et sous-menus retrouvent leur parcours normal au toucher.
+- Reflet blanc diagonal discret sur TOUTE la tuile selectionnee.
+  Les contours restent fixes. Aucun effet d'arriere-plan.
+
+INSTALLATION
+1. Sauvegarder les fichiers et reglages actuels de la carte SD.
+2. Fusionner le dossier bootloader fourni avec celui de la SD.
+   Verifier le remplacement de bootloader/sys/nyx.bin : c'est le correctif.
+3. Utiliser hekate_nova_pro_6.5.4_v13.bin avec la methode habituelle.
+   bootloader/update.bin contient exactement ce meme payload.
+Les dossiers fonts et wallpapers peuvent etre fusionnes pour les ressources.
+Aucun nyx.ini ou hekate_ipl.ini n'est fourni. Les reglages sont conserves.
+Le reglage d'heure d'origine avec le choix de langue reste inchange.
+
+TEST SUR LA CONSOLE
+Conserver le fond active, ouvrir les reglages Nyx puis Themes et couleurs.
+Fermer, ouvrir Apparence, puis revenir aux onglets Outils, Infos et Diagnostic.
+Le reflet doit traverser la surface de la tuile selectionnee, sans tourner
+autour de sa bordure. Effets de selection permet de le desactiver.
+
+Compilation et essais du code reel sur PC effectues. Cette version reste a
+valider sur Switch : aucun essai materiel ni mesure de FPS console fait ici.
+Voir documentation/CORRECTIONS-NOVA-PRO-V13.md et verification/.

@@ -36,25 +36,7 @@ typedef struct _usb_pd_objects_t
 	usb_pd_object_t selected_pdo;
 } usb_pd_objects_t;
 
-// Read-only BM92T36 register diagnostics. A read result of 0 means success.
-typedef struct _bm92t36_diag_t
-{
-	u16 status1;
-	u16 status2;
-	u16 dp_status_first;
-	u16 dp_status_second;
-	u16 reg1c;
-	u16 reg1d;
-	int status1_result;
-	int status2_result;
-	int dp_status_first_result;
-	int dp_status_second_result;
-	int reg1c_result;
-	int reg1d_result;
-} bm92t36_diag_t;
-
 int  bm92t36_get_version(u32 *value);
 void bm92t36_get_source_info(bool *inserted, usb_pd_objects_t *usb_pd);
-void bm92t36_get_diagnostics(bm92t36_diag_t *diag);
 
 #endif

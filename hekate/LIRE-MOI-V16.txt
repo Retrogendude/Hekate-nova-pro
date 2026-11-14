@@ -1,0 +1,50 @@
+HEKATE NOVA PRO 16
+Base : Hekate 6.5.4 / Nyx 1.9.4
+
+INSTALLATION / MISE A JOUR
+Copier le contenu du paquet sur la carte SD en conservant les dossiers
+bootloader, fonts et wallpapers a la racine.
+Utiliser hekate_nova_pro_6.5.4_v16.bin comme payload.
+Le paquet ne contient aucun nyx.ini ou hekate_ipl.ini : les preferences
+et les configurations de demarrage existantes sont conservees.
+
+PREMIERE INSTALLATION
+Fond : wallpapers/Nova-Carbon.bmp.
+Couleurs Nova : fond sombre, textes clairs, accents turquoise.
+Fenetres : 75 % de transparence, soit 25 % d'opacite.
+Icones : opacite 100 %, reglable independamment.
+Reglage date/heure d'origine et choix de la langue conserves.
+Sur une installation existante, le theme et le fond deja sauvegardes restent
+prioritaires. Le bouton Reinitialiser du menu Themes et couleurs permet de
+retrouver les nouveaux choix Carbon/Nova, puis de les sauvegarder.
+
+PRINCIPAUX CHANGEMENTS
+- Gestionnaire de partitions compact avec modes simplifie et expert.
+- Modele de console verifie et emuMMC complete 29/58 Go arrondis.
+- Linux et Android independants : 0, 16 ou 32 Go chacun en mode simplifie.
+- Recapitulatif exact en MiB et dispositions invalides bloquees.
+- Colonnes sauvegarde/restauration alignees.
+- Outils USB et bit d'archive remis en page.
+- Journaux Package 1/2 dans deux onglets avec defilement interne.
+- Onglet actif des reglages plus visible.
+- Luminosite dans Reglages Nyx / Systeme, a droite de l'horloge.
+- Credits et version Nova actualises.
+- Bordure animee bleu/violet sur la selection et reflet blanc accelere.
+Le reflet traverse la tuile en 240 ms ; cycle complet de 720 ms.
+Le reglage des effets de selection permet de couper ces effets.
+Les animations de fond vagues/particules restent supprimees.
+
+PARTITIONNEMENT
+Les valeurs simplifiees sont des reservations d'espace. Creer ensuite
+l'emuMMC avec son outil et installer Linux/Android avec les outils dedies.
+Les allocations completes Hekate sont conservees : 29856 ou 59680 MiB,
+reserves techniques comprises. Android 16/32 Go inclut son espace systeme.
+Les confirmations et la limite de sauvegarde automatique d'origine restent
+en place. Le mode expert conserve les options manuelles.
+
+VERIFICATIONS
+Compilation et tests sur PC : voir documentation/VERIFICATION-V16.json
+et documentation/SUIVI-CAHIER-CHARGES-V16.md.
+Les 42 controles HWTest et le service memoire isole sont conserves.
+Validation sur console non effectuee ; les mesures du rendu sur PC ne sont
+pas une mesure de FPS sur Switch.

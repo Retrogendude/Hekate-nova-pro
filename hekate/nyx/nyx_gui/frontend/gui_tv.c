@@ -9,12 +9,14 @@
 #include <libs/fatfs/ff.h>
 #include <string.h>
 #include "gui_tv.h"
+#include "gui_nova.h"
+#include "../localization.h"
 
 #define TV_LOG_SIZE 32768
 #define TV_RUN_LIMIT_MS 45000
 extern bpmp_freq_t bpmp_fid_current;
 static struct {
-    lv_obj_t *win, *status;
+    lv_obj_t *win, *status, *panel;
     lv_task_t *task;
     lv_signal_func_t signal;
     dock_t dock;
@@ -55,8 +57,14 @@ static void _log(const char *line)
 
 static void _show(const char *text)
 {
-    // Bounded messages are formed by the caller; no recolor in register logs.
-    lv_label_set_text(tv.status, text);
+    if (text != tv.message) {
+        strncpy(tv.message, text, sizeof(tv.message) - 1);
+        tv.message[sizeof(tv.message) - 1] = 0;
+    }
+    if (tv.status) {
+        nyx_label_set_text(tv.status, tv.message);
+        nyx_nova_fit_text(tv.status, lv_obj_get_height(tv.panel) - 48);
+    }
 }
 
 static int _write_report(FIL *fp)
@@ -75,7 +83,7 @@ static int _write_report(FIL *fp)
 
 static bool _save(void)
 {
-    if (!tv.log_size || !sd_mount())
+    if (!tv.log_size || sd_mount() != 0)
         return false;
     f_mkdir("bootloader/tv-test");
     FIL fp;
@@ -106,6 +114,8 @@ static void _stop(void)
 {
     // Stop DMA before freeing its framebuffer, including partial starts.
     tv.mirrored = false;
+    if (tv.clock_saved)
+        bpmp_clk_rate_set(BPMP_CLK_NORMAL);
     dpout_video_stop();
     dock_stop(&tv.dock);
     dpout_aux_end();
@@ -130,6 +140,33 @@ static void _stop(void)
         free(tv.allocation);
     tv.allocation = NULL;
     tv.fb = NULL;
+    if (!tv.win && tv.task) {
+        lv_task_del(tv.task);
+        tv.task = NULL;
+    }
+}
+
+void gui_tv_shutdown(bool save_report)
+{
+    bool was_active = tv.running || tv.mirrored || tv.clock_saved;
+    if (was_active)
+        _log("Stopping external display before subsystem handoff.");
+    _stop();
+    if (save_report)
+        _save();
+    if (tv.task) {
+        lv_task_del(tv.task);
+        tv.task = NULL;
+    }
+    dpout_set_logger(NULL);
+    if (was_active)
+        _show("TV output stopped.");
+}
+
+// Strong override of the BDK teardown hook; no SD access after sd_end().
+void hw_display_external_end(void)
+{
+    gui_tv_shutdown(false);
 }
 
 void gui_tv_dirty(int y1, int y2)
@@ -154,7 +191,7 @@ static void _tick(void *param)
             _log("HPD lost: stopping video and dock session.");
             _stop();
             _save();
-            _show("Connexion TV perdue. Sortie arretee. Vous pouvez relancer le test.");
+            _show("TV disconnected. Output stopped. Start it again after docking.");
             return;
         }
         if (tv.dirty_last >= tv.dirty_first) {
@@ -174,7 +211,7 @@ static void _tick(void *param)
         _log("Session timeout after 45 seconds.");
         _stop();
         _save();
-        _show("Delai de 45 secondes depasse. Test arrete. Verifiez dock, alimentation et HDMI.");
+        _show("Dock negotiation timed out. Check power and HDMI, then start again.");
         return;
     }
     dock_step(&tv.dock);
@@ -182,11 +219,11 @@ static void _tick(void *param)
         _log(tv.dock.log);
         tv.dock.log_new = false;
     }
-    s_printf(tv.message, "Etape : %s\nSTATUS1 %04X  STATUS2 %04X  DP %04X\n\n%s",
+    s_printf(tv.message, nyx_tr("Stage: %s\nSTATUS1 %04X  STATUS2 %04X  DP %04X\n\n%s"),
              dock_state_name(tv.dock.state), tv.dock.s1, tv.dock.s2, tv.dock.dp, tv.dock.log);
     _show(tv.message);
     if (tv.dock.state == DOCK_FAILED) {
-        s_printf(tv.message, "Echec a l'etape %s\n%s", tv.dock.failed_at, tv.dock.fail);
+        s_printf(tv.message, nyx_tr("Failed at %s\n%s"), tv.dock.failed_at, tv.dock.fail);
         _log(tv.message);
         _stop();
         _save();
@@ -199,22 +236,22 @@ static void _tick(void *param)
         _log("Handshake ended without DisplayPort + HPD; no video attempted.");
         _stop();
         _save();
-        _show("Negociation terminee sans signal TV. Verifiez le dock et le branchement HDMI.");
+        _show("No TV signal after negotiation. Check the dock and HDMI connection.");
         return;
     }
     int r = dpout_aux_init();
     if (!r)
         r = dpout_probe_sink(&tv.sink);
     if (r) {
-        s_printf(tv.message, "Echec AUX/DPCD (%d) : %s", r, tv.sink.why);
+        s_printf(tv.message, nyx_tr("AUX/DPCD failed (%d): %s"), r, tv.sink.why);
     } else {
         memcpy(tv.fb, (void *)NYX_FB2_ADDRESS, NYX_FB_SZ);
         bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_PHY, false);
         r = dpout_video_start(&tv.video, &tv.sink, (u32)tv.fb);
-        s_printf(tv.message,
-                 "Sortie 1280x720 / 60 Hz : %s\nTV : %s %s\nLien : %d voies, %s\n%s\n\n"
-                 "Seul un controle visuel sur la TV confirme l'image.\nArreter, Fermer ou VOL- coupe la sortie TV.",
-                 r ? "ECHEC" : "configuree (a verifier)", tv.sink.tv_maker, tv.sink.tv_name,
+        s_printf(tv.message, nyx_tr(
+                 "1280x720 / 60 Hz: %s\nTV: %s %s\nLink: %d lanes, %s\n%s\n\n"
+                 "Check the image on your TV. Close this window to use Nova.\nStop TV or VOL- ends TV output."),
+                 nyx_tr(r ? "Failed" : "Configured - check TV"), tv.sink.tv_maker, tv.sink.tv_name,
                  tv.video.lanes, dpout_rate_name(tv.video.rate), tv.video.why);
     }
     _log(tv.message);
@@ -225,6 +262,8 @@ static void _tick(void *param)
         tv.mirrored = true;
         tv.dirty_first = 0;
         tv.dirty_last = 719;
+        // Only PD negotiation needs the base clock. Restore UI performance.
+        bpmp_clk_rate_set(tv.clock);
     }
     bool saved = _save();
     _show(tv.message);
@@ -234,11 +273,15 @@ static void _tick(void *param)
 static lv_res_t _start(lv_obj_t *btn)
 {
     if (!tv.task)
+        tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
+    if (!tv.task) {
+        _show("TV service could not start. Close this window and try again.");
         return LV_RES_OK;
+    }
     if (tv.running || tv.mirrored)
         return LV_RES_OK;
     if (fuse_read_hw_type() == FUSE_NX_HW_TYPE_HOAG) {
-        _show("La Switch Lite ne possede pas de sortie TV.");
+        _show("Switch Lite does not support TV output.");
         return LV_RES_OK;
     }
     tv.log_size = 0;
@@ -247,7 +290,7 @@ static lv_res_t _start(lv_obj_t *btn)
     tv.started = get_tmr_ms();
     memset(&tv.sink, 0, sizeof(tv.sink));
     memset(&tv.video, 0, sizeof(tv.video));
-    _log("Hekate 6.5.5 / Nyx 1.9.5 - TV experiment 02");
+    _log("Hekate Nova Pro 19-TV - manual dock output");
     _log("HWTest-RCM upstream 3731bfb471515a5f83709aa496c9cdb0a9aeff83");
     tv.clock = bpmp_fid_current;
     tv.clock_saved = true;
@@ -264,7 +307,7 @@ static lv_res_t _start(lv_obj_t *btn)
     if (!tv.snap.ok) {
         _stop();
         _save();
-        _show("Le controleur BM92T36 ne repond pas. Aucun reset automatique effectue.");
+        _show("BM92T36 did not respond. No automatic reset was performed.");
         return LV_RES_OK;
     }
     if (i2c_recv_buf_small(&tv.rails[0], 1, I2C_5, MAX77620_I2C_ADDR, MAX77620_REG_LDO7_CFG) ||
@@ -272,7 +315,7 @@ static lv_res_t _start(lv_obj_t *btn)
         _log("Cannot preserve DP regulator state; test cancelled.");
         _stop();
         _save();
-        _show("Impossible de lire les alimentations video. Test annule.");
+        _show("Video power state could not be read. TV start cancelled.");
         return LV_RES_OK;
     }
     tv.rails_saved = true;
@@ -281,7 +324,7 @@ static lv_res_t _start(lv_obj_t *btn)
         _log("No memory for TV framebuffer.");
         _stop();
         _save();
-        _show("Memoire insuffisante pour le tampon TV.");
+        _show("Not enough memory for TV output.");
         return LV_RES_OK;
     }
     tv.fb = (u32 *)ALIGN((u32)tv.allocation, 4096);
@@ -289,21 +332,21 @@ static lv_res_t _start(lv_obj_t *btn)
     dpout_lane_test(false, false);
     dock_start(&tv.dock);
     tv.running = true;
-    _show("Negociation du dock en cours... Arreter ou VOL- pour annuler.");
+    _show("Connecting to the dock... Stop TV or VOL- cancels.");
     return LV_RES_OK;
 }
 
 static lv_res_t _cancel(lv_obj_t *btn)
 {
     if (!tv.log_size) {
-        _show("Aucun test en cours. Demarrer lance le test du dock.");
+        _show("TV output is off. Start TV connects to the dock.");
         return LV_RES_OK;
     }
     _log("User stopped the session.");
     _stop();
     bool saved = _save();
-    _show(saved ? "Test arrete. Journal : bootloader/tv-test/last-run.txt" :
-                 "Test arrete. Impossible de sauvegarder le journal sur la SD.");
+    _show(saved ? "TV stopped. Report: bootloader/tv-test/last-run.txt" :
+                 "TV stopped. Report could not be saved to SD.");
     return LV_RES_OK;
 }
 
@@ -311,13 +354,15 @@ static lv_res_t _signal(lv_obj_t *obj, lv_signal_t sign, void *param)
 {
     lv_signal_func_t previous = tv.signal;
     if (sign == LV_SIGNAL_CLEANUP) {
-        if (tv.task) lv_task_del(tv.task);
-        tv.task = NULL;
-        if (tv.log_size) _log("Test window closed.");
-        _stop();
-        _save();
-        dpout_set_logger(NULL);
+        // The session outlives its settings window; never retain dead widgets.
         tv.win = NULL;
+        tv.status = NULL;
+        tv.panel = NULL;
+        if (!tv.running && !tv.mirrored) {
+            if (tv.task) lv_task_del(tv.task);
+            tv.task = NULL;
+            dpout_set_logger(NULL);
+        }
     }
     return previous(obj, sign, param);
 }
@@ -326,28 +371,25 @@ lv_res_t gui_tv_open(lv_obj_t *btn)
 {
     if (tv.win)
         return LV_RES_OK;
-    memset(&tv, 0, sizeof(tv));
-    tv.win = nyx_create_standard_window("TV USB-C / Dock - EXPERIMENTAL 02", NULL);
+    tv.win = nyx_create_standard_window(nyx_tr("USB-C TV / Dock"), NULL);
     tv.signal = lv_obj_get_signal_func(tv.win);
     lv_obj_set_signal_func(tv.win, _signal);
-    lv_win_add_btn(tv.win, NULL, "Demarrer", _start);
-    lv_win_add_btn(tv.win, NULL, "Arreter", _cancel);
+    lv_win_add_btn(tv.win, NULL, nyx_tr("Start TV"), _start);
+    lv_win_add_btn(tv.win, NULL, nyx_tr("Stop TV"), _cancel);
     lv_obj_t *page = lv_win_get_content(tv.win);
-    lv_page_set_scrl_layout(page, LV_LAYOUT_OFF);
+    nyx_nova_fixed_page(page);
     lv_obj_t *scrl = lv_page_get_scrl(page);
-    tv.status = lv_label_create(scrl, NULL);
-    lv_label_set_long_mode(tv.status, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(tv.status, LV_HOR_RES - 80);
-    lv_obj_set_pos(tv.status, 30, 24);
-    _show("Test manuel de la sortie TV, separe de Nova Pro v18.\n\n"
-          "Branchez le dock officiel a son alimentation et a la TV en HDMI.\n"
-          "Placez la console dans le dock, puis utilisez Demarrer.\n\n"
-          "L'ecran de la console reste allume. Aucun reset du controleur automatique.\n"
-          "Le test negocie l'alimentation et DisplayPort avec le dock.\n"
-          "Fermer, Arreter ou VOL- termine le test. Switch Lite non prise en charge.\n\n"
-          "Journaux : bootloader/tv-test/last-run.txt et run-NNN.txt");
-    tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
+    tv.panel = nyx_nova_panel(scrl, 24, 16, lv_obj_get_width(page) - 48, lv_obj_get_height(page) - 32);
+    tv.status = nyx_nova_text(tv.panel, "", 24, 24, lv_obj_get_width(tv.panel) - 48, NOVA_BODY);
+    if (!tv.message[0])
+        _show("Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\n"
+              "You can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\n"
+              "VOL- stops TV output. The console screen stays on.");
+    else
+        _show(tv.message);
     if (!tv.task)
-        _show("Impossible de creer la tache de test. Fermez cette fenetre.");
+        tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
+    if (!tv.task)
+        _show("TV service could not start. Close this window and try again.");
     return LV_RES_OK;
 }

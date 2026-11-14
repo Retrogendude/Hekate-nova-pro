@@ -24,5 +24,9 @@ bool nyx_options_get_ini_changes_made();
 void first_time_clock_edit(void *param);
 lv_res_t create_win_nyx_options(lv_obj_t *parrent_btn);
 void create_tab_options(lv_theme_t *th, lv_obj_t *parent);
+void create_tab_boot_options(lv_theme_t *th, lv_obj_t *parent);
+bool nyx_options_has_changes(void);
+bool nyx_options_commit_boot(void);
+lv_res_t nyx_options_save_all(lv_obj_t *button);
 
 #endif

@@ -1,6 +1,9 @@
-Sources du prototype TV personnel 02, distinct de Nova Pro v18.
-Compilation standard : make -j4 avec devkitARM, Python3, un GCC natif et les outils Unix de devkitPro.
-Les scripts de verification Windows attendent work/hekate-tv-02,
-work/tv02-tests et work/toolchains/w64devkit dans le workspace.
-Les tests PC ne valident pas le fonctionnement du dock sur console.
-Lire TV-SOURCES.md avant toute redistribution publique.
+Hekate Nova Pro 19-TV : make -j4 avec devkitARM et les outils du projet.
+Base 6.5.4 / Nyx 1.9.4 ; les ressources Nova sont reprises de v18.
+HWTest-RCM et ses ressources RAM restent identiques a v18.
+Les scripts Windows attendent les sources dans work/hekate-nova-pro-v19-tv,
+les fixtures dans work/nova-tv-tests et le compilateur natif dans
+work/toolchains/w64devkit. Ils documentent la configuration de ce workspace.
+Les rendus natifs attendent aussi l archive officielle 6.5.4/1.9.4 et les
+polices de test documentees dans les scripts. Ils ne simulent pas HDMI.
+Lire LIRE-MOI-V19-TV.md et TV-SOURCES.md avant essai ou redistribution.

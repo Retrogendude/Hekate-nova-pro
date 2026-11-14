@@ -27,8 +27,8 @@ TRACK_CFLAGS = $(BUILDDIR)/.cflags
 TRACK_LDFLAGS = $(BUILDDIR)/.ldflags
 
 # Main and graphics.
-OBJS =  start exception_handlers nyx heap gfx \
-		gui gui_tv gui_info gui_tools gui_options gui_emmc_tools gui_emummc_tools gui_tools_partition_manager \
+OBJS =  start exception_handlers nyx heap gfx nova_splash \
+		gui gui_tv gui_info gui_tools gui_options gui_appearance gui_readability gui_layout gui_choices gui_nova gui_nova_reflection gui_nova_theme gui_color_picker nova_image lodepng_nyx gui_nova_report gui_diagnostics gui_component_summary gui_interactive gui_stick gui_emmc_tools gui_emummc_tools gui_tools_partition_manager gui_partition_plan \
 		fe_emummc_tools fe_emmc_tools
 
 # Hardware.
@@ -43,7 +43,12 @@ OBJS += actmon bpmp ccplex clock di vic i2c irq timer \
 		hw_init
 
 # Utilities.
-OBJS += btn dirlist ianos ini util config sprintf
+OBJS += btn dirlist ianos ini util config sprintf localization unicode_fonts font_manager
+
+# Native HWTest-RCM probes. RAM stress testing is an isolated service payload.
+OBJS += nyx_diagnostics component_summary diag_format hwtest_pages dx verdict \
+		probe_soc probe_power probe_memclk probe_inputs probe_bt probe_audio probe_audio_beep \
+		probe_wifi probe_display probe_storage probe_gamecard probe_lowlevel als cpu_stub_bin
 
 # Horizon.
 OBJS += hos pkg1 pkg2
@@ -75,6 +80,7 @@ CUSTOMDEFINES += -DNYX_VER_MJ=$(NYXVERSION_MAJOR) -DNYX_VER_MN=$(NYXVERSION_MINO
 # BDK defines.
 CUSTOMDEFINES += -DBDK_MINERVA_CFG_FROM_RAM -DBDK_HW_EXTRA_DEINIT -DBDK_SDMMC_EXTRA_PRINT
 CUSTOMDEFINES += -DGFX_INC=$(GFX_INC) -DFFCFG_INC=$(FFCFG_INC)
+CUSTOMDEFINES += -DHAVE_CPU_STUB=1
 
 #CUSTOMDEFINES += -DDEBUG
 
@@ -144,3 +150,24 @@ $(TRACK_CFLAGS): $(BUILDDIR)
 $(TRACK_LDFLAGS): $(BUILDDIR)
 	@echo '$(LDFLAGS)' | cmp -s - $@ || echo '$(LDFLAGS)' > $@
 -include $(OBJS:.o=.d)
+
+# A64 is required: release diagnostics must not silently omit Wi-Fi CPU access.
+DEVKITA64 ?= $(abspath $(DEVKITARM)/../devkitA64)
+DIAG_EXE := $(if $(filter Windows_NT,$(OS)),.exe,)
+A64_CC ?= $(DEVKITA64)/bin/aarch64-none-elf-gcc$(DIAG_EXE)
+A64_OC ?= $(DEVKITA64)/bin/aarch64-none-elf-objcopy$(DIAG_EXE)
+PYTHON ?= python3
+DIAGDIR := $(SOURCEDIR)/diagnostics
+A64FLAGS := -march=armv8-a -mgeneral-regs-only -ffreestanding -nostdlib -fno-builtin -fno-stack-protector -Os -Wall -Wextra -fno-asynchronous-unwind-tables -fno-unwind-tables
+
+$(BUILDDIR)/cpu_stub.elf: $(DIAGDIR)/vendor/cpu_stub/stub.S $(DIAGDIR)/vendor/cpu_stub/stub.c $(DIAGDIR)/vendor/cpu_stub/stub.ld $(DIAGDIR)/vendor/cpu_mbox.h | $(BUILDDIR)
+	@$(A64_CC) $(A64FLAGS) -T $(DIAGDIR)/vendor/cpu_stub/stub.ld -o $@ $(DIAGDIR)/vendor/cpu_stub/stub.S $(DIAGDIR)/vendor/cpu_stub/stub.c -lgcc
+
+$(BUILDDIR)/cpu_stub.bin: $(BUILDDIR)/cpu_stub.elf
+	@$(A64_OC) -O binary $< $@
+
+$(BUILDDIR)/cpu_stub_bin.c: $(BUILDDIR)/cpu_stub.bin $(DIAGDIR)/embed_cpu_stub.py
+	@$(PYTHON) $(DIAGDIR)/embed_cpu_stub.py $< $@
+
+$(BUILDDIR)/cpu_stub_bin.o: $(BUILDDIR)/cpu_stub_bin.c $(TRACK_CFLAGS)
+	@$(CC) $(CFLAGS) $(BDKINC) -MMD -MP -c $< -o $@

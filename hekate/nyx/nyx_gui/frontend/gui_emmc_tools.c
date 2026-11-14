@@ -15,6 +15,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <bdk.h>
 
@@ -50,108 +51,14 @@ static void _create_window_backup_restore(emmcPartType_t type, const char* win_l
 
 	char win_label_full[80];
 
-	s_printf(win_label_full, "%s%s", emmc_btn_ctxt.restore ? SYMBOL_DOWNLOAD"  Restore " : SYMBOL_UPLOAD"  Backup ", win_label+3);
+	s_printf(win_label_full,nyx_tr(emmc_btn_ctxt.restore?"Restore %s":"Backup %s"),nyx_nova_caption(win_label));
 
 	lv_obj_t *win = nyx_create_standard_window(win_label_full, NULL);
 
 	//Disable buttons.
 	nyx_window_toggle_buttons(win, true);
 
-	// Create important info container.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 5);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_cont_get_style(h1));
-	h_style.body.main_color = LV_COLOR_HEX(0x1d1d1d);
-	h_style.body.grad_color = h_style.body.main_color;
-	h_style.body.opa = LV_OPA_COVER;
-
-	// Create log container.
-	lv_obj_t *h2 = lv_cont_create(win, h1);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, false);
-	lv_obj_set_size(h2, (LV_HOR_RES / 11) * 4, LV_DPI * 5);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, 0, LV_DPI / 5);
-
-	lv_obj_t *label_log = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_log, true);
-	lv_obj_set_style(label_log, &monospace_text);
-	lv_label_set_long_mode(label_log, LV_LABEL_LONG_BREAK);
-	lv_label_set_static_text(label_log, "");
-	lv_obj_set_width(label_log, lv_obj_get_width(h2));
-	lv_obj_align(label_log, h2, LV_ALIGN_IN_TOP_LEFT, LV_DPI / 10, LV_DPI / 10);
-	emmc_tool_gui_ctxt.label_log = label_log;
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	// Create info elements.
-	lv_obj_t *label_info = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_info, true);
-	lv_obj_set_width(label_info, lv_obj_get_width(h1));
-	lv_label_set_static_text(label_info, "\n\n\n\n\n\n\n\n\n");
-	lv_obj_set_style(label_info, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_info, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 10);
-	emmc_tool_gui_ctxt.label_info = label_info;
-
-	static lv_style_t bar_teal_bg, bar_teal_ind, bar_orange_bg, bar_orange_ind, bar_white_ind;
-
-	lv_style_copy(&bar_teal_bg, lv_theme_get_current()->bar.bg);
-	bar_teal_bg.body.main_color = LV_COLOR_HEX(0x005a47);
-	bar_teal_bg.body.grad_color = bar_teal_bg.body.main_color;
-
-	lv_style_copy(&bar_teal_ind, lv_theme_get_current()->bar.indic);
-	bar_teal_ind.body.main_color = LV_COLOR_HEX(0x00FFC9);
-	bar_teal_ind.body.grad_color = bar_teal_ind.body.main_color;
-
-	lv_style_copy(&bar_orange_bg, lv_theme_get_current()->bar.bg);
-	bar_orange_bg.body.main_color = LV_COLOR_HEX(0x755000);
-	bar_orange_bg.body.grad_color = bar_orange_bg.body.main_color;
-
-	lv_style_copy(&bar_orange_ind, lv_theme_get_current()->bar.indic);
-	bar_orange_ind.body.main_color = LV_COLOR_HEX(0xFFAE00);
-	bar_orange_ind.body.grad_color = bar_orange_ind.body.main_color;
-
-	lv_style_copy(&bar_white_ind, lv_theme_get_current()->bar.indic);
-	bar_white_ind.body.main_color = LV_COLOR_HEX(0xF0F0F0);
-	bar_white_ind.body.grad_color = bar_white_ind.body.main_color;
-
-	emmc_tool_gui_ctxt.bar_teal_bg = &bar_teal_bg;
-	emmc_tool_gui_ctxt.bar_teal_ind = &bar_teal_ind;
-	emmc_tool_gui_ctxt.bar_orange_bg = &bar_orange_bg;
-	emmc_tool_gui_ctxt.bar_orange_ind = &bar_orange_ind;
-	emmc_tool_gui_ctxt.bar_white_bg = lv_theme_get_current()->bar.bg;
-	emmc_tool_gui_ctxt.bar_white_ind = &bar_white_ind;
-
-	lv_obj_t *bar = lv_bar_create(h1, NULL);
-	lv_obj_set_size(bar, LV_DPI * 38 / 10, LV_DPI / 5);
-	lv_bar_set_range(bar, 0, 100);
-	lv_bar_set_value(bar, 0);
-	lv_obj_align(bar, label_info, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 8);
-	lv_obj_set_opa_scale(bar, LV_OPA_0);
-	lv_obj_set_opa_scale_enable(bar, true);
-	emmc_tool_gui_ctxt.bar = bar;
-
-	lv_obj_t *label_pct= lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_pct, true);
-	lv_label_set_static_text(label_pct, " "SYMBOL_DOT" 0%");
-	lv_obj_set_style(label_pct, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_pct, bar, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 20, 0);
-	lv_obj_set_opa_scale(label_pct, LV_OPA_0);
-	lv_obj_set_opa_scale_enable(label_pct, true);
-	emmc_tool_gui_ctxt.label_pct = label_pct;
-
-	lv_obj_t *label_finish = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_finish, true);
-	lv_label_set_static_text(label_finish, "");
-	lv_obj_set_style(label_finish, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_finish, bar, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 9 / 20);
-	emmc_tool_gui_ctxt.label_finish = label_finish;
+    nyx_nova_transfer(win,&emmc_tool_gui_ctxt);
 
 	if (!emmc_btn_ctxt.restore)
 		dump_emmc_selected(type, &emmc_tool_gui_ctxt);
@@ -270,200 +177,39 @@ static lv_res_t _emmc_backup_buttons_raw_toggle(lv_obj_t *btn)
 
 		emmc_btn_ctxt.raw_emummc = true;
 	}
+	/* Keep the new card titles and disabled state consistent when the target
+	 * changes. The single-label button contract is preserved for the decider. */
+	lv_obj_t *cards[]={emmc_btn_ctxt.emmc_boot,emmc_btn_ctxt.emmc_raw_gpp,emmc_btn_ctxt.emmc_sys,emmc_btn_ctxt.emmc_usr};
+	for(u32 i=0;i<4;++i)if(cards[i]){
+		lv_obj_t *label=lv_obj_get_child(cards[i],NULL);
+		const char *caption=nyx_nova_caption(lv_label_get_text(label));
+		char title[160];u32 length=strlen(caption);if(length>=sizeof(title))length=sizeof(title)-1;
+		memcpy(title,caption,length);title[length]=0;lv_label_set_text(label,title);
+		lv_label_set_style(label,(lv_style_t *)nyx_nova_text_style(lv_obj_get_click(cards[i])?NOVA_BODY:NOVA_MUTED));
+		nyx_nova_fit_text(label,58);
+	}
 
 	return LV_RES_OK;
 }
 
 lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 {
-	lv_obj_t *win;
-
-	emmc_btn_ctxt.restore = false;
-	if (strcmp(lv_label_get_text(lv_obj_get_child(btn, NULL)), SYMBOL_UPLOAD"  Backup eMMC"))
-		emmc_btn_ctxt.restore = true;
-
-	if (!emmc_btn_ctxt.restore)
-		win = nyx_create_standard_window(SYMBOL_SD" Backup", NULL);
-	else
-		win = nyx_create_standard_window(SYMBOL_SD" Restore", NULL);
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
-	h_style.body.padding.inner = 0;
-	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
-	h_style.body.padding.ver = LV_DPI / 9;
-
-	// Create Full container.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h1, &h_style);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "Full");
-	lv_obj_set_style(label_txt, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 3 / 10);
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create BOOT0 & BOOT1 button.
-	lv_obj_t *btn1 = lv_btn_create(h1, NULL);
-	lv_obj_t *label_btn = lv_label_create(btn1, NULL);
-	lv_btn_set_fit(btn1, true, true);
-	if (!emmc_btn_ctxt.restore)
-		lv_label_set_static_text(label_btn, SYMBOL_UPLOAD"  eMMC BOOT0 & BOOT1");
-	else
-		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  eMMC BOOT0 & BOOT1");
-
-	lv_obj_align(btn1, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn1, LV_BTN_ACTION_CLICK, _emmc_backup_buttons_decider);
-	emmc_btn_ctxt.emmc_boot = btn1;
-
-	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	if (!emmc_btn_ctxt.restore)
-	{
-		lv_label_set_static_text(label_txt2,
-			"Allows you to backup the BOOT physical partitions.\n"
-			"They contain the BCT, keys and various package1.\n"
-			"#FF8000 These are paired with the RAW GPP backup.#");
-	}
-	else
-	{
-		lv_label_set_static_text(label_txt2,
-			"Allows you to restore the BOOT physical partitions.\n"
-			"They contain the BCT, keys and various package1.\n"
-			"#FF8000 These are paired with the RAW GPP restore.#");
-	}
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create RAW GPP button.
-	lv_obj_t *btn2 = lv_btn_create(h1, btn1);
-	label_btn = lv_label_create(btn2, NULL);
-	if (!emmc_btn_ctxt.restore)
-		lv_label_set_static_text(label_btn, SYMBOL_UPLOAD"  eMMC RAW GPP");
-	else
-		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  eMMC RAW GPP");
-	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, _emmc_backup_buttons_decider);
-	emmc_btn_ctxt.emmc_raw_gpp= btn2;
-
-	label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	if (!emmc_btn_ctxt.restore)
-	{
-		lv_label_set_static_text(label_txt2,
-			"Allows you to backup the GPP physical partition.\n"
-			"It contains, CAL0, various package2, SYSTEM, USER, etc.\n"
-			"#FF8000 This is paired with the BOOT0/1 backups.#");
-	}
-	else
-	{
-		lv_label_set_static_text(label_txt2,
-			"Allows you to restore the GPP physical partition.\n"
-			"It contains, CAL0, various package2, SYSTEM, USER, etc.\n"
-			"#FF8000 This is paired with the BOOT0/1 restore.#");
-	}
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create GPP Partitions container.
-	lv_obj_t *h2 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, true);
-	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h2, false);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 17 / 29, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "GPP Partitions");
-	lv_obj_set_style(label_txt3, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 4 / 21);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create SYS/ALL button.
-	lv_obj_t *btn3 = lv_btn_create(h2, NULL);
-	label_btn = lv_label_create(btn3, NULL);
-	lv_btn_set_fit(btn3, true, true);
-	if (!emmc_btn_ctxt.restore)
-		lv_label_set_static_text(label_btn, SYMBOL_MODULES"  eMMC SYS");
-	else
-		lv_label_set_static_text(label_btn, SYMBOL_MODULES"  eMMC ALL");
-	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, _emmc_backup_buttons_decider);
-	emmc_btn_ctxt.emmc_sys = btn3;
-
-	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	if (!emmc_btn_ctxt.restore)
-	{
-		lv_label_set_static_text(label_txt4,
-			"Allows you to backup the partitions from RAW GPP except\n"
-			"USER. It contains, CAL0, various package2, SYSTEM, etc.\n"
-			"#FF8000 This is an incomplete backup.#");
-	}
-	else
-	{
-		lv_label_set_static_text(label_txt4,
-			"Allows you to restore ALL partitions from RAW GPP\n"
-			"It contains, CAL0, various package2, SYSTEM, USER, etc.\n");
-	}
-
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create USER button.
-	if (!emmc_btn_ctxt.restore)
-	{
-		lv_obj_t *btn4 = lv_btn_create(h2, btn1);
-		label_btn = lv_label_create(btn4, NULL);
-		lv_label_set_static_text(label_btn, SYMBOL_MODULES_ALT"  eMMC USER");
-		lv_obj_align(btn4, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-		lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _emmc_backup_buttons_decider);
-		emmc_btn_ctxt.emmc_usr = btn4;
-
-		label_txt4 = lv_label_create(h2, NULL);
-		lv_label_set_recolor(label_txt4, true);
-		lv_label_set_static_text(label_txt4,
-			"Allows you to backup the USER partition from RAW GPP.\n"
-			"#FF8000 This is an incomplete backup.#\n");
-		lv_obj_set_style(label_txt4, &hint_small_style);
-		lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-	}
-	else
-	{
-		emmc_btn_ctxt.emmc_usr = NULL;
-	}
-
-	// Create eMMC/emuMMC On/Off button.
-	lv_obj_t *h3 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h3, &h_style);
-	lv_cont_set_fit(h3, false, true);
-	lv_obj_set_width(h3, (LV_HOR_RES / 10) * 4);
-	lv_obj_set_click(h3, false);
-	lv_cont_set_layout(h3, LV_LAYOUT_OFF);
-	lv_obj_align(h3, h1, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI * 38 / 11, LV_DPI / 7);
-
-	lv_obj_t *sd_emummc_raw = lv_btn_create(h3, NULL);
-	nyx_create_onoff_button(lv_theme_get_current(), h3,
-		sd_emummc_raw, SYMBOL_SD" SD emuMMC Raw Partition", _emmc_backup_buttons_raw_toggle, false);
-	emmc_btn_ctxt.raw_emummc = false;
-
-	return LV_RES_OK;
+    emmc_btn_ctxt.restore=lv_obj_get_free_num(btn)==1;
+    lv_obj_t *win=nyx_create_standard_window(emmc_btn_ctxt.restore?SYMBOL_SD" Restore":SYMBOL_SD" Backup",NULL);
+    nyx_nova_fixed_page(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page);
+    const char *descriptions[]={
+        "Partitions BOOT0/BOOT1, à conserver avec RAW GPP.",
+        "Stockage complet : CAL0, SYSTEM, USER et fichiers de démarrage.",
+        "Partitions système de RAW GPP.",
+        "Partition USER. Cette copie seule est incomplète."
+    };
+    int height=(lv_obj_get_height(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page)-132)/2;
+    emmc_btn_ctxt.emmc_boot=nyx_nova_action(win,"eMMC BOOT0 & BOOT1",descriptions[0],"hard-drive-download",_emmc_backup_buttons_decider,0,34,18,594,height);
+    emmc_btn_ctxt.emmc_raw_gpp=nyx_nova_action(win,"eMMC RAW GPP",descriptions[1],"hard-drive",_emmc_backup_buttons_decider,0,652,18,594,height);
+    emmc_btn_ctxt.emmc_sys=nyx_nova_action(win,emmc_btn_ctxt.restore?"eMMC ALL":"eMMC SYS",descriptions[2],"boxes",_emmc_backup_buttons_decider,0,34,34+height,594,height);
+    emmc_btn_ctxt.emmc_usr=emmc_btn_ctxt.restore?NULL:nyx_nova_action(win,"eMMC USER",descriptions[3],"folder-open",_emmc_backup_buttons_decider,0,652,34+height,594,height);
+    lv_obj_t *panel=nyx_nova_panel(win,34,50+height*2,1212,64);
+    nyx_nova_switch_row(panel,"SD emuMMC Raw Partition","Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.","database",_emmc_backup_buttons_raw_toggle,false,18,0,1176,64);
+    emmc_btn_ctxt.raw_emummc=false;
+    return LV_RES_OK;
 }

@@ -1,6 +1,0 @@
-{
-  "prototype": "TV 01",
-  "source_sha256": "02f2f115b2f4a7a7cf0b1f319172b4b5f0c1c4cdbf483940b232459e5c683586",
-  "regression_result": "FAIL: CMD_DONE consumed while CMD_BUSY is set",
-  "hardware_cause_confirmed": false
-}

@@ -18,6 +18,21 @@
 #define _GUI_H_
 
 #include <libs/lvgl/lvgl.h>
+#include "../localization.h"
+#include "gui_nova.h"
+
+/* Translate UI strings; keep file lists and boot names verbatim. */
+#define lv_label_set_text(...) nyx_label_set_text(__VA_ARGS__)
+#define lv_label_set_static_text(...) nyx_label_set_static_text(__VA_ARGS__)
+#define lv_mbox_set_text(...) nyx_mbox_set_text(__VA_ARGS__)
+#define lv_ddlist_set_options(...) nyx_ddlist_set_options(__VA_ARGS__)
+#define lv_roller_set_options(...) nyx_roller_set_options(__VA_ARGS__)
+#define lv_mbox_add_btns(...) nyx_mbox_add_btns(__VA_ARGS__)
+#define lv_btnm_set_map(...) nyx_btnm_set_map(__VA_ARGS__)
+#define lv_win_set_title(...) nyx_win_set_title(__VA_ARGS__)
+#define lv_win_add_btn(...) nyx_win_add_btn(__VA_ARGS__)
+#define lv_tabview_add_tab(...) nyx_tabview_add_tab(__VA_ARGS__)
+#define lv_obj_align(...) nyx_nova_align(__VA_ARGS__)
 
 typedef struct _emmc_tool_gui_t
 {
@@ -82,6 +97,10 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, const char *btn_name, lv_action_t action, bool transparent);
 lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn);
 void manual_system_maintenance(bool refresh);
+/* Pause native input and hardware maintenance while diagnostic probes own it. */
+void gui_diagnostics_suspend(unsigned int groups);
+void gui_diagnostics_resume(unsigned int groups);
+bool gui_diagnostics_inputs_ready(void);
 void nyx_load_and_run();
 
 #endif

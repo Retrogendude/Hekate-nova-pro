@@ -20,15 +20,22 @@
 
 #include "gui.h"
 #include "gui_tv.h"
+#include <display/nova_splash.h>
 #include "gui_emummc_tools.h"
 #include "gui_tools.h"
 #include "gui_info.h"
 #include "gui_options.h"
+#include "gui_diagnostics.h"
+#include "gui_interactive.h"
+#include "../diagnostics/nyx_diagnostics.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
 #include <libs/lvgl/lvgl.h>
 #include "../gfx/logos-gui.h"
 
 #include "../config.h"
+#include "../fonts/font_manager.h"
+#include "gui_appearance.h"
+#include "gui_readability.h"
 #include <libs/fatfs/ff.h>
 
 extern volatile boot_cfg_t *b_cfg;
@@ -310,36 +317,70 @@ exit:
 	timer = get_tmr_ms() + 2000;
 }
 
+static bool display_frame_dirty;
+static bool display_frame_ready;
+
 static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t *color_p)
 {
+	/* A refresh can contain many small rectangles. Wait once before updating
+	 * the source buffer, then present their completed frame together. */
+	if (!display_frame_dirty && disp_init_done)
+		vic_wait_idle();
+
 	// Draw to intermediate non-rotated framebuffer.
 	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
 	gui_tv_dirty(y1, y2);
+	display_frame_dirty = true;
+	if ((x2 - x1 + 1) > 600)
+		display_frame_ready = true;
 
-	// Rotate and copy to visible framebuffer.
+	lv_flush_ready();
+}
+
+static void _disp_fb_present(uint32_t elapsed, uint32_t pixels)
+{
+	(void)elapsed;
+	(void)pixels;
+	if (!display_frame_dirty)
+		return;
+
+	/* LVGL calls this once after all dirty rectangles have been flushed.
+	 * Rotating the full frame per rectangle stalls input and scrolling. */
 	if (disp_init_done)
 		vic_compose();
-
-	// Check if display init was done. If it's the first big draw, init.
-	if (!disp_init_done && ((x2 - x1 + 1) > 600))
+	else if (display_frame_ready)
 	{
 		disp_init_done = true;
 		_nyx_disp_init();
 	}
-
-	lv_flush_ready();
+	display_frame_dirty = false;
+	display_frame_ready = false;
 }
 
 static touch_event_t touchpad;
 static bool touch_enabled;
 static bool console_enabled = false;
+static bool diagnostics_suspended;
+static bool diagnostics_touch_was_enabled;
+static bool diagnostics_inputs_ready = true;
 
 static bool _fts_touch_read(lv_indev_data_t *data)
 {
-	if (!touch_enabled)
+	if (diagnostics_suspended)
+	{
+		data->state = LV_INDEV_STATE_REL;
 		return false;
+	}
+	if (!touch_enabled)
+	{
+		data->state = LV_INDEV_STATE_REL;
+		return false;
+	}
 
 	int res = touch_poll(&touchpad);
+	if(nyx_interactive_touch(&touchpad)){data->state=LV_INDEV_STATE_REL;return false;}
+	if (touchpad.touch)
+		nyx_background_interaction();
 
 	// Take a screenshot if 3rd finger.
 	if (touchpad.finger > 2)
@@ -385,14 +426,22 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 
 static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 {
+	if (diagnostics_suspended || (n_cfg.jc_disable && !nyx_interactive_joycon_active()))
+	{
+		data->state = LV_INDEV_STATE_REL;
+		return false;
+	}
 	// Poll Joy-Con.
 	jc_gamepad_rpt_t *jc_pad = joycon_poll();
+	if(nyx_interactive_joycon(jc_pad)){data->state=LV_INDEV_STATE_REL;return false;}
 
 	if (!jc_pad)
 	{
 		data->state = LV_INDEV_STATE_REL;
 		return false;
 	}
+	if (jc_pad->buttons)
+		nyx_background_interaction();
 
 	// Take a screenshot if Capture button is pressed.
 	if (jc_pad->cap)
@@ -586,6 +635,7 @@ console:
 	// Auto hide cursor.
 	if (jc_drv_ctx.pos_x != jc_drv_ctx.pos_last_x || jc_drv_ctx.pos_y != jc_drv_ctx.pos_last_y)
 	{
+		nyx_background_interaction();
 		jc_drv_ctx.pos_last_x = jc_drv_ctx.pos_x;
 		jc_drv_ctx.pos_last_y = jc_drv_ctx.pos_y;
 
@@ -614,11 +664,13 @@ console:
 			data->state = LV_INDEV_STATE_REL; // Ensure that no clicks are allowed.
 	}
 
-	if (jc_pad->b && close_btn)
+	if (jc_pad->b && close_btn && lv_obj_get_click(close_btn))
 	{
-		lv_action_t close_btn_action = lv_btn_get_action(close_btn, LV_BTN_ACTION_CLICK);
-		close_btn_action(close_btn);
+		lv_obj_t *button = close_btn;
+		lv_action_t close_btn_action = lv_btn_get_action(button, LV_BTN_ACTION_CLICK);
 		close_btn = NULL;
+		if (close_btn_action)
+			close_btn_action(button);
 	}
 
 	return false; // No buffering so no more data read.
@@ -638,9 +690,83 @@ typedef struct _system_maintenance_tasks_t
 } system_maintenance_tasks_t;
 
 static system_maintenance_tasks_t system_tasks;
+static lv_task_prio_t diagnostics_saved_task_priorities[2];
+
+/* This HWTest helper resets/senses touch without the button-triggered
+ * persistent auto-calibration path in touch_power_on(). */
+extern int touch_power_on_safe(void);
+
+void gui_diagnostics_suspend(u32 groups)
+{
+	gui_tv_shutdown(false);
+	nyx_background_pause(true);
+	(void)groups;
+	if (diagnostics_suspended)
+		return;
+	diagnostics_suspended = true;
+	diagnostics_inputs_ready = true;
+	diagnostics_touch_was_enabled = touch_enabled;
+	for (u32 i = 0; i < ARRAY_SIZE(system_tasks.tasks); i++)
+	{
+		lv_task_t *task = system_tasks.tasks[i];
+		if (task)
+		{
+			diagnostics_saved_task_priorities[i] = task->prio;
+			lv_task_set_prio(task, LV_TASK_PRIO_OFF);
+		}
+	}
+	lv_indev_reset(jc_drv_ctx.indev_jc);
+	lv_indev_reset(jc_drv_ctx.indev_touch);
+	if (jc_drv_ctx.cursor)
+		lv_obj_set_opa_scale(jc_drv_ctx.cursor, LV_OPA_TRANSP);
+}
+
+void gui_diagnostics_resume(u32 groups)
+{
+	nyx_background_pause(false);
+	if (!diagnostics_suspended)
+		return;
+	if (groups & NYX_DIAG_G_INPUTS)
+	{
+		touch_enabled = diagnostics_touch_was_enabled && !touch_power_on_safe();
+		diagnostics_inputs_ready = !diagnostics_touch_was_enabled || touch_enabled;
+	}
+	touchpad.touch = false;
+	if (!n_cfg.jc_disable)
+	{
+		/* Keep powered Joy-Con rails intact during measurements; resync the
+		 * driver only after the backend has restored its hardware snapshot. */
+		jc_deinit();
+		jc_init_hw();
+		jc_drv_ctx.calibration_step = 0;
+	}
+	lv_indev_reset(jc_drv_ctx.indev_jc);
+	lv_indev_reset(jc_drv_ctx.indev_touch);
+	for (u32 i = 0; i < ARRAY_SIZE(system_tasks.tasks); i++)
+	{
+		lv_task_t *task = system_tasks.tasks[i];
+		if (task)
+		{
+			task->last_run = lv_tick_get();
+			lv_task_set_prio(task, diagnostics_saved_task_priorities[i]);
+		}
+	}
+	diagnostics_suspended = false;
+}
+
+bool gui_diagnostics_inputs_ready(void)
+{
+	return diagnostics_inputs_ready;
+}
 
 void manual_system_maintenance(bool refresh)
 {
+	if (diagnostics_suspended)
+	{
+		if (refresh)
+			lv_refr_now();
+		return;
+	}
 	for (u32 task_idx = 0; task_idx < (sizeof(system_maintenance_tasks_t) / sizeof(lv_task_t *)); task_idx++)
 	{
 		lv_task_t *task = system_tasks.tasks[task_idx];
@@ -741,34 +867,37 @@ lv_img_dsc_t *bmp_to_lvimg_obj(const char *path)
 
 lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 {
+	if (nyx_nova_toggle_refresh(btn)) return LV_RES_OK;
 	lv_obj_t *label_btn = lv_obj_get_child(btn, NULL);
 	lv_obj_t *label_btn2 = lv_obj_get_child(btn, label_btn);
 
-	char label_text[64];
+	const char *state = nyx_tr((lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL) ? "ON" : "OFF");
+	const char *color = (lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL) ? text_color : "#D0D0D0";
 	if (!label_btn2)
 	{
-		strcpy(label_text, lv_label_get_text(label_btn));
-		label_text[strlen(label_text) - 15] = 0;
-
-		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-		{
-			strcat(label_text, "#D0D0D0    OFF#");
-			lv_label_set_text(label_btn, label_text);
+		const char *current = lv_label_get_text(label_btn);
+		/* The final recolored span is the state. Byte counts vary by locale. */
+		u32 prefix = strlen(current);
+		if (prefix && current[prefix - 1] == '#') {
+			--prefix;
+			while (prefix && current[prefix - 1] != '#') --prefix;
+			if (prefix) --prefix;
 		}
-		else
-		{
-			s_printf(label_text, "%s%s%s", label_text, text_color, "    ON #");
-			lv_label_set_text(label_btn, label_text);
+		char *label_text = malloc(prefix + strlen(color) + strlen(state) + 8);
+		if (label_text) {
+			memcpy(label_text, current, prefix); label_text[prefix] = 0;
+			strcat(label_text, color); strcat(label_text, "    ");
+			strcat(label_text, state); strcat(label_text, "#");
+			lv_label_set_text(label_btn, label_text); free(label_text);
 		}
 	}
 	else
 	{
-		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-			lv_label_set_text(label_btn, "#D0D0D0 OFF#");
-		else
-		{
-			s_printf(label_text, "%s%s", text_color, " ON #");
-			lv_label_set_text(label_btn, label_text);
+		char *label_text = malloc(strlen(color) + strlen(state) + 4);
+		if (label_text) {
+			strcpy(label_text, color); strcat(label_text, " ");
+			strcat(label_text, state); strcat(label_text, "#");
+			lv_label_set_text(label_btn, label_text); free(label_text);
 		}
 	}
 
@@ -886,11 +1015,21 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 	lv_style_copy(&win_bg_style, &lv_style_plain);
 	win_bg_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
 	win_bg_style.body.grad_color = win_bg_style.body.main_color;
+	win_bg_style.body.opa = LV_OPA_COVER;
+	win_bg_style.body.padding.hor = 0;
+	win_bg_style.body.padding.ver = 0;
+	win_bg_style.body.padding.inner = 0;
 
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
 	lv_win_set_style(win, LV_WIN_STYLE_BG, &win_bg_style);
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES);
+	/* The persistent status bar lives on the top layer. Keep the window's
+	 * page inside it, rather than drawing/scrolling controls behind the bar. */
+	nyx_nova_window(win);
+	lv_win_ext_t *content = lv_obj_get_ext_attr(win);
+	lv_page_set_style(content->page, LV_PAGE_STYLE_BG, &lv_style_transp_tight);
+	lv_page_set_style(content->page, LV_PAGE_STYLE_SCRL, &lv_style_transp_tight);
+	lv_obj_set_pos(lv_page_get_scrl(content->page), 0, 0);
 
 	if (!close_action)
 		close_btn = lv_win_add_btn(win, NULL, SYMBOL_CLOSE" Close", nyx_win_close_action);
@@ -1204,8 +1343,8 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
 	btn_onoff_rel_hos_style.body.padding.hor = 0;
-	btn_onoff_rel_hos_style.body.radius = 0;
-	btn_onoff_rel_hos_style.body.empty = 1;
+	btn_onoff_rel_hos_style.body.radius = 8;
+	btn_onoff_rel_hos_style.body.empty = 0;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
 	if (transparent)
@@ -1214,10 +1353,13 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 		btn_onoff_pr_hos_style.body.opa = 35;
 	}
 	else
-		btn_onoff_pr_hos_style.body.main_color = LV_COLOR_HEX(theme_bg_color ? (theme_bg_color + 0x101010) : 0x2D2D2D); // COLOR_HOS_BG_LIGHT.
+		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT.
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.empty = 0;
+	btn_onoff_pr_hos_style.body.border.width = 2;
+	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
+	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
 
 	lv_obj_t *label_btn = lv_label_create(btn, NULL);
 	lv_obj_t *label_btnsw = NULL;
@@ -1253,9 +1395,9 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 	lv_style_copy(&btn_onoff_rel_hos_style, th->btn.rel);
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
-	btn_onoff_rel_hos_style.body.radius = 0;
+	btn_onoff_rel_hos_style.body.radius = 8;
 	btn_onoff_rel_hos_style.body.padding.hor = LV_DPI / 4;
-	btn_onoff_rel_hos_style.body.empty = 1;
+	btn_onoff_rel_hos_style.body.empty = 0;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
 	if (hekate_bg)
@@ -1264,10 +1406,13 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		btn_onoff_pr_hos_style.body.opa = 35;
 	}
 	else
-		btn_onoff_pr_hos_style.body.main_color = LV_COLOR_HEX(theme_bg_color ? (theme_bg_color + 0x101010) : 0x2D2D2D); // COLOR_HOS_BG_LIGHT
+		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.empty = 0;
+	btn_onoff_pr_hos_style.body.border.width = 2;
+	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
+	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
 
 	lv_obj_t *label_btn = lv_label_create(btn, NULL);
 
@@ -1286,80 +1431,9 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, action);
 }
 
-static void _create_tab_about(lv_theme_t * th, lv_obj_t * parent)
+static void _create_tab_about(lv_theme_t *th,lv_obj_t *parent)
 {
-	lv_obj_t * lbl_credits = lv_label_create(parent, NULL);
-
-	lv_obj_align(lbl_credits, NULL, LV_ALIGN_IN_TOP_LEFT, LV_DPI / 2, LV_DPI / 2);
-	lv_label_set_style(lbl_credits, &monospace_text);
-	lv_label_set_recolor(lbl_credits, true);
-	lv_label_set_static_text(lbl_credits,
-		"#C7EA46 hekate# (c) 2018,      #C7EA46 naehrwert#, #C7EA46 st4rk#\n"
-		"       (c) 2018-2026, #C7EA46 CTCaer#\n"
-		"\n"
-		"#C7EA46 Nyx#    (c) 2019-2026, #C7EA46 CTCaer#\n"
-		"\n"
-		"Thanks to: #00CCFF derrek, nedwill, plutoo, #\n"
-		"           #00CCFF shuffle2, smea, thexyz, yellows8 #\n"
-		"\n"
-		"Greetings to: fincs, hexkyz, SciresM,\n"
-		"              Shiny Quagsire, WinterMute\n"
-		"\n"
-		"Open source and free packages used:                    \n" // Label width alignment padding.
-		" - Littlev Graphics Library,\n"
-		"   Copyright (c) 2016-2018, Gabor Kiss-Vamosi\n\n"
-		" - FatFs R0.13c,\n"
-		"   Copyright (c) 2006-2018, ChaN\n"
-		"   Copyright (c) 2018-2022, CTCaer\n\n"
-		" - bcl-1.2.0,\n"
-		"   Copyright (c) 2003-2006, Marcus Geelnard\n\n"
-		" - blz,\n"
-		"   Copyright (c) 2018, SciresM\n\n"
-		" - elfload,\n"
-		"   Copyright (c) 2014, Owen Shepherd\n"
-		"   Copyright (c) 2018, M4xw"
-	);
-
-	lv_obj_t * lbl_octopus = lv_label_create(parent, NULL);
-	lv_obj_align(lbl_octopus, lbl_credits, LV_ALIGN_OUT_RIGHT_TOP, -LV_DPI / 10, 0);
-	lv_label_set_style(lbl_octopus, &monospace_text);
-	lv_label_set_recolor(lbl_octopus, true);
-
-	lv_label_set_static_text(lbl_octopus,
-		"\n#00CCFF                          ___#\n"
-		"#00CCFF                       .-'   `'.#\n"
-		"#00CCFF                      /         \\#\n"
-		"#00CCFF                      |         ;#\n"
-		"#00CCFF                      |         |           ___.--,#\n"
-		"#00CCFF             _.._     |0) = (0) |    _.---'`__.-( (_.#\n"
-		"#00CCFF      __.--'`_.. '.__.\\    '--. \\_.-' ,.--'`     `\"\"`#\n"
-		"#00CCFF     ( ,.--'`   ',__ /./;   ;, '.__.'`    __#\n"
-		"#00CCFF     _`) )  .---.__.' / |   |\\   \\__..--\"\"  \"\"\"--.,_#\n"
-		"#00CCFF    `---' .'.''-._.-'`_./  /\\ '.  \\ _.--''````'''--._`-.__.'#\n"
-		"#00CCFF          | |  .' _.-' |  |  \\  \\  '.               `----`#\n"
-		"#00CCFF           \\ \\/ .'     \\  \\   '. '-._)#\n"
-		"#00CCFF            \\/ /        \\  \\    `=.__`'-.#\n"
-		"#00CCFF            / /\\         `) )    / / `\"\".`\\#\n"
-		"#00CCFF      , _.-'.'\\ \\        / /    ( (     / /#\n"
-		"#00CCFF       `--'`   ) )    .-'.'      '.'.  | (#\n"
-		"#00CCFF              (/`    ( (`          ) )  '-;    ##00FFCC [switchbrew]#\n"
-		"#00CCFF               `      '-;         (-'#"
-	);
-
-	lv_obj_t *hekate_img = lv_img_create(parent, NULL);
-	lv_img_set_src(hekate_img, &hekate_logo);
-	lv_obj_align(hekate_img, lbl_octopus, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 2 / 3);
-
-	lv_obj_t *ctcaer_img = lv_img_create(parent, NULL);
-	lv_img_set_src(ctcaer_img, &ctcaer_logo);
-	lv_obj_align(ctcaer_img, lbl_octopus, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI * 2 / 3);
-
-	char version[32];
-	s_printf(version, "Nyx %s%d.%d.%d%c", NYX_VER_RL ? "v" : "", NYX_VER_MJ, NYX_VER_MN, NYX_VER_HF, NYX_VER_RL > 'A' ? NYX_VER_RL : 0);
-	lv_obj_t * lbl_ver = lv_label_create(parent, NULL);
-	lv_obj_align(lbl_ver, ctcaer_img, LV_ALIGN_OUT_BOTTOM_RIGHT, -LV_DPI / 20, LV_DPI / 4);
-	lv_label_set_style(lbl_ver, &monospace_text);
-	lv_label_set_text(lbl_ver, version);
+    (void)th;nyx_nova_about(parent);
 }
 
 static void _update_status_bar(void *params)
@@ -1389,35 +1463,19 @@ static void _update_status_bar(void *params)
 		label = (char *)malloc(512);
 
 	// Set time and SoC temperature.
-	s_printf(label, "%02d:%02d "SYMBOL_DOT" "SYMBOL_TEMPERATURE" %02d.%d",
-		time.hour, time.min, soc_temp_dec, (soc_temp & 0xFF) / 10);
+	s_printf(label, "%02d:%02d · #%06X %02d.%d °C#",
+		time.hour, time.min, nyx_nova_temperature_rgb(soc_temp_dec), soc_temp_dec, (soc_temp & 0xFF) / 10);
+	lv_label_set_recolor(status_bar.time_temp, true);
 
 	lv_label_set_text(status_bar.time_temp, label);
 
-	lv_obj_realign(status_bar.temp_symbol);
-	lv_obj_realign(status_bar.temp_degrees);
 
-	// Set battery percent and charging symbol.
-	s_printf(label, " "SYMBOL_DOT" %d.%d%% ", (batt_percent >> 8) & 0xFF, (batt_percent & 0xFF) / 26);
-
-	u8 batt_level = (batt_percent >> 8) & 0xFF;
-	if (batt_level > 80)
-		strcat(label, SYMBOL_BATTERY_FULL);
-	else if (batt_level > 60)
-		strcat(label, SYMBOL_BATTERY_3);
-	else if (batt_level > 40)
-		strcat(label, SYMBOL_BATTERY_2);
-	else if (batt_level > 15)
-		strcat(label, SYMBOL_BATTERY_1);
-	else
-		strcat(label, "#FF3C28 "SYMBOL_BATTERY_EMPTY"#");
-
-	// Set charging symbol.
-	if (charge_status)
-		strcat(label, " #FFDD00 "SYMBOL_CHARGE"#");
+	// Compact Nova footer uses the live percentage and SVG charging state.
+	s_printf(label, "%d.%d%%", (batt_percent >> 8) & 0xFF, (batt_percent & 0xFF) / 26);
+	nyx_nova_battery((batt_percent >> 8) & 0xFF, charge_status != 0);
 
 	lv_label_set_text(status_bar.battery, label);
-	lv_obj_realign(status_bar.battery);
+	lv_obj_set_pos(status_bar.battery, 1174, 24);
 
 	// Set battery current draw and voltage.
 	s_printf(label, "#%s%d", batt_curr >= 0 ? "96FF00 +" : "FF3C28 ", batt_curr / 1000);
@@ -1558,7 +1616,7 @@ static lv_obj_t *create_window_launch(const char *win_title)
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
 
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES);
+	nyx_nova_window(win);
 
 	if (n_cfg.home_screen && !launch_bg_done && hekate_bg)
 	{
@@ -1591,19 +1649,14 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 
 	lv_obj_t *label_btn = lv_obj_get_child(btn, NULL);
 
-	char label_text[64];
-	strcpy(label_text, lv_label_get_text(label_btn));
-	label_text[strlen(label_text) - 12] = 0;
-
-	if (!launch_logs_enable)
-	{
-		strcat(label_text, "#D0D0D0 OFF#");
-		lv_label_set_text(label_btn, label_text);
-	}
-	else
-	{
-		s_printf(label_text, "%s%s%s", label_text, text_color, " ON #");
-		lv_label_set_text(label_btn, label_text);
+	const char *title = nyx_tr("Logs");
+	const char *state = nyx_tr(launch_logs_enable ? "ON" : "OFF");
+	const char *color = launch_logs_enable ? text_color : "#D0D0D0";
+	char *label_text = malloc(strlen(title) + strlen(state) + strlen(color) + 16);
+	if (label_text) {
+		strcpy(label_text, SYMBOL_LIST" "); strcat(label_text, title); strcat(label_text, " ");
+		strcat(label_text, color); strcat(label_text, " "); strcat(label_text, state); strcat(label_text, "#");
+		lv_label_set_text(label_btn, label_text); free(label_text);
 	}
 
 	return LV_RES_OK;
@@ -1668,6 +1721,9 @@ static lv_res_t _create_window_home_launch(lv_obj_t *btn)
 	btn_home_transp_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	btn_home_transp_pr.body.grad_color = btn_home_transp_pr.body.main_color;
 	btn_home_transp_pr.body.opa = LV_OPA_30;
+	btn_home_transp_pr.body.empty = 1;
+	btn_home_transp_pr.body.border.width = 2;
+	btn_home_transp_pr.body.border.opa = LV_OPA_COVER;
 
 	static lv_style_t btn_label_home_transp;
 	lv_style_copy(&btn_label_home_transp, lv_theme_get_current()->cont);
@@ -1679,8 +1735,8 @@ static lv_res_t _create_window_home_launch(lv_obj_t *btn)
 	bool combined_cfg = false;
 	if (btn)
 	{
-		if (strcmp(lv_label_get_text(lv_obj_get_child(btn, NULL)) + 8,"Launch#"))
-			more_cfg = true;
+		// Explicit action identity: labels and child order can change with the UI.
+		more_cfg = lv_obj_get_free_num(btn) == 1;
 	}
 	else
 	{
@@ -1941,7 +1997,7 @@ ini_parsing:
 			lv_btn_set_action(btns, LV_BTN_ACTION_CLICK, _launch_more_cfg_action);
 
 		// Set button's label text.
-		lv_label_set_text(launch_ctxt.label[curr_btn_idx], ini_sec->name);
+		(lv_label_set_text)(launch_ctxt.label[curr_btn_idx], ini_sec->name);
 		lv_obj_set_opa_scale(launch_ctxt.label[curr_btn_idx], LV_OPA_COVER);
 
 		// Set rolling text if name is too big.
@@ -2001,224 +2057,67 @@ failed_sd_mount:
 	return LV_RES_OK;
 }
 
-static void _create_tab_home(lv_theme_t *th, lv_obj_t *parent)
+/* Both native home layouts use the Nova components and the original actions. */
+enum { HOME_ACTION_BOOT, HOME_ACTION_CONFIGS, HOME_ACTION_PAYLOADS,
+    HOME_ACTION_EMUMMC, HOME_ACTION_DIAGNOSTIC, HOME_ACTION_COUNT };
+static lv_obj_t *home_tabview;
+static lv_res_t _home_modern_activate(lv_obj_t *btn)
 {
-	lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
-	lv_page_set_scrl_fit(parent, false, false);
-	lv_page_set_scrl_height(parent, 592);
-
-	char btn_colored_text[64];
-
-	// Set brand label.
-	lv_obj_t *label_brand = lv_label_create(parent, NULL);
-	lv_label_set_recolor(label_brand, true);
-	s_printf(btn_colored_text, "%s%s", text_color, " hekate#");
-	lv_label_set_text(label_brand, btn_colored_text);
-	lv_obj_set_pos(label_brand, 50, 48);
-
-	// Set tagline label.
-	lv_obj_t *label_tagline = lv_label_create(parent, NULL);
-	lv_obj_set_style(label_tagline, &hint_small_style_white);
-	lv_label_set_static_text(label_tagline, "THE ALL IN ONE BOOTLOADER FOR ALL YOUR NEEDS");
-	lv_obj_set_pos(label_tagline, 50, 82);
-
-	static lv_style_t icons;
-	lv_style_copy(&icons, th->label.prim);
-	icons.text.font = &hekate_symbol_120;
-
-	// Launch button.
-	lv_obj_t *btn_launch = lv_btn_create(parent, NULL);
-	if (hekate_bg)
+	switch (lv_obj_get_free_num(btn))
 	{
-		lv_btn_set_style(btn_launch, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn_launch, LV_BTN_STYLE_PR, &btn_transp_pr);
+	case HOME_ACTION_BOOT:
+	case HOME_ACTION_CONFIGS:
+		return _create_window_home_launch(btn);
+	case HOME_ACTION_PAYLOADS:
+		return _create_mbox_payloads(btn);
+	case HOME_ACTION_EMUMMC:
+		return create_win_emummc_tools(btn);
+	case HOME_ACTION_DIAGNOSTIC:
+		if (home_tabview)
+		{
+			lv_tabview_set_tab_act(home_tabview, 5, false);
+			nyx_nova_navigation_select(5);
+		}
+		break;
 	}
-	lv_obj_t *label_btn = lv_label_create(btn_launch, NULL);
-	lv_label_set_recolor(label_btn, true);
-	lv_obj_set_style(label_btn, &icons);
-	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_DOT"#");
-	lv_label_set_text(label_btn, btn_colored_text);
-	lv_btn_set_action(btn_launch, LV_BTN_ACTION_CLICK, _create_window_home_launch);
-	lv_obj_set_size(btn_launch, 256, 256);
-	lv_obj_set_pos(btn_launch, 50, 160);
-	lv_btn_set_layout(btn_launch, LV_LAYOUT_OFF);
-	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
-	lv_obj_t *label_btn2 = lv_label_create(btn_launch, NULL);
-	lv_label_set_recolor(label_btn2, true);
-	s_printf(btn_colored_text, "%s%s", text_color, " Launch#");
-	lv_label_set_text(label_btn2, btn_colored_text);
-	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
-
-	// More Configs button.
-	lv_obj_t *btn_more_cfg = lv_btn_create(parent, btn_launch);
-	label_btn = lv_label_create(btn_more_cfg, label_btn);
-	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_CLOCK"#");
-	lv_label_set_text(label_btn, btn_colored_text);
-	lv_btn_set_action(btn_more_cfg, LV_BTN_ACTION_CLICK, _create_window_home_launch);
-	lv_btn_set_layout(btn_more_cfg, LV_LAYOUT_OFF);
-	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
-	label_btn2 = lv_label_create(btn_more_cfg, label_btn2);
-	s_printf(btn_colored_text, "%s%s", text_color, " More Configs#");
-	lv_label_set_text(label_btn2, btn_colored_text);
-	lv_obj_set_pos(btn_more_cfg, 341, 160);
-	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
-
-	// Quick Launch button.
-	// lv_obj_t *btn_quick_launch = lv_btn_create(parent, NULL);
-	// lv_obj_t *label_quick_launch = lv_label_create(btn_quick_launch, NULL);
-	// lv_label_set_static_text(label_quick_launch, SYMBOL_EDIT" Quick Launch");
-	// lv_obj_set_width(btn_quick_launch, 256);
-	// lv_obj_set_pos(btn_quick_launch, 343, 448);
-	// lv_btn_set_action(btn_quick_launch, LV_BTN_ACTION_CLICK, NULL);
-	// if (hekate_bg)
-	// {
-	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_REL, &btn_transp_rel);
-	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_PR, &btn_transp_pr);
-	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_INA, &btn_transp_ina);
-	// }
-
-	lv_obj_t *btn_nyx_options = lv_btn_create(parent, NULL);
-	_create_text_button(th, NULL, btn_nyx_options, SYMBOL_SETTINGS" Nyx Settings", NULL);
-	//lv_obj_set_width(btn_nyx_options, 256);
-	lv_btn_set_action(btn_nyx_options, LV_BTN_ACTION_CLICK, create_win_nyx_options);
-	lv_obj_align(btn_nyx_options, NULL, LV_ALIGN_IN_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 12);
-
-	// Payloads button.
-	lv_obj_t *btn_payloads = lv_btn_create(parent, btn_launch);
-	label_btn = lv_label_create(btn_payloads, label_btn);
-	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_OK"#");
-	lv_label_set_text(label_btn, btn_colored_text);
-	lv_btn_set_action(btn_payloads, LV_BTN_ACTION_CLICK, _create_mbox_payloads);
-	lv_btn_set_layout(btn_payloads, LV_LAYOUT_OFF);
-	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
-	label_btn2 = lv_label_create(btn_payloads, label_btn2);
-	s_printf(btn_colored_text, "%s%s", text_color, " Payloads#");
-	lv_label_set_text(label_btn2, btn_colored_text);
-	lv_obj_set_pos(btn_payloads, 632, 160);
-	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
-
-	lv_obj_t *line_sep = lv_line_create(parent, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, {0, LV_DPI * 3} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, th->line.decor);
-	lv_obj_align(line_sep, btn_payloads, LV_ALIGN_OUT_RIGHT_MID, 35, 0);
-
-	// emuMMC manage button.
-	lv_obj_t *btn_emummc = lv_btn_create(parent, btn_launch);
-	label_btn = lv_label_create(btn_emummc, label_btn);
-	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_LIST"#");
-	lv_label_set_text(label_btn, btn_colored_text);
-	lv_btn_set_action(btn_emummc, LV_BTN_ACTION_CLICK, create_win_emummc_tools);
-	lv_btn_set_layout(btn_emummc, LV_LAYOUT_OFF);
-	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
-	lv_obj_set_pos(btn_emummc, 959, 160);
-	label_btn2 = lv_label_create(btn_emummc, label_btn2);
-	s_printf(btn_colored_text, "%s%s", text_color, " emuMMC#");
-	lv_label_set_text(label_btn2, btn_colored_text);
-	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
-
-	// Create bottom right power buttons.
-	lv_obj_t *btn_reboot = lv_btn_create(parent, NULL);
-	lv_obj_t *btn_power_off = lv_btn_create(parent, NULL);
-	lv_obj_t *btn_reload = lv_btn_create(parent, NULL);
-
-	_create_text_button(th, NULL, btn_power_off, SYMBOL_POWER" Power Off", _create_mbox_poweroff);
-	lv_obj_align(btn_power_off, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, -LV_DPI / 4, -LV_DPI / 12);
-
-	_create_text_button(th, NULL, btn_reboot, SYMBOL_REBOOT" Reboot", _create_mbox_reboot);
-	lv_obj_align(btn_reboot, btn_power_off, LV_ALIGN_OUT_LEFT_MID, 0, 0);
-
-	_create_text_button(th, NULL, btn_reload, SYMBOL_REFRESH" Reload", _create_mbox_reload);
-	lv_obj_align(btn_reload, btn_reboot, LV_ALIGN_OUT_LEFT_MID, 0, 0);
-}
-
-static lv_res_t _save_options_action(lv_obj_t *btn)
-{
-	static const char * mbox_btn_map[] = {"\251", "\222OK!", "\251", ""};
-	lv_obj_t * mbox = lv_mbox_create(lv_scr_act(), NULL);
-	lv_mbox_set_recolor_text(mbox, true);
-
-	int res = 0;
-
-	if (!sd_mount())
-		res = create_config_entry();
-
-	if (!res)
-		lv_mbox_set_text(mbox, "#FF8000 hekate Configuration#\n\n#96FF00 The configuration was saved to sd card!#");
-	else
-		lv_mbox_set_text(mbox, "#FF8000 hekate Configuration#\n\n#FFDD00 Failed to save the configuration#\n#FFDD00 to sd card!#");
-	lv_mbox_add_btns(mbox, mbox_btn_map, NULL);
-	lv_obj_set_top(mbox, true);
-
-	nyx_options_clear_ini_changes_made();
-
-	sd_unmount();
-
 	return LV_RES_OK;
 }
 
-static void _create_status_bar(lv_theme_t * th)
+static void _create_tab_home(lv_theme_t *theme, lv_obj_t *parent)
 {
-	static lv_obj_t *status_bar_bg;
-	status_bar_bg = lv_cont_create(lv_layer_top(), NULL);
-	status_bar.bar_bg = status_bar_bg;
-
-	static lv_style_t status_bar_style;
-	lv_style_copy(&status_bar_style, &lv_style_plain_color);
-	status_bar_style.body.opa = LV_OPA_0;
-	status_bar_style.body.shadow.width = 0;
-
-	lv_obj_set_style(status_bar_bg, &status_bar_style);
-	lv_obj_set_size(status_bar_bg, LV_HOR_RES, LV_DPI * 9 / 14);
-	lv_obj_align(status_bar_bg, NULL, LV_ALIGN_IN_BOTTOM_LEFT, 0, 0);
-
-	// Battery percentages.
-	lv_obj_t *lbl_battery = lv_label_create(status_bar_bg, NULL);
-	lv_label_set_recolor(lbl_battery, true);
-	lv_label_set_text(lbl_battery, " "SYMBOL_DOT" 00.0% "SYMBOL_BATTERY_1" #FFDD00 "SYMBOL_CHARGE"#");
-	lv_obj_align(lbl_battery, NULL, LV_ALIGN_IN_RIGHT_MID, -LV_DPI * 6 / 11, 0);
-	status_bar.battery = lbl_battery;
-
-	// Amperages, voltages.
-	lbl_battery = lv_label_create(status_bar_bg, lbl_battery);
-	lv_obj_set_style(lbl_battery, &hint_small_style_white);
-	lv_label_set_text(lbl_battery, "#96FF00 +0 mA# (0 mV)");
-	lv_obj_align(lbl_battery, status_bar.battery, LV_ALIGN_OUT_LEFT_MID, -LV_DPI / 25, -1);
-	status_bar.battery_more = lbl_battery;
-
-	lv_obj_t *lbl_left = lv_label_create(status_bar_bg, NULL);
-	lv_label_set_text(lbl_left, SYMBOL_CLOCK" ");
-	lv_obj_align(lbl_left, NULL, LV_ALIGN_IN_LEFT_MID, LV_DPI * 6 / 11, 0);
-
-	// Time, temperature.
-	lv_obj_t *lbl_time_temp = lv_label_create(status_bar_bg, NULL);
-	lv_label_set_text(lbl_time_temp, "00:00 "SYMBOL_DOT" "SYMBOL_TEMPERATURE" 00.0");
-	lv_obj_align(lbl_time_temp, lbl_left, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-	status_bar.time_temp = lbl_time_temp;
-
-	lbl_left = lv_label_create(status_bar_bg, NULL);
-	lv_label_set_text(lbl_left, " "SYMBOL_DOT);
-	lv_obj_align(lbl_left, lbl_time_temp, LV_ALIGN_OUT_RIGHT_MID, 0, -LV_DPI / 14);
-	status_bar.temp_symbol = lbl_left;
-
-	lv_obj_t *lbl_degrees = lv_label_create(status_bar_bg, NULL);
-	lv_label_set_text(lbl_degrees, "C");
-	lv_obj_align(lbl_degrees, lbl_left, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 50, LV_DPI / 14);
-	status_bar.temp_degrees = lbl_degrees;
-
-	// Middle button.
-	//! TODO: Utilize it for more.
-	lv_obj_t *btn_mid = lv_btn_create(status_bar_bg, NULL);
-	lv_obj_t *lbl_mid = lv_label_create(btn_mid, NULL);
-	lv_label_set_static_text(lbl_mid, "Save Options");
-	lv_obj_set_size(btn_mid, LV_DPI * 17 / 8, LV_DPI / 2);
-	lv_obj_align(btn_mid, NULL, LV_ALIGN_CENTER, 0, 0);
-	status_bar.mid = btn_mid;
-	lv_obj_set_opa_scale(btn_mid, LV_OPA_0);
-	lv_obj_set_opa_scale_enable(btn_mid, true);
-	lv_obj_set_click(btn_mid, false);
-	lv_btn_set_action(btn_mid, LV_BTN_ACTION_CLICK, _save_options_action);
+    (void)theme;
+    if (n_cfg.home_layout == HOME_LAYOUT_CAROUSEL) nyx_nova_carousel(parent, _home_modern_activate);
+    else nyx_nova_home(parent, _home_modern_activate);
 }
+
+static lv_res_t _create_nova_quick_actions(lv_obj_t *button)
+{
+    (void)button;
+    lv_obj_t *win = nyx_create_standard_window("hekate", NULL);
+    const char *titles[] = {"Reglages Nyx", "Recharger", "Redemarrer", "Eteindre"};
+    const char *icons[] = {"settings-2", "refresh-cw", "rotate-ccw", "power"};
+    lv_action_t actions[] = {create_win_nyx_options, _create_mbox_reload, _create_mbox_reboot, _create_mbox_poweroff};
+    for (u32 i = 0; i < 4; ++i) {
+        lv_obj_t *panel = nyx_nova_panel(win, 34 + i % 2 * 614, 28 + i / 2 * 204, 598, 188);
+        nyx_nova_icon_box(panel, icons[i], 28, 28, 48, false);
+        lv_obj_t *action = lv_btn_create(panel, NULL); lv_btn_set_fit(action, false, false); lv_btn_set_layout(action, LV_LAYOUT_OFF);
+        lv_obj_set_size(action, 480, 82); lv_obj_set_pos(action, 94, 52); lv_btn_set_action(action, LV_BTN_ACTION_CLICK, actions[i]);
+        lv_obj_t *label = nyx_nova_text(action, titles[i], 20, 24, 440, NOVA_TITLE); nyx_nova_fit_text(label, 40);
+    }
+    return LV_RES_OK;
+}
+
+static lv_res_t _save_options_action(lv_obj_t *button)
+{
+    return nyx_options_save_all(button);
+}
+
+
+static void _create_status_bar(lv_theme_t *theme)
+{
+    (void)theme; nyx_nova_footer(lv_layer_top(), _save_options_action);
+}
+
 
 static lv_res_t _create_mbox_save_changes_action(lv_obj_t *btns, const char * txt)
 {
@@ -2234,7 +2133,7 @@ static lv_res_t _create_mbox_save_changes_action(lv_obj_t *btns, const char * tx
 
 void nyx_check_ini_changes()
 {
-	if (nyx_options_get_ini_changes_made())
+	if (nyx_options_has_changes())
 	{
 		lv_obj_t *dark_bg = lv_obj_create(lv_scr_act(), NULL);
 		lv_obj_set_style(dark_bg, &mbox_darken);
@@ -2254,13 +2153,13 @@ void nyx_check_ini_changes()
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_set_top(mbox, true);
 
-		nyx_options_clear_ini_changes_made();
 	}
 }
 
 static lv_res_t _show_hide_save_button(lv_obj_t *tv, uint16_t tab_idx)
 {
-	if (tab_idx == 4) // Options.
+	nyx_nova_navigation_select(tab_idx);
+	if (tab_idx == 4 && nyx_options_has_changes()) // Options.
 	{
 		lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_options_action);
 		lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
@@ -2272,7 +2171,7 @@ static lv_res_t _show_hide_save_button(lv_obj_t *tv, uint16_t tab_idx)
 		lv_obj_set_click(status_bar.mid, false);
 	}
 
-	nyx_check_ini_changes();
+	if (tab_idx != 4) nyx_check_ini_changes();
 
 	return LV_RES_OK;
 }
@@ -2282,15 +2181,15 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	lv_style_copy(&mbox_darken, &lv_style_plain);
 	mbox_darken.body.main_color = LV_COLOR_BLACK;
 	mbox_darken.body.grad_color = mbox_darken.body.main_color;
-	mbox_darken.body.opa = LV_OPA_30;
+	mbox_darken.body.opa = LV_OPA_50;
 
 	lv_style_copy(&hint_small_style, th->label.hint);
 	hint_small_style.text.letter_space = 1;
-	hint_small_style.text.font = &interui_20;
+	hint_small_style.text.font = nyx_font_small();
 
 	lv_style_copy(&hint_small_style_white, th->label.prim);
 	hint_small_style_white.text.letter_space = 1;
-	hint_small_style_white.text.font = &interui_20;
+	hint_small_style_white.text.font = nyx_font_small();
 
 	lv_style_copy(&monospace_text, &lv_style_plain);
 	monospace_text.body.main_color = COLOR_HOS_BG_DARKER;
@@ -2298,58 +2197,67 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	monospace_text.body.border.color = COLOR_HOS_BG_DARKER;
 	monospace_text.body.border.width = 0;
 	monospace_text.body.opa = LV_OPA_TRANSP;
-	monospace_text.text.color = LV_COLOR_HEX(0xD8D8D8);
-	monospace_text.text.font = &ubuntu_mono;
+	monospace_text.text.color = nyx_nova_color(NOVA_COLOR_TEXT);
+	monospace_text.text.font = nyx_font_mono();
 	monospace_text.text.letter_space = 0;
 	monospace_text.text.line_space = 0;
 
 	lv_style_copy(&btn_transp_rel, th->btn.rel);
-	btn_transp_rel.body.main_color = LV_COLOR_HEX(0x444444);
+	btn_transp_rel.body.empty = 1;
+	btn_transp_rel.body.main_color = th->btn.rel->body.main_color;
 	btn_transp_rel.body.grad_color = btn_transp_rel.body.main_color;
 	btn_transp_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_pr, th->btn.pr);
-	btn_transp_pr.body.main_color = LV_COLOR_HEX(0x888888);
+	btn_transp_pr.body.empty = 1;
+	btn_transp_pr.body.main_color = th->btn.pr->body.main_color;
 	btn_transp_pr.body.grad_color = btn_transp_pr.body.main_color;
 	btn_transp_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_rel, th->btn.tgl_rel);
-	btn_transp_tgl_rel.body.main_color = LV_COLOR_HEX(0x444444);
+	btn_transp_tgl_rel.body.empty = 1;
+	btn_transp_tgl_rel.body.main_color = th->btn.tgl_rel->body.main_color;
 	btn_transp_tgl_rel.body.grad_color = btn_transp_tgl_rel.body.main_color;
 	btn_transp_tgl_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_pr, th->btn.tgl_pr);
-	btn_transp_tgl_pr.body.main_color = LV_COLOR_HEX(0x888888);
+	btn_transp_tgl_pr.body.empty = 1;
+	btn_transp_tgl_pr.body.main_color = th->btn.tgl_pr->body.main_color;
 	btn_transp_tgl_pr.body.grad_color = btn_transp_tgl_pr.body.main_color;
 	btn_transp_tgl_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_ina, th->btn.ina);
-	btn_transp_ina.body.main_color = LV_COLOR_HEX(0x292929);
+	btn_transp_ina.body.empty = 1;
+	btn_transp_ina.body.main_color = th->btn.ina->body.main_color;
 	btn_transp_ina.body.grad_color = btn_transp_ina.body.main_color;
-	btn_transp_ina.body.border.color = LV_COLOR_HEX(0x444444);
+	btn_transp_ina.body.border.color = th->btn.ina->body.border.color;
 	btn_transp_ina.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_ina.body.opa = LV_OPA_50;
 
 	lv_style_copy(&ddlist_transp_bg, th->ddlist.bg);
-	ddlist_transp_bg.body.main_color = LV_COLOR_HEX(0x2D2D2D);
+	ddlist_transp_bg.body.empty = 1;
+	ddlist_transp_bg.body.main_color = th->ddlist.bg->body.main_color;
 	ddlist_transp_bg.body.grad_color = ddlist_transp_bg.body.main_color;
 	ddlist_transp_bg.body.opa = 180; // 70.6%.
 
 	lv_style_copy(&ddlist_transp_sel, th->ddlist.sel);
-	ddlist_transp_sel.body.main_color = LV_COLOR_HEX(0x4D4D4D);
+	ddlist_transp_sel.body.empty = 1;
+	ddlist_transp_sel.body.main_color = th->ddlist.sel->body.main_color;
 	ddlist_transp_sel.body.grad_color = ddlist_transp_sel.body.main_color;
 	ddlist_transp_sel.body.opa = 180; // 70.6%.
 
 	lv_style_copy(&tabview_btn_pr, th->tabview.btn.pr);
+	tabview_btn_pr.body.empty = 1;
 	tabview_btn_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	tabview_btn_pr.body.grad_color = tabview_btn_pr.body.main_color;
 	tabview_btn_pr.body.opa = 35; // 13.7%.
 
 	lv_style_copy(&tabview_btn_tgl_pr, th->tabview.btn.tgl_pr);
+	tabview_btn_tgl_pr.body.empty = 1;
 	tabview_btn_tgl_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	tabview_btn_tgl_pr.body.grad_color = tabview_btn_tgl_pr.body.main_color;
 	tabview_btn_tgl_pr.body.opa = 35; // 13.7%.
@@ -2378,36 +2286,37 @@ static void _nyx_main_menu(lv_theme_t * th)
 
 	// Initialize global styles.
 	_nyx_set_default_styles(th);
+	nyx_nova_init(th);
 
 	// Create screen container.
 	lv_obj_t *scr = lv_cont_create(NULL, NULL);
 	lv_scr_load(scr);
 	lv_cont_set_style(scr, th->bg);
 
-	// Create base background and add a custom one if exists.
-	lv_obj_t *cnr = lv_cont_create(scr, NULL);
-	static lv_style_t base_bg_style;
-	lv_style_copy(&base_bg_style, &lv_style_plain_color);
-	base_bg_style.body.main_color = th->bg->body.main_color;
-	base_bg_style.body.grad_color = base_bg_style.body.main_color;
-	lv_cont_set_style(cnr, &base_bg_style);
-	lv_obj_set_size(cnr, LV_HOR_RES, LV_VER_RES);
-
-	if (hekate_bg)
-	{
-		lv_obj_t *img = lv_img_create(cnr, NULL);
-		lv_img_set_src(img, hekate_bg);
-	}
+	/* Opaque root, protected wallpaper behind all interactive surfaces. */
+	nyx_nova_screen(scr);
 
 	// Add tabview page to screen.
-	lv_obj_t *tv = lv_tabview_create(scr, NULL);
+	lv_obj_t *tv = nyx_nova_tabview(scr);
+	home_tabview = tv;
 	if (hekate_bg)
 	{
 		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_PR, &tabview_btn_pr);
 		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR, &tabview_btn_tgl_pr);
 	}
-	lv_tabview_set_sliding(tv, false);
-	lv_obj_set_size(tv, LV_HOR_RES, LV_VER_RES);
+	if (nyx_font_size() > 30) {
+		static lv_style_t readable_tab_styles[4];
+		const lv_style_t *styles[4] = {lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_REL), lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_PR),
+			lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_TGL_REL), lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR)};
+		const lv_tabview_style_t types[4] = {LV_TABVIEW_STYLE_BTN_REL, LV_TABVIEW_STYLE_BTN_PR,
+			LV_TABVIEW_STYLE_BTN_TGL_REL, LV_TABVIEW_STYLE_BTN_TGL_PR};
+		for (u32 i = 0; i < 4; ++i) {
+			lv_style_copy(&readable_tab_styles[i], styles[i]);
+			readable_tab_styles[i].text.font = nyx_font_small();
+			lv_tabview_set_style(tv, types[i], &readable_tab_styles[i]);
+		}
+	}
+	/* Nova owns the top navigation and the fixed content viewport. */
 
 	// Add all tabs content.
 	char version[32];
@@ -2435,6 +2344,13 @@ static void _nyx_main_menu(lv_theme_t * th)
 	create_tab_info(th, tab_info);
 	create_tab_options(th, tab_options);
 
+	// Append to preserve existing Options tab index and saved navigation.
+	lv_obj_t *tab_diag = lv_tabview_add_tab(tv, SYMBOL_CHIP" Diagnostic");
+	create_tab_diagnostics(th, tab_diag);
+	nyx_nova_navigation(scr, tv, version, _create_nova_quick_actions);
+	lv_action_t quick_actions[] = {create_win_nyx_options, _create_mbox_reload, _create_mbox_reboot, _create_mbox_poweroff};
+	nyx_nova_quick_actions(quick_actions);
+
 	lv_tabview_set_tab_act(tv, 1, false);
 
 	// Create status bar.
@@ -2451,26 +2367,6 @@ static void _nyx_main_menu(lv_theme_t * th)
 
 	task_emmc_errors = lv_task_create(_nyx_emmc_issues_warning, 2000, LV_TASK_PRIO_LOWEST, NULL);
 	lv_task_ready(task_emmc_errors);
-
-	// Create top level global line separators.
-	lv_obj_t *line = lv_cont_create(lv_layer_top(), NULL);
-
-	static lv_style_t line_style;
-	lv_style_copy(&line_style, &lv_style_plain_color);
-
-	line_style.body.main_color = LV_COLOR_HEX(0xDDDDDD); // 0x505050
-	line_style.body.grad_color = line_style.body.main_color;
-	line_style.body.shadow.width = 0;
-
-	lv_cont_set_style(line, &line_style);
-	lv_obj_set_size(line, LV_HOR_RES - LV_DPI * 3 / 5, 1);
-	lv_obj_set_pos(line, LV_DPI * 3 / 10, 63);
-
-	lv_obj_set_top(line, true);
-
-	line = lv_cont_create(lv_layer_top(), line);
-	lv_obj_set_pos(line, LV_DPI * 3 / 10, 656);
-	lv_obj_set_top(line, true);
 
 	// Option save button.
 	lv_tabview_set_tab_load_action(tv, _show_hide_save_button);
@@ -2500,6 +2396,9 @@ void nyx_load_and_run()
 	memset(&system_tasks, 0, sizeof(system_maintenance_tasks_t));
 
 	lv_init();
+	nyx_localization_init();
+	nyx_font_manager_init();
+    nova_splash_animate((u32 *)IPL_FB_ADDRESS,85,100,500);
 	gfx_con.fillbg = 1;
 
 	// Initialize framebuffer drawing functions.
@@ -2507,6 +2406,7 @@ void nyx_load_and_run()
 	lv_disp_drv_init(&disp_drv);
 	disp_drv.disp_flush = _disp_fb_flush;
 	lv_disp_drv_register(&disp_drv);
+	lv_refr_set_monitor_cb(_disp_fb_present);
 
 	// Initialize Joy-Con.
 	if (!n_cfg.jc_disable)
@@ -2535,11 +2435,14 @@ void nyx_load_and_run()
 	tmp451_init();
 
 	// Set hekate theme based on chosen hue.
-	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, NULL);
+	lv_theme_hekate_set_accents(n_cfg.nova_icon_color,n_cfg.nova_selection_color);
+	lv_theme_hekate_set_colors(n_cfg.nova_text_color, n_cfg.nova_border_color, n_cfg.nova_reflection_color, n_cfg.nova_menu_opacity);
+	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, (lv_font_t *)nyx_font_ui(20));
 	lv_theme_set_current(th);
 
 	// Create main menu
 	_nyx_main_menu(th);
+	nyx_readability_request();
 
 	jc_drv_ctx.cursor = lv_img_create(lv_scr_act(), NULL);
 	lv_img_set_src(jc_drv_ctx.cursor, &touch_cursor);

@@ -1,0 +1,35 @@
+HEKATE NOVA PRO - VERSION PERSONNALISEE 12
+Hekate 6.5.4 / Nyx 1.9.4
+
+INSTALLATION
+1. Conserver une copie du dossier bootloader et des reglages actuels.
+2. Fusionner bootloader, fonts et wallpapers avec la racine de la carte SD.
+3. Utiliser hekate_nova_pro_6.5.4_v12.bin avec la methode habituelle.
+   bootloader/update.bin contient exactement le meme payload.
+Aucun nyx.ini ou hekate_ipl.ini n'est inclus : les reglages restent en place.
+Le demarrage Hekate garde la presentation Nova Pro deja ajoutee en v11.
+
+CORRECTIONS
+- Fond d'ecran place derriere les menus et les fenetres.
+- Six couleurs : fond, textes, contours, logo, icones et selection.
+- Reflet BLANC diagonal discret sur le symbole selectionne. Aucun contour anime.
+- Logo ouvrant directement les credits.
+- Temperature verte/jaune/orange/rouge selon les plages indiquees dans la documentation.
+- Interrupteurs Actif/Inactif assortis au theme.
+- PREMIER DEMARRAGE : reglage d'heure D'ORIGINE conserve, avec simplement
+  les sept langues ajoutees. Enregistrer et recharger applique heure et langue.
+  Aucun second assistant, aucune remise a zero de l'heure existante.
+
+Les nouvelles couleurs se trouvent dans Reglages Nyx > Themes et couleurs.
+Les choix de couleur sont appliques apres Enregistrer et recharger.
+Le reflet reste blanc quelle que soit la palette choisie.
+Les fonds BMP fixes sont places dans wallpapers a la racine de la SD.
+Les polices NYXF sont placees dans fonts. Les convertisseurs sont fournis.
+
+Les sauvegardes Nyx conservent une copie de recuperation pendant le remplacement.
+Si une sauvegarde echoue, verifier la carte et reessayer. Ne pas supprimer une
+copie nyx.ini.nova.bak si le fichier nyx.ini principal est absent.
+
+Compilation et essais du code reel sur PC effectues. Version a tester sur Switch :
+aucun essai materiel ni mesure de FPS sur console n'a ete effectue ici.
+Voir documentation/CORRECTIONS-NOVA-PRO-V12.md et verification/.

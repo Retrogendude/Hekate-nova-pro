@@ -126,7 +126,7 @@
 #define LV_COLOR_TRANSP        LV_COLOR_LIME     /*Images pixels with this color will not be drawn (with chroma keying)*/
 
 /*Text settings*/
-#define LV_TXT_UTF8             0                /*Enable UTF-8 coded Unicode character usage */
+#define LV_TXT_UTF8             1                /*Accents and Cyrillic UI translations. */
 #define LV_TXT_BREAK_CHARS     " ,.;:-_"         /*Can break texts on these chars*/
 #define LV_TXT_LINE_BREAK_LONG_LEN 12            /* If a character is at least this long, will break wherever "prettiest" */
 #define LV_TXT_LINE_BREAK_LONG_PRE_MIN_LEN 3     /* Minimum number of characters of a word to put on a line before a break */
@@ -235,7 +235,7 @@
 #define USE_LV_IMG      1
 #if USE_LV_IMG != 0
 #  define LV_IMG_CF_INDEXED   0       /*Enable indexed (palette) images*/
-#  define LV_IMG_CF_ALPHA     0       /*Enable alpha indexed images*/
+#  define LV_IMG_CF_ALPHA     1       /*Nova's antialiased Lucide alpha masks*/
 #endif
 
 /*Line (dependencies: -*/

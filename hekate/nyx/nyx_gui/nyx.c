@@ -22,6 +22,8 @@
 #include <bdk.h>
 
 #include "config.h"
+#include <display/nova_splash.h>
+#include "localization.h"
 #include "hos/hos.h"
 #include <ianos/ianos.h>
 #include <libs/compr/blz.h>
@@ -29,6 +31,9 @@
 
 #include "frontend/fe_emmc_tools.h"
 #include "frontend/gui.h"
+#include "frontend/gui_diagnostics.h"
+#include "diagnostics/nyx_diagnostics.h"
+#include "diagnostics/ram_handoff.h"
 
 nyx_config n_cfg;
 hekate_config h_cfg;
@@ -162,6 +167,113 @@ out:
 	return LV_RES_OK;
 }
 
+/* Validate size before allocating, and reject short/failed reads. */
+static u8 *_read_service_payload(const char *path, u32 limit, u32 *size)
+{
+	FIL file;
+	if (f_open(&file, path, FA_READ) != FR_OK)
+		return NULL;
+	u32 length = f_size(&file);
+	if (length < 0x100 || length > limit)
+	{
+		f_close(&file);
+		return NULL;
+	}
+	u8 *buffer = malloc(length);
+	if (!buffer)
+	{
+		f_close(&file);
+		return NULL;
+	}
+	UINT received = 0;
+	FRESULT read_result = f_read(&file, buffer, length, &received);
+	FRESULT close_result = f_close(&file);
+	if (read_result != FR_OK || close_result != FR_OK || received != length)
+	{
+		free(buffer);
+		return NULL;
+	}
+	*size = length;
+	return buffer;
+}
+
+int nyx_launch_ram_service(u32 mode,u32 mask)
+{
+	if(!nyx_ram_selection_valid(mode,mask))return 7;
+	if (nyx_diag_running())
+		return 5;
+	/* A failed preparation must not leave an older automatic-run request. */
+	((volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR)->magic = 0;
+	/* The optional localized service UI occupies the same protected first
+	 * 4 MiB as the return image. A missing/corrupt pack falls back to English. */
+	*(volatile u32 *)NYX_RAM_UI_ADDR = 0;
+	if (sd_mount())
+		return 1;
+	u32 ram_size = 0, return_size = 0;
+	u8 *ram_image = _read_service_payload("bootloader/sys/hwtest_ram.bin", 130392, &ram_size);
+	if (!ram_image)
+	{
+		sd_unmount();
+		return 2;
+	}
+	u8 *return_image = _read_service_payload("bootloader/update.bin", NYX_RAM_RETURN_MAX, &return_size);
+	if (!return_image)
+	{
+		free(ram_image);
+		sd_unmount();
+		return 3;
+	}
+	/* The return image must be a Hekate payload, not an arbitrary .bin. */
+	if (!ram_size || ram_size > 130392 || return_size < 0x100 ||
+		return_size > NYX_RAM_RETURN_MAX ||
+		memcmp(return_image + return_size - 6, "ICTC", 4))
+	{
+		free(return_image);
+		free(ram_image);
+		sd_unmount();
+		return 4;
+	}
+	/* Force Hekate's menu on return, even when normal autoboot is configured. */
+	static const char *ram_languages[] = {"en", "fr", "es", "it", "ru", "de", "pt"};
+	_Static_assert(ARRAY_SIZE(ram_languages) == I18N_LANGUAGE_COUNT, "RAM language codes must match Nyx locales");
+	_Static_assert(NYX_RAM_UI_ADDR + NYX_RAM_UI_MAX <= NYX_RAM_HANDOFF_ADDR, "RAM UI must stay below the return handoff");
+	char ui_path[64];
+	s_printf(ui_path, "bootloader/sys/ram-ui-%s.bin", ram_languages[n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN]);
+	u32 ui_size = 0;
+	u8 *ui = _read_service_payload(ui_path, NYX_RAM_UI_MAX, &ui_size);
+	if (ui && *(u32 *)ui == NYX_RAM_UI_MAGIC && ((u32 *)ui)[1] == ui_size &&
+		((u32 *)ui)[2] == nyx_ram_hash(ui + 32, ui_size - 32))
+		memcpy((void *)NYX_RAM_UI_ADDR, ui, ui_size);
+	free(ui);
+	return_image[0x94] = BOOT_CFG_AUTOBOOT_EN;
+	return_image[0x95] = 0;
+	return_image[0x96] = 0;
+	return_image[0x97] = 0;
+	memcpy((void *)NYX_RAM_RETURN_ADDR, return_image, return_size);
+	nyx_ram_handoff_t request = {0};
+	request.version = NYX_RAM_VERSION;
+	request.payload_size = return_size;
+	request.payload_hash = nyx_ram_hash(return_image, return_size);
+	request.auto_run = 1;
+	request.mode = mode;
+	request.selected_mask = mask;
+	request.request_hash = nyx_ram_request_hash(&request);
+	request.magic = NYX_RAM_HANDOFF_MAGIC;
+	memcpy((void *)NYX_RAM_HANDOFF_ADDR, &request, sizeof(request));
+	memcpy((void *)RCM_PAYLOAD_ADDR, ram_image, ram_size);
+	memset((void *)(RCM_PAYLOAD_ADDR + ram_size), 0, ALIGN(ram_size, 0x10) - ram_size);
+	_reloc_append(PATCHED_RELOC_ENTRY, EXT_PAYLOAD_ADDR, ALIGN(ram_size, 0x10));
+	free(return_image);
+	free(ram_image);
+	sd_end();
+	bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_WAY, false);
+	hw_deinit(false);
+	void (*payload)(void) = (void *)EXT_PAYLOAD_ADDR;
+	payload();
+	((volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR)->magic = 0;
+	return 6;
+}
+
 static void _load_saved_configuration()
 {
 	LIST_INIT(ini_sections);
@@ -212,7 +324,11 @@ static void _load_saved_configuration()
 	ini_free(&ini_sections);
 
 skip_main_cfg_parse:
-	if (ini_parse(&ini_nyx_sections, "bootloader/nyx.ini", false))
+	/* Recover the previous complete file if power was lost during commit. */
+    const char *nyx_ini="bootloader/nyx.ini";
+    FRESULT cfg_status=f_stat(nyx_ini,NULL);
+    if(cfg_status==FR_NO_FILE||cfg_status==FR_NO_PATH)nyx_ini="bootloader/nyx.ini.nova.bak";
+    if (ini_parse(&ini_nyx_sections, nyx_ini, false))
 		return;
 
 	// Load Nyx configuration.
@@ -245,6 +361,11 @@ skip_main_cfg_parse:
 					n_cfg.timedst        = atoi(kv->val);
 				else if (!strcmp("homescreen",   kv->key))
 					n_cfg.home_screen    = atoi(kv->val);
+				else if (!strcmp("home_layout",  kv->key))
+					n_cfg.home_layout = !strcmp(kv->val, "1") ? HOME_LAYOUT_CAROUSEL : HOME_LAYOUT_TILES;
+				else if (!strcmp("language",     kv->key))
+					n_cfg.language = kv->val[0] >= '0' && kv->val[0] < '0' + I18N_LANGUAGE_COUNT && !kv->val[1]
+						? (u32)(kv->val[0] - '0') : I18N_EN;
 				else if (!strcmp("verification", kv->key))
 					n_cfg.verification   = atoi(kv->val);
 				else if (!strcmp("umsemmcrw",    kv->key))
@@ -255,6 +376,7 @@ skip_main_cfg_parse:
 					n_cfg.jc_force_right = atoi(kv->val) == 1;
 				else if (!strcmp("bpmpclock",    kv->key))
 					n_cfg.bpmp_clock     = atoi(kv->val);
+				else nyx_appearance_key(kv->key, kv->val);
 			}
 
 			// Check if user canceled time setting before.
@@ -302,6 +424,7 @@ static void nyx_load_bg_icons()
 
 	// Load background resource if any.
 	hekate_bg = bmp_to_lvimg_obj("bootloader/res/background.bmp");
+	nyx_nova_wallpaper_load();
 }
 
 #define EXCP_EN_ADDR   0x4003FF1C
@@ -327,6 +450,7 @@ static void _show_errors(int sd_error)
 
 	if (*excp_enabled == EXCP_MAGIC || sd_error)
 	{
+		nova_splash_stop();
 		gfx_clear_grey(0);
 		gfx_con_setpos(0, 0, 0);
 		display_backlight_brightness(150, 1000);
@@ -440,8 +564,12 @@ void nyx_init_load_res()
 	minerva_change_freq(FREQ_1600);
 
 	// Load hekate/Nyx configuration.
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,50,65);
 	_load_saved_configuration();
+	nova_splash_set_colors(n_cfg.boot_logo_color,n_cfg.boot_bar_color);
 
+	nova_splash_animate((u32 *)IPL_FB_ADDRESS,50,65,300);
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,65,85);
 	// Load Nyx resources.
 	if (nyx_load_resources())
 	{
@@ -484,6 +612,8 @@ void nyx_init_load_res()
 		break;
 	}
 
+	nova_splash_animate((u32 *)IPL_FB_ADDRESS,65,85,300);
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,85,100);
 	// Load default launch icons and background if it exists.
 	nyx_load_bg_icons();
 

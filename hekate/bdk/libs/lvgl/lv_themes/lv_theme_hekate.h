@@ -38,14 +38,14 @@ extern "C" {
 #define COLOR_BG_BASE_MIN      0x0B0B0B
 #define COLOR_BG_BASE_MAX      0xC7C7C7
 
-#define COLOR_HOS_BG_DARKER    LV_COLOR_HEX(0x1B1B1B)
-#define COLOR_HOS_BG_DARK      LV_COLOR_HEX(0x222222)
-#define COLOR_HOS_BG           LV_COLOR_HEX(0x2D2D2D)
-#define COLOR_HOS_BG_RGB       0x2D2D2D
-#define COLOR_HOS_BG_LIGHT     LV_COLOR_HEX(0x3D3D3D)
-#define COLOR_HOS_BG_LIGHTER   LV_COLOR_HEX(0x4D4D4D)
+#define COLOR_HOS_BG_DARKER    LV_COLOR_HEX(0x0F1512)
+#define COLOR_HOS_BG_DARK      LV_COLOR_HEX(0x141A19)
+#define COLOR_HOS_BG           LV_COLOR_HEX(0x141A19)
+#define COLOR_HOS_BG_RGB       0x141A19
+#define COLOR_HOS_BG_LIGHT     LV_COLOR_HEX(0x202B27)
+#define COLOR_HOS_BG_LIGHTER   LV_COLOR_HEX(0x2B3A31)
 
-#define COLOR_HOS_TURQUOISE_EX(hue) (hue ? lv_color_hsv_to_rgb(hue, 100, 100) : lv_color_hsv_to_rgb(53, 8, 90)) // 0x00FFC9
+#define COLOR_HOS_TURQUOISE_EX(hue) (hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0x55C9F1))
 
 /**********************
  *      TYPEDEFS
@@ -56,6 +56,8 @@ extern "C" {
  **********************/
 
 extern uint32_t theme_bg_color;
+void lv_theme_hekate_set_accents(uint32_t icons, uint32_t selection);
+void lv_theme_hekate_set_colors(uint32_t text, uint32_t border, uint32_t reflection, uint32_t opacity);
 
 /**
  * Initialize the material theme

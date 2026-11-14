@@ -1,0 +1,25 @@
+ICONES PERSONNALISEES - HEKATE NOVA PRO 18
+
+Ce dossier doit se trouver a la racine de la carte SD : /icone/.
+Images PNG avec transparence, 1920 x 1080 maximum et 8 MiB maximum.
+PNG RGBA, RGB, niveaux de gris et palettes transparentes pris en charge.
+
+Pour remplacer les petits pictogrammes des cinq tuiles d'accueil :
+launch.png   : Demarrer / Launch
+configs.png  : Autres configurations
+payloads.png : Payloads
+emummc.png   : emuMMC
+diagnostic.png : Diagnostic
+
+Utiliser de preference une image carree avec des marges transparentes.
+Les proportions sont conservees. Recharger Nyx apres modification.
+Si le fichier est absent ou invalide, le pictogramme Nova reste affiche.
+
+Pour remplir la grande tuile Launch avec une image, copier un autre PNG
+ici (exemple accueil.png), puis le choisir dans Reglages Nyx > Themes et
+couleurs > Tuile Launch. L'image est recadree aux dimensions de la tuile.
+Ses zones transparentes laissent voir la tuile. Les libelles restent devant.
+Choisir Aucune image restaure le fond normal de la tuile.
+
+Le fond d'ecran global reste gere par le dossier /wallpapers/ et ses BMP.
+Les anciens BMP choisis pour la tuile Launch restent compatibles.

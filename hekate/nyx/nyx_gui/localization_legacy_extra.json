@@ -1,0 +1,3611 @@
+{
+  "Status:": [
+    "Status:",
+    "État :",
+    "Estado:",
+    "Stato:",
+    "Состояние:",
+    "Status:",
+    "Estado:"
+  ],
+  "Error:": [
+    "Error:",
+    "Erreur :",
+    "Error:",
+    "Errore:",
+    "Ошибка:",
+    "Fehler:",
+    "Erro:"
+  ],
+  "Warning:": [
+    "Warning:",
+    "Attention :",
+    "Advertencia:",
+    "Attenzione:",
+    "Внимание:",
+    "Warnung:",
+    "Aviso:"
+  ],
+  "Success:": [
+    "Success:",
+    "Réussite :",
+    "Éxito:",
+    "Operazione riuscita:",
+    "Успешно:",
+    "Erfolg:",
+    "Sucesso:"
+  ],
+  "Dump": [
+    "Dump",
+    "Exporter",
+    "Exportar",
+    "Esporta",
+    "Сохранить",
+    "Sichern",
+    "Exportar"
+  ],
+  "- Init": [
+    "- Init",
+    "- Initialisation",
+    "- Inicialización",
+    "- Inizializzazione",
+    "- Инициализация",
+    "- Initialisierung",
+    "- Inicialização"
+  ],
+  "- Low": [
+    "- Low",
+    "- Faible",
+    "- Bajo",
+    "- Basso",
+    "- Низкий",
+    "- Niedrig",
+    "- Baixo"
+  ],
+  "Failed to dump to": [
+    "Failed to dump to",
+    "Échec de l'export vers",
+    "No se pudo volcar en",
+    "Esportazione non riuscita in",
+    "Не удалось сохранить в",
+    "Speichern fehlgeschlagen unter",
+    "Falha ao exportar para"
+  ],
+  "CAL0 Info": [
+    "CAL0 Info",
+    "Informations CAL0",
+    "Información CAL0",
+    "Informazioni CAL0",
+    "Сведения CAL0",
+    "CAL0-Informationen",
+    "Informações CAL0"
+  ],
+  "CAL0 Version:": [
+    "CAL0 Version:",
+    "Version CAL0 :",
+    "Versión CAL0:",
+    "Versione CAL0:",
+    "Версия CAL0:",
+    "CAL0-Version:",
+    "Versão CAL0:"
+  ],
+  "Update Count:": [
+    "Update Count:",
+    "Nombre de mises à jour :",
+    "Número de actualizaciones:",
+    "Numero aggiornamenti:",
+    "Число обновлений:",
+    "Aktualisierungen:",
+    "Número de atualizações:"
+  ],
+  "Serial Number:": [
+    "Serial Number:",
+    "Numéro de série :",
+    "Número de serie:",
+    "Numero di serie:",
+    "Серийный номер:",
+    "Seriennummer:",
+    "Número de série:"
+  ],
+  "WLAN MAC:": [
+    "WLAN MAC:",
+    "MAC Wi-Fi :",
+    "MAC Wi-Fi:",
+    "MAC Wi-Fi:",
+    "MAC Wi-Fi:",
+    "WLAN-MAC:",
+    "MAC Wi-Fi:"
+  ],
+  "Bluetooth MAC:": [
+    "Bluetooth MAC:",
+    "MAC Bluetooth :",
+    "MAC Bluetooth:",
+    "MAC Bluetooth:",
+    "MAC Bluetooth:",
+    "Bluetooth-MAC:",
+    "MAC Bluetooth:"
+  ],
+  "Battery LOT:": [
+    "Battery LOT:",
+    "Lot de batterie :",
+    "Lote de batería:",
+    "Lotto batteria:",
+    "Партия батареи:",
+    "Batteriecharge:",
+    "Lote da bateria:"
+  ],
+  "LCD Vendor:": [
+    "LCD Vendor:",
+    "Fabricant LCD :",
+    "Fabricante LCD:",
+    "Produttore LCD:",
+    "Производитель LCD:",
+    "LCD-Hersteller:",
+    "Fabricante LCD:"
+  ],
+  "Touch Vendor:": [
+    "Touch Vendor:",
+    "Fabricant tactile :",
+    "Fabricante táctil:",
+    "Produttore touch:",
+    "Производитель сенсора:",
+    "Touch-Hersteller:",
+    "Fabricante tátil:"
+  ],
+  "IMU Type/Mount:": [
+    "IMU Type/Mount:",
+    "Type/montage IMU :",
+    "Tipo/montaje IMU:",
+    "Tipo/montaggio IMU:",
+    "Тип/установка IMU:",
+    "IMU-Typ/Montage:",
+    "Tipo/montagem IMU:"
+  ],
+  "Stick L/R Type:": [
+    "Stick L/R Type:",
+    "Type des sticks G/D :",
+    "Tipo de palancas I/D:",
+    "Tipo stick S/D:",
+    "Тип стиков Л/П:",
+    "Sticktyp L/R:",
+    "Tipo de manípulos E/D:"
+  ],
+  "SHA256 Hash Match:": [
+    "SHA256 Hash Match:",
+    "Correspondance SHA256 :",
+    "Coincidencia SHA256:",
+    "Corrispondenza SHA256:",
+    "Совпадение SHA256:",
+    "SHA256 stimmt überein:",
+    "Correspondência SHA256:"
+  ],
+  "Wafer": [
+    "Wafer",
+    "Plaquette",
+    "Oblea",
+    "Wafer",
+    "Пластина",
+    "Wafer",
+    "Lâmina"
+  ],
+  "SoC:": [
+    "SoC:",
+    "SoC :",
+    "SoC:",
+    "SoC:",
+    "SoC:",
+    "SoC:",
+    "SoC:"
+  ],
+  "SKU:": [
+    "SKU:",
+    "SKU :",
+    "SKU:",
+    "SKU:",
+    "SKU:",
+    "SKU:",
+    "SKU:"
+  ],
+  "DRAM ID:": [
+    "DRAM ID:",
+    "Identifiant DRAM :",
+    "Identificador DRAM:",
+    "Identificativo DRAM:",
+    "Идентификатор DRAM:",
+    "DRAM-Kennung:",
+    "Identificador DRAM:"
+  ],
+  "Burnt Fuses (ODM 7/6):": [
+    "Burnt Fuses (ODM 7/6):",
+    "Fusibles gravés (ODM 7/6) :",
+    "Fusibles quemados (ODM 7/6):",
+    "Fusibili bruciati (ODM 7/6):",
+    "Прожжённые предохранители (ODM 7/6):",
+    "Gebrannte Sicherungen (ODM 7/6):",
+    "Fusíveis gravados (ODM 7/6):"
+  ],
+  "ODM Fields (4/6/7):": [
+    "ODM Fields (4/6/7):",
+    "Champs ODM (4/6/7) :",
+    "Campos ODM (4/6/7):",
+    "Campi ODM (4/6/7):",
+    "Поля ODM (4/6/7):",
+    "ODM-Felder (4/6/7):",
+    "Campos ODM (4/6/7):"
+  ],
+  "Secure Boot Key (SBK):": [
+    "Secure Boot Key (SBK):",
+    "Clé de démarrage sécurisé (SBK) :",
+    "Clave de arranque seguro (SBK):",
+    "Chiave di avvio sicuro (SBK):",
+    "Ключ безопасной загрузки (SBK):",
+    "Sicherer Startschlüssel (SBK):",
+    "Chave de arranque seguro (SBK):"
+  ],
+  "Device Key (DK):": [
+    "Device Key (DK):",
+    "Clé de l'appareil (DK) :",
+    "Clave del dispositivo (DK):",
+    "Chiave del dispositivo (DK):",
+    "Ключ устройства (DK):",
+    "Geräteschlüssel (DK):",
+    "Chave do dispositivo (DK):"
+  ],
+  "Public Key (PK SHA256):": [
+    "Public Key (PK SHA256):",
+    "Clé publique (PK SHA256) :",
+    "Clave pública (PK SHA256):",
+    "Chiave pubblica (PK SHA256):",
+    "Открытый ключ (PK SHA256):",
+    "Öffentlicher Schlüssel (PK SHA256):",
+    "Chave pública (PK SHA256):"
+  ],
+  "HOS Keygen Revision:": [
+    "HOS Keygen Revision:",
+    "Révision de génération des clés HOS :",
+    "Revisión de generación de claves HOS:",
+    "Revisione generazione chiavi HOS:",
+    "Ревизия генерации ключей HOS:",
+    "HOS-Schlüsselerzeugungsrevision:",
+    "Revisão da geração de chaves HOS:"
+  ],
+  "USB Controller (BROM):": [
+    "USB Controller (BROM):",
+    "Contrôleur USB (BROM) :",
+    "Controlador USB (BROM):",
+    "Controller USB (BROM):",
+    "Контроллер USB (BROM):",
+    "USB-Controller (BROM):",
+    "Controlador USB (BROM):"
+  ],
+  "Final Test Revision:": [
+    "Final Test Revision:",
+    "Révision du test final :",
+    "Revisión de prueba final:",
+    "Revisione test finale:",
+    "Ревизия итогового теста:",
+    "Endprüfungsrevision:",
+    "Revisão do teste final:"
+  ],
+  "Chip Probing Revision:": [
+    "Chip Probing Revision:",
+    "Révision de test de la puce :",
+    "Revisión de sondeo del chip:",
+    "Revisione verifica chip:",
+    "Ревизия проверки чипа:",
+    "Chip-Prüfungsrevision:",
+    "Revisão da sondagem do chip:"
+  ],
+  "BootROM Revision:": [
+    "BootROM Revision:",
+    "Révision BootROM :",
+    "Revisión BootROM:",
+    "Revisione BootROM:",
+    "Ревизия BootROM:",
+    "BootROM-Revision:",
+    "Revisão BootROM:"
+  ],
+  "CPU/GPU/SoC Speedo:": [
+    "CPU/GPU/SoC Speedo:",
+    "Speedo CPU/GPU/SoC :",
+    "Speedo CPU/GPU/SoC:",
+    "Speedo CPU/GPU/SoC:",
+    "Speedo CPU/GPU/SoC:",
+    "CPU/GPU/SoC-Speedo:",
+    "Speedo CPU/GPU/SoC:"
+  ],
+  "CPU/GPU/SoC IDDQ:": [
+    "CPU/GPU/SoC IDDQ:",
+    "IDDQ CPU/GPU/SoC :",
+    "IDDQ CPU/GPU/SoC:",
+    "IDDQ CPU/GPU/SoC:",
+    "IDDQ CPU/GPU/SoC:",
+    "CPU/GPU/SoC-IDDQ:",
+    "IDDQ CPU/GPU/SoC:"
+  ],
+  "CPU Speedo 1:": [
+    "CPU Speedo 1:",
+    "Speedo CPU 1 :",
+    "Speedo CPU 1:",
+    "Speedo CPU 1:",
+    "Speedo CPU 1:",
+    "CPU-Speedo 1:",
+    "Speedo CPU 1:"
+  ],
+  "SoC Speedo 2:": [
+    "SoC Speedo 2:",
+    "Speedo SoC 2 :",
+    "Speedo SoC 2:",
+    "Speedo SoC 2:",
+    "Speedo SoC 2:",
+    "SoC-Speedo 2:",
+    "Speedo SoC 2:"
+  ],
+  "Product Code:": [
+    "Product Code:",
+    "Code produit :",
+    "Código de producto:",
+    "Codice prodotto:",
+    "Код продукта:",
+    "Produktcode:",
+    "Código do produto:"
+  ],
+  "Vendor Code:": [
+    "Vendor Code:",
+    "Code fabricant :",
+    "Código de fabricante:",
+    "Codice produttore:",
+    "Код производителя:",
+    "Herstellercode:",
+    "Código do fabricante:"
+  ],
+  "FAB/LOT Code:": [
+    "FAB/LOT Code:",
+    "Code usine/lot :",
+    "Código de fábrica/lote:",
+    "Codice fabbrica/lotto:",
+    "Код фабрики/партии:",
+    "Fabrik-/Chargencode:",
+    "Código de fábrica/lote:"
+  ],
+  "Wafer ID:": [
+    "Wafer ID:",
+    "Identifiant de plaquette :",
+    "Identificador de oblea:",
+    "Identificativo wafer:",
+    "Идентификатор пластины:",
+    "Wafer-Kennung:",
+    "Identificador da lâmina:"
+  ],
+  "X Coordinate:": [
+    "X Coordinate:",
+    "Coordonnée X :",
+    "Coordenada X:",
+    "Coordinata X:",
+    "Координата X:",
+    "X-Koordinate:",
+    "Coordenada X:"
+  ],
+  "Y Coordinate:": [
+    "Y Coordinate:",
+    "Coordonnée Y :",
+    "Coordenada Y:",
+    "Coordinata Y:",
+    "Координата Y:",
+    "Y-Koordinate:",
+    "Coordenada Y:"
+  ],
+  "Uptime:": [
+    "Uptime:",
+    "Durée de fonctionnement :",
+    "Tiempo de actividad:",
+    "Tempo di attività:",
+    "Время работы:",
+    "Betriebszeit:",
+    "Tempo de atividade:"
+  ],
+  "Forced DRAM Config 8GB": [
+    "Forced DRAM Config 8GB",
+    "Configuration DRAM forcée à 8 Go",
+    "Configuración DRAM forzada a 8 GB",
+    "Configurazione DRAM forzata a 8 GB",
+    "Принудительная настройка DRAM 8 ГБ",
+    "Erzwungene DRAM-Konfiguration 8 GB",
+    "Configuração DRAM forçada para 8 GB"
+  ],
+  "Overburnt": [
+    "Overburnt",
+    "Trop de fusibles gravés",
+    "Demasiados fusibles quemados",
+    "Troppi fusibili bruciati",
+    "Избыточно прожжены",
+    "Zu viele Sicherungen gebrannt",
+    "Fusíveis gravados em excesso"
+  ],
+  "Dev": [
+    "Dev",
+    "Développement",
+    "Desarrollo",
+    "Sviluppo",
+    "Разработка",
+    "Entwicklung",
+    "Desenvolvimento"
+  ],
+  "Retail": [
+    "Retail",
+    "Commercial",
+    "Comercial",
+    "Commerciale",
+    "Розница",
+    "Handelsversion",
+    "Comercial"
+  ],
+  "Vendor:": [
+    "Vendor:",
+    "Fabricant :",
+    "Fabricante:",
+    "Produttore:",
+    "Производитель:",
+    "Hersteller:",
+    "Fabricante:"
+  ],
+  "Rev ID:": [
+    "Rev ID:",
+    "Identifiant de révision :",
+    "Identificador de revisión:",
+    "Identificativo revisione:",
+    "Идентификатор ревизии:",
+    "Revisionskennung:",
+    "Identificador de revisão:"
+  ],
+  "Density:": [
+    "Density:",
+    "Capacité :",
+    "Densidad:",
+    "Densità:",
+    "Плотность:",
+    "Dichte:",
+    "Densidade:"
+  ],
+  "OEM Clone 6.2\"": [
+    "OEM Clone 6.2\"",
+    "Clone OEM 6,2\"",
+    "Clon OEM 6,2\"",
+    "Clone OEM 6,2\"",
+    "OEM-клон 6,2\"",
+    "OEM-Nachbau 6,2\"",
+    "Clone OEM 6,2\""
+  ],
+  "OEM Clone 5.5\"": [
+    "OEM Clone 5.5\"",
+    "Clone OEM 5,5\"",
+    "Clon OEM 5,5\"",
+    "Clone OEM 5,5\"",
+    "OEM-клон 5,5\"",
+    "OEM-Nachbau 5,5\"",
+    "Clone OEM 5,5\""
+  ],
+  "OEM Clone": [
+    "OEM Clone",
+    "Clone OEM",
+    "Clon OEM",
+    "Clone OEM",
+    "OEM-клон",
+    "OEM-Nachbau",
+    "Clone OEM"
+  ],
+  "LCD OEM Clone 7\"": [
+    "LCD OEM Clone 7\"",
+    "Clone LCD OEM 7\"",
+    "Clon LCD OEM 7\"",
+    "Clone LCD OEM 7\"",
+    "OEM-клон LCD 7\"",
+    "OEM-LCD-Nachbau 7\"",
+    "Clone LCD OEM 7\""
+  ],
+  "OEM Clone TSP": [
+    "OEM Clone TSP",
+    "Clone TSP OEM",
+    "Clon TSP OEM",
+    "Clone TSP OEM",
+    "OEM-клон TSP",
+    "OEM-TSP-Nachbau",
+    "Clone TSP OEM"
+  ],
+  "Clone": [
+    "Clone",
+    "Clone",
+    "Clon",
+    "Clone",
+    "Клон",
+    "Nachbau",
+    "Clone"
+  ],
+  "Contact me": [
+    "Contact me",
+    "Me contacter",
+    "Contáctame",
+    "Contattami",
+    "Связаться со мной",
+    "Kontakt aufnehmen",
+    "Contactar-me"
+  ],
+  "FTB ver:": [
+    "FTB ver:",
+    "Version FTB :",
+    "Versión FTB:",
+    "Versione FTB:",
+    "Версия FTB:",
+    "FTB-Version:",
+    "Versão FTB:"
+  ],
+  "FW rev:": [
+    "FW rev:",
+    "Révision du micrologiciel :",
+    "Revisión del firmware:",
+    "Revisione firmware:",
+    "Ревизия прошивки:",
+    "Firmware-Revision:",
+    "Revisão do firmware:"
+  ],
+  "HW rev:": [
+    "HW rev:",
+    "Révision matérielle :",
+    "Revisión de hardware:",
+    "Revisione hardware:",
+    "Ревизия оборудования:",
+    "Hardware-Revision:",
+    "Revisão do hardware:"
+  ],
+  "Paired": [
+    "Paired",
+    "Appairé",
+    "Vinculado",
+    "Associato",
+    "Сопряжено",
+    "Gekoppelt",
+    "Emparelhado"
+  ],
+  "This unit is exploitable": [
+    "This unit is exploitable",
+    "Cette console est vulnérable",
+    "Esta consola es vulnerable",
+    "Questa console è vulnerabile",
+    "Эта консоль уязвима",
+    "Diese Konsole ist anfällig",
+    "Esta consola é vulnerável"
+  ],
+  "to the RCM bug!": [
+    "to the RCM bug!",
+    "à la faille RCM !",
+    "al fallo RCM.",
+    "alla falla RCM.",
+    "к уязвимости RCM.",
+    "für den RCM-Fehler.",
+    "à falha RCM."
+  ],
+  "This unit is patched": [
+    "This unit is patched",
+    "Cette console est protégée",
+    "Esta consola está protegida",
+    "Questa console è protetta",
+    "Эта консоль защищена",
+    "Diese Konsole ist geschützt",
+    "Esta consola está protegida"
+  ],
+  "Ipatches:": [
+    "Ipatches:",
+    "Correctifs Ipatch :",
+    "Parches Ipatch:",
+    "Patch Ipatch:",
+    "Исправления Ipatch:",
+    "Ipatch-Korrekturen:",
+    "Correções Ipatch:"
+  ],
+  "Address": [
+    "Address",
+    "Adresse",
+    "Dirección",
+    "Indirizzo",
+    "Адрес",
+    "Adresse",
+    "Endereço"
+  ],
+  "Val": [
+    "Val",
+    "Valeur",
+    "Valor",
+    "Valore",
+    "Значение",
+    "Wert",
+    "Valor"
+  ],
+  "Instruction": [
+    "Instruction",
+    "Instruction",
+    "Instrucción",
+    "Istruzione",
+    "Инструкция",
+    "Anweisung",
+    "Instrução"
+  ],
+  "Device report": [
+    "Device report",
+    "Rapport de l'appareil",
+    "Informe del dispositivo",
+    "Rapporto dispositivo",
+    "Отчёт устройства",
+    "Gerätebericht",
+    "Relatório do dispositivo"
+  ],
+  "Average Erases SLC:": [
+    "Average Erases SLC:",
+    "Effacements SLC moyens :",
+    "Borrados SLC medios:",
+    "Cancellazioni SLC medie:",
+    "Средние стирания SLC:",
+    "Mittlere SLC-Löschungen:",
+    "Apagamentos SLC médios:"
+  ],
+  "Average Erases MLC:": [
+    "Average Erases MLC:",
+    "Effacements MLC moyens :",
+    "Borrados MLC medios:",
+    "Cancellazioni MLC medie:",
+    "Средние стирания MLC:",
+    "Mittlere MLC-Löschungen:",
+    "Apagamentos MLC médios:"
+  ],
+  "Read Reclaims SLC:": [
+    "Read Reclaims SLC:",
+    "Récupérations en lecture SLC :",
+    "Recuperaciones de lectura SLC:",
+    "Recuperi in lettura SLC:",
+    "Восстановления чтения SLC:",
+    "SLC-Lesewiederherstellungen:",
+    "Recuperações de leitura SLC:"
+  ],
+  "Read Reclaims MLC:": [
+    "Read Reclaims MLC:",
+    "Récupérations en lecture MLC :",
+    "Recuperaciones de lectura MLC:",
+    "Recuperi in lettura MLC:",
+    "Восстановления чтения MLC:",
+    "MLC-Lesewiederherstellungen:",
+    "Recuperações de leitura MLC:"
+  ],
+  "Bad Blocks Factory:": [
+    "Bad Blocks Factory:",
+    "Blocs défectueux d'usine :",
+    "Bloques defectuosos de fábrica:",
+    "Blocchi difettosi di fabbrica:",
+    "Заводские плохие блоки:",
+    "Ab Werk fehlerhafte Blöcke:",
+    "Blocos defeituosos de fábrica:"
+  ],
+  "Bad Blocks SYS:": [
+    "Bad Blocks SYS:",
+    "Blocs SYS défectueux :",
+    "Bloques SYS defectuosos:",
+    "Blocchi SYS difettosi:",
+    "Плохие блоки SYS:",
+    "Fehlerhafte SYS-Blöcke:",
+    "Blocos SYS defeituosos:"
+  ],
+  "Bad Blocks SLC:": [
+    "Bad Blocks SLC:",
+    "Blocs SLC défectueux :",
+    "Bloques SLC defectuosos:",
+    "Blocchi SLC difettosi:",
+    "Плохие блоки SLC:",
+    "Fehlerhafte SLC-Blöcke:",
+    "Blocos SLC defeituosos:"
+  ],
+  "Bad Blocks MLC:": [
+    "Bad Blocks MLC:",
+    "Blocs MLC défectueux :",
+    "Bloques MLC defectuosos:",
+    "Blocchi MLC difettosi:",
+    "Плохие блоки MLC:",
+    "Fehlerhafte MLC-Blöcke:",
+    "Blocos MLC defeituosos:"
+  ],
+  "FW Updates:": [
+    "FW Updates:",
+    "Mises à jour du micrologiciel :",
+    "Actualizaciones de firmware:",
+    "Aggiornamenti firmware:",
+    "Обновления прошивки:",
+    "Firmware-Aktualisierungen:",
+    "Atualizações do firmware:"
+  ],
+  "FW Buildtime:": [
+    "FW Buildtime:",
+    "Date de compilation du micrologiciel :",
+    "Fecha de compilación del firmware:",
+    "Data compilazione firmware:",
+    "Дата сборки прошивки:",
+    "Firmware-Erstellungszeit:",
+    "Data de compilação do firmware:"
+  ],
+  "Total Writes:": [
+    "Total Writes:",
+    "Écritures totales :",
+    "Escrituras totales:",
+    "Scritture totali:",
+    "Всего записано:",
+    "Gesamtschreibmenge:",
+    "Escritas totais:"
+  ],
+  "Total Writes SLC:": [
+    "Total Writes SLC:",
+    "Écritures SLC totales :",
+    "Escrituras SLC totales:",
+    "Scritture SLC totali:",
+    "Всего записано SLC:",
+    "SLC-Gesamtschreibmenge:",
+    "Escritas SLC totais:"
+  ],
+  "Total Writes MLC:": [
+    "Total Writes MLC:",
+    "Écritures MLC totales :",
+    "Escrituras MLC totales:",
+    "Scritture MLC totali:",
+    "Всего записано MLC:",
+    "MLC-Gesamtschreibmenge:",
+    "Escritas MLC totais:"
+  ],
+  "BigFile limit status:": [
+    "BigFile limit status:",
+    "État de la limite BigFile :",
+    "Estado del límite BigFile:",
+    "Stato limite BigFile:",
+    "Состояние ограничения BigFile:",
+    "BigFile-Grenzstatus:",
+    "Estado do limite BigFile:"
+  ],
+  "Average Erases Hybrid:": [
+    "Average Erases Hybrid:",
+    "Effacements hybrides moyens :",
+    "Borrados híbridos medios:",
+    "Cancellazioni ibride medie:",
+    "Средние гибридные стирания:",
+    "Mittlere Hybrid-Löschungen:",
+    "Apagamentos híbridos médios:"
+  ],
+  "Advanced Health Status": [
+    "Advanced Health Status",
+    "État de santé avancé",
+    "Estado de salud avanzado",
+    "Stato di salute avanzato",
+    "Расширенное состояние ресурса",
+    "Erweiterter Zustandsbericht",
+    "Estado de saúde avançado"
+  ],
+  "Power ups:": [
+    "Power ups:",
+    "Mises sous tension :",
+    "Encendidos:",
+    "Accensioni:",
+    "Включения:",
+    "Einschaltvorgänge:",
+    "Ligações:"
+  ],
+  "Maximum Erases SLC:": [
+    "Maximum Erases SLC:",
+    "Effacements SLC maximaux :",
+    "Borrados SLC máximos:",
+    "Cancellazioni SLC massime:",
+    "Максимум стираний SLC:",
+    "Maximale SLC-Löschungen:",
+    "Apagamentos SLC máximos:"
+  ],
+  "Maximum Erases MLC:": [
+    "Maximum Erases MLC:",
+    "Effacements MLC maximaux :",
+    "Borrados MLC máximos:",
+    "Cancellazioni MLC massime:",
+    "Максимум стираний MLC:",
+    "Maximale MLC-Löschungen:",
+    "Apagamentos MLC máximos:"
+  ],
+  "Minimum Erases SLC:": [
+    "Minimum Erases SLC:",
+    "Effacements SLC minimaux :",
+    "Borrados SLC mínimos:",
+    "Cancellazioni SLC minime:",
+    "Минимум стираний SLC:",
+    "Minimale SLC-Löschungen:",
+    "Apagamentos SLC mínimos:"
+  ],
+  "Minimum Erases MLC:": [
+    "Minimum Erases MLC:",
+    "Effacements MLC minimaux :",
+    "Borrados MLC mínimos:",
+    "Cancellazioni MLC minime:",
+    "Минимум стираний MLC:",
+    "Minimale MLC-Löschungen:",
+    "Apagamentos MLC mínimos:"
+  ],
+  "Maximum Erases EUDA:": [
+    "Maximum Erases EUDA:",
+    "Effacements EUDA maximaux :",
+    "Borrados EUDA máximos:",
+    "Cancellazioni EUDA massime:",
+    "Максимум стираний EUDA:",
+    "Maximale EUDA-Löschungen:",
+    "Apagamentos EUDA máximos:"
+  ],
+  "Minimum Erases EUDA:": [
+    "Minimum Erases EUDA:",
+    "Effacements EUDA minimaux :",
+    "Borrados EUDA mínimos:",
+    "Cancellazioni EUDA minime:",
+    "Минимум стираний EUDA:",
+    "Minimale EUDA-Löschungen:",
+    "Apagamentos EUDA mínimos:"
+  ],
+  "Average Erases EUDA:": [
+    "Average Erases EUDA:",
+    "Effacements EUDA moyens :",
+    "Borrados EUDA medios:",
+    "Cancellazioni EUDA medie:",
+    "Средние стирания EUDA:",
+    "Mittlere EUDA-Löschungen:",
+    "Apagamentos EUDA médios:"
+  ],
+  "Read Reclaims EUDA:": [
+    "Read Reclaims EUDA:",
+    "Récupérations en lecture EUDA :",
+    "Recuperaciones de lectura EUDA:",
+    "Recuperi in lettura EUDA:",
+    "Восстановления чтения EUDA:",
+    "EUDA-Lesewiederherstellungen:",
+    "Recuperações de leitura EUDA:"
+  ],
+  "Bad Blocks EUDA:": [
+    "Bad Blocks EUDA:",
+    "Blocs EUDA défectueux :",
+    "Bloques EUDA defectuosos:",
+    "Blocchi EUDA difettosi:",
+    "Плохие блоки EUDA:",
+    "Fehlerhafte EUDA-Blöcke:",
+    "Blocos EUDA defeituosos:"
+  ],
+  "Uncorrectable ECC:": [
+    "Uncorrectable ECC:",
+    "ECC non corrigeables :",
+    "ECC no corregibles:",
+    "ECC non correggibili:",
+    "Неисправимые ECC:",
+    "Nicht korrigierbare ECC:",
+    "ECC não corrigíveis:"
+  ],
+  "Temperature Now:": [
+    "Temperature Now:",
+    "Température actuelle :",
+    "Temperatura actual:",
+    "Temperatura attuale:",
+    "Текущая температура:",
+    "Aktuelle Temperatur:",
+    "Temperatura atual:"
+  ],
+  "Temperature Max:": [
+    "Temperature Max:",
+    "Température maximale :",
+    "Temperatura máxima:",
+    "Temperatura massima:",
+    "Максимальная температура:",
+    "Höchsttemperatur:",
+    "Temperatura máxima:"
+  ],
+  "Health Level EUDA:": [
+    "Health Level EUDA:",
+    "État de santé EUDA :",
+    "Nivel de salud EUDA:",
+    "Livello salute EUDA:",
+    "Состояние ресурса EUDA:",
+    "EUDA-Zustand:",
+    "Nível de saúde EUDA:"
+  ],
+  "Health Level MLC:": [
+    "Health Level MLC:",
+    "État de santé MLC :",
+    "Nivel de salud MLC:",
+    "Livello salute MLC:",
+    "Состояние ресурса MLC:",
+    "MLC-Zustand:",
+    "Nível de saúde MLC:"
+  ],
+  "Vendor/Reserved Registers": [
+    "Vendor/Reserved Registers",
+    "Registres fabricant/réservés",
+    "Registros del fabricante/reservados",
+    "Registri produttore/riservati",
+    "Регистры производителя/резервные",
+    "Hersteller-/Reservierte Register",
+    "Registos do fabricante/reservados"
+  ],
+  "SCR Vendor:": [
+    "SCR Vendor:",
+    "SCR fabricant :",
+    "SCR del fabricante:",
+    "SCR produttore:",
+    "SCR производителя:",
+    "Hersteller-SCR:",
+    "SCR do fabricante:"
+  ],
+  "Has data!": [
+    "Has data!",
+    "Contient des données !",
+    "Contiene datos.",
+    "Contiene dati.",
+    "Есть данные.",
+    "Enthält Daten!",
+    "Contém dados!"
+  ],
+  "Empty": [
+    "Empty",
+    "Vide",
+    "Vacío",
+    "Vuoto",
+    "Пусто",
+    "Leer",
+    "Vazio"
+  ],
+  "[Raw Reads] Abort: VOL- & VOL+": [
+    "[Raw Reads] Abort: VOL- & VOL+",
+    "[Lectures brutes] Annuler : VOL- et VOL+",
+    "[Lecturas sin procesar] Cancelar: VOL- y VOL+",
+    "[Letture dirette] Annulla: VOL- e VOL+",
+    "[Прямое чтение] Отмена: VOL- и VOL+",
+    "[Rohdaten lesen] Abbruch: VOL- und VOL+",
+    "[Leituras diretas] Cancelar: VOL- e VOL+"
+  ],
+  "[Raw Reads]": [
+    "[Raw Reads]",
+    "[Lectures brutes]",
+    "[Lecturas sin procesar]",
+    "[Letture dirette]",
+    "[Прямое чтение]",
+    "[Rohdaten lesen]",
+    "[Leituras diretas]"
+  ],
+  "Rate:": [
+    "Rate:",
+    "Débit :",
+    "Velocidad:",
+    "Velocità:",
+    "Скорость:",
+    "Rate:",
+    "Velocidade:"
+  ],
+  "SEQ 16MB": [
+    "SEQ 16MB",
+    "SEQ 16 Mo",
+    "SEQ 16 MB",
+    "SEQ 16 MB",
+    "SEQ 16 МБ",
+    "SEQ 16 MB",
+    "SEQ 16 MB"
+  ],
+  "SEQ  4KB": [
+    "SEQ  4KB",
+    "SEQ  4 Ko",
+    "SEQ  4 KB",
+    "SEQ  4 KB",
+    "SEQ  4 КБ",
+    "SEQ  4 KB",
+    "SEQ  4 KB"
+  ],
+  "RND  4KB": [
+    "RND  4KB",
+    "RND  4 Ko",
+    "RND  4 KB",
+    "RND  4 KB",
+    "RND  4 КБ",
+    "RND  4 KB",
+    "RND  4 KB"
+  ],
+  "Manual": [
+    "Manual",
+    "Manuel",
+    "Manual",
+    "Manuale",
+    "Вручную",
+    "Manuell",
+    "Manual"
+  ],
+  "Minor": [
+    "Minor",
+    "Mineure",
+    "Menor",
+    "Minore",
+    "Младшая",
+    "Nebenrevision",
+    "Menor"
+  ],
+  "Vendor ID:": [
+    "Vendor ID:",
+    "Identifiant fabricant :",
+    "Identificador de fabricante:",
+    "Identificativo produttore:",
+    "Идентификатор производителя:",
+    "Herstellerkennung:",
+    "Identificador do fabricante:"
+  ],
+  "Model:": [
+    "Model:",
+    "Modèle :",
+    "Modelo:",
+    "Modello:",
+    "Модель:",
+    "Modell:",
+    "Modelo:"
+  ],
+  "Prod Rev:": [
+    "Prod Rev:",
+    "Révision produit :",
+    "Revisión del producto:",
+    "Revisione prodotto:",
+    "Ревизия продукта:",
+    "Produktrevision:",
+    "Revisão do produto:"
+  ],
+  "S/N:": [
+    "S/N:",
+    "N° de série :",
+    "N.º de serie:",
+    "N. di serie:",
+    "Серийный №:",
+    "Seriennr.:",
+    "N.º de série:"
+  ],
+  "Month/Year:": [
+    "Month/Year:",
+    "Mois/année :",
+    "Mes/año:",
+    "Mese/anno:",
+    "Месяц/год:",
+    "Monat/Jahr:",
+    "Mês/ano:"
+  ],
+  "Cmd Classes:": [
+    "Cmd Classes:",
+    "Classes de commandes :",
+    "Clases de comandos:",
+    "Classi comandi:",
+    "Классы команд:",
+    "Befehlsklassen:",
+    "Classes de comandos:"
+  ],
+  "Max Bus Rate:": [
+    "Max Bus Rate:",
+    "Débit maximal du bus :",
+    "Velocidad máxima del bus:",
+    "Velocità massima bus:",
+    "Максимальная скорость шины:",
+    "Maximale Busrate:",
+    "Velocidade máxima do barramento:"
+  ],
+  "Current Rate:": [
+    "Current Rate:",
+    "Débit actuel :",
+    "Velocidad actual:",
+    "Velocità attuale:",
+    "Текущая скорость:",
+    "Aktuelle Rate:",
+    "Velocidade atual:"
+  ],
+  "Enhanced Area:": [
+    "Enhanced Area:",
+    "Zone améliorée :",
+    "Área mejorada:",
+    "Area migliorata:",
+    "Улучшенная область:",
+    "Erweiterter Bereich:",
+    "Área melhorada:"
+  ],
+  "Write Cache:": [
+    "Write Cache:",
+    "Cache d'écriture :",
+    "Caché de escritura:",
+    "Cache scrittura:",
+    "Кэш записи:",
+    "Schreibcache:",
+    "Cache de escrita:"
+  ],
+  "Maintenance:": [
+    "Maintenance:",
+    "Maintenance :",
+    "Mantenimiento:",
+    "Manutenzione:",
+    "Обслуживание:",
+    "Wartung:",
+    "Manutenção:"
+  ],
+  "Estimated Life:": [
+    "Estimated Life:",
+    "Durée de vie estimée :",
+    "Vida útil estimada:",
+    "Durata stimata:",
+    "Оценка срока службы:",
+    "Geschätzte Lebensdauer:",
+    "Vida útil estimada:"
+  ],
+  "Reserved Used:": [
+    "Reserved Used:",
+    "Réserve utilisée :",
+    "Reserva utilizada:",
+    "Riserva utilizzata:",
+    "Использовано резерва:",
+    "Verbrauchte Reserve:",
+    "Reserva utilizada:"
+  ],
+  "eMMC Physical Partitions:": [
+    "eMMC Physical Partitions:",
+    "Partitions physiques eMMC :",
+    "Particiones físicas eMMC:",
+    "Partizioni fisiche eMMC:",
+    "Физические разделы eMMC:",
+    "Physische eMMC-Partitionen:",
+    "Partições físicas eMMC:"
+  ],
+  "Size:": [
+    "Size:",
+    "Taille :",
+    "Tamaño:",
+    "Dimensione:",
+    "Размер:",
+    "Größe:",
+    "Tamanho:"
+  ],
+  "Sectors:": [
+    "Sectors:",
+    "Secteurs :",
+    "Sectores:",
+    "Settori:",
+    "Секторы:",
+    "Sektoren:",
+    "Setores:"
+  ],
+  "GPP (eMMC USER) Partition Table:": [
+    "GPP (eMMC USER) Partition Table:",
+    "Table de partitions GPP (eMMC USER) :",
+    "Tabla de particiones GPP (eMMC USER):",
+    "Tabella partizioni GPP (eMMC USER):",
+    "Таблица разделов GPP (eMMC USER):",
+    "GPP-Partitionstabelle (eMMC USER):",
+    "Tabela de partições GPP (eMMC USER):"
+  ],
+  "Idx Name                            Size     Offset    Sectors": [
+    "Idx Name                            Size     Offset    Sectors",
+    "Idx Nom                             Taille   Position  Secteurs",
+    "Índ Nombre                          Tamaño   Posición  Sectores",
+    "Ind Nome                            Dimens.  Offset    Settori",
+    "Инд Имя                             Размер   Смещение  Секторы",
+    "Idx Name                            Größe    Position  Sektoren",
+    "Índ Nome                            Tamanho  Posição   Setores"
+  ],
+  "Card ID": [
+    "Card ID",
+    "Identifiant de carte",
+    "Identificador de tarjeta",
+    "Identificativo scheda",
+    "Идентификатор карты",
+    "Kartenkennung",
+    "Identificador do cartão"
+  ],
+  "OEM ID:": [
+    "OEM ID:",
+    "Identifiant OEM :",
+    "Identificador OEM:",
+    "Identificativo OEM:",
+    "Идентификатор OEM:",
+    "OEM-Kennung:",
+    "Identificador OEM:"
+  ],
+  "Max Power:": [
+    "Max Power:",
+    "Puissance maximale :",
+    "Potencia máxima:",
+    "Potenza massima:",
+    "Максимальная мощность:",
+    "Maximale Leistung:",
+    "Potência máxima:"
+  ],
+  "Initial bus:": [
+    "Initial bus:",
+    "Bus initial :",
+    "Bus inicial:",
+    "Bus iniziale:",
+    "Исходная шина:",
+    "Anfänglicher Bus:",
+    "Barramento inicial:"
+  ],
+  "Card-Specific Data": [
+    "Card-Specific Data",
+    "Données propres à la carte",
+    "Datos específicos de la tarjeta",
+    "Dati specifici della scheda",
+    "Данные конкретной карты",
+    "Kartenspezifische Daten",
+    "Dados específicos do cartão"
+  ],
+  "Capacity:": [
+    "Capacity:",
+    "Capacité :",
+    "Capacidad:",
+    "Capacità:",
+    "Ёмкость:",
+    "Kapazität:",
+    "Capacidade:"
+  ],
+  "Capacity (LBA):": [
+    "Capacity (LBA):",
+    "Capacité (LBA) :",
+    "Capacidad (LBA):",
+    "Capacità (LBA):",
+    "Ёмкость (LBA):",
+    "Kapazität (LBA):",
+    "Capacidade (LBA):"
+  ],
+  "Bus Width:": [
+    "Bus Width:",
+    "Largeur du bus :",
+    "Ancho del bus:",
+    "Larghezza bus:",
+    "Ширина шины:",
+    "Busbreite:",
+    "Largura do barramento:"
+  ],
+  "Max Bus Speed:": [
+    "Max Bus Speed:",
+    "Vitesse maximale du bus :",
+    "Velocidad máxima del bus:",
+    "Velocità massima bus:",
+    "Максимальная скорость шины:",
+    "Maximale Busgeschwindigkeit:",
+    "Velocidade máxima do barramento:"
+  ],
+  "Speed Class:": [
+    "Speed Class:",
+    "Classe de vitesse :",
+    "Clase de velocidad:",
+    "Classe di velocità:",
+    "Класс скорости:",
+    "Geschwindigkeitsklasse:",
+    "Classe de velocidade:"
+  ],
+  "UHS Classes:": [
+    "UHS Classes:",
+    "Classes UHS :",
+    "Clases UHS:",
+    "Classi UHS:",
+    "Классы UHS:",
+    "UHS-Klassen:",
+    "Classes UHS:"
+  ],
+  "Write Protect:": [
+    "Write Protect:",
+    "Protection en écriture :",
+    "Protección de escritura:",
+    "Protezione scrittura:",
+    "Защита записи:",
+    "Schreibschutz:",
+    "Proteção de escrita:"
+  ],
+  "Vendor Info:": [
+    "Vendor Info:",
+    "Informations fabricant :",
+    "Información del fabricante:",
+    "Informazioni produttore:",
+    "Сведения производителя:",
+    "Herstellerinformationen:",
+    "Informações do fabricante:"
+  ],
+  "SDMMC1 Errors:": [
+    "SDMMC1 Errors:",
+    "Erreurs SDMMC1 :",
+    "Errores SDMMC1:",
+    "Errori SDMMC1:",
+    "Ошибки SDMMC1:",
+    "SDMMC1-Fehler:",
+    "Erros SDMMC1:"
+  ],
+  "SDMMC4 Errors:": [
+    "SDMMC4 Errors:",
+    "Erreurs SDMMC4 :",
+    "Errores SDMMC4:",
+    "Errori SDMMC4:",
+    "Ошибки SDMMC4:",
+    "SDMMC4-Fehler:",
+    "Erros SDMMC4:"
+  ],
+  "Init fails:": [
+    "Init fails:",
+    "Échecs d'initialisation :",
+    "Fallos de inicialización:",
+    "Inizializzazioni fallite:",
+    "Сбои инициализации:",
+    "Initialisierungsfehler:",
+    "Falhas de inicialização:"
+  ],
+  "Read/Write fails:": [
+    "Read/Write fails:",
+    "Échecs de lecture/écriture :",
+    "Fallos de lectura/escritura:",
+    "Operazioni lettura/scrittura fallite:",
+    "Сбои чтения/записи:",
+    "Lese-/Schreibfehlschläge:",
+    "Falhas de leitura/escrita:"
+  ],
+  "Read/Write errors:": [
+    "Read/Write errors:",
+    "Erreurs de lecture/écriture :",
+    "Errores de lectura/escritura:",
+    "Errori lettura/scrittura:",
+    "Ошибки чтения/записи:",
+    "Lese-/Schreibfehler:",
+    "Erros de leitura/escrita:"
+  ],
+  "Found FAT FS:": [
+    "Found FAT FS:",
+    "Système FAT détecté :",
+    "Sistema FAT detectado:",
+    "File system FAT rilevato:",
+    "Обнаружена FAT:",
+    "FAT-Dateisystem gefunden:",
+    "Sistema FAT encontrado:"
+  ],
+  "Filesystem:": [
+    "Filesystem:",
+    "Système de fichiers :",
+    "Sistema de archivos:",
+    "File system:",
+    "Файловая система:",
+    "Dateisystem:",
+    "Sistema de ficheiros:"
+  ],
+  "Cluster:": [
+    "Cluster:",
+    "Unité d'allocation :",
+    "Unidad de asignación:",
+    "Unità di allocazione:",
+    "Кластер:",
+    "Zuordnungseinheit:",
+    "Unidade de alocação:"
+  ],
+  "Size free/total:": [
+    "Size free/total:",
+    "Espace libre/total :",
+    "Espacio libre/total:",
+    "Spazio libero/totale:",
+    "Свободно/всего:",
+    "Frei/Gesamt:",
+    "Espaço livre/total:"
+  ],
+  "Init": [
+    "Init",
+    "Initialisation",
+    "Inicialización",
+    "Inizializzazione",
+    "Инициализация",
+    "Initialisierung",
+    "Inicialização"
+  ],
+  "Low": [
+    "Low",
+    "Faible",
+    "Bajo",
+    "Basso",
+    "Низкий",
+    "Niedrig",
+    "Baixo"
+  ],
+  "Error!": [
+    "Error!",
+    "Erreur !",
+    "Error.",
+    "Errore.",
+    "Ошибка!",
+    "Fehler!",
+    "Erro!"
+  ],
+  "Unknown OTP": [
+    "Unknown OTP",
+    "OTP inconnu",
+    "OTP desconocida",
+    "OTP sconosciuta",
+    "Неизвестная OTP",
+    "Unbekannte OTP",
+    "OTP desconhecida"
+  ],
+  "Battery Charger IC Info:": [
+    "Battery Charger IC Info:",
+    "Informations du circuit de charge :",
+    "Información del circuito de carga:",
+    "Informazioni circuito di carica:",
+    "Сведения о микросхеме зарядки:",
+    "Informationen zum Lade-IC:",
+    "Informações do circuito de carga:"
+  ],
+  "Input current limit:": [
+    "Input current limit:",
+    "Limite de courant d'entrée :",
+    "Límite de corriente de entrada:",
+    "Limite corrente in ingresso:",
+    "Предел входного тока:",
+    "Eingangsstromgrenze:",
+    "Limite da corrente de entrada:"
+  ],
+  "System voltage limit:": [
+    "System voltage limit:",
+    "Limite de tension système :",
+    "Límite de tensión del sistema:",
+    "Limite tensione sistema:",
+    "Предел напряжения системы:",
+    "Systemspannungsgrenze:",
+    "Limite da tensão do sistema:"
+  ],
+  "Charge current limit:": [
+    "Charge current limit:",
+    "Limite de courant de charge :",
+    "Límite de corriente de carga:",
+    "Limite corrente di carica:",
+    "Предел зарядного тока:",
+    "Ladestromgrenze:",
+    "Limite da corrente de carga:"
+  ],
+  "Charge voltage limit:": [
+    "Charge voltage limit:",
+    "Limite de tension de charge :",
+    "Límite de tensión de carga:",
+    "Limite tensione di carica:",
+    "Предел зарядного напряжения:",
+    "Ladespannungsgrenze:",
+    "Limite da tensão de carga:"
+  ],
+  "Charge status:": [
+    "Charge status:",
+    "État de charge :",
+    "Estado de carga:",
+    "Stato carica:",
+    "Состояние зарядки:",
+    "Ladestatus:",
+    "Estado de carga:"
+  ],
+  "Temperature status:": [
+    "Temperature status:",
+    "État thermique :",
+    "Estado térmico:",
+    "Stato termico:",
+    "Температурное состояние:",
+    "Temperaturstatus:",
+    "Estado térmico:"
+  ],
+  "USB-PD IC Info:": [
+    "USB-PD IC Info:",
+    "Informations du circuit USB-PD :",
+    "Información del circuito USB-PD:",
+    "Informazioni circuito USB-PD:",
+    "Сведения о микросхеме USB-PD:",
+    "Informationen zum USB-PD-IC:",
+    "Informações do circuito USB-PD:"
+  ],
+  "Connection status:": [
+    "Connection status:",
+    "État de connexion :",
+    "Estado de conexión:",
+    "Stato connessione:",
+    "Состояние подключения:",
+    "Verbindungsstatus:",
+    "Estado da ligação:"
+  ],
+  "Input Wattage Limit:": [
+    "Input Wattage Limit:",
+    "Limite de puissance d'entrée :",
+    "Límite de potencia de entrada:",
+    "Limite potenza in ingresso:",
+    "Предел входной мощности:",
+    "Eingangsleistungsgrenze:",
+    "Limite da potência de entrada:"
+  ],
+  "USB-PD Profiles:": [
+    "USB-PD Profiles:",
+    "Profils USB-PD :",
+    "Perfiles USB-PD:",
+    "Profili USB-PD:",
+    "Профили USB-PD:",
+    "USB-PD-Profile:",
+    "Perfis USB-PD:"
+  ],
+  "Non PD": [
+    "Non PD",
+    "Sans PD",
+    "Sin PD",
+    "Senza PD",
+    "Без PD",
+    "Ohne PD",
+    "Sem PD"
+  ],
+  "Delete Installation Files": [
+    "Delete Installation Files",
+    "Supprimer les fichiers d'installation",
+    "Eliminar archivos de instalación",
+    "Elimina file di installazione",
+    "Удалить файлы установки",
+    "Installationsdateien löschen",
+    "Eliminar ficheiros de instalação"
+  ],
+  "Flashing Linux...": [
+    "Flashing Linux...",
+    "Écriture de Linux...",
+    "Escribiendo Linux...",
+    "Scrittura di Linux...",
+    "Запись Linux...",
+    "Linux wird geschrieben...",
+    "A escrever Linux..."
+  ],
+  "Failed to open 1st part!": [
+    "Failed to open 1st part!",
+    "Impossible d'ouvrir la première partie !",
+    "No se pudo abrir la primera parte.",
+    "Impossibile aprire la prima parte.",
+    "Не удалось открыть первую часть!",
+    "Erster Teil konnte nicht geöffnet werden!",
+    "Não foi possível abrir a primeira parte!"
+  ],
+  "Failed to open part %d": [
+    "Failed to open part %d",
+    "Impossible d'ouvrir la partie %d",
+    "No se pudo abrir la parte %d",
+    "Impossibile aprire la parte %d",
+    "Не удалось открыть часть %d",
+    "Teil %d konnte nicht geöffnet werden",
+    "Não foi possível abrir a parte %d"
+  ],
+  "Reading from SD!": [
+    "Reading from SD!",
+    "Lecture de la carte SD !",
+    "Lectura de la tarjeta SD.",
+    "Lettura dalla scheda SD.",
+    "Чтение с SD!",
+    "Lesen von SD!",
+    "Leitura do cartão SD!"
+  ],
+  "Writing to SD!": [
+    "Writing to SD!",
+    "Écriture sur la carte SD !",
+    "Escritura en la tarjeta SD.",
+    "Scrittura sulla scheda SD.",
+    "Запись на SD!",
+    "Schreiben auf SD!",
+    "Escrita no cartão SD!"
+  ],
+  "Searching for files and partitions...": [
+    "Searching for files and partitions...",
+    "Recherche des fichiers et partitions...",
+    "Buscando archivos y particiones...",
+    "Ricerca di file e partizioni...",
+    "Поиск файлов и разделов...",
+    "Dateien und Partitionen werden gesucht...",
+    "A procurar ficheiros e partições..."
+  ],
+  "Installation files not found!": [
+    "Installation files not found!",
+    "Fichiers d'installation introuvables !",
+    "No se encontraron archivos de instalación.",
+    "File di installazione non trovati.",
+    "Файлы установки не найдены!",
+    "Installationsdateien nicht gefunden!",
+    "Ficheiros de instalação não encontrados!"
+  ],
+  "No partition found!": [
+    "No partition found!",
+    "Aucune partition trouvée !",
+    "No se encontró ninguna partición.",
+    "Nessuna partizione trovata.",
+    "Разделы не найдены!",
+    "Keine Partition gefunden!",
+    "Nenhuma partição encontrada!"
+  ],
+  "The image is not aligned to 4 MiB!": [
+    "The image is not aligned to 4 MiB!",
+    "L'image n'est pas alignée sur 4 Mio !",
+    "La imagen no está alineada a 4 MiB.",
+    "L'immagine non è allineata a 4 MiB.",
+    "Образ не выровнен по 4 МиБ!",
+    "Das Image ist nicht auf 4 MiB ausgerichtet!",
+    "A imagem não está alinhada a 4 MiB!"
+  ],
+  "The image is bigger than the partition!": [
+    "The image is bigger than the partition!",
+    "L'image est plus grande que la partition !",
+    "La imagen supera el tamaño de la partición.",
+    "L'immagine è più grande della partizione.",
+    "Образ больше раздела!",
+    "Das Image ist größer als die Partition!",
+    "A imagem é maior do que a partição!"
+  ],
+  "Found installation files and partition.": [
+    "Found installation files and partition.",
+    "Fichiers d'installation et partition trouvés.",
+    "Archivos de instalación y partición encontrados.",
+    "File di installazione e partizione trovati.",
+    "Файлы установки и раздел найдены.",
+    "Installationsdateien und Partition gefunden.",
+    "Ficheiros de instalação e partição encontrados."
+  ],
+  "Offset:": [
+    "Offset:",
+    "Position :",
+    "Posición:",
+    "Offset:",
+    "Смещение:",
+    "Position:",
+    "Posição:"
+  ],
+  "Image size:": [
+    "Image size:",
+    "Taille de l'image :",
+    "Tamaño de imagen:",
+    "Dimensione immagine:",
+    "Размер образа:",
+    "Imagegröße:",
+    "Tamanho da imagem:"
+  ],
+  "No Android GPT was found!": [
+    "No Android GPT was found!",
+    "Aucune GPT Android trouvée !",
+    "No se encontró ninguna GPT de Android.",
+    "Nessuna GPT Android trovata.",
+    "GPT Android не найдена!",
+    "Keine Android-GPT gefunden!",
+    "Nenhuma GPT Android encontrada!"
+  ],
+  "Kernel image not found!": [
+    "Kernel image not found!",
+    "Image du noyau introuvable !",
+    "No se encontró la imagen del núcleo.",
+    "Immagine del kernel non trovata.",
+    "Образ ядра не найден!",
+    "Kernel-Image nicht gefunden!",
+    "Imagem do kernel não encontrada!"
+  ],
+  "Kernel image too big!": [
+    "Kernel image too big!",
+    "Image du noyau trop grande !",
+    "La imagen del núcleo es demasiado grande.",
+    "Immagine del kernel troppo grande.",
+    "Образ ядра слишком большой!",
+    "Kernel-Image zu groß!",
+    "Imagem do kernel demasiado grande!"
+  ],
+  "Kernel image flashed!": [
+    "Kernel image flashed!",
+    "Image du noyau écrite !",
+    "Imagen del núcleo escrita.",
+    "Immagine del kernel scritta.",
+    "Образ ядра записан!",
+    "Kernel-Image geschrieben!",
+    "Imagem do kernel escrita!"
+  ],
+  "Kernel partition not found!": [
+    "Kernel partition not found!",
+    "Partition du noyau introuvable !",
+    "No se encontró la partición del núcleo.",
+    "Partizione del kernel non trovata.",
+    "Раздел ядра не найден!",
+    "Kernel-Partition nicht gefunden!",
+    "Partição do kernel não encontrada!"
+  ],
+  "Recovery image not found!": [
+    "Recovery image not found!",
+    "Image de récupération introuvable !",
+    "No se encontró la imagen de recuperación.",
+    "Immagine di ripristino non trovata.",
+    "Образ восстановления не найден!",
+    "Recovery-Image nicht gefunden!",
+    "Imagem de recuperação não encontrada!"
+  ],
+  "Recovery image too big!": [
+    "Recovery image too big!",
+    "Image de récupération trop grande !",
+    "La imagen de recuperación es demasiado grande.",
+    "Immagine di ripristino troppo grande.",
+    "Образ восстановления слишком большой!",
+    "Recovery-Image zu groß!",
+    "Imagem de recuperação demasiado grande!"
+  ],
+  "Recovery image flashed!": [
+    "Recovery image flashed!",
+    "Image de récupération écrite !",
+    "Imagen de recuperación escrita.",
+    "Immagine di ripristino scritta.",
+    "Образ восстановления записан!",
+    "Recovery-Image geschrieben!",
+    "Imagem de recuperação escrita!"
+  ],
+  "Recovery partition not found!": [
+    "Recovery partition not found!",
+    "Partition de récupération introuvable !",
+    "No se encontró la partición de recuperación.",
+    "Partizione di ripristino non trovata.",
+    "Раздел восстановления не найден!",
+    "Recovery-Partition nicht gefunden!",
+    "Partição de recuperação não encontrada!"
+  ],
+  "DTB image not found!": [
+    "DTB image not found!",
+    "Image DTB introuvable !",
+    "No se encontró la imagen DTB.",
+    "Immagine DTB non trovata.",
+    "Образ DTB не найден!",
+    "DTB-Image nicht gefunden!",
+    "Imagem DTB não encontrada!"
+  ],
+  "DTB image too big!": [
+    "DTB image too big!",
+    "Image DTB trop grande !",
+    "La imagen DTB es demasiado grande.",
+    "Immagine DTB troppo grande.",
+    "Образ DTB слишком большой!",
+    "DTB-Image zu groß!",
+    "Imagem DTB demasiado grande!"
+  ],
+  "DTB image flashed!": [
+    "DTB image flashed!",
+    "Image DTB écrite !",
+    "Imagen DTB escrita.",
+    "Immagine DTB scritta.",
+    "Образ DTB записан!",
+    "DTB-Image geschrieben!",
+    "Imagem DTB escrita!"
+  ],
+  "DTB partition not found!": [
+    "DTB partition not found!",
+    "Partition DTB introuvable !",
+    "No se encontró la partición DTB.",
+    "Partizione DTB non trovata.",
+    "Раздел DTB не найден!",
+    "DTB-Partition nicht gefunden!",
+    "Partição DTB não encontrada!"
+  ],
+  "Do you want to reboot into Recovery\nto finish Android installation?": [
+    "Do you want to reboot into Recovery\nto finish Android installation?",
+    "Redémarrer en récupération\npour terminer l'installation d'Android ?",
+    "¿Reiniciar en recuperación\npara terminar la instalación de Android?",
+    "Riavviare in ripristino\nper completare l'installazione Android?",
+    "Перезагрузить в режим восстановления\nдля завершения установки Android?",
+    "In Recovery neu starten,\num die Android-Installation abzuschließen?",
+    "Reiniciar em recuperação\npara concluir a instalação do Android?"
+  ],
+  "Initializing Ramdisk...": [
+    "Initializing Ramdisk...",
+    "Initialisation du disque RAM...",
+    "Inicializando el disco RAM...",
+    "Inizializzazione disco RAM...",
+    "Инициализация RAM-диска...",
+    "RAM-Disk wird initialisiert...",
+    "A inicializar o disco RAM..."
+  ],
+  "Failed to initialize Ramdisk!": [
+    "Failed to initialize Ramdisk!",
+    "Impossible d'initialiser le disque RAM !",
+    "No se pudo inicializar el disco RAM.",
+    "Impossibile inizializzare il disco RAM.",
+    "Не удалось инициализировать RAM-диск!",
+    "RAM-Disk konnte nicht initialisiert werden!",
+    "Não foi possível inicializar o disco RAM!"
+  ],
+  "Backing up files...": [
+    "Backing up files...",
+    "Sauvegarde des fichiers...",
+    "Guardando copia de los archivos...",
+    "Backup dei file...",
+    "Резервное копирование файлов...",
+    "Dateien werden gesichert...",
+    "A criar cópia dos ficheiros..."
+  ],
+  "Failed to back up files!": [
+    "Failed to back up files!",
+    "Impossible de sauvegarder les fichiers !",
+    "No se pudo guardar la copia de los archivos.",
+    "Backup dei file non riuscito.",
+    "Не удалось сохранить резервную копию файлов!",
+    "Dateisicherung fehlgeschlagen!",
+    "Não foi possível criar a cópia dos ficheiros!"
+  ],
+  "Bootloader folder exceeds 1.2GB or corrupt!": [
+    "Bootloader folder exceeds 1.2GB or corrupt!",
+    "Dossier bootloader corrompu ou supérieur à 1,2 Go !",
+    "La carpeta bootloader supera 1,2 GB o está dañada.",
+    "La cartella bootloader supera 1,2 GB o è danneggiata.",
+    "Папка bootloader повреждена или превышает 1,2 ГБ!",
+    "Ordner bootloader ist beschädigt oder größer als 1,2 GB!",
+    "A pasta bootloader excede 1,2 GB ou está danificada!"
+  ],
+  "Formatting FAT32 partition...": [
+    "Formatting FAT32 partition...",
+    "Formatage de la partition FAT32...",
+    "Formateando la partición FAT32...",
+    "Formattazione partizione FAT32...",
+    "Форматирование раздела FAT32...",
+    "FAT32-Partition wird formatiert...",
+    "A formatar a partição FAT32..."
+  ],
+  "Failed to format disk (%d)!": [
+    "Failed to format disk (%d)!",
+    "Impossible de formater le disque (%d) !",
+    "No se pudo formatear el disco (%d).",
+    "Impossibile formattare il disco (%d).",
+    "Не удалось отформатировать диск (%d)!",
+    "Datenträger konnte nicht formatiert werden (%d)!",
+    "Não foi possível formatar o disco (%d)!"
+  ],
+  "Restoring files...": [
+    "Restoring files...",
+    "Restauration des fichiers...",
+    "Restaurando archivos...",
+    "Ripristino dei file...",
+    "Восстановление файлов...",
+    "Dateien werden wiederhergestellt...",
+    "A restaurar os ficheiros..."
+  ],
+  "Failed to restore files!": [
+    "Failed to restore files!",
+    "Impossible de restaurer les fichiers !",
+    "No se pudieron restaurar los archivos.",
+    "Ripristino dei file non riuscito.",
+    "Не удалось восстановить файлы!",
+    "Dateiwiederherstellung fehlgeschlagen!",
+    "Não foi possível restaurar os ficheiros!"
+  ],
+  "Restored files but the operation failed!": [
+    "Restored files but the operation failed!",
+    "Fichiers restaurés, mais l'opération a échoué !",
+    "Archivos restaurados, pero la operación falló.",
+    "File ripristinati, ma operazione non riuscita.",
+    "Файлы восстановлены, но операция завершилась неудачей!",
+    "Dateien wiederhergestellt, aber Vorgang fehlgeschlagen!",
+    "Ficheiros restaurados, mas a operação falhou!"
+  ],
+  "Flashing partition table...": [
+    "Flashing partition table...",
+    "Écriture de la table de partitions...",
+    "Escribiendo la tabla de particiones...",
+    "Scrittura della tabella partizioni...",
+    "Запись таблицы разделов...",
+    "Partitionstabelle wird geschrieben...",
+    "A escrever a tabela de partições..."
+  ],
+  "Done!": [
+    "Done!",
+    "Terminé !",
+    "Terminado.",
+    "Completato.",
+    "Готово!",
+    "Fertig!",
+    "Concluído!"
+  ],
+  "Initializing...": [
+    "Initializing...",
+    "Initialisation...",
+    "Inicializando...",
+    "Inizializzazione...",
+    "Инициализация...",
+    "Initialisierung...",
+    "A inicializar..."
+  ],
+  "For formatting USER partition,": [
+    "For formatting USER partition,",
+    "Pour formater la partition USER,",
+    "Para formatear la partición USER,",
+    "Per formattare la partizione USER,",
+    "Для форматирования раздела USER",
+    "Zum Formatieren der USER-Partition",
+    "Para formatar a partição USER,"
+  ],
+  "BIS keys are needed!": [
+    "BIS keys are needed!",
+    "les clés BIS sont nécessaires !",
+    "se necesitan las claves BIS.",
+    "sono necessarie le chiavi BIS.",
+    "нужны ключи BIS!",
+    "werden BIS-Schlüssel benötigt!",
+    "são necessárias as chaves BIS!"
+  ],
+  "Formatting USER partition...": [
+    "Formatting USER partition...",
+    "Formatage de la partition USER...",
+    "Formateando la partición USER...",
+    "Formattazione partizione USER...",
+    "Форматирование раздела USER...",
+    "USER-Partition wird formatiert...",
+    "A formatar a partição USER..."
+  ],
+  "Flash Linux": [
+    "Flash Linux",
+    "Installer Linux",
+    "Instalar Linux",
+    "Installa Linux",
+    "Установить Linux",
+    "Linux installieren",
+    "Instalar Linux"
+  ],
+  "Flash Android": [
+    "Flash Android",
+    "Installer Android",
+    "Instalar Android",
+    "Installa Android",
+    "Установить Android",
+    "Android installieren",
+    "Instalar Android"
+  ],
+  "Legacy": [
+    "Legacy",
+    "Ancien format",
+    "Heredado",
+    "Tradizionale",
+    "Старая схема",
+    "Klassisch",
+    "Legado"
+  ],
+  "Dynamic": [
+    "Dynamic",
+    "Dynamique",
+    "Dinámico",
+    "Dinamico",
+    "Динамическая",
+    "Dynamisch",
+    "Dinâmico"
+  ],
+  "Don't Backup": [
+    "Don't Backup",
+    "Ne pas sauvegarder",
+    "No hacer copia",
+    "Non fare backup",
+    "Не создавать копию",
+    "Nicht sichern",
+    "Não criar cópia"
+  ],
+  "The SD Card files will be backed up automatically!": [
+    "The SD Card files will be backed up automatically!",
+    "Les fichiers de la carte SD seront sauvegardés automatiquement !",
+    "Los archivos de la tarjeta SD se copiarán automáticamente.",
+    "I file della scheda SD saranno salvati automaticamente.",
+    "Файлы SD-карты будут автоматически сохранены!",
+    "Die SD-Dateien werden automatisch gesichert!",
+    "Os ficheiros do cartão SD serão copiados automaticamente!"
+  ],
+  "Any other partition will be wiped!": [
+    "Any other partition will be wiped!",
+    "Toutes les autres partitions seront effacées !",
+    "Se borrarán todas las demás particiones.",
+    "Tutte le altre partizioni saranno cancellate.",
+    "Все остальные разделы будут стёрты!",
+    "Alle anderen Partitionen werden gelöscht!",
+    "Todas as outras partições serão apagadas!"
+  ],
+  "Total files:": [
+    "Total files:",
+    "Nombre de fichiers :",
+    "Archivos totales:",
+    "File totali:",
+    "Всего файлов:",
+    "Dateien insgesamt:",
+    "Total de ficheiros:"
+  ],
+  "Total size:": [
+    "Total size:",
+    "Taille totale :",
+    "Tamaño total:",
+    "Dimensione totale:",
+    "Общий размер:",
+    "Gesamtgröße:",
+    "Tamanho total:"
+  ],
+  "No valid GPT was found!": [
+    "No valid GPT was found!",
+    "Aucune GPT valide trouvée !",
+    "No se encontró ninguna GPT válida.",
+    "Nessuna GPT valida trovata.",
+    "Корректная GPT не найдена!",
+    "Keine gültige GPT gefunden!",
+    "Nenhuma GPT válida encontrada!"
+  ],
+  "The Hybrid MBR needs no change!": [
+    "The Hybrid MBR needs no change!",
+    "Le MBR hybride ne nécessite aucune modification !",
+    "El MBR híbrido no necesita cambios.",
+    "L'MBR ibrido non richiede modifiche.",
+    "Гибридная MBR не требует изменений!",
+    "Der Hybrid-MBR muss nicht geändert werden!",
+    "O MBR híbrido não necessita de alterações!"
+  ],
+  "The following need to be corrected:": [
+    "The following need to be corrected:",
+    "Les éléments suivants doivent être corrigés :",
+    "Se deben corregir los siguientes elementos:",
+    "Occorre correggere quanto segue:",
+    "Необходимо исправить следующее:",
+    "Folgendes muss korrigiert werden:",
+    "É necessário corrigir o seguinte:"
+  ],
+  "- MBR attributes": [
+    "- MBR attributes",
+    "- Attributs MBR",
+    "- Atributos MBR",
+    "- Attributi MBR",
+    "- Атрибуты MBR",
+    "- MBR-Attribute",
+    "- Atributos MBR"
+  ],
+  "- emuMMC GPT Partition address and size": [
+    "- emuMMC GPT Partition address and size",
+    "- Adresse et taille de partition GPT emuMMC",
+    "- Dirección y tamaño de partición GPT emuMMC",
+    "- Indirizzo e dimensione partizione GPT emuMMC",
+    "- Адрес и размер раздела GPT emuMMC",
+    "- Adresse und Größe der emuMMC-GPT-Partition",
+    "- Endereço e tamanho da partição GPT emuMMC"
+  ],
+  "- GPT OOB/Empty Partitions (removal)": [
+    "- GPT OOB/Empty Partitions (removal)",
+    "- Partitions GPT hors limites/vides (suppression)",
+    "- Particiones GPT fuera de límites/vacías (eliminar)",
+    "- Partizioni GPT fuori limite/vuote (rimozione)",
+    "- Разделы GPT вне границ/пустые (удаление)",
+    "- GPT-Partitionen außerhalb der Grenzen/leer (Entfernung)",
+    "- Partições GPT fora dos limites/vazias (remoção)"
+  ],
+  "Choose new partition layout:": [
+    "Choose new partition layout:",
+    "Choisir la nouvelle disposition des partitions :",
+    "Elige la nueva distribución de particiones:",
+    "Scegli la nuova disposizione delle partizioni:",
+    "Выберите новую схему разделов:",
+    "Neues Partitionslayout wählen:",
+    "Escolher a nova disposição das partições:"
+  ],
+  "HOS (FAT32):": [
+    "HOS (FAT32):",
+    "HOS (FAT32) :",
+    "HOS (FAT32):",
+    "HOS (FAT32):",
+    "HOS (FAT32):",
+    "HOS (FAT32):",
+    "HOS (FAT32):"
+  ],
+  "eMMC (USER):": [
+    "eMMC (USER):",
+    "eMMC (USER) :",
+    "eMMC (USER):",
+    "eMMC (USER):",
+    "eMMC (USER):",
+    "eMMC (USER):",
+    "eMMC (USER):"
+  ],
+  "emuMMC (RAW):": [
+    "emuMMC (RAW):",
+    "emuMMC (RAW) :",
+    "emuMMC (RAW):",
+    "emuMMC (RAW):",
+    "emuMMC (RAW):",
+    "emuMMC (RAW):",
+    "emuMMC (RAW):"
+  ],
+  "Linux (EXT4):": [
+    "Linux (EXT4):",
+    "Linux (EXT4) :",
+    "Linux (EXT4):",
+    "Linux (EXT4):",
+    "Linux (EXT4):",
+    "Linux (EXT4):",
+    "Linux (EXT4):"
+  ],
+  "Android (USER):": [
+    "Android (USER):",
+    "Android (USER) :",
+    "Android (USER):",
+    "Android (USER):",
+    "Android (USER):",
+    "Android (USER):",
+    "Android (USER):"
+  ],
+  "%s Benchmark": [
+    "%s Benchmark",
+    "Test de performances %s",
+    "Prueba de rendimiento %s",
+    "Test prestazioni %s",
+    "Тест скорости %s",
+    "%s-Leistungstest",
+    "Teste de desempenho %s"
+  ],
+  "(Module 0 | 1):": [
+    "(Module 0 | 1):",
+    "(Module 0 | 1) :",
+    "(Módulo 0 | 1):",
+    "(Modulo 0 | 1):",
+    "(Модуль 0 | 1):",
+    "(Modul 0 | 1):",
+    "(Módulo 0 | 1):"
+  ],
+  " + Manual": [
+    " + Manual",
+    " + Manuel",
+    " + Manual",
+    " + Manuale",
+    " + Вручную",
+    " + Manuell",
+    " + Manual"
+  ],
+  "Start:": [
+    "Start:",
+    "Début :",
+    "Inicio:",
+    "Inizio:",
+    "Начало:",
+    "Anfang:",
+    "Início:"
+  ],
+  "Type:": [
+    "Type:",
+    "Type :",
+    "Tipo:",
+    "Tipo:",
+    "Тип:",
+    "Typ:",
+    "Tipo:"
+  ],
+  "Warning: Do you really want to continue?!": [
+    "Warning: Do you really want to continue?!",
+    "Attention : voulez-vous vraiment continuer ?!",
+    "Advertencia: ¿seguro que quieres continuar?",
+    "Attenzione: continuare davvero?",
+    "Внимание: вы действительно хотите продолжить?!",
+    "Warnung: Wirklich fortfahren?!",
+    "Aviso: pretende mesmo continuar?!"
+  ],
+  "Please select a partition scheme:": [
+    "Please select a partition scheme:",
+    "Choisissez un schéma de partitions :",
+    "Selecciona un esquema de particiones:",
+    "Scegli uno schema di partizioni:",
+    "Выберите схему разделов:",
+    "Partitionsschema auswählen:",
+    "Escolha um esquema de partições:"
+  ],
+  "Android 13+ (Preferred)": [
+    "Android 13+ (Preferred)",
+    "Android 13+ (recommandé)",
+    "Android 13+ (recomendado)",
+    "Android 13+ (consigliato)",
+    "Android 13+ (рекомендуется)",
+    "Android 13+ (empfohlen)",
+    "Android 13+ (recomendado)"
+  ],
+  "Press #FF8000 POWER# to Continue.": [
+    "Press #FF8000 POWER# to Continue.",
+    "Appuyez sur #FF8000 POWER# pour continuer.",
+    "Pulsa #FF8000 POWER# para continuar.",
+    "Premi #FF8000 POWER# per continuare.",
+    "Нажмите #FF8000 POWER# для продолжения.",
+    "Zum Fortfahren #FF8000 POWER# drücken.",
+    "Prima #FF8000 POWER# para continuar."
+  ],
+  "Press #FF8000 VOL# to abort.": [
+    "Press #FF8000 VOL# to abort.",
+    "Appuyez sur #FF8000 VOL# pour annuler.",
+    "Pulsa #FF8000 VOL# para cancelar.",
+    "Premi #FF8000 VOL# per annullare.",
+    "Нажмите #FF8000 VOL# для отмены.",
+    "Zum Abbrechen #FF8000 VOL# drücken.",
+    "Prima #FF8000 VOL# para cancelar."
+  ],
+  "Remove the SD card and check that is OK.": [
+    "Remove the SD card and check that is OK.",
+    "Retirez la carte SD et vérifiez son état.",
+    "Retira la tarjeta SD y comprueba su estado.",
+    "Rimuovi la scheda SD e verifica che funzioni.",
+    "Извлеките SD-карту и проверьте её исправность.",
+    "SD-Karte entfernen und auf Fehler prüfen.",
+    "Retire o cartão SD e verifique o seu estado."
+  ],
+  "If not, format it, reinsert it and": [
+    "If not, format it, reinsert it and",
+    "Sinon, formatez-la, réinsérez-la et",
+    "Si falla, formatéala, vuelve a insertarla y",
+    "Se necessario, formattala, reinseriscila e",
+    "При неисправности отформатируйте, вставьте и",
+    "Bei Fehlern formatieren, wieder einsetzen und",
+    "Se não estiver bem, formate-o, volte a inseri-lo e"
+  ],
+  "press #FF8000 POWER#!": [
+    "press #FF8000 POWER#!",
+    "appuyez sur #FF8000 POWER# !",
+    "pulsa #FF8000 POWER#.",
+    "premi #FF8000 POWER#.",
+    "нажмите #FF8000 POWER#!",
+    "#FF8000 POWER# drücken!",
+    "prima #FF8000 POWER#!"
+  ],
+  "Choose #FFDD00 new# partition layout:": [
+    "Choose #FFDD00 new# partition layout:",
+    "Choisir la #FFDD00 nouvelle# disposition des partitions :",
+    "Elige la #FFDD00 nueva# distribución de particiones:",
+    "Scegli la #FFDD00 nuova# disposizione delle partizioni:",
+    "Выберите #FFDD00 новую# схему разделов:",
+    "#FFDD00 Neues# Partitionslayout wählen:",
+    "Escolher a #FFDD00 nova# disposição das partições:"
+  ],
+  "This will flash #C7EA46 Kernel#, #C7EA46 DTB# and #C7EA46 Recovery# if found.": [
+    "This will flash #C7EA46 Kernel#, #C7EA46 DTB# and #C7EA46 Recovery# if found.",
+    "Les images #C7EA46 Kernel#, #C7EA46 DTB# et #C7EA46 Recovery# seront écrites si elles sont trouvées.",
+    "Se escribirán las imágenes #C7EA46 Kernel#, #C7EA46 DTB# y #C7EA46 Recovery# que se encuentren.",
+    "Saranno scritte le immagini #C7EA46 Kernel#, #C7EA46 DTB# e #C7EA46 Recovery# se presenti.",
+    "Будут записаны найденные образы #C7EA46 Kernel#, #C7EA46 DTB# и #C7EA46 Recovery#.",
+    "Gefundene Images für #C7EA46 Kernel#, #C7EA46 DTB# und #C7EA46 Recovery# werden geschrieben.",
+    "Serão escritas as imagens #C7EA46 Kernel#, #C7EA46 DTB# e #C7EA46 Recovery# que forem encontradas."
+  ],
+  "These will be deleted after a successful flash.": [
+    "These will be deleted after a successful flash.",
+    "Elles seront supprimées après une écriture réussie.",
+    "Se eliminarán después de escribirlas correctamente.",
+    "Saranno eliminate dopo una scrittura riuscita.",
+    "После успешной записи они будут удалены.",
+    "Nach erfolgreichem Schreiben werden sie gelöscht.",
+    "Serão eliminadas após uma escrita bem-sucedida."
+  ],
+  "This will launch Lockpick RCM.": [
+    "This will launch Lockpick RCM.",
+    "Lockpick RCM va être lancé.",
+    "Se iniciará Lockpick RCM.",
+    "Verrà avviato Lockpick RCM.",
+    "Будет запущен Lockpick RCM.",
+    "Lockpick RCM wird gestartet.",
+    "O Lockpick RCM será iniciado."
+  ],
+  "To return back from lockpick use": [
+    "To return back from lockpick use",
+    "Pour revenir depuis Lockpick, utilisez",
+    "Para volver desde Lockpick, usa",
+    "Per tornare da Lockpick, usa",
+    "Для возврата из Lockpick используйте",
+    "Zur Rückkehr aus Lockpick die Option",
+    "Para regressar do Lockpick, utilize"
+  ],
+  "Reboot to hekate": [
+    "Reboot to hekate",
+    "Reboot to hekate",
+    "Reboot to hekate",
+    "Reboot to hekate",
+    "Reboot to hekate",
+    "Reboot to hekate",
+    "Reboot to hekate"
+  ],
+  "View Ipatches and dump the unpatched and patched versions": [
+    "View Ipatches and dump the unpatched and patched versions",
+    "Afficher les correctifs Ipatch et exporter les versions d'origine et corrigée",
+    "Ver los parches Ipatch y exportar las versiones original y corregida",
+    "Visualizza le patch Ipatch ed esporta le versioni originale e corretta",
+    "Просмотр Ipatch и сохранение исходной и исправленной версий",
+    "Ipatches anzeigen und ursprüngliche sowie korrigierte Versionen sichern",
+    "Ver correções Ipatch e exportar as versões original e corrigida"
+  ],
+  "of BootROM.": [
+    "of BootROM.",
+    "de BootROM.",
+    "de BootROM.",
+    "di BootROM.",
+    "BootROM.",
+    "des BootROM.",
+    "de BootROM."
+  ],
+  "Or dump every single key via #C7EA46 Lockpick RCM#.": [
+    "Or dump every single key via #C7EA46 Lockpick RCM#.",
+    "Ou exporter toutes les clés avec #C7EA46 Lockpick RCM#.",
+    "O exportar todas las claves con #C7EA46 Lockpick RCM#.",
+    "Oppure esporta tutte le chiavi con #C7EA46 Lockpick RCM#.",
+    "Или сохраните все ключи через #C7EA46 Lockpick RCM#.",
+    "Oder alle Schlüssel mit #C7EA46 Lockpick RCM# sichern.",
+    "Ou exportar todas as chaves com #C7EA46 Lockpick RCM#."
+  ],
+  "of BootROM. Or dump every single key via #C7EA46 Lockpick RCM#.": [
+    "of BootROM. Or dump every single key via #C7EA46 Lockpick RCM#.",
+    "de BootROM. Ou exporter toutes les clés avec #C7EA46 Lockpick RCM#.",
+    "de BootROM. O exportar todas las claves con #C7EA46 Lockpick RCM#.",
+    "di BootROM. Oppure esporta tutte le chiavi con #C7EA46 Lockpick RCM#.",
+    "BootROM. Или сохраните все ключи через #C7EA46 Lockpick RCM#.",
+    "des BootROM. Oder alle Schlüssel mit #C7EA46 Lockpick RCM# sichern.",
+    "de BootROM. Ou exportar todas as chaves com #C7EA46 Lockpick RCM#."
+  ],
+  "#FFDD00 bootloader/payloads/Lockpick_RCM.bin is missing or old!#": [
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin is missing or old!#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin est absent ou ancien !#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin falta o es antiguo.#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin manca o è obsoleto.#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin отсутствует или устарел!#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin fehlt oder ist veraltet!#",
+    "#FFDD00 bootloader/payloads/Lockpick_RCM.bin está ausente ou desatualizado!#"
+  ],
+  "View and dump the cached #C7EA46 Fuses# and #C7EA46 KFuses#.": [
+    "View and dump the cached #C7EA46 Fuses# and #C7EA46 KFuses#.",
+    "Afficher et exporter les #C7EA46 fusibles# et #C7EA46 KFuses# en cache.",
+    "Ver y exportar los #C7EA46 fusibles# y #C7EA46 KFuses# almacenados.",
+    "Visualizza ed esporta #C7EA46 fusibili# e #C7EA46 KFuses# memorizzati.",
+    "Просмотр и сохранение кэшированных #C7EA46 предохранителей# и #C7EA46 KFuses#.",
+    "Zwischengespeicherte #C7EA46 Fuses# und #C7EA46 KFuses# anzeigen und sichern.",
+    "Ver e exportar os #C7EA46 fusíveis# e #C7EA46 KFuses# em cache."
+  ],
+  "Fuses contain info about the SoC/SKU and KFuses HDCP keys.": [
+    "Fuses contain info about the SoC/SKU and KFuses HDCP keys.",
+    "Les fusibles contiennent les informations SoC/SKU et les KFuses les clés HDCP.",
+    "Los fusibles contienen información del SoC/SKU y los KFuses las claves HDCP.",
+    "I fusibili contengono informazioni SoC/SKU e i KFuses le chiavi HDCP.",
+    "Предохранители содержат данные SoC/SKU, а KFuses — ключи HDCP.",
+    "Fuses enthalten SoC-/SKU-Daten und KFuses die HDCP-Schlüssel.",
+    "Os fusíveis contêm dados do SoC/SKU e os KFuses as chaves HDCP."
+  ],
+  "You can also see info about #C7EA46 DRAM#, #C7EA46 Screen# and #C7EA46 Touch panel#.": [
+    "You can also see info about #C7EA46 DRAM#, #C7EA46 Screen# and #C7EA46 Touch panel#.",
+    "Consulter aussi les informations sur la #C7EA46 DRAM#, l'#C7EA46 écran# et la #C7EA46 dalle tactile#.",
+    "También puedes ver información de la #C7EA46 DRAM#, la #C7EA46 pantalla# y el #C7EA46 panel táctil#.",
+    "Puoi anche consultare informazioni su #C7EA46 DRAM#, #C7EA46 schermo# e #C7EA46 pannello touch#.",
+    "Также доступны сведения о #C7EA46 DRAM#, #C7EA46 экране# и #C7EA46 сенсорной панели#.",
+    "Auch Informationen zu #C7EA46 DRAM#, #C7EA46 Bildschirm# und #C7EA46 Touchpanel# sind verfügbar.",
+    "Também pode consultar informações da #C7EA46 DRAM#, do #C7EA46 ecrã# e do #C7EA46 painel tátil#."
+  ],
+  "View info about the eMMC or microSD and their partition list.": [
+    "View info about the eMMC or microSD and their partition list.",
+    "Consulter les informations de l'eMMC ou de la microSD et leurs partitions.",
+    "Ver información de la eMMC o microSD y sus particiones.",
+    "Visualizza informazioni su eMMC o microSD e le relative partizioni.",
+    "Просмотр сведений об eMMC или microSD и их разделах.",
+    "Informationen zu eMMC oder microSD und deren Partitionen anzeigen.",
+    "Ver informações da eMMC ou microSD e das suas partições."
+  ],
+  "Additionally you can benchmark read speeds.": [
+    "Additionally you can benchmark read speeds.",
+    "Vous pouvez aussi mesurer les débits de lecture.",
+    "También puedes medir la velocidad de lectura.",
+    "Puoi anche misurare la velocità di lettura.",
+    "Также можно измерить скорость чтения.",
+    "Zusätzlich kann die Lesegeschwindigkeit gemessen werden.",
+    "Também pode medir a velocidade de leitura."
+  ],
+  "Your eMMC is initialized in a slower mode,": [
+    "Your eMMC is initialized in a slower mode,",
+    "Votre eMMC fonctionne dans un mode plus lent,",
+    "La eMMC se ha iniciado en un modo más lento,",
+    "L'eMMC è inizializzata in una modalità più lenta,",
+    "eMMC инициализирована в замедленном режиме,",
+    "Die eMMC wurde in einem langsameren Modus initialisiert,",
+    "A eMMC foi inicializada num modo mais lento,"
+  ],
+  "or init/read/write errors occurred!": [
+    "or init/read/write errors occurred!",
+    "ou des erreurs d'initialisation/lecture/écriture ont eu lieu !",
+    "o se produjeron errores de inicio/lectura/escritura.",
+    "oppure si sono verificati errori di avvio/lettura/scrittura.",
+    "либо произошли ошибки инициализации/чтения/записи!",
+    "oder es traten Initialisierungs-/Lese-/Schreibfehler auf!",
+    "ou ocorreram erros de inicialização/leitura/escrita!"
+  ],
+  "This might mean hardware issues!": [
+    "This might mean hardware issues!",
+    "Cela peut signaler un problème matériel !",
+    "Esto puede indicar problemas de hardware.",
+    "Ciò può indicare problemi hardware.",
+    "Это может указывать на неисправность оборудования!",
+    "Dies kann auf Hardwareprobleme hinweisen!",
+    "Isto pode indicar problemas de hardware!"
+  ],
+  "Bus Speed:": [
+    "Bus Speed:",
+    "Vitesse du bus :",
+    "Velocidad del bus:",
+    "Velocità bus:",
+    "Скорость шины:",
+    "Busgeschwindigkeit:",
+    "Velocidade do barramento:"
+  ],
+  "Note 1: Only up to #C7EA46 1.2GB# can be backed up. If more, you will be asked to back them manually at the next step.": [
+    "Note 1: Only up to #C7EA46 1.2GB# can be backed up. If more, you will be asked to back them manually at the next step.",
+    "Note 1 : la sauvegarde est limitée à #C7EA46 1,2 Go#. Au-delà, une sauvegarde manuelle sera demandée à l'étape suivante.",
+    "Nota 1: solo se pueden copiar hasta #C7EA46 1,2 GB#. Si hay más, se pedirá una copia manual en el siguiente paso.",
+    "Nota 1: è possibile salvare al massimo #C7EA46 1,2 GB#. Oltre questo limite verrà richiesto un backup manuale al passaggio successivo.",
+    "Примечание 1: можно сохранить не более #C7EA46 1,2 ГБ#. При превышении на следующем шаге потребуется ручная копия.",
+    "Hinweis 1: Es können höchstens #C7EA46 1,2 GB# gesichert werden. Bei mehr Daten wird im nächsten Schritt zur manuellen Sicherung aufgefordert.",
+    "Nota 1: apenas é possível copiar até #C7EA46 1,2 GB#. Acima disso, será pedida uma cópia manual no passo seguinte."
+  ],
+  "Note 2: Resized emuMMC formats the USER partition. A save data manager can be used to move them over.": [
+    "Note 2: Resized emuMMC formats the USER partition. A save data manager can be used to move them over.",
+    "Note 2 : redimensionner l'emuMMC formate la partition USER. Un gestionnaire de sauvegardes peut transférer les données.",
+    "Nota 2: redimensionar la emuMMC formatea la partición USER. Usa un gestor de partidas para trasladar los datos.",
+    "Nota 2: ridimensionare l'emuMMC formatta la partizione USER. Un gestore dei salvataggi può trasferire i dati.",
+    "Примечание 2: изменение размера emuMMC форматирует раздел USER. Данные можно перенести менеджером сохранений.",
+    "Hinweis 2: Eine Größenänderung der emuMMC formatiert USER. Spielstände können mit einem Speicherdatenmanager übertragen werden.",
+    "Nota 2: redimensionar a emuMMC formata a partição USER. Pode usar um gestor de gravações para transferir os dados."
+  ],
+  "Note 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.": [
+    "Note 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.",
+    "Note 3 : #C7EA46 Installer Linux# et #C7EA46 Installer Android# écrivent les fichiers si les partitions et fichiers d'installation adéquats sont trouvés.",
+    "Nota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escriben los archivos si se encuentran particiones y archivos de instalación adecuados.",
+    "Nota 3: #C7EA46 Installa Linux# e #C7EA46 Installa Android# scrivono i file se vengono trovati partizioni e file di installazione adatti.",
+    "Примечание 3: #C7EA46 Установить Linux# и #C7EA46 Установить Android# запишут файлы при наличии подходящих разделов и установочных файлов.",
+    "Hinweis 3: #C7EA46 Linux installieren# und #C7EA46 Android installieren# schreiben die Dateien, wenn geeignete Partitionen und Installationsdateien gefunden werden.",
+    "Nota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escrevem os ficheiros se forem encontradas partições e ficheiros de instalação adequados."
+  ],
+  "Note 1: Any partition existing after the selected ones gets removed from the table.": [
+    "Note 1: Any partition existing after the selected ones gets removed from the table.",
+    "Note 1 : toutes les partitions situées après celles sélectionnées sont retirées de la table.",
+    "Nota 1: se eliminarán de la tabla todas las particiones situadas después de las seleccionadas.",
+    "Nota 1: tutte le partizioni successive a quelle selezionate vengono rimosse dalla tabella.",
+    "Примечание 1: все разделы после выбранных будут удалены из таблицы.",
+    "Hinweis 1: Alle Partitionen nach den ausgewählten werden aus der Tabelle entfernt.",
+    "Nota 1: todas as partições após as selecionadas serão removidas da tabela."
+  ],
+  "Note 2: The HOS USER partition gets formatted. A save data manager can be used to move them over.": [
+    "Note 2: The HOS USER partition gets formatted. A save data manager can be used to move them over.",
+    "Note 2 : la partition HOS USER est formatée. Un gestionnaire de sauvegardes peut transférer les données.",
+    "Nota 2: se formateará la partición HOS USER. Usa un gestor de partidas para trasladar los datos.",
+    "Nota 2: la partizione HOS USER viene formattata. Un gestore dei salvataggi può trasferire i dati.",
+    "Примечание 2: раздел HOS USER будет отформатирован. Данные можно перенести менеджером сохранений.",
+    "Hinweis 2: Die Partition HOS USER wird formatiert. Spielstände können mit einem Speicherdatenmanager übertragen werden.",
+    "Nota 2: a partição HOS USER será formatada. Pode usar um gestor de gravações para transferir os dados."
+  ],
+  "Partition 0 - Type:": [
+    "Partition 0 - Type:",
+    "Partition 0 - Type :",
+    "Partición 0 - Tipo:",
+    "Partizione 0 - Tipo:",
+    "Раздел 0 - Тип:",
+    "Partition 0 - Typ:",
+    "Partição 0 - Tipo:"
+  ],
+  "Partition 1 - Type:": [
+    "Partition 1 - Type:",
+    "Partition 1 - Type :",
+    "Partición 1 - Tipo:",
+    "Partizione 1 - Tipo:",
+    "Раздел 1 - Тип:",
+    "Partition 1 - Typ:",
+    "Partição 1 - Tipo:"
+  ],
+  "Partition 2 - Type:": [
+    "Partition 2 - Type:",
+    "Partition 2 - Type :",
+    "Partición 2 - Tipo:",
+    "Partizione 2 - Tipo:",
+    "Раздел 2 - Тип:",
+    "Partition 2 - Typ:",
+    "Partição 2 - Tipo:"
+  ],
+  "Partition 3 - Type:": [
+    "Partition 3 - Type:",
+    "Partition 3 - Type :",
+    "Partición 3 - Tipo:",
+    "Partizione 3 - Tipo:",
+    "Раздел 3 - Тип:",
+    "Partition 3 - Typ:",
+    "Partição 3 - Tipo:"
+  ],
+  "\n\n#96FF00 This unit is exploitable#\n#96FF00 to the RCM bug!#": [
+    "\n\n#96FF00 This unit is exploitable#\n#96FF00 to the RCM bug!#",
+    "\n\n#96FF00 Cette console est vulnérable#\n#96FF00 à la faille RCM !#",
+    "\n\n#96FF00 Esta consola es vulnerable#\n#96FF00 al fallo RCM.#",
+    "\n\n#96FF00 Questa console è vulnerabile#\n#96FF00 alla falla RCM.#",
+    "\n\n#96FF00 Эта консоль уязвима#\n#96FF00 к ошибке RCM!#",
+    "\n\n#96FF00 Diese Konsole ist anfällig#\n#96FF00 für den RCM-Fehler!#",
+    "\n\n#96FF00 Esta consola é vulnerável#\n#96FF00 à falha RCM!#"
+  ],
+  "\n\n#FF8000 This unit is patched#\n#FF8000 to the RCM bug!#": [
+    "\n\n#FF8000 This unit is patched#\n#FF8000 to the RCM bug!#",
+    "\n\n#FF8000 Cette console est protégée#\n#FF8000 contre la faille RCM !#",
+    "\n\n#FF8000 Esta consola está protegida#\n#FF8000 contra el fallo RCM.#",
+    "\n\n#FF8000 Questa console è protetta#\n#FF8000 contro la falla RCM.#",
+    "\n\n#FF8000 Эта консоль защищена#\n#FF8000 от ошибки RCM!#",
+    "\n\n#FF8000 Diese Konsole ist gegen#\n#FF8000 den RCM-Fehler geschützt!#",
+    "\n\n#FF8000 Esta consola está protegida#\n#FF8000 contra a falha RCM!#"
+  ],
+  "Close": [
+    "Close",
+    "Fermer",
+    "Cerrar",
+    "Chiudi",
+    "Закрыть",
+    "Schließen",
+    "Fechar"
+  ],
+  "Cancel": [
+    "Cancel",
+    "Annuler",
+    "Cancelar",
+    "Annulla",
+    "Отмена",
+    "Abbrechen",
+    "Cancelar"
+  ],
+  "Continue": [
+    "Continue",
+    "Continuer",
+    "Continuar",
+    "Continua",
+    "Продолжить",
+    "Fortfahren",
+    "Continuar"
+  ],
+  "#FFDD00 Failed to dump to# %s#FFDD00 !#\nError: %d": [
+    "#FFDD00 Failed to dump to# %s#FFDD00 !#\nError: %d",
+    "#FFDD00 Échec de l'export vers# %s#FFDD00 !#\nErreur : %d",
+    "#FFDD00 No se pudo volcar en# %s#FFDD00 !#\nError: %d",
+    "#FFDD00 Esportazione non riuscita in# %s#FFDD00 !#\nErrore: %d",
+    "#FFDD00 Не удалось сохранить в# %s#FFDD00 !#\nОшибка: %d",
+    "#FFDD00 Speichern fehlgeschlagen unter# %s#FFDD00 !#\nFehler: %d",
+    "#FFDD00 Falha ao exportar para# %s#FFDD00 !#\nErro: %d"
+  ],
+  "#C7EA46 CAL0 Info#": [
+    "#C7EA46 CAL0 Info#",
+    "#C7EA46 Informations CAL0#",
+    "#C7EA46 Información CAL0#",
+    "#C7EA46 Informazioni CAL0#",
+    "#C7EA46 Сведения CAL0#",
+    "#C7EA46 CAL0-Informationen#",
+    "#C7EA46 Informações CAL0#"
+  ],
+  "#FF8000 CAL0 Version:#      %d\n#FF8000 Update Count:#      %d\n#FF8000 Serial Number:#     %s\n#FF8000 WLAN MAC:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Bluetooth MAC:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Battery LOT:#       %s (%d)\n#FF8000 LCD Vendor:#        ": [
+    "#FF8000 CAL0 Version:#      %d\n#FF8000 Update Count:#      %d\n#FF8000 Serial Number:#     %s\n#FF8000 WLAN MAC:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Bluetooth MAC:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Battery LOT:#       %s (%d)\n#FF8000 LCD Vendor:#        ",
+    "#FF8000 Version CAL0 :#      %d\n#FF8000 Nombre de mises à jour :#      %d\n#FF8000 Numéro de série :#     %s\n#FF8000 MAC Wi-Fi :#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 MAC Bluetooth :#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Lot de batterie :#       %s (%d)\n#FF8000 Fabricant LCD :#        ",
+    "#FF8000 Versión CAL0:#      %d\n#FF8000 Número de actualizaciones:#      %d\n#FF8000 Número de serie:#     %s\n#FF8000 MAC Wi-Fi:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 MAC Bluetooth:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Lote de batería:#       %s (%d)\n#FF8000 Fabricante LCD:#        ",
+    "#FF8000 Versione CAL0:#      %d\n#FF8000 Numero aggiornamenti:#      %d\n#FF8000 Numero di serie:#     %s\n#FF8000 MAC Wi-Fi:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 MAC Bluetooth:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Lotto batteria:#       %s (%d)\n#FF8000 Produttore LCD:#        ",
+    "#FF8000 Версия CAL0:#      %d\n#FF8000 Число обновлений:#      %d\n#FF8000 Серийный номер:#     %s\n#FF8000 MAC Wi-Fi:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 MAC Bluetooth:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Партия батареи:#       %s (%d)\n#FF8000 Производитель LCD:#        ",
+    "#FF8000 CAL0-Version:#      %d\n#FF8000 Aktualisierungen:#      %d\n#FF8000 Seriennummer:#     %s\n#FF8000 WLAN-MAC:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Bluetooth-MAC:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Batteriecharge:#       %s (%d)\n#FF8000 LCD-Hersteller:#        ",
+    "#FF8000 Versão CAL0:#      %d\n#FF8000 Número de atualizações:#      %d\n#FF8000 Número de série:#     %s\n#FF8000 MAC Wi-Fi:#          %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 MAC Bluetooth:#     %02X:%02X:%02X:%02X:%02X:%02X\n#FF8000 Lote da bateria:#       %s (%d)\n#FF8000 Fabricante LCD:#        "
+  ],
+  " (%06X)\n#FF8000 Touch Vendor:#      %d\n#FF8000 IMU Type/Mount:#    %d / %d\n#FF8000 Stick L/R Type:#    %02X / %02X\n": [
+    " (%06X)\n#FF8000 Touch Vendor:#      %d\n#FF8000 IMU Type/Mount:#    %d / %d\n#FF8000 Stick L/R Type:#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Fabricant tactile :#      %d\n#FF8000 Type/montage IMU :#    %d / %d\n#FF8000 Type des sticks G/D :#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Fabricante táctil:#      %d\n#FF8000 Tipo/montaje IMU:#    %d / %d\n#FF8000 Tipo de palancas I/D:#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Produttore touch:#      %d\n#FF8000 Tipo/montaggio IMU:#    %d / %d\n#FF8000 Tipo stick S/D:#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Производитель сенсора:#      %d\n#FF8000 Тип/установка IMU:#    %d / %d\n#FF8000 Тип стиков Л/П:#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Touch-Hersteller:#      %d\n#FF8000 IMU-Typ/Montage:#    %d / %d\n#FF8000 Sticktyp L/R:#    %02X / %02X\n",
+    " (%06X)\n#FF8000 Fabricante tátil:#      %d\n#FF8000 Tipo/montagem IMU:#    %d / %d\n#FF8000 Tipo de manípulos E/D:#    %02X / %02X\n"
+  ],
+  "#FF8000 SHA256 Hash Match:# %s": [
+    "#FF8000 SHA256 Hash Match:# %s",
+    "#FF8000 Correspondance SHA256 :# %s",
+    "#FF8000 Coincidencia SHA256:# %s",
+    "#FF8000 Corrispondenza SHA256:# %s",
+    "#FF8000 Совпадение SHA256:# %s",
+    "#FF8000 SHA256 stimmt überein:# %s",
+    "#FF8000 Correspondência SHA256:# %s"
+  ],
+  " CAL0 Info": [
+    " CAL0 Info",
+    " Informations CAL0",
+    " Información CAL0",
+    " Informazioni CAL0",
+    " Сведения CAL0",
+    " CAL0-Informationen",
+    " Informações CAL0"
+  ],
+  "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 DRAM ID:#\n#FF8000 Burnt Fuses (ODM 7/6):#\nODM Fields (4/6/7):\nSecure Boot Key (SBK):\nDevice Key (DK):\nPublic Key (PK SHA256):\n\nHOS Keygen Revision:\nUSB Controller (BROM):\nFinal Test Revision:\nChip Probing Revision:\nBootROM Revision:\n\n#FF8000 CPU/GPU/SoC Speedo:#\nCPU/GPU/SoC IDDQ:\nCPU Speedo 1:\nSoC Speedo 2:\n\nProduct Code:\nVendor Code:\nFAB/LOT Code:\nWafer ID:\nX Coordinate:\nY Coordinate:\n\nUptime:": [
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 DRAM ID:#\n#FF8000 Burnt Fuses (ODM 7/6):#\nODM Fields (4/6/7):\nSecure Boot Key (SBK):\nDevice Key (DK):\nPublic Key (PK SHA256):\n\nHOS Keygen Revision:\nUSB Controller (BROM):\nFinal Test Revision:\nChip Probing Revision:\nBootROM Revision:\n\n#FF8000 CPU/GPU/SoC Speedo:#\nCPU/GPU/SoC IDDQ:\nCPU Speedo 1:\nSoC Speedo 2:\n\nProduct Code:\nVendor Code:\nFAB/LOT Code:\nWafer ID:\nX Coordinate:\nY Coordinate:\n\nUptime:",
+    "#FF8000 SoC :#\n#FF8000 SKU :#\n#FF8000 Identifiant DRAM :#\n#FF8000 Fusibles gravés (ODM 7/6) :#\nChamps ODM (4/6/7) :\nClé de démarrage sécurisé (SBK) :\nClé de l'appareil (DK) :\nClé publique (PK SHA256) :\n\nRévision de génération des clés HOS :\nContrôleur USB (BROM) :\nRévision du test final :\nRévision de test de la puce :\nRévision BootROM :\n\n#FF8000 Speedo CPU/GPU/SoC :#\nIDDQ CPU/GPU/SoC :\nSpeedo CPU 1 :\nSpeedo SoC 2 :\n\nCode produit :\nCode fabricant :\nCode usine/lot :\nIdentifiant de plaquette :\nCoordonnée X :\nCoordonnée Y :\n\nDurée de fonctionnement :",
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 Identificador DRAM:#\n#FF8000 Fusibles quemados (ODM 7/6):#\nCampos ODM (4/6/7):\nClave de arranque seguro (SBK):\nClave del dispositivo (DK):\nClave pública (PK SHA256):\n\nRevisión de generación de claves HOS:\nControlador USB (BROM):\nRevisión de prueba final:\nRevisión de sondeo del chip:\nRevisión BootROM:\n\n#FF8000 Speedo CPU/GPU/SoC:#\nIDDQ CPU/GPU/SoC:\nSpeedo CPU 1:\nSpeedo SoC 2:\n\nCódigo de producto:\nCódigo de fabricante:\nCódigo de fábrica/lote:\nIdentificador de oblea:\nCoordenada X:\nCoordenada Y:\n\nTiempo de actividad:",
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 Identificativo DRAM:#\n#FF8000 Fusibili bruciati (ODM 7/6):#\nCampi ODM (4/6/7):\nChiave di avvio sicuro (SBK):\nChiave del dispositivo (DK):\nChiave pubblica (PK SHA256):\n\nRevisione generazione chiavi HOS:\nController USB (BROM):\nRevisione test finale:\nRevisione verifica chip:\nRevisione BootROM:\n\n#FF8000 Speedo CPU/GPU/SoC:#\nIDDQ CPU/GPU/SoC:\nSpeedo CPU 1:\nSpeedo SoC 2:\n\nCodice prodotto:\nCodice produttore:\nCodice fabbrica/lotto:\nIdentificativo wafer:\nCoordinata X:\nCoordinata Y:\n\nTempo di attività:",
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 Идентификатор DRAM:#\n#FF8000 Прожжённые предохранители (ODM 7/6):#\nПоля ODM (4/6/7):\nКлюч безопасной загрузки (SBK):\nКлюч устройства (DK):\nОткрытый ключ (PK SHA256):\n\nРевизия генерации ключей HOS:\nКонтроллер USB (BROM):\nРевизия итогового теста:\nРевизия проверки чипа:\nРевизия BootROM:\n\n#FF8000 Speedo CPU/GPU/SoC:#\nIDDQ CPU/GPU/SoC:\nSpeedo CPU 1:\nSpeedo SoC 2:\n\nКод продукта:\nКод производителя:\nКод фабрики/партии:\nИдентификатор пластины:\nКоордината X:\nКоордината Y:\n\nВремя работы:",
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 DRAM-Kennung:#\n#FF8000 Gebrannte Sicherungen (ODM 7/6):#\nODM-Felder (4/6/7):\nSicherer Startschlüssel (SBK):\nGeräteschlüssel (DK):\nÖffentlicher Schlüssel (PK SHA256):\n\nHOS-Schlüsselerzeugungsrevision:\nUSB-Controller (BROM):\nEndprüfungsrevision:\nChip-Prüfungsrevision:\nBootROM-Revision:\n\n#FF8000 CPU/GPU/SoC-Speedo:#\nCPU/GPU/SoC-IDDQ:\nCPU-Speedo 1:\nSoC-Speedo 2:\n\nProduktcode:\nHerstellercode:\nFabrik-/Chargencode:\nWafer-Kennung:\nX-Koordinate:\nY-Koordinate:\n\nBetriebszeit:",
+    "#FF8000 SoC:#\n#FF8000 SKU:#\n#FF8000 Identificador DRAM:#\n#FF8000 Fusíveis gravados (ODM 7/6):#\nCampos ODM (4/6/7):\nChave de arranque seguro (SBK):\nChave do dispositivo (DK):\nChave pública (PK SHA256):\n\nRevisão da geração de chaves HOS:\nControlador USB (BROM):\nRevisão do teste final:\nRevisão da sondagem do chip:\nRevisão BootROM:\n\n#FF8000 Speedo CPU/GPU/SoC:#\nIDDQ CPU/GPU/SoC:\nSpeedo CPU 1:\nSpeedo SoC 2:\n\nCódigo do produto:\nCódigo do fabricante:\nCódigo de fábrica/lote:\nIdentificador da lâmina:\nCoordenada X:\nCoordenada Y:\n\nTempo de atividade:"
+  ],
+  "#FF8000 Forced DRAM Config 8GB#": [
+    "#FF8000 Forced DRAM Config 8GB#",
+    "#FF8000 Configuration DRAM forcée à 8 Go#",
+    "#FF8000 Configuración DRAM forzada a 8 GB#",
+    "#FF8000 Configurazione DRAM forzata a 8 GB#",
+    "#FF8000 Принудительная настройка DRAM 8 ГБ#",
+    "#FF8000 Erzwungene DRAM-Konfiguration 8 GB#",
+    "#FF8000 Configuração DRAM forçada para 8 GB#"
+  ],
+  "#FFD000 Overburnt#": [
+    "#FFD000 Overburnt#",
+    "#FFD000 Trop de fusibles gravés#",
+    "#FFD000 Demasiados fusibles quemados#",
+    "#FFD000 Troppi fusibili bruciati#",
+    "#FFD000 Избыточно прожжены#",
+    "#FFD000 Zu viele Sicherungen gebrannt#",
+    "#FFD000 Fusíveis gravados em excesso#"
+  ],
+  "#00DDFF %s SDRAM ##FF8000 (Module 0 | 1):#\n#FF8000 Vendor:# ": [
+    "#00DDFF %s SDRAM ##FF8000 (Module 0 | 1):#\n#FF8000 Vendor:# ",
+    "#00DDFF %s SDRAM ##FF8000 (Module 0 | 1) :#\n#FF8000 Fabricant :# ",
+    "#00DDFF %s SDRAM ##FF8000 (Módulo 0 | 1):#\n#FF8000 Fabricante:# ",
+    "#00DDFF %s SDRAM ##FF8000 (Modulo 0 | 1):#\n#FF8000 Produttore:# ",
+    "#00DDFF %s SDRAM ##FF8000 (Модуль 0 | 1):#\n#FF8000 Производитель:# ",
+    "#00DDFF %s SDRAM ##FF8000 (Modul 0 | 1):#\n#FF8000 Hersteller:# ",
+    "#00DDFF %s SDRAM ##FF8000 (Módulo 0 | 1):#\n#FF8000 Fabricante:# "
+  ],
+  "\n#FF8000 Rev ID:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Density:# ": [
+    "\n#FF8000 Rev ID:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Density:# ",
+    "\n#FF8000 Identifiant de révision :#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Capacité :# ",
+    "\n#FF8000 Identificador de revisión:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Densidad:# ",
+    "\n#FF8000 Identificativo revisione:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Densità:# ",
+    "\n#FF8000 Идентификатор ревизии:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Плотность:# ",
+    "\n#FF8000 Revisionskennung:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Dichte:# ",
+    "\n#FF8000 Identificador de revisão:#  %X.%02X #FF8000 |# %X.%02X\n#FF8000 Densidade:# "
+  ],
+  "#FFDD00 OEM Clone 6.2\"#": [
+    "#FFDD00 OEM Clone 6.2\"#",
+    "#FFDD00 Clone OEM 6,2\"#",
+    "#FFDD00 Clon OEM 6,2\"#",
+    "#FFDD00 Clone OEM 6,2\"#",
+    "#FFDD00 OEM-клон 6,2\"#",
+    "#FFDD00 OEM-Nachbau 6,2\"#",
+    "#FFDD00 Clone OEM 6,2\"#"
+  ],
+  "#FFDD00 OEM Clone 5.5\"#": [
+    "#FFDD00 OEM Clone 5.5\"#",
+    "#FFDD00 Clone OEM 5,5\"#",
+    "#FFDD00 Clon OEM 5,5\"#",
+    "#FFDD00 Clone OEM 5,5\"#",
+    "#FFDD00 OEM-клон 5,5\"#",
+    "#FFDD00 OEM-Nachbau 5,5\"#",
+    "#FFDD00 Clone OEM 5,5\"#"
+  ],
+  "#FFDD00 OEM Clone#": [
+    "#FFDD00 OEM Clone#",
+    "#FFDD00 Clone OEM#",
+    "#FFDD00 Clon OEM#",
+    "#FFDD00 Clone OEM#",
+    "#FFDD00 OEM-клон#",
+    "#FFDD00 OEM-Nachbau#",
+    "#FFDD00 Clone OEM#"
+  ],
+  "#FFDD00 LCD OEM Clone 7\"#": [
+    "#FFDD00 LCD OEM Clone 7\"#",
+    "#FFDD00 Clone LCD OEM 7\"#",
+    "#FFDD00 Clon LCD OEM 7\"#",
+    "#FFDD00 Clone LCD OEM 7\"#",
+    "#FFDD00 OEM-клон LCD 7\"#",
+    "#FFDD00 OEM-LCD-Nachbau 7\"#",
+    "#FFDD00 Clone LCD OEM 7\"#"
+  ],
+  "#FFDD00 OEM Clone TSP#": [
+    "#FFDD00 OEM Clone TSP#",
+    "#FFDD00 Clone TSP OEM#",
+    "#FFDD00 Clon TSP OEM#",
+    "#FFDD00 Clone TSP OEM#",
+    "#FFDD00 OEM-клон TSP#",
+    "#FFDD00 OEM-TSP-Nachbau#",
+    "#FFDD00 Clone TSP OEM#"
+  ],
+  "#FF8000 Contact me#": [
+    "#FF8000 Contact me#",
+    "#FF8000 Me contacter#",
+    "#FF8000 Contáctame#",
+    "#FF8000 Contattami#",
+    "#FF8000 Связаться со мной#",
+    "#FF8000 Kontakt aufnehmen#",
+    "#FF8000 Contactar-me#"
+  ],
+  " - %s)\n#FF8000 FTB ver:# %04X\n#FF8000 FW rev:# %04X": [
+    " - %s)\n#FF8000 FTB ver:# %04X\n#FF8000 FW rev:# %04X",
+    " - %s)\n#FF8000 Version FTB :# %04X\n#FF8000 Révision du micrologiciel :# %04X",
+    " - %s)\n#FF8000 Versión FTB:# %04X\n#FF8000 Revisión del firmware:# %04X",
+    " - %s)\n#FF8000 Versione FTB:# %04X\n#FF8000 Revisione firmware:# %04X",
+    " - %s)\n#FF8000 Версия FTB:# %04X\n#FF8000 Ревизия прошивки:# %04X",
+    " - %s)\n#FF8000 FTB-Version:# %04X\n#FF8000 Firmware-Revision:# %04X",
+    " - %s)\n#FF8000 Versão FTB:# %04X\n#FF8000 Revisão do firmware:# %04X"
+  ],
+  "#00DDFF Ipatches:#\n#FF8000 Address  ": [
+    "#00DDFF Ipatches:#\n#FF8000 Address  ",
+    "#00DDFF Correctifs Ipatch :#\n#FF8000 Adresse  ",
+    "#00DDFF Parches Ipatch:#\n#FF8000 Dirección  ",
+    "#00DDFF Patch Ipatch:#\n#FF8000 Indirizzo  ",
+    "#00DDFF Исправления Ipatch:#\n#FF8000 Адрес  ",
+    "#00DDFF Ipatch-Korrekturen:#\n#FF8000 Adresse  ",
+    "#00DDFF Correções Ipatch:#\n#FF8000 Endereço  "
+  ],
+  "  Val  ": [
+    "  Val  ",
+    "  Valeur  ",
+    "  Valor  ",
+    "  Valore  ",
+    "  Значение  ",
+    "  Wert  ",
+    "  Valor  "
+  ],
+  "  Instruction#\n": [
+    "  Instruction#\n",
+    "  Instruction#\n",
+    "  Instrucción#\n",
+    "  Istruzione#\n",
+    "  Инструкция#\n",
+    "  Anweisung#\n",
+    "  Instrução#\n"
+  ],
+  "#FF8000 Lockpick RCM#\n\nThis will launch Lockpick RCM.\nDo you want to continue?\n\nTo return back from lockpick use\n#96FF00 Reboot to hekate#.": [
+    "#FF8000 Lockpick RCM#\n\nThis will launch Lockpick RCM.\nDo you want to continue?\n\nTo return back from lockpick use\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nLockpick RCM va être lancé.\nVoulez-vous continuer ?\n\nPour revenir depuis Lockpick, utilisez\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nSe iniciará Lockpick RCM.\n¿Quieres continuar?\n\nPara volver desde Lockpick, usa\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nVerrà avviato Lockpick RCM.\nVuoi continuare?\n\nPer tornare da Lockpick, usa\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nБудет запущен Lockpick RCM.\nПродолжить?\n\nДля возврата из Lockpick используйте\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nLockpick RCM wird gestartet.\nMöchten Sie fortfahren?\n\nZur Rückkehr aus Lockpick die Option\n#96FF00 Reboot to hekate#.",
+    "#FF8000 Lockpick RCM#\n\nO Lockpick RCM será iniciado.\nDeseja continuar?\n\nPara regressar do Lockpick, utilize\n#96FF00 Reboot to hekate#."
+  ],
+  "#00DDFF Device report#\n#FF8000 Average Erases SLC:#    %d\n#FF8000 Average Erases MLC:#    %d\n#FF8000 Read Reclaims SLC:#     %d\n#FF8000 Read Reclaims MLC:#     %d\n#FF8000 Bad Blocks Factory:#    %d\n#FF8000 Bad Blocks SYS:#        %d\n#FF8000 Bad Blocks SLC:#        %d\n#FF8000 Bad Blocks MLC:#        %d\n#FF8000 FW Updates:#            %d\n#FF8000 FW Buildtime:#          %s %s\n#FF8000 Total Writes:#          %d MB\n#FF8000 Total Writes SLC:#      %d MB\n#FF8000 Total Writes MLC:#      %d MB\n#FF8000 BigFile limit status:#  %d\n#FF8000 Average Erases Hybrid:# %d": [
+    "#00DDFF Device report#\n#FF8000 Average Erases SLC:#    %d\n#FF8000 Average Erases MLC:#    %d\n#FF8000 Read Reclaims SLC:#     %d\n#FF8000 Read Reclaims MLC:#     %d\n#FF8000 Bad Blocks Factory:#    %d\n#FF8000 Bad Blocks SYS:#        %d\n#FF8000 Bad Blocks SLC:#        %d\n#FF8000 Bad Blocks MLC:#        %d\n#FF8000 FW Updates:#            %d\n#FF8000 FW Buildtime:#          %s %s\n#FF8000 Total Writes:#          %d MB\n#FF8000 Total Writes SLC:#      %d MB\n#FF8000 Total Writes MLC:#      %d MB\n#FF8000 BigFile limit status:#  %d\n#FF8000 Average Erases Hybrid:# %d",
+    "#00DDFF Rapport de l'appareil#\n#FF8000 Effacements SLC moyens :#    %d\n#FF8000 Effacements MLC moyens :#    %d\n#FF8000 Récupérations en lecture SLC :#     %d\n#FF8000 Récupérations en lecture MLC :#     %d\n#FF8000 Blocs défectueux d'usine :#    %d\n#FF8000 Blocs SYS défectueux :#        %d\n#FF8000 Blocs SLC défectueux :#        %d\n#FF8000 Blocs MLC défectueux :#        %d\n#FF8000 Mises à jour du micrologiciel :#            %d\n#FF8000 Date de compilation du micrologiciel :#          %s %s\n#FF8000 Écritures totales :#          %d MB\n#FF8000 Écritures SLC totales :#      %d MB\n#FF8000 Écritures MLC totales :#      %d MB\n#FF8000 État de la limite BigFile :#  %d\n#FF8000 Effacements hybrides moyens :# %d",
+    "#00DDFF Informe del dispositivo#\n#FF8000 Borrados SLC medios:#    %d\n#FF8000 Borrados MLC medios:#    %d\n#FF8000 Recuperaciones de lectura SLC:#     %d\n#FF8000 Recuperaciones de lectura MLC:#     %d\n#FF8000 Bloques defectuosos de fábrica:#    %d\n#FF8000 Bloques SYS defectuosos:#        %d\n#FF8000 Bloques SLC defectuosos:#        %d\n#FF8000 Bloques MLC defectuosos:#        %d\n#FF8000 Actualizaciones de firmware:#            %d\n#FF8000 Fecha de compilación del firmware:#          %s %s\n#FF8000 Escrituras totales:#          %d MB\n#FF8000 Escrituras SLC totales:#      %d MB\n#FF8000 Escrituras MLC totales:#      %d MB\n#FF8000 Estado del límite BigFile:#  %d\n#FF8000 Borrados híbridos medios:# %d",
+    "#00DDFF Rapporto dispositivo#\n#FF8000 Cancellazioni SLC medie:#    %d\n#FF8000 Cancellazioni MLC medie:#    %d\n#FF8000 Recuperi in lettura SLC:#     %d\n#FF8000 Recuperi in lettura MLC:#     %d\n#FF8000 Blocchi difettosi di fabbrica:#    %d\n#FF8000 Blocchi SYS difettosi:#        %d\n#FF8000 Blocchi SLC difettosi:#        %d\n#FF8000 Blocchi MLC difettosi:#        %d\n#FF8000 Aggiornamenti firmware:#            %d\n#FF8000 Data compilazione firmware:#          %s %s\n#FF8000 Scritture totali:#          %d MB\n#FF8000 Scritture SLC totali:#      %d MB\n#FF8000 Scritture MLC totali:#      %d MB\n#FF8000 Stato limite BigFile:#  %d\n#FF8000 Cancellazioni ibride medie:# %d",
+    "#00DDFF Отчёт устройства#\n#FF8000 Средние стирания SLC:#    %d\n#FF8000 Средние стирания MLC:#    %d\n#FF8000 Восстановления чтения SLC:#     %d\n#FF8000 Восстановления чтения MLC:#     %d\n#FF8000 Заводские плохие блоки:#    %d\n#FF8000 Плохие блоки SYS:#        %d\n#FF8000 Плохие блоки SLC:#        %d\n#FF8000 Плохие блоки MLC:#        %d\n#FF8000 Обновления прошивки:#            %d\n#FF8000 Дата сборки прошивки:#          %s %s\n#FF8000 Всего записано:#          %d MB\n#FF8000 Всего записано SLC:#      %d MB\n#FF8000 Всего записано MLC:#      %d MB\n#FF8000 Состояние ограничения BigFile:#  %d\n#FF8000 Средние гибридные стирания:# %d",
+    "#00DDFF Gerätebericht#\n#FF8000 Mittlere SLC-Löschungen:#    %d\n#FF8000 Mittlere MLC-Löschungen:#    %d\n#FF8000 SLC-Lesewiederherstellungen:#     %d\n#FF8000 MLC-Lesewiederherstellungen:#     %d\n#FF8000 Ab Werk fehlerhafte Blöcke:#    %d\n#FF8000 Fehlerhafte SYS-Blöcke:#        %d\n#FF8000 Fehlerhafte SLC-Blöcke:#        %d\n#FF8000 Fehlerhafte MLC-Blöcke:#        %d\n#FF8000 Firmware-Aktualisierungen:#            %d\n#FF8000 Firmware-Erstellungszeit:#          %s %s\n#FF8000 Gesamtschreibmenge:#          %d MB\n#FF8000 SLC-Gesamtschreibmenge:#      %d MB\n#FF8000 MLC-Gesamtschreibmenge:#      %d MB\n#FF8000 BigFile-Grenzstatus:#  %d\n#FF8000 Mittlere Hybrid-Löschungen:# %d",
+    "#00DDFF Relatório do dispositivo#\n#FF8000 Apagamentos SLC médios:#    %d\n#FF8000 Apagamentos MLC médios:#    %d\n#FF8000 Recuperações de leitura SLC:#     %d\n#FF8000 Recuperações de leitura MLC:#     %d\n#FF8000 Blocos defeituosos de fábrica:#    %d\n#FF8000 Blocos SYS defeituosos:#        %d\n#FF8000 Blocos SLC defeituosos:#        %d\n#FF8000 Blocos MLC defeituosos:#        %d\n#FF8000 Atualizações do firmware:#            %d\n#FF8000 Data de compilação do firmware:#          %s %s\n#FF8000 Escritas totais:#          %d MB\n#FF8000 Escritas SLC totais:#      %d MB\n#FF8000 Escritas MLC totais:#      %d MB\n#FF8000 Estado do limite BigFile:#  %d\n#FF8000 Apagamentos híbridos médios:# %d"
+  ],
+  "#00DDFF Advanced Health Status#\n#FF8000 Power ups:#             %d\n#FF8000 Maximum Erases SLC:#    %d\n#FF8000 Maximum Erases MLC:#    %d\n#FF8000 Minimum Erases SLC:#    %d\n#FF8000 Minimum Erases MLC:#    %d\n#FF8000 Maximum Erases EUDA:#   %d\n#FF8000 Minimum Erases EUDA:#   %d\n#FF8000 Average Erases EUDA:#   %d\n#FF8000 Read Reclaims EUDA:#    %d\n#FF8000 Bad Blocks EUDA:#       %d\n#FF8000 Uncorrectable ECC:#     %d\n#FF8000 Temperature Now:#       %d oC\n#FF8000 Temperature Max:#       %d oC\n#FF8000 Health Level EUDA:#     %d%%\n#FF8000 Health Level MLC:#      %d%%": [
+    "#00DDFF Advanced Health Status#\n#FF8000 Power ups:#             %d\n#FF8000 Maximum Erases SLC:#    %d\n#FF8000 Maximum Erases MLC:#    %d\n#FF8000 Minimum Erases SLC:#    %d\n#FF8000 Minimum Erases MLC:#    %d\n#FF8000 Maximum Erases EUDA:#   %d\n#FF8000 Minimum Erases EUDA:#   %d\n#FF8000 Average Erases EUDA:#   %d\n#FF8000 Read Reclaims EUDA:#    %d\n#FF8000 Bad Blocks EUDA:#       %d\n#FF8000 Uncorrectable ECC:#     %d\n#FF8000 Temperature Now:#       %d oC\n#FF8000 Temperature Max:#       %d oC\n#FF8000 Health Level EUDA:#     %d%%\n#FF8000 Health Level MLC:#      %d%%",
+    "#00DDFF État de santé avancé#\n#FF8000 Mises sous tension :#             %d\n#FF8000 Effacements SLC maximaux :#    %d\n#FF8000 Effacements MLC maximaux :#    %d\n#FF8000 Effacements SLC minimaux :#    %d\n#FF8000 Effacements MLC minimaux :#    %d\n#FF8000 Effacements EUDA maximaux :#   %d\n#FF8000 Effacements EUDA minimaux :#   %d\n#FF8000 Effacements EUDA moyens :#   %d\n#FF8000 Récupérations en lecture EUDA :#    %d\n#FF8000 Blocs EUDA défectueux :#       %d\n#FF8000 ECC non corrigeables :#     %d\n#FF8000 Température actuelle :#       %d oC\n#FF8000 Température maximale :#       %d oC\n#FF8000 État de santé EUDA :#     %d%%\n#FF8000 État de santé MLC :#      %d%%",
+    "#00DDFF Estado de salud avanzado#\n#FF8000 Encendidos:#             %d\n#FF8000 Borrados SLC máximos:#    %d\n#FF8000 Borrados MLC máximos:#    %d\n#FF8000 Borrados SLC mínimos:#    %d\n#FF8000 Borrados MLC mínimos:#    %d\n#FF8000 Borrados EUDA máximos:#   %d\n#FF8000 Borrados EUDA mínimos:#   %d\n#FF8000 Borrados EUDA medios:#   %d\n#FF8000 Recuperaciones de lectura EUDA:#    %d\n#FF8000 Bloques EUDA defectuosos:#       %d\n#FF8000 ECC no corregibles:#     %d\n#FF8000 Temperatura actual:#       %d oC\n#FF8000 Temperatura máxima:#       %d oC\n#FF8000 Nivel de salud EUDA:#     %d%%\n#FF8000 Nivel de salud MLC:#      %d%%",
+    "#00DDFF Stato di salute avanzato#\n#FF8000 Accensioni:#             %d\n#FF8000 Cancellazioni SLC massime:#    %d\n#FF8000 Cancellazioni MLC massime:#    %d\n#FF8000 Cancellazioni SLC minime:#    %d\n#FF8000 Cancellazioni MLC minime:#    %d\n#FF8000 Cancellazioni EUDA massime:#   %d\n#FF8000 Cancellazioni EUDA minime:#   %d\n#FF8000 Cancellazioni EUDA medie:#   %d\n#FF8000 Recuperi in lettura EUDA:#    %d\n#FF8000 Blocchi EUDA difettosi:#       %d\n#FF8000 ECC non correggibili:#     %d\n#FF8000 Temperatura attuale:#       %d oC\n#FF8000 Temperatura massima:#       %d oC\n#FF8000 Livello salute EUDA:#     %d%%\n#FF8000 Livello salute MLC:#      %d%%",
+    "#00DDFF Расширенное состояние ресурса#\n#FF8000 Включения:#             %d\n#FF8000 Максимум стираний SLC:#    %d\n#FF8000 Максимум стираний MLC:#    %d\n#FF8000 Минимум стираний SLC:#    %d\n#FF8000 Минимум стираний MLC:#    %d\n#FF8000 Максимум стираний EUDA:#   %d\n#FF8000 Минимум стираний EUDA:#   %d\n#FF8000 Средние стирания EUDA:#   %d\n#FF8000 Восстановления чтения EUDA:#    %d\n#FF8000 Плохие блоки EUDA:#       %d\n#FF8000 Неисправимые ECC:#     %d\n#FF8000 Текущая температура:#       %d oC\n#FF8000 Максимальная температура:#       %d oC\n#FF8000 Состояние ресурса EUDA:#     %d%%\n#FF8000 Состояние ресурса MLC:#      %d%%",
+    "#00DDFF Erweiterter Zustandsbericht#\n#FF8000 Einschaltvorgänge:#             %d\n#FF8000 Maximale SLC-Löschungen:#    %d\n#FF8000 Maximale MLC-Löschungen:#    %d\n#FF8000 Minimale SLC-Löschungen:#    %d\n#FF8000 Minimale MLC-Löschungen:#    %d\n#FF8000 Maximale EUDA-Löschungen:#   %d\n#FF8000 Minimale EUDA-Löschungen:#   %d\n#FF8000 Mittlere EUDA-Löschungen:#   %d\n#FF8000 EUDA-Lesewiederherstellungen:#    %d\n#FF8000 Fehlerhafte EUDA-Blöcke:#       %d\n#FF8000 Nicht korrigierbare ECC:#     %d\n#FF8000 Aktuelle Temperatur:#       %d oC\n#FF8000 Höchsttemperatur:#       %d oC\n#FF8000 EUDA-Zustand:#     %d%%\n#FF8000 MLC-Zustand:#      %d%%",
+    "#00DDFF Estado de saúde avançado#\n#FF8000 Ligações:#             %d\n#FF8000 Apagamentos SLC máximos:#    %d\n#FF8000 Apagamentos MLC máximos:#    %d\n#FF8000 Apagamentos SLC mínimos:#    %d\n#FF8000 Apagamentos MLC mínimos:#    %d\n#FF8000 Apagamentos EUDA máximos:#   %d\n#FF8000 Apagamentos EUDA mínimos:#   %d\n#FF8000 Apagamentos EUDA médios:#   %d\n#FF8000 Recuperações de leitura EUDA:#    %d\n#FF8000 Blocos EUDA defeituosos:#       %d\n#FF8000 ECC não corrigíveis:#     %d\n#FF8000 Temperatura atual:#       %d oC\n#FF8000 Temperatura máxima:#       %d oC\n#FF8000 Nível de saúde EUDA:#     %d%%\n#FF8000 Nível de saúde MLC:#      %d%%"
+  ],
+  "#00DDFF Vendor/Reserved Registers#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR Vendor:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X": [
+    "#00DDFF Vendor/Reserved Registers#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR Vendor:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Registres fabricant/réservés#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR fabricant :#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Registros del fabricante/reservados#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR del fabricante:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Registri produttore/riservati#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR produttore:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Регистры производителя/резервные#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR производителя:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Hersteller-/Reservierte Register#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 Hersteller-SCR:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X",
+    "#00DDFF Registos do fabricante/reservados#\n#FF8000 CID[023:020]:# %X\n\n#FF8000 CSD[009:008]:# %X\n#FF8000 CSD[020:016]:# %02X\n#FF8000 CSD[030:029]:# %X\n#FF8000 CSD[125:120]:# %02X\n#FF8000 SCR do fabricante:#   %08X\n#FF8000 SCR[037:036]:# %X\n\n#FF8000 SSR[031:000]:# %08X\n#FF8000 SSR[063:032]:# %08X\n#FF8000 SSR[095:064]:# %08X\n#FF8000 SSR[127:096]:# %08X\n#FF8000 SSR[159:128]:# %08X\n#FF8000 SSR[191:160]:# %08X\n#FF8000 SSR[223:192]:# %08X\n#FF8000 SSR[255:224]:# %08X\n#FF8000 SSR[287:256]:# %08X\n#FF8000 SSR[311:288]:# %06X"
+  ],
+  "\n#FF8000 %08X:# Has data!": [
+    "\n#FF8000 %08X:# Has data!",
+    "\n#FF8000 %08X:# Contient des données !",
+    "\n#FF8000 %08X:# Contiene datos.",
+    "\n#FF8000 %08X:# Contiene dati.",
+    "\n#FF8000 %08X:# Есть данные.",
+    "\n#FF8000 %08X:# Enthält Daten!",
+    "\n#FF8000 %08X:# Contém dados!"
+  ],
+  "\n#FF8000 %08X:# Empty": [
+    "\n#FF8000 %08X:# Empty",
+    "\n#FF8000 %08X:# Vide",
+    "\n#FF8000 %08X:# Vacío",
+    "\n#FF8000 %08X:# Vuoto",
+    "\n#FF8000 %08X:# Пусто",
+    "\n#FF8000 %08X:# Leer",
+    "\n#FF8000 %08X:# Vazio"
+  ],
+  "#FF8000 %s Benchmark#\n[Raw Reads] Abort: VOL- & VOL+": [
+    "#FF8000 %s Benchmark#\n[Raw Reads] Abort: VOL- & VOL+",
+    "#FF8000 Test de performances %s#\n[Lectures brutes] Annuler : VOL- et VOL+",
+    "#FF8000 Prueba de rendimiento %s#\n[Lecturas sin procesar] Cancelar: VOL- y VOL+",
+    "#FF8000 Test prestazioni %s#\n[Letture dirette] Annulla: VOL- e VOL+",
+    "#FF8000 Тест скорости %s#\n[Прямое чтение] Отмена: VOL- и VOL+",
+    "#FF8000 %s-Leistungstest#\n[Rohdaten lesen] Abbruch: VOL- und VOL+",
+    "#FF8000 Teste de desempenho %s#\n[Leituras diretas] Cancelar: VOL- e VOL+"
+  ],
+  " SEQ 16MB - Rate: #C7EA46 %3d.%02d %s#": [
+    " SEQ 16MB - Rate: #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Débit : #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Velocidad: #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Velocità: #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Скорость: #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Rate: #C7EA46 %3d.%02d %s#",
+    " SEQ 16MB - Velocidade: #C7EA46 %3d.%02d %s#"
+  ],
+  " SEQ  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n": [
+    " SEQ  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Débit : #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Velocidad: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Velocità: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Скорость: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " SEQ  4KB - Velocidade: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n"
+  ],
+  " RND  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n": [
+    " RND  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Débit : #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Velocidad: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Velocità: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Скорость: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+    " RND  4KB - Velocidade: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n"
+  ],
+  "#FF8000 %s Benchmark#\n[Raw Reads]": [
+    "#FF8000 %s Benchmark#\n[Raw Reads]",
+    "#FF8000 Test de performances %s#\n[Lectures brutes]",
+    "#FF8000 Prueba de rendimiento %s#\n[Lecturas sin procesar]",
+    "#FF8000 Test prestazioni %s#\n[Letture dirette]",
+    "#FF8000 Тест скорости %s#\n[Прямое чтение]",
+    "#FF8000 %s-Leistungstest#\n[Rohdaten lesen]",
+    "#FF8000 Teste de desempenho %s#\n[Leituras diretas]"
+  ],
+  "#00DDFF CID:#\nVendor ID:\nModel:\nProd Rev:\nS/N:\nMonth/Year:\n\n#00DDFF Ext CSD:#\nCmd Classes:\nMax Bus Rate:\nCurrent Rate:\nEnhanced Area:\nWrite Cache:\n\nMaintenance:\nEstimated Life:\nReserved Used:": [
+    "#00DDFF CID:#\nVendor ID:\nModel:\nProd Rev:\nS/N:\nMonth/Year:\n\n#00DDFF Ext CSD:#\nCmd Classes:\nMax Bus Rate:\nCurrent Rate:\nEnhanced Area:\nWrite Cache:\n\nMaintenance:\nEstimated Life:\nReserved Used:",
+    "#00DDFF CID:#\nIdentifiant fabricant :\nModèle :\nRévision produit :\nN° de série :\nMois/année :\n\n#00DDFF Ext CSD:#\nClasses de commandes :\nDébit maximal du bus :\nDébit actuel :\nZone améliorée :\nCache d'écriture :\n\nMaintenance :\nDurée de vie estimée :\nRéserve utilisée :",
+    "#00DDFF CID:#\nIdentificador de fabricante:\nModelo:\nRevisión del producto:\nN.º de serie:\nMes/año:\n\n#00DDFF Ext CSD:#\nClases de comandos:\nVelocidad máxima del bus:\nVelocidad actual:\nÁrea mejorada:\nCaché de escritura:\n\nMantenimiento:\nVida útil estimada:\nReserva utilizada:",
+    "#00DDFF CID:#\nIdentificativo produttore:\nModello:\nRevisione prodotto:\nN. di serie:\nMese/anno:\n\n#00DDFF Ext CSD:#\nClassi comandi:\nVelocità massima bus:\nVelocità attuale:\nArea migliorata:\nCache scrittura:\n\nManutenzione:\nDurata stimata:\nRiserva utilizzata:",
+    "#00DDFF CID:#\nИдентификатор производителя:\nМодель:\nРевизия продукта:\nСерийный №:\nМесяц/год:\n\n#00DDFF Ext CSD:#\nКлассы команд:\nМаксимальная скорость шины:\nТекущая скорость:\nУлучшенная область:\nКэш записи:\n\nОбслуживание:\nОценка срока службы:\nИспользовано резерва:",
+    "#00DDFF CID:#\nHerstellerkennung:\nModell:\nProduktrevision:\nSeriennr.:\nMonat/Jahr:\n\n#00DDFF Ext CSD:#\nBefehlsklassen:\nMaximale Busrate:\nAktuelle Rate:\nErweiterter Bereich:\nSchreibcache:\n\nWartung:\nGeschätzte Lebensdauer:\nVerbrauchte Reserve:",
+    "#00DDFF CID:#\nIdentificador do fabricante:\nModelo:\nRevisão do produto:\nN.º de série:\nMês/ano:\n\n#00DDFF Ext CSD:#\nClasses de comandos:\nVelocidade máxima do barramento:\nVelocidade atual:\nÁrea melhorada:\nCache de escrita:\n\nManutenção:\nVida útil estimada:\nReserva utilizada:"
+  ],
+  "#00DDFF eMMC Physical Partitions:#\n": [
+    "#00DDFF eMMC Physical Partitions:#\n",
+    "#00DDFF Partitions physiques eMMC :#\n",
+    "#00DDFF Particiones físicas eMMC:#\n",
+    "#00DDFF Partizioni fisiche eMMC:#\n",
+    "#00DDFF Физические разделы eMMC:#\n",
+    "#00DDFF Physische eMMC-Partitionen:#\n",
+    "#00DDFF Partições físicas eMMC:#\n"
+  ],
+  "1: #96FF00 BOOT0#  Size: %6d KiB  Sectors: 0x%08X\n": [
+    "1: #96FF00 BOOT0#  Size: %6d KiB  Sectors: 0x%08X\n",
+    "1: #96FF00 BOOT0#  Taille : %6d KiB  Secteurs : 0x%08X\n",
+    "1: #96FF00 BOOT0#  Tamaño: %6d KiB  Sectores: 0x%08X\n",
+    "1: #96FF00 BOOT0#  Dimensione: %6d KiB  Settori: 0x%08X\n",
+    "1: #96FF00 BOOT0#  Размер: %6d KiB  Секторы: 0x%08X\n",
+    "1: #96FF00 BOOT0#  Größe: %6d KiB  Sektoren: 0x%08X\n",
+    "1: #96FF00 BOOT0#  Tamanho: %6d KiB  Setores: 0x%08X\n"
+  ],
+  "2: #96FF00 BOOT1#  Size: %6d KiB  Sectors: 0x%08X\n": [
+    "2: #96FF00 BOOT1#  Size: %6d KiB  Sectors: 0x%08X\n",
+    "2: #96FF00 BOOT1#  Taille : %6d KiB  Secteurs : 0x%08X\n",
+    "2: #96FF00 BOOT1#  Tamaño: %6d KiB  Sectores: 0x%08X\n",
+    "2: #96FF00 BOOT1#  Dimensione: %6d KiB  Settori: 0x%08X\n",
+    "2: #96FF00 BOOT1#  Размер: %6d KiB  Секторы: 0x%08X\n",
+    "2: #96FF00 BOOT1#  Größe: %6d KiB  Sektoren: 0x%08X\n",
+    "2: #96FF00 BOOT1#  Tamanho: %6d KiB  Setores: 0x%08X\n"
+  ],
+  "3: #96FF00 RPMB#   Size: %6d KiB  Sectors: 0x%08X\n": [
+    "3: #96FF00 RPMB#   Size: %6d KiB  Sectors: 0x%08X\n",
+    "3: #96FF00 RPMB#   Taille : %6d KiB  Secteurs : 0x%08X\n",
+    "3: #96FF00 RPMB#   Tamaño: %6d KiB  Sectores: 0x%08X\n",
+    "3: #96FF00 RPMB#   Dimensione: %6d KiB  Settori: 0x%08X\n",
+    "3: #96FF00 RPMB#   Размер: %6d KiB  Секторы: 0x%08X\n",
+    "3: #96FF00 RPMB#   Größe: %6d KiB  Sektoren: 0x%08X\n",
+    "3: #96FF00 RPMB#   Tamanho: %6d KiB  Setores: 0x%08X\n"
+  ],
+  "0: #96FF00 GPP#    Size: %6d MiB  Sectors: 0x%08X\n": [
+    "0: #96FF00 GPP#    Size: %6d MiB  Sectors: 0x%08X\n",
+    "0: #96FF00 GPP#    Taille : %6d MiB  Secteurs : 0x%08X\n",
+    "0: #96FF00 GPP#    Tamaño: %6d MiB  Sectores: 0x%08X\n",
+    "0: #96FF00 GPP#    Dimensione: %6d MiB  Settori: 0x%08X\n",
+    "0: #96FF00 GPP#    Размер: %6d MiB  Секторы: 0x%08X\n",
+    "0: #96FF00 GPP#    Größe: %6d MiB  Sektoren: 0x%08X\n",
+    "0: #96FF00 GPP#    Tamanho: %6d MiB  Setores: 0x%08X\n"
+  ],
+  "\n#00DDFF GPP (eMMC USER) Partition Table:#\n": [
+    "\n#00DDFF GPP (eMMC USER) Partition Table:#\n",
+    "\n#00DDFF Table de partitions GPP (eMMC USER) :#\n",
+    "\n#00DDFF Tabla de particiones GPP (eMMC USER):#\n",
+    "\n#00DDFF Tabella partizioni GPP (eMMC USER):#\n",
+    "\n#00DDFF Таблица разделов GPP (eMMC USER):#\n",
+    "\n#00DDFF GPP-Partitionstabelle (eMMC USER):#\n",
+    "\n#00DDFF Tabela de partições GPP (eMMC USER):#\n"
+  ],
+  "#FFBA00 Idx Name                            Size     Offset    Sectors#\n": [
+    "#FFBA00 Idx Name                            Size     Offset    Sectors#\n",
+    "#FFBA00 Idx Nom                             Taille   Position  Secteurs#\n",
+    "#FFBA00 Índ Nombre                          Tamaño   Posición  Sectores#\n",
+    "#FFBA00 Ind Nome                            Dimens.  Offset    Settori#\n",
+    "#FFBA00 Инд Имя                             Размер   Смещение  Секторы#\n",
+    "#FFBA00 Idx Name                            Größe    Position  Sektoren#\n",
+    "#FFBA00 Índ Nome                            Tamanho  Posição   Setores#\n"
+  ],
+  "#FF8000 eMMC Issues Warning#\n\n#FFDD00 Your eMMC is initialized in a slower mode,#\n#FFDD00 or init/read/write errors occurred!#\n#FFDD00 This might mean hardware issues!#\n\n#00DDFF Bus Speed:# %d MB/s\n\n#00DDFF SDMMC4 Errors:#\nInit fails: %d\nRead/Write fails: %d\nRead/Write errors: %d": [
+    "#FF8000 eMMC Issues Warning#\n\n#FFDD00 Your eMMC is initialized in a slower mode,#\n#FFDD00 or init/read/write errors occurred!#\n#FFDD00 This might mean hardware issues!#\n\n#00DDFF Bus Speed:# %d MB/s\n\n#00DDFF SDMMC4 Errors:#\nInit fails: %d\nRead/Write fails: %d\nRead/Write errors: %d",
+    "#FF8000 Problèmes d'eMMC#\n\n#FFDD00 Votre eMMC fonctionne dans un mode plus lent,#\n#FFDD00 ou des erreurs d'initialisation/lecture/écriture ont eu lieu !#\n#FFDD00 Cela peut signaler un problème matériel !#\n\n#00DDFF Vitesse du bus :# %d MB/s\n\n#00DDFF Erreurs SDMMC4 :#\nÉchecs d'initialisation : %d\nÉchecs de lecture/écriture : %d\nErreurs de lecture/écriture : %d",
+    "#FF8000 Problemas de eMMC#\n\n#FFDD00 La eMMC se ha iniciado en un modo más lento,#\n#FFDD00 o se produjeron errores de inicio/lectura/escritura.#\n#FFDD00 Esto puede indicar problemas de hardware.#\n\n#00DDFF Velocidad del bus:# %d MB/s\n\n#00DDFF Errores SDMMC4:#\nFallos de inicialización: %d\nFallos de lectura/escritura: %d\nErrores de lectura/escritura: %d",
+    "#FF8000 Problemi eMMC#\n\n#FFDD00 L'eMMC è inizializzata in una modalità più lenta,#\n#FFDD00 oppure si sono verificati errori di avvio/lettura/scrittura.#\n#FFDD00 Ciò può indicare problemi hardware.#\n\n#00DDFF Velocità bus:# %d MB/s\n\n#00DDFF Errori SDMMC4:#\nInizializzazioni fallite: %d\nLetture/scritture fallite: %d\nErrori lettura/scrittura: %d",
+    "#FF8000 Проблемы eMMC#\n\n#FFDD00 eMMC инициализирована в замедленном режиме,#\n#FFDD00 либо произошли ошибки инициализации/чтения/записи!#\n#FFDD00 Это может указывать на неисправность оборудования!#\n\n#00DDFF Скорость шины:# %d MB/s\n\n#00DDFF Ошибки SDMMC4:#\nСбои инициализации: %d\nСбои чтения/записи: %d\nОшибки чтения/записи: %d",
+    "#FF8000 eMMC-Probleme#\n\n#FFDD00 Die eMMC wurde in einem langsameren Modus initialisiert,#\n#FFDD00 oder es traten Initialisierungs-/Lese-/Schreibfehler auf!#\n#FFDD00 Dies kann auf Hardwareprobleme hinweisen!#\n\n#00DDFF Busgeschwindigkeit:# %d MB/s\n\n#00DDFF SDMMC4-Fehler:#\nInitialisierungsfehler: %d\nLese-/Schreibausfälle: %d\nLese-/Schreibfehler: %d",
+    "#FF8000 Problemas de eMMC#\n\n#FFDD00 A eMMC foi inicializada num modo mais lento,#\n#FFDD00 ou ocorreram erros de inicialização/leitura/escrita!#\n#FFDD00 Isto pode indicar problemas de hardware!#\n\n#00DDFF Velocidade do barramento:# %d MB/s\n\n#00DDFF Erros SDMMC4:#\nFalhas de inicialização: %d\nFalhas de leitura/escrita: %d\nErros de leitura/escrita: %d"
+  ],
+  "#00DDFF Card ID#\nVendor ID:\nModel:\nOEM ID:\nHW rev:\nFW rev:\nS/N:\nMonth/Year:\n\nMax Power:\nInitial bus:": [
+    "#00DDFF Card ID#\nVendor ID:\nModel:\nOEM ID:\nHW rev:\nFW rev:\nS/N:\nMonth/Year:\n\nMax Power:\nInitial bus:",
+    "#00DDFF Identifiant de carte#\nIdentifiant fabricant :\nModèle :\nIdentifiant OEM :\nRévision matérielle :\nRévision du micrologiciel :\nN° de série :\nMois/année :\n\nPuissance maximale :\nBus initial :",
+    "#00DDFF Identificador de tarjeta#\nIdentificador de fabricante:\nModelo:\nIdentificador OEM:\nRevisión de hardware:\nRevisión del firmware:\nN.º de serie:\nMes/año:\n\nPotencia máxima:\nBus inicial:",
+    "#00DDFF Identificativo scheda#\nIdentificativo produttore:\nModello:\nIdentificativo OEM:\nRevisione hardware:\nRevisione firmware:\nN. di serie:\nMese/anno:\n\nPotenza massima:\nBus iniziale:",
+    "#00DDFF Идентификатор карты#\nИдентификатор производителя:\nМодель:\nИдентификатор OEM:\nРевизия оборудования:\nРевизия прошивки:\nСерийный №:\nМесяц/год:\n\nМаксимальная мощность:\nИсходная шина:",
+    "#00DDFF Kartenkennung#\nHerstellerkennung:\nModell:\nOEM-Kennung:\nHardware-Revision:\nFirmware-Revision:\nSeriennr.:\nMonat/Jahr:\n\nMaximale Leistung:\nAnfänglicher Bus:",
+    "#00DDFF Identificador do cartão#\nIdentificador do fabricante:\nModelo:\nIdentificador OEM:\nRevisão do hardware:\nRevisão do firmware:\nN.º de série:\nMês/ano:\n\nPotência máxima:\nBarramento inicial:"
+  ],
+  "#00DDFF Card-Specific Data#\nCmd Classes:\nCapacity:\nCapacity (LBA):\nBus Width:\nCurrent Rate:\nMax Bus Speed:\nSpeed Class:\nUHS Classes:\nWrite Protect:\nVendor Info:": [
+    "#00DDFF Card-Specific Data#\nCmd Classes:\nCapacity:\nCapacity (LBA):\nBus Width:\nCurrent Rate:\nMax Bus Speed:\nSpeed Class:\nUHS Classes:\nWrite Protect:\nVendor Info:",
+    "#00DDFF Données propres à la carte#\nClasses de commandes :\nCapacité :\nCapacité (LBA) :\nLargeur du bus :\nDébit actuel :\nVitesse maximale du bus :\nClasse de vitesse :\nClasses UHS :\nProtection en écriture :\nInformations fabricant :",
+    "#00DDFF Datos específicos de la tarjeta#\nClases de comandos:\nCapacidad:\nCapacidad (LBA):\nAncho del bus:\nVelocidad actual:\nVelocidad máxima del bus:\nClase de velocidad:\nClases UHS:\nProtección de escritura:\nInformación del fabricante:",
+    "#00DDFF Dati specifici della scheda#\nClassi comandi:\nCapacità:\nCapacità (LBA):\nLarghezza bus:\nVelocità attuale:\nVelocità massima bus:\nClasse di velocità:\nClassi UHS:\nProtezione scrittura:\nInformazioni produttore:",
+    "#00DDFF Данные конкретной карты#\nКлассы команд:\nЁмкость:\nЁмкость (LBA):\nШирина шины:\nТекущая скорость:\nМаксимальная скорость шины:\nКласс скорости:\nКлассы UHS:\nЗащита записи:\nСведения производителя:",
+    "#00DDFF Kartenspezifische Daten#\nBefehlsklassen:\nKapazität:\nKapazität (LBA):\nBusbreite:\nAktuelle Rate:\nMaximale Busgeschwindigkeit:\nGeschwindigkeitsklasse:\nUHS-Klassen:\nSchreibschutz:\nHerstellerinformationen:",
+    "#00DDFF Dados específicos do cartão#\nClasses de comandos:\nCapacidade:\nCapacidade (LBA):\nLargura do barramento:\nVelocidade atual:\nVelocidade máxima do barramento:\nClasse de velocidade:\nClasses UHS:\nProteção de escrita:\nInformações do fabricante:"
+  ],
+  "#00DDFF SDMMC1 Errors:#\nInit fails:\nRead/Write fails:\nRead/Write errors:": [
+    "#00DDFF SDMMC1 Errors:#\nInit fails:\nRead/Write fails:\nRead/Write errors:",
+    "#00DDFF Erreurs SDMMC1 :#\nÉchecs d'initialisation :\nÉchecs de lecture/écriture :\nErreurs de lecture/écriture :",
+    "#00DDFF Errores SDMMC1:#\nFallos de inicialización:\nFallos de lectura/escritura:\nErrores de lectura/escritura:",
+    "#00DDFF Errori SDMMC1:#\nInizializzazioni fallite:\nOperazioni lettura/scrittura fallite:\nErrori lettura/scrittura:",
+    "#00DDFF Ошибки SDMMC1:#\nСбои инициализации:\nСбои чтения/записи:\nОшибки чтения/записи:",
+    "#00DDFF SDMMC1-Fehler:#\nInitialisierungsfehler:\nLese-/Schreibfehlschläge:\nLese-/Schreibfehler:",
+    "#00DDFF Erros SDMMC1:#\nFalhas de inicialização:\nFalhas de leitura/escrita:\nErros de leitura/escrita:"
+  ],
+  "#00DDFF Found FAT FS:#\nFilesystem:\nCluster:\nSize free/total:": [
+    "#00DDFF Found FAT FS:#\nFilesystem:\nCluster:\nSize free/total:",
+    "#00DDFF Système FAT détecté :#\nSystème de fichiers :\nUnité d'allocation :\nEspace libre/total :",
+    "#00DDFF Sistema FAT detectado:#\nSistema de archivos:\nUnidad de asignación:\nEspacio libre/total:",
+    "#00DDFF File system FAT rilevato:#\nFile system:\nUnità di allocazione:\nSpazio libero/totale:",
+    "#00DDFF Обнаружена FAT:#\nФайловая система:\nКластер:\nСвободно/всего:",
+    "#00DDFF FAT-Dateisystem gefunden:#\nDateisystem:\nZuordnungseinheit:\nFrei/Gesamt:",
+    "#00DDFF Sistema FAT encontrado:#\nSistema de ficheiros:\nUnidade de alocação:\nEspaço livre/total:"
+  ],
+  " - Init ": [
+    " - Init ",
+    " - Initialisation ",
+    " - Inicialización ",
+    " - Inizializzazione ",
+    " - Инициализация ",
+    " - Initialisierung ",
+    " - Inicialização "
+  ],
+  " - Low ": [
+    " - Low ",
+    " - Faible ",
+    " - Bajo ",
+    " - Basso ",
+    " - Низкий ",
+    " - Niedrig ",
+    " - Baixo "
+  ],
+  " Error!#\n\n\n\n\n\n\n\n\n\n\n\n\n": [
+    " Error!#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Erreur !#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Error.#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Errore.#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Ошибка!#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Fehler!#\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    " Erro!#\n\n\n\n\n\n\n\n\n\n\n\n\n"
+  ],
+  "#FF8000 Unknown OTP# (%02X)\n": [
+    "#FF8000 Unknown OTP# (%02X)\n",
+    "#FF8000 OTP inconnu# (%02X)\n",
+    "#FF8000 OTP desconocida# (%02X)\n",
+    "#FF8000 OTP sconosciuta# (%02X)\n",
+    "#FF8000 Неизвестная OTP# (%02X)\n",
+    "#FF8000 Unbekannte OTP# (%02X)\n",
+    "#FF8000 OTP desconhecida# (%02X)\n"
+  ],
+  "#00DDFF Battery Charger IC Info:#\nInput current limit:\nSystem voltage limit:\nCharge current limit:\nCharge voltage limit:\nCharge status:\nTemperature status:\n\n#00DDFF USB-PD IC Info:#\nConnection status:\nInput Wattage Limit:\nUSB-PD Profiles:": [
+    "#00DDFF Battery Charger IC Info:#\nInput current limit:\nSystem voltage limit:\nCharge current limit:\nCharge voltage limit:\nCharge status:\nTemperature status:\n\n#00DDFF USB-PD IC Info:#\nConnection status:\nInput Wattage Limit:\nUSB-PD Profiles:",
+    "#00DDFF Informations du circuit de charge :#\nLimite de courant d'entrée :\nLimite de tension système :\nLimite de courant de charge :\nLimite de tension de charge :\nÉtat de charge :\nÉtat thermique :\n\n#00DDFF Informations du circuit USB-PD :#\nÉtat de connexion :\nLimite de puissance d'entrée :\nProfils USB-PD :",
+    "#00DDFF Información del circuito de carga:#\nLímite de corriente de entrada:\nLímite de tensión del sistema:\nLímite de corriente de carga:\nLímite de tensión de carga:\nEstado de carga:\nEstado térmico:\n\n#00DDFF Información del circuito USB-PD:#\nEstado de conexión:\nLímite de potencia de entrada:\nPerfiles USB-PD:",
+    "#00DDFF Informazioni circuito di carica:#\nLimite corrente in ingresso:\nLimite tensione sistema:\nLimite corrente di carica:\nLimite tensione di carica:\nStato carica:\nStato termico:\n\n#00DDFF Informazioni circuito USB-PD:#\nStato connessione:\nLimite potenza in ingresso:\nProfili USB-PD:",
+    "#00DDFF Сведения о микросхеме зарядки:#\nПредел входного тока:\nПредел напряжения системы:\nПредел зарядного тока:\nПредел зарядного напряжения:\nСостояние зарядки:\nТемпературное состояние:\n\n#00DDFF Сведения о микросхеме USB-PD:#\nСостояние подключения:\nПредел входной мощности:\nПрофили USB-PD:",
+    "#00DDFF Informationen zum Lade-IC:#\nEingangsstromgrenze:\nSystemspannungsgrenze:\nLadestromgrenze:\nLadespannungsgrenze:\nLadestatus:\nTemperaturstatus:\n\n#00DDFF Informationen zum USB-PD-IC:#\nVerbindungsstatus:\nEingangsleistungsgrenze:\nUSB-PD-Profile:",
+    "#00DDFF Informações do circuito de carga:#\nLimite da corrente de entrada:\nLimite da tensão do sistema:\nLimite da corrente de carga:\nLimite da tensão de carga:\nEstado de carga:\nEstado térmico:\n\n#00DDFF Informações do circuito USB-PD:#\nEstado da ligação:\nLimite da potência de entrada:\nPerfis USB-PD:"
+  ],
+  " Error!#\n\n\n\n\n": [
+    " Error!#\n\n\n\n\n",
+    " Erreur !#\n\n\n\n\n",
+    " Error.#\n\n\n\n\n",
+    " Errore.#\n\n\n\n\n",
+    " Ошибка!#\n\n\n\n\n",
+    " Fehler!#\n\n\n\n\n",
+    " Erro!#\n\n\n\n\n"
+  ],
+  "\nNon PD": [
+    "\nNon PD",
+    "\nSans PD",
+    "\nSin PD",
+    "\nSenza PD",
+    "\nБез PD",
+    "\nOhne PD",
+    "\nSem PD"
+  ],
+  " Error!#": [
+    " Error!#",
+    " Erreur !#",
+    " Error.#",
+    " Errore.#",
+    " Ошибка!#",
+    " Fehler!#",
+    " Erro!#"
+  ],
+  "View Ipatches and dump the unpatched and patched versions\nof BootROM.\nOr dump every single key via #C7EA46 Lockpick RCM#.\n": [
+    "View Ipatches and dump the unpatched and patched versions\nof BootROM.\nOr dump every single key via #C7EA46 Lockpick RCM#.\n",
+    "Afficher les correctifs Ipatch et exporter les versions d'origine et corrigée\nde BootROM.\nOu exporter toutes les clés avec #C7EA46 Lockpick RCM#.\n",
+    "Ver los parches Ipatch y exportar las versiones original y corregida\nde BootROM.\nO exportar todas las claves con #C7EA46 Lockpick RCM#.\n",
+    "Visualizza le patch Ipatch ed esporta le versioni originale e corretta\ndi BootROM.\nOppure esporta tutte le chiavi con #C7EA46 Lockpick RCM#.\n",
+    "Просмотр Ipatch и сохранение исходной и исправленной версий\nBootROM.\nИли сохраните все ключи через #C7EA46 Lockpick RCM#.\n",
+    "Ipatches anzeigen und ursprüngliche sowie korrigierte Versionen sichern\ndes BootROM.\nOder alle Schlüssel mit #C7EA46 Lockpick RCM# sichern.\n",
+    "Ver correções Ipatch e exportar as versões original e corrigida\nde BootROM.\nOu exportar todas as chaves com #C7EA46 Lockpick RCM#.\n"
+  ],
+  "View Ipatches and dump the unpatched and patched versions\nof BootROM. Or dump every single key via #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin is missing or old!#\n": [
+    "View Ipatches and dump the unpatched and patched versions\nof BootROM. Or dump every single key via #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin is missing or old!#\n",
+    "Afficher les correctifs Ipatch et exporter les versions d'origine et corrigée\nde BootROM. Ou exporter toutes les clés avec #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin est absent ou ancien !#\n",
+    "Ver los parches Ipatch y exportar las versiones original y corregida\nde BootROM. O exportar todas las claves con #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin falta o es antiguo.#\n",
+    "Visualizza le patch Ipatch ed esporta le versioni originale e corretta\ndi BootROM. Oppure esporta tutte le chiavi con #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin manca o è obsoleto.#\n",
+    "Просмотр Ipatch и сохранение исходной и исправленной версий\nBootROM. Или сохраните все ключи через #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin отсутствует или устарел!#\n",
+    "Ipatches anzeigen und ursprüngliche sowie korrigierte Versionen sichern\ndes BootROM. Oder alle Schlüssel mit #C7EA46 Lockpick RCM# sichern.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin fehlt oder ist veraltet!#\n",
+    "Ver correções Ipatch e exportar as versões original e corrigida\nde BootROM. Ou exportar todas as chaves com #C7EA46 Lockpick RCM#.\n#FFDD00 bootloader/payloads/Lockpick_RCM.bin está ausente ou desatualizado!#\n"
+  ],
+  "View and dump the cached #C7EA46 Fuses# and #C7EA46 KFuses#.\nFuses contain info about the SoC/SKU and KFuses HDCP keys.\nYou can also see info about #C7EA46 DRAM#, #C7EA46 Screen# and #C7EA46 Touch panel#.": [
+    "View and dump the cached #C7EA46 Fuses# and #C7EA46 KFuses#.\nFuses contain info about the SoC/SKU and KFuses HDCP keys.\nYou can also see info about #C7EA46 DRAM#, #C7EA46 Screen# and #C7EA46 Touch panel#.",
+    "Afficher et exporter les #C7EA46 fusibles# et #C7EA46 KFuses# en cache.\nLes fusibles contiennent les informations SoC/SKU et les KFuses les clés HDCP.\nConsulter aussi les informations sur la #C7EA46 DRAM#, l'#C7EA46 écran# et la #C7EA46 dalle tactile#.",
+    "Ver y exportar los #C7EA46 fusibles# y #C7EA46 KFuses# almacenados.\nLos fusibles contienen información del SoC/SKU y los KFuses las claves HDCP.\nTambién puedes ver información de la #C7EA46 DRAM#, la #C7EA46 pantalla# y el #C7EA46 panel táctil#.",
+    "Visualizza ed esporta #C7EA46 fusibili# e #C7EA46 KFuses# memorizzati.\nI fusibili contengono informazioni SoC/SKU e i KFuses le chiavi HDCP.\nPuoi anche consultare informazioni su #C7EA46 DRAM#, #C7EA46 schermo# e #C7EA46 pannello touch#.",
+    "Просмотр и сохранение кэшированных #C7EA46 предохранителей# и #C7EA46 KFuses#.\nПредохранители содержат данные SoC/SKU, а KFuses — ключи HDCP.\nТакже доступны сведения о #C7EA46 DRAM#, #C7EA46 экране# и #C7EA46 сенсорной панели#.",
+    "Zwischengespeicherte #C7EA46 Fuses# und #C7EA46 KFuses# anzeigen und sichern.\nFuses enthalten SoC-/SKU-Daten und KFuses die HDCP-Schlüssel.\nAuch Informationen zu #C7EA46 DRAM#, #C7EA46 Bildschirm# und #C7EA46 Touchpanel# sind verfügbar.",
+    "Ver e exportar os #C7EA46 fusíveis# e #C7EA46 KFuses# em cache.\nOs fusíveis contêm dados do SoC/SKU e os KFuses as chaves HDCP.\nTambém pode consultar informações da #C7EA46 DRAM#, do #C7EA46 ecrã# e do #C7EA46 painel tátil#."
+  ],
+  "View info about the eMMC or microSD and their partition list.\nAdditionally you can benchmark read speeds.": [
+    "View info about the eMMC or microSD and their partition list.\nAdditionally you can benchmark read speeds.",
+    "Consulter les informations de l'eMMC ou de la microSD et leurs partitions.\nVous pouvez aussi mesurer les débits de lecture.",
+    "Ver información de la eMMC o microSD y sus particiones.\nTambién puedes medir la velocidad de lectura.",
+    "Visualizza informazioni su eMMC o microSD e le relative partizioni.\nPuoi anche misurare la velocità di lettura.",
+    "Просмотр сведений об eMMC или microSD и их разделах.\nТакже можно измерить скорость чтения.",
+    "Informationen zu eMMC oder microSD und deren Partitionen anzeigen.\nZusätzlich kann die Lesegeschwindigkeit gemessen werden.",
+    "Ver informações da eMMC ou microSD e das suas partições.\nTambém pode medir a velocidade de leitura."
+  ],
+  "#C7EA46 Status:# Flashing Linux...": [
+    "#C7EA46 Status:# Flashing Linux...",
+    "#C7EA46 État :# Écriture de Linux...",
+    "#C7EA46 Estado:# Escribiendo Linux...",
+    "#C7EA46 Stato:# Scrittura di Linux...",
+    "#C7EA46 Состояние:# Запись Linux...",
+    "#C7EA46 Status:# Linux wird geschrieben...",
+    "#C7EA46 Estado:# A escrever Linux..."
+  ],
+  "#FFDD00 Error:# Failed to open 1st part!": [
+    "#FFDD00 Error:# Failed to open 1st part!",
+    "#FFDD00 Erreur :# Impossible d'ouvrir la première partie !",
+    "#FFDD00 Error:# No se pudo abrir la primera parte.",
+    "#FFDD00 Errore:# Impossibile aprire la prima parte.",
+    "#FFDD00 Ошибка:# Не удалось открыть первую часть!",
+    "#FFDD00 Fehler:# Erster Teil konnte nicht geöffnet werden!",
+    "#FFDD00 Erro:# Não foi possível abrir a primeira parte!"
+  ],
+  "#FFDD00 Error:# Failed to open part %d#": [
+    "#FFDD00 Error:# Failed to open part %d#",
+    "#FFDD00 Erreur :# Impossible d'ouvrir la partie %d#",
+    "#FFDD00 Error:# No se pudo abrir la parte %d#",
+    "#FFDD00 Errore:# Impossibile aprire la parte %d#",
+    "#FFDD00 Ошибка:# Не удалось открыть часть %d#",
+    "#FFDD00 Fehler:# Teil %d konnte nicht geöffnet werden#",
+    "#FFDD00 Erro:# Não foi possível abrir a parte %d#"
+  ],
+  "#FFDD00 Error:# Reading from SD!": [
+    "#FFDD00 Error:# Reading from SD!",
+    "#FFDD00 Erreur :# Lecture de la carte SD !",
+    "#FFDD00 Error:# Lectura de la tarjeta SD.",
+    "#FFDD00 Errore:# Lettura dalla scheda SD.",
+    "#FFDD00 Ошибка:# Чтение с SD!",
+    "#FFDD00 Fehler:# Lesen von SD!",
+    "#FFDD00 Erro:# Leitura do cartão SD!"
+  ],
+  "#FFDD00 Error:# Writing to SD!": [
+    "#FFDD00 Error:# Writing to SD!",
+    "#FFDD00 Erreur :# Écriture sur la carte SD !",
+    "#FFDD00 Error:# Escritura en la tarjeta SD.",
+    "#FFDD00 Errore:# Scrittura sulla scheda SD.",
+    "#FFDD00 Ошибка:# Запись на SD!",
+    "#FFDD00 Fehler:# Schreiben auf SD!",
+    "#FFDD00 Erro:# Escrita no cartão SD!"
+  ],
+  "#C7EA46 Status:# Searching for files and partitions...": [
+    "#C7EA46 Status:# Searching for files and partitions...",
+    "#C7EA46 État :# Recherche des fichiers et partitions...",
+    "#C7EA46 Estado:# Buscando archivos y particiones...",
+    "#C7EA46 Stato:# Ricerca di file e partizioni...",
+    "#C7EA46 Состояние:# Поиск файлов и разделов...",
+    "#C7EA46 Status:# Dateien und Partitionen werden gesucht...",
+    "#C7EA46 Estado:# A procurar ficheiros e partições..."
+  ],
+  "#FFDD00 Error:# Installation files not found!": [
+    "#FFDD00 Error:# Installation files not found!",
+    "#FFDD00 Erreur :# Fichiers d'installation introuvables !",
+    "#FFDD00 Error:# No se encontraron archivos de instalación.",
+    "#FFDD00 Errore:# File di installazione non trovati.",
+    "#FFDD00 Ошибка:# Файлы установки не найдены!",
+    "#FFDD00 Fehler:# Installationsdateien nicht gefunden!",
+    "#FFDD00 Erro:# Ficheiros de instalação não encontrados!"
+  ],
+  "#FFDD00 Error:# No partition found!": [
+    "#FFDD00 Error:# No partition found!",
+    "#FFDD00 Erreur :# Aucune partition trouvée !",
+    "#FFDD00 Error:# No se encontró ninguna partición.",
+    "#FFDD00 Errore:# Nessuna partizione trovata.",
+    "#FFDD00 Ошибка:# Разделы не найдены!",
+    "#FFDD00 Fehler:# Keine Partition gefunden!",
+    "#FFDD00 Erro:# Nenhuma partição encontrada!"
+  ],
+  "#FFDD00 Error:# The image is not aligned to 4 MiB!": [
+    "#FFDD00 Error:# The image is not aligned to 4 MiB!",
+    "#FFDD00 Erreur :# L'image n'est pas alignée sur 4 Mio !",
+    "#FFDD00 Error:# La imagen no está alineada a 4 MiB.",
+    "#FFDD00 Errore:# L'immagine non è allineata a 4 MiB.",
+    "#FFDD00 Ошибка:# Образ не выровнен по 4 МиБ!",
+    "#FFDD00 Fehler:# Das Image ist nicht auf 4 MiB ausgerichtet!",
+    "#FFDD00 Erro:# A imagem não está alinhada a 4 MiB!"
+  ],
+  "#FFDD00 Error:# The image is bigger than the partition!": [
+    "#FFDD00 Error:# The image is bigger than the partition!",
+    "#FFDD00 Erreur :# L'image est plus grande que la partition !",
+    "#FFDD00 Error:# La imagen supera el tamaño de la partición.",
+    "#FFDD00 Errore:# L'immagine è più grande della partizione.",
+    "#FFDD00 Ошибка:# Образ больше раздела!",
+    "#FFDD00 Fehler:# Das Image ist größer als die Partition!",
+    "#FFDD00 Erro:# A imagem é maior do que a partição!"
+  ],
+  "#C7EA46 Status:# Found installation files and partition.\n#00DDFF Offset:# %08x, #00DDFF Size:# %X, #00DDFF Image size:# %d MiB\n\nDo you want to continue?": [
+    "#C7EA46 Status:# Found installation files and partition.\n#00DDFF Offset:# %08x, #00DDFF Size:# %X, #00DDFF Image size:# %d MiB\n\nDo you want to continue?",
+    "#C7EA46 État :# Fichiers d'installation et partition trouvés.\n#00DDFF Position :# %08x, #00DDFF Taille :# %X, #00DDFF Taille de l'image :# %d MiB\n\nVoulez-vous continuer ?",
+    "#C7EA46 Estado:# Archivos de instalación y partición encontrados.\n#00DDFF Posición:# %08x, #00DDFF Tamaño:# %X, #00DDFF Tamaño de imagen:# %d MiB\n\n¿Quieres continuar?",
+    "#C7EA46 Stato:# File di installazione e partizione trovati.\n#00DDFF Offset:# %08x, #00DDFF Dimensione:# %X, #00DDFF Dimensione immagine:# %d MiB\n\nVuoi continuare?",
+    "#C7EA46 Состояние:# Файлы установки и раздел найдены.\n#00DDFF Смещение:# %08x, #00DDFF Размер:# %X, #00DDFF Размер образа:# %d MiB\n\nПродолжить?",
+    "#C7EA46 Status:# Installationsdateien und Partition gefunden.\n#00DDFF Position:# %08x, #00DDFF Größe:# %X, #00DDFF Imagegröße:# %d MiB\n\nMöchten Sie fortfahren?",
+    "#C7EA46 Estado:# Ficheiros de instalação e partição encontrados.\n#00DDFF Posição:# %08x, #00DDFF Tamanho:# %X, #00DDFF Tamanho da imagem:# %d MiB\n\nDeseja continuar?"
+  ],
+  "#FFDD00 Error:# No Android GPT was found!": [
+    "#FFDD00 Error:# No Android GPT was found!",
+    "#FFDD00 Erreur :# Aucune GPT Android trouvée !",
+    "#FFDD00 Error:# No se encontró ninguna GPT de Android.",
+    "#FFDD00 Errore:# Nessuna GPT Android trovata.",
+    "#FFDD00 Ошибка:# GPT Android не найдена!",
+    "#FFDD00 Fehler:# Keine Android-GPT gefunden!",
+    "#FFDD00 Erro:# Nenhuma GPT Android encontrada!"
+  ],
+  "#FF8000 Warning:# Kernel image not found!\n": [
+    "#FF8000 Warning:# Kernel image not found!\n",
+    "#FF8000 Attention :# Image du noyau introuvable !\n",
+    "#FF8000 Advertencia:# No se encontró la imagen del núcleo.\n",
+    "#FF8000 Attenzione:# Immagine del kernel non trovata.\n",
+    "#FF8000 Внимание:# Образ ядра не найден!\n",
+    "#FF8000 Warnung:# Kernel-Image nicht gefunden!\n",
+    "#FF8000 Aviso:# Imagem do kernel não encontrada!\n"
+  ],
+  "#FF8000 Warning:# Kernel image too big!\n": [
+    "#FF8000 Warning:# Kernel image too big!\n",
+    "#FF8000 Attention :# Image du noyau trop grande !\n",
+    "#FF8000 Advertencia:# La imagen del núcleo es demasiado grande.\n",
+    "#FF8000 Attenzione:# Immagine del kernel troppo grande.\n",
+    "#FF8000 Внимание:# Образ ядра слишком большой!\n",
+    "#FF8000 Warnung:# Kernel-Image zu groß!\n",
+    "#FF8000 Aviso:# Imagem do kernel demasiado grande!\n"
+  ],
+  "#C7EA46 Success:# Kernel image flashed!\n": [
+    "#C7EA46 Success:# Kernel image flashed!\n",
+    "#C7EA46 Réussite :# Image du noyau écrite !\n",
+    "#C7EA46 Éxito:# Imagen del núcleo escrita.\n",
+    "#C7EA46 Operazione riuscita:# Immagine del kernel scritta.\n",
+    "#C7EA46 Успешно:# Образ ядра записан!\n",
+    "#C7EA46 Erfolg:# Kernel-Image geschrieben!\n",
+    "#C7EA46 Sucesso:# Imagem do kernel escrita!\n"
+  ],
+  "#FF8000 Warning:# Kernel partition not found!\n": [
+    "#FF8000 Warning:# Kernel partition not found!\n",
+    "#FF8000 Attention :# Partition du noyau introuvable !\n",
+    "#FF8000 Advertencia:# No se encontró la partición del núcleo.\n",
+    "#FF8000 Attenzione:# Partizione del kernel non trovata.\n",
+    "#FF8000 Внимание:# Раздел ядра не найден!\n",
+    "#FF8000 Warnung:# Kernel-Partition nicht gefunden!\n",
+    "#FF8000 Aviso:# Partição do kernel não encontrada!\n"
+  ],
+  "#FF8000 Warning:# Recovery image not found!\n": [
+    "#FF8000 Warning:# Recovery image not found!\n",
+    "#FF8000 Attention :# Image de récupération introuvable !\n",
+    "#FF8000 Advertencia:# No se encontró la imagen de recuperación.\n",
+    "#FF8000 Attenzione:# Immagine di ripristino non trovata.\n",
+    "#FF8000 Внимание:# Образ восстановления не найден!\n",
+    "#FF8000 Warnung:# Recovery-Image nicht gefunden!\n",
+    "#FF8000 Aviso:# Imagem de recuperação não encontrada!\n"
+  ],
+  "#FF8000 Warning:# Recovery image too big!\n": [
+    "#FF8000 Warning:# Recovery image too big!\n",
+    "#FF8000 Attention :# Image de récupération trop grande !\n",
+    "#FF8000 Advertencia:# La imagen de recuperación es demasiado grande.\n",
+    "#FF8000 Attenzione:# Immagine di ripristino troppo grande.\n",
+    "#FF8000 Внимание:# Образ восстановления слишком большой!\n",
+    "#FF8000 Warnung:# Recovery-Image zu groß!\n",
+    "#FF8000 Aviso:# Imagem de recuperação demasiado grande!\n"
+  ],
+  "#C7EA46 Success:# Recovery image flashed!\n": [
+    "#C7EA46 Success:# Recovery image flashed!\n",
+    "#C7EA46 Réussite :# Image de récupération écrite !\n",
+    "#C7EA46 Éxito:# Imagen de recuperación escrita.\n",
+    "#C7EA46 Operazione riuscita:# Immagine di ripristino scritta.\n",
+    "#C7EA46 Успешно:# Образ восстановления записан!\n",
+    "#C7EA46 Erfolg:# Recovery-Image geschrieben!\n",
+    "#C7EA46 Sucesso:# Imagem de recuperação escrita!\n"
+  ],
+  "#FF8000 Warning:# Recovery partition not found!\n": [
+    "#FF8000 Warning:# Recovery partition not found!\n",
+    "#FF8000 Attention :# Partition de récupération introuvable !\n",
+    "#FF8000 Advertencia:# No se encontró la partición de recuperación.\n",
+    "#FF8000 Attenzione:# Partizione di ripristino non trovata.\n",
+    "#FF8000 Внимание:# Раздел восстановления не найден!\n",
+    "#FF8000 Warnung:# Recovery-Partition nicht gefunden!\n",
+    "#FF8000 Aviso:# Partição de recuperação não encontrada!\n"
+  ],
+  "#FF8000 Warning:# DTB image not found!": [
+    "#FF8000 Warning:# DTB image not found!",
+    "#FF8000 Attention :# Image DTB introuvable !",
+    "#FF8000 Advertencia:# No se encontró la imagen DTB.",
+    "#FF8000 Attenzione:# Immagine DTB non trovata.",
+    "#FF8000 Внимание:# Образ DTB не найден!",
+    "#FF8000 Warnung:# DTB-Image nicht gefunden!",
+    "#FF8000 Aviso:# Imagem DTB não encontrada!"
+  ],
+  "#FF8000 Warning:# DTB image too big!": [
+    "#FF8000 Warning:# DTB image too big!",
+    "#FF8000 Attention :# Image DTB trop grande !",
+    "#FF8000 Advertencia:# La imagen DTB es demasiado grande.",
+    "#FF8000 Attenzione:# Immagine DTB troppo grande.",
+    "#FF8000 Внимание:# Образ DTB слишком большой!",
+    "#FF8000 Warnung:# DTB-Image zu groß!",
+    "#FF8000 Aviso:# Imagem DTB demasiado grande!"
+  ],
+  "#C7EA46 Success:# DTB image flashed!": [
+    "#C7EA46 Success:# DTB image flashed!",
+    "#C7EA46 Réussite :# Image DTB écrite !",
+    "#C7EA46 Éxito:# Imagen DTB escrita.",
+    "#C7EA46 Operazione riuscita:# Immagine DTB scritta.",
+    "#C7EA46 Успешно:# Образ DTB записан!",
+    "#C7EA46 Erfolg:# DTB-Image geschrieben!",
+    "#C7EA46 Sucesso:# Imagem DTB escrita!"
+  ],
+  "#FF8000 Warning:# DTB partition not found!": [
+    "#FF8000 Warning:# DTB partition not found!",
+    "#FF8000 Attention :# Partition DTB introuvable !",
+    "#FF8000 Advertencia:# No se encontró la partición DTB.",
+    "#FF8000 Attenzione:# Partizione DTB non trovata.",
+    "#FF8000 Внимание:# Раздел DTB не найден!",
+    "#FF8000 Warnung:# DTB-Partition nicht gefunden!",
+    "#FF8000 Aviso:# Partição DTB não encontrada!"
+  ],
+  "\n\nDo you want to reboot into Recovery\nto finish Android installation?": [
+    "\n\nDo you want to reboot into Recovery\nto finish Android installation?",
+    "\n\nRedémarrer en récupération\npour terminer l'installation d'Android ?",
+    "\n\n¿Reiniciar en recuperación\npara terminar la instalación de Android?",
+    "\n\nRiavviare in ripristino\nper completare l'installazione Android?",
+    "\n\nПерезагрузить в режим восстановления\nдля завершения установки Android?",
+    "\n\nIn Recovery neu starten,\num die Android-Installation abzuschließen?",
+    "\n\nReiniciar em recuperação\npara concluir a instalação do Android?"
+  ],
+  "This will flash #C7EA46 Kernel#, #C7EA46 DTB# and #C7EA46 Recovery# if found.\nThese will be deleted after a successful flash.\nDo you want to continue?": [
+    "This will flash #C7EA46 Kernel#, #C7EA46 DTB# and #C7EA46 Recovery# if found.\nThese will be deleted after a successful flash.\nDo you want to continue?",
+    "Les images #C7EA46 Kernel#, #C7EA46 DTB# et #C7EA46 Recovery# seront écrites si elles sont trouvées.\nElles seront supprimées après une écriture réussie.\nVoulez-vous continuer ?",
+    "Se escribirán las imágenes #C7EA46 Kernel#, #C7EA46 DTB# y #C7EA46 Recovery# que se encuentren.\nSe eliminarán después de escribirlas correctamente.\n¿Quieres continuar?",
+    "Saranno scritte le immagini #C7EA46 Kernel#, #C7EA46 DTB# e #C7EA46 Recovery# se presenti.\nSaranno eliminate dopo una scrittura riuscita.\nVuoi continuare?",
+    "Будут записаны найденные образы #C7EA46 Kernel#, #C7EA46 DTB# и #C7EA46 Recovery#.\nПосле успешной записи они будут удалены.\nПродолжить?",
+    "Gefundene Images für #C7EA46 Kernel#, #C7EA46 DTB# und #C7EA46 Recovery# werden geschrieben.\nNach erfolgreichem Schreiben werden sie gelöscht.\nMöchten Sie fortfahren?",
+    "Serão escritas as imagens #C7EA46 Kernel#, #C7EA46 DTB# e #C7EA46 Recovery# que forem encontradas.\nSerão eliminadas após uma escrita bem-sucedida.\nDeseja continuar?"
+  ],
+  "#FF8000 SD Partition Manager#\n\n#FFDD00 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.": [
+    "#FF8000 SD Partition Manager#\n\n#FFDD00 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.",
+    "#FF8000 Gestionnaire de partitions SD#\n\n#FFDD00 Attention : voulez-vous vraiment continuer ?!#\n\nAppuyez sur #FF8000 POWER# pour continuer.\nAppuyez sur #FF8000 VOL# pour annuler.",
+    "#FF8000 Gestor de particiones SD#\n\n#FFDD00 Advertencia: ¿seguro que quieres continuar?#\n\nPulsa #FF8000 POWER# para continuar.\nPulsa #FF8000 VOL# para cancelar.",
+    "#FF8000 Gestore partizioni SD#\n\n#FFDD00 Attenzione: continuare davvero?#\n\nPremi #FF8000 POWER# per continuare.\nPremi #FF8000 VOL# per annullare.",
+    "#FF8000 Управление разделами SD#\n\n#FFDD00 Внимание: вы действительно хотите продолжить?!#\n\nНажмите #FF8000 POWER# для продолжения.\nНажмите #FF8000 VOL# для отмены.",
+    "#FF8000 SD-Partitionsverwaltung#\n\n#FFDD00 Warnung: Wirklich fortfahren?!#\n\nZum Fortfahren #FF8000 POWER# drücken.\nZum Abbrechen #FF8000 VOL# drücken.",
+    "#FF8000 Gestor de partições SD#\n\n#FFDD00 Aviso: pretende mesmo continuar?!#\n\nPrima #FF8000 POWER# para continuar.\nPrima #FF8000 VOL# para cancelar."
+  ],
+  "#00DDFF Status:# Initializing Ramdisk...": [
+    "#00DDFF Status:# Initializing Ramdisk...",
+    "#00DDFF État :# Initialisation du disque RAM...",
+    "#00DDFF Estado:# Inicializando el disco RAM...",
+    "#00DDFF Stato:# Inizializzazione disco RAM...",
+    "#00DDFF Состояние:# Инициализация RAM-диска...",
+    "#00DDFF Status:# RAM-Disk wird initialisiert...",
+    "#00DDFF Estado:# A inicializar o disco RAM..."
+  ],
+  "#FFDD00 Error:# Failed to initialize Ramdisk!": [
+    "#FFDD00 Error:# Failed to initialize Ramdisk!",
+    "#FFDD00 Erreur :# Impossible d'initialiser le disque RAM !",
+    "#FFDD00 Error:# No se pudo inicializar el disco RAM.",
+    "#FFDD00 Errore:# Impossibile inizializzare il disco RAM.",
+    "#FFDD00 Ошибка:# Не удалось инициализировать RAM-диск!",
+    "#FFDD00 Fehler:# RAM-Disk konnte nicht initialisiert werden!",
+    "#FFDD00 Erro:# Não foi possível inicializar o disco RAM!"
+  ],
+  "#00DDFF Status:# Backing up files...": [
+    "#00DDFF Status:# Backing up files...",
+    "#00DDFF État :# Sauvegarde des fichiers...",
+    "#00DDFF Estado:# Guardando copia de los archivos...",
+    "#00DDFF Stato:# Backup dei file...",
+    "#00DDFF Состояние:# Резервное копирование файлов...",
+    "#00DDFF Status:# Dateien werden gesichert...",
+    "#00DDFF Estado:# A criar cópia dos ficheiros..."
+  ],
+  "#FFDD00 Error:# Failed to back up files!": [
+    "#FFDD00 Error:# Failed to back up files!",
+    "#FFDD00 Erreur :# Impossible de sauvegarder les fichiers !",
+    "#FFDD00 Error:# No se pudo guardar la copia de los archivos.",
+    "#FFDD00 Errore:# Backup dei file non riuscito.",
+    "#FFDD00 Ошибка:# Не удалось сохранить резервную копию файлов!",
+    "#FFDD00 Fehler:# Dateisicherung fehlgeschlagen!",
+    "#FFDD00 Erro:# Não foi possível criar a cópia dos ficheiros!"
+  ],
+  "#FFDD00 Error:# Failed to back up files!\nBootloader folder exceeds 1.2GB or corrupt!": [
+    "#FFDD00 Error:# Failed to back up files!\nBootloader folder exceeds 1.2GB or corrupt!",
+    "Erreur : échec de la sauvegarde !\nDossier bootloader corrompu ou supérieur à 1,2 Go !",
+    "#FFDD00 Error:# ¡No se pudieron copiar los archivos!\nLa carpeta bootloader supera 1,2 GB o está dañada.",
+    "Errore: backup dei file non riuscito!\nLa cartella bootloader supera 1,2 GB o è danneggiata.",
+    "Ошибка: не удалось сохранить файлы!\nПапка bootloader повреждена или превышает 1,2 ГБ!",
+    "Fehler: Dateisicherung fehlgeschlagen!\nOrdner bootloader ist beschädigt oder größer als 1,2 GB!",
+    "Erro: falha ao copiar os ficheiros!\nA pasta bootloader excede 1,2 GB ou está danificada!"
+  ],
+  "#00DDFF Status:# Formatting FAT32 partition...": [
+    "#00DDFF Status:# Formatting FAT32 partition...",
+    "#00DDFF État :# Formatage de la partition FAT32...",
+    "#00DDFF Estado:# Formateando la partición FAT32...",
+    "#00DDFF Stato:# Formattazione partizione FAT32...",
+    "#00DDFF Состояние:# Форматирование раздела FAT32...",
+    "#00DDFF Status:# FAT32-Partition wird formatiert...",
+    "#00DDFF Estado:# A formatar a partição FAT32..."
+  ],
+  "#FFDD00 Error:# Failed to format disk (%d)!\n\nRemove the SD card and check that is OK.\nIf not, format it, reinsert it and\npress #FF8000 POWER#!": [
+    "#FFDD00 Error:# Failed to format disk (%d)!\n\nRemove the SD card and check that is OK.\nIf not, format it, reinsert it and\npress #FF8000 POWER#!",
+    "#FFDD00 Erreur :# Impossible de formater le disque (%d) !\n\nRetirez la carte SD et vérifiez son état.\nSinon, formatez-la, réinsérez-la et\nappuyez sur #FF8000 POWER# !",
+    "#FFDD00 Error:# No se pudo formatear el disco (%d).\n\nRetira la tarjeta SD y comprueba su estado.\nSi falla, formatéala, vuelve a insertarla y\npulsa #FF8000 POWER#.",
+    "#FFDD00 Errore:# Impossibile formattare il disco (%d).\n\nRimuovi la scheda SD e verifica che funzioni.\nSe necessario, formattala, reinseriscila e\npremi #FF8000 POWER#.",
+    "#FFDD00 Ошибка:# Не удалось отформатировать диск (%d)!\n\nИзвлеките SD-карту и проверьте её исправность.\nПри неисправности отформатируйте, вставьте и\nнажмите #FF8000 POWER#!",
+    "#FFDD00 Fehler:# Datenträger konnte nicht formatiert werden (%d)!\n\nSD-Karte entfernen und auf Fehler prüfen.\nBei Fehlern formatieren, wieder einsetzen und\n#FF8000 POWER# drücken!",
+    "#FFDD00 Erro:# Não foi possível formatar o disco (%d)!\n\nRetire o cartão SD e verifique o seu estado.\nSe não estiver bem, formate-o, volte a inseri-lo e\nprima #FF8000 POWER#!"
+  ],
+  "#00DDFF Status:# Restoring files...": [
+    "#00DDFF Status:# Restoring files...",
+    "#00DDFF État :# Restauration des fichiers...",
+    "#00DDFF Estado:# Restaurando archivos...",
+    "#00DDFF Stato:# Ripristino dei file...",
+    "#00DDFF Состояние:# Восстановление файлов...",
+    "#00DDFF Status:# Dateien werden wiederhergestellt...",
+    "#00DDFF Estado:# A restaurar os ficheiros..."
+  ],
+  "#FFDD00 Error:# Failed to restore files!": [
+    "#FFDD00 Error:# Failed to restore files!",
+    "#FFDD00 Erreur :# Impossible de restaurer les fichiers !",
+    "#FFDD00 Error:# No se pudieron restaurar los archivos.",
+    "#FFDD00 Errore:# Ripristino dei file non riuscito.",
+    "#FFDD00 Ошибка:# Не удалось восстановить файлы!",
+    "#FFDD00 Fehler:# Dateiwiederherstellung fehlgeschlagen!",
+    "#FFDD00 Erro:# Não foi possível restaurar os ficheiros!"
+  ],
+  "#00DDFF Status:# Restored files but the operation failed!": [
+    "#00DDFF Status:# Restored files but the operation failed!",
+    "#00DDFF État :# Fichiers restaurés, mais l'opération a échoué !",
+    "#00DDFF Estado:# Archivos restaurados, pero la operación falló.",
+    "#00DDFF Stato:# File ripristinati, ma operazione non riuscita.",
+    "#00DDFF Состояние:# Файлы восстановлены, но операция завершилась неудачей!",
+    "#00DDFF Status:# Dateien wiederhergestellt, aber Vorgang fehlgeschlagen!",
+    "#00DDFF Estado:# Ficheiros restaurados, mas a operação falhou!"
+  ],
+  "#00DDFF Status:# Flashing partition table...": [
+    "#00DDFF Status:# Flashing partition table...",
+    "#00DDFF État :# Écriture de la table de partitions...",
+    "#00DDFF Estado:# Escribiendo la tabla de particiones...",
+    "#00DDFF Stato:# Scrittura della tabella partizioni...",
+    "#00DDFF Состояние:# Запись таблицы разделов...",
+    "#00DDFF Status:# Partitionstabelle wird geschrieben...",
+    "#00DDFF Estado:# A escrever a tabela de partições..."
+  ],
+  "#00DDFF Status:# Done!": [
+    "#00DDFF Status:# Done!",
+    "#00DDFF État :# Terminé !",
+    "#00DDFF Estado:# Terminado.",
+    "#00DDFF Stato:# Completato.",
+    "#00DDFF Состояние:# Готово!",
+    "#00DDFF Status:# Fertig!",
+    "#00DDFF Estado:# Concluído!"
+  ],
+  "#FF8000 eMMC Partition Manager#\n\n#FFDD00 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.": [
+    "#FF8000 eMMC Partition Manager#\n\n#FFDD00 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.",
+    "#FF8000 Gestionnaire de partitions eMMC#\n\n#FFDD00 Attention : voulez-vous vraiment continuer ?!#\n\nAppuyez sur #FF8000 POWER# pour continuer.\nAppuyez sur #FF8000 VOL# pour annuler.",
+    "#FF8000 Gestor de particiones eMMC#\n\n#FFDD00 Advertencia: ¿seguro que quieres continuar?#\n\nPulsa #FF8000 POWER# para continuar.\nPulsa #FF8000 VOL# para cancelar.",
+    "#FF8000 Gestore partizioni eMMC#\n\n#FFDD00 Attenzione: continuare davvero?#\n\nPremi #FF8000 POWER# per continuare.\nPremi #FF8000 VOL# per annullare.",
+    "#FF8000 Управление разделами eMMC#\n\n#FFDD00 Внимание: вы действительно хотите продолжить?!#\n\nНажмите #FF8000 POWER# для продолжения.\nНажмите #FF8000 VOL# для отмены.",
+    "#FF8000 eMMC-Partitionsverwaltung#\n\n#FFDD00 Warnung: Wirklich fortfahren?!#\n\nZum Fortfahren #FF8000 POWER# drücken.\nZum Abbrechen #FF8000 VOL# drücken.",
+    "#FF8000 Gestor de partições eMMC#\n\n#FFDD00 Aviso: pretende mesmo continuar?!#\n\nPrima #FF8000 POWER# para continuar.\nPrima #FF8000 VOL# para cancelar."
+  ],
+  "#00DDFF Status:# Initializing...": [
+    "#00DDFF Status:# Initializing...",
+    "#00DDFF État :# Initialisation...",
+    "#00DDFF Estado:# Inicializando...",
+    "#00DDFF Stato:# Inizializzazione...",
+    "#00DDFF Состояние:# Инициализация...",
+    "#00DDFF Status:# Initialisierung...",
+    "#00DDFF Estado:# A inicializar..."
+  ],
+  "#FFDD00 For formatting USER partition,#\n#FFDD00 BIS keys are needed!#": [
+    "#FFDD00 For formatting USER partition,#\n#FFDD00 BIS keys are needed!#",
+    "#FFDD00 Pour formater la partition USER,#\n#FFDD00 les clés BIS sont nécessaires !#",
+    "#FFDD00 Para formatear la partición USER,#\n#FFDD00 se necesitan las claves BIS.#",
+    "#FFDD00 Per formattare la partizione USER,#\n#FFDD00 sono necessarie le chiavi BIS.#",
+    "#FFDD00 Для форматирования раздела USER#\n#FFDD00 нужны ключи BIS!#",
+    "#FFDD00 Zum Formatieren der USER-Partition#\n#FFDD00 werden BIS-Schlüssel benötigt!#",
+    "#FFDD00 Para formatar a partição USER,#\n#FFDD00 são necessárias as chaves BIS!#"
+  ],
+  "#00DDFF Status:# Formatting USER partition...": [
+    "#00DDFF Status:# Formatting USER partition...",
+    "#00DDFF État :# Formatage de la partition USER...",
+    "#00DDFF Estado:# Formateando la partición USER...",
+    "#00DDFF Stato:# Formattazione partizione USER...",
+    "#00DDFF Состояние:# Форматирование раздела USER...",
+    "#00DDFF Status:# USER-Partition wird formatiert...",
+    "#00DDFF Estado:# A formatar a partição USER..."
+  ],
+  "Start": [
+    "Start",
+    "Démarrer",
+    "Iniciar",
+    "Avvia",
+    "Начать",
+    "Starten",
+    "Iniciar"
+  ],
+  "Please select a partition scheme:\n\n#C7EA46 Dynamic:# Android 13+ (Preferred)\n#C7EA46 Legacy:# Android 11\n": [
+    "Please select a partition scheme:\n\n#C7EA46 Dynamic:# Android 13+ (Preferred)\n#C7EA46 Legacy:# Android 11\n",
+    "Choisissez un schéma de partitions :\n\n#C7EA46 Dynamic:# Android 13+ (recommandé)\n#C7EA46 Legacy:# Android 11\n",
+    "Selecciona un esquema de particiones:\n\n#C7EA46 Dynamic:# Android 13+ (recomendado)\n#C7EA46 Legacy:# Android 11\n",
+    "Scegli uno schema di partizioni:\n\n#C7EA46 Dynamic:# Android 13+ (consigliato)\n#C7EA46 Legacy:# Android 11\n",
+    "Выберите схему разделов:\n\n#C7EA46 Dynamic:# Android 13+ (рекомендуется)\n#C7EA46 Legacy:# Android 11\n",
+    "Partitionsschema auswählen:\n\n#C7EA46 Dynamic:# Android 13+ (empfohlen)\n#C7EA46 Legacy:# Android 11\n",
+    "Escolha um esquema de partições:\n\n#C7EA46 Dynamic:# Android 13+ (recomendado)\n#C7EA46 Legacy:# Android 11\n"
+  ],
+  "#96FF00 The SD Card files will be backed up automatically!#\n#FFDD00 Any other partition will be wiped!#\n#00DDFF Total files:# %d, #00DDFF Total size:# %d MiB": [
+    "#96FF00 The SD Card files will be backed up automatically!#\n#FFDD00 Any other partition will be wiped!#\n#00DDFF Total files:# %d, #00DDFF Total size:# %d MiB",
+    "#96FF00 Les fichiers de la carte SD seront sauvegardés automatiquement !#\n#FFDD00 Toutes les autres partitions seront effacées !#\n#00DDFF Nombre de fichiers :# %d, #00DDFF Taille totale :# %d MiB",
+    "#96FF00 Los archivos de la tarjeta SD se copiarán automáticamente.#\n#FFDD00 Se borrarán todas las demás particiones.#\n#00DDFF Archivos totales:# %d, #00DDFF Tamaño total:# %d MiB",
+    "#96FF00 I file della scheda SD saranno salvati automaticamente.#\n#FFDD00 Tutte le altre partizioni saranno cancellate.#\n#00DDFF File totali:# %d, #00DDFF Dimensione totale:# %d MiB",
+    "#96FF00 Файлы SD-карты будут автоматически сохранены!#\n#FFDD00 Все остальные разделы будут стёрты!#\n#00DDFF Всего файлов:# %d, #00DDFF Общий размер:# %d MiB",
+    "#96FF00 Die SD-Dateien werden automatisch gesichert!#\n#FFDD00 Alle anderen Partitionen werden gelöscht!#\n#00DDFF Dateien insgesamt:# %d, #00DDFF Gesamtgröße:# %d MiB",
+    "#96FF00 Os ficheiros do cartão SD serão copiados automaticamente!#\n#FFDD00 Todas as outras partições serão apagadas!#\n#00DDFF Total de ficheiros:# %d, #00DDFF Tamanho total:# %d MiB"
+  ],
+  "Partition 0 - Type: %02x, Start: %08x, Size: %08x\nPartition 1 - Type: %02x, Start: %08x, Size: %08x\nPartition 2 - Type: %02x, Start: %08x, Size: %08x\nPartition 3 - Type: %02x, Start: %08x, Size: %08x": [
+    "Partition 0 - Type: %02x, Start: %08x, Size: %08x\nPartition 1 - Type: %02x, Start: %08x, Size: %08x\nPartition 2 - Type: %02x, Start: %08x, Size: %08x\nPartition 3 - Type: %02x, Start: %08x, Size: %08x",
+    "Partition 0 - Type : %02x, Début : %08x, Taille : %08x\nPartition 1 - Type : %02x, Début : %08x, Taille : %08x\nPartition 2 - Type : %02x, Début : %08x, Taille : %08x\nPartition 3 - Type : %02x, Début : %08x, Taille : %08x",
+    "Partición 0 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 1 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 2 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 3 - Tipo: %02x, Inicio: %08x, Tamaño: %08x",
+    "Partizione 0 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 1 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 2 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 3 - Tipo: %02x, Inizio: %08x, Dimensione: %08x",
+    "Раздел 0 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 1 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 2 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 3 - Тип: %02x, Начало: %08x, Размер: %08x",
+    "Partition 0 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 1 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 2 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 3 - Typ: %02x, Anfang: %08x, Größe: %08x",
+    "Partição 0 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 1 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 2 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 3 - Tipo: %02x, Início: %08x, Tamanho: %08x"
+  ],
+  "#FFDD00 Warning:# No valid GPT was found!": [
+    "#FFDD00 Warning:# No valid GPT was found!",
+    "#FFDD00 Attention :# Aucune GPT valide trouvée !",
+    "#FFDD00 Advertencia:# No se encontró ninguna GPT válida.",
+    "#FFDD00 Attenzione:# Nessuna GPT valida trovata.",
+    "#FFDD00 Внимание:# Корректная GPT не найдена!",
+    "#FFDD00 Warnung:# Keine gültige GPT gefunden!",
+    "#FFDD00 Aviso:# Nenhuma GPT válida encontrada!"
+  ],
+  "#96FF00 Warning:# The Hybrid MBR needs no change!#": [
+    "#96FF00 Warning:# The Hybrid MBR needs no change!#",
+    "#96FF00 Attention :# Le MBR hybride ne nécessite aucune modification !#",
+    "#96FF00 Advertencia:# El MBR híbrido no necesita cambios.#",
+    "#96FF00 Attenzione:# L'MBR ibrido non richiede modifiche.#",
+    "#96FF00 Внимание:# Гибридная MBR не требует изменений!#",
+    "#96FF00 Warnung:# Der Hybrid-MBR muss nicht geändert werden!#",
+    "#96FF00 Aviso:# O MBR híbrido não necessita de alterações!#"
+  ],
+  "Partition 0 - Type: %02x, Start: %08x, Size: %08x\nPartition 1 - Type: %02x, Start: %08x, Size: %08x\nPartition 2 - Type: %02x, Start: %08x, Size: %08x\nPartition 3 - Type: %02x, Start: %08x, Size: %08x\n\n": [
+    "Partition 0 - Type: %02x, Start: %08x, Size: %08x\nPartition 1 - Type: %02x, Start: %08x, Size: %08x\nPartition 2 - Type: %02x, Start: %08x, Size: %08x\nPartition 3 - Type: %02x, Start: %08x, Size: %08x\n\n",
+    "Partition 0 - Type : %02x, Début : %08x, Taille : %08x\nPartition 1 - Type : %02x, Début : %08x, Taille : %08x\nPartition 2 - Type : %02x, Début : %08x, Taille : %08x\nPartition 3 - Type : %02x, Début : %08x, Taille : %08x\n\n",
+    "Partición 0 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 1 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 2 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\nPartición 3 - Tipo: %02x, Inicio: %08x, Tamaño: %08x\n\n",
+    "Partizione 0 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 1 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 2 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\nPartizione 3 - Tipo: %02x, Inizio: %08x, Dimensione: %08x\n\n",
+    "Раздел 0 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 1 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 2 - Тип: %02x, Начало: %08x, Размер: %08x\nРаздел 3 - Тип: %02x, Начало: %08x, Размер: %08x\n\n",
+    "Partition 0 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 1 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 2 - Typ: %02x, Anfang: %08x, Größe: %08x\nPartition 3 - Typ: %02x, Anfang: %08x, Größe: %08x\n\n",
+    "Partição 0 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 1 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 2 - Tipo: %02x, Início: %08x, Tamanho: %08x\nPartição 3 - Tipo: %02x, Início: %08x, Tamanho: %08x\n\n"
+  ],
+  "#00DDFF The following need to be corrected:#\n": [
+    "#00DDFF The following need to be corrected:#\n",
+    "#00DDFF Les éléments suivants doivent être corrigés :#\n",
+    "#00DDFF Se deben corregir los siguientes elementos:#\n",
+    "#00DDFF Occorre correggere quanto segue:#\n",
+    "#00DDFF Необходимо исправить следующее:#\n",
+    "#00DDFF Folgendes muss korrigiert werden:#\n",
+    "#00DDFF É necessário corrigir o seguinte:#\n"
+  ],
+  "- MBR attributes\n": [
+    "- MBR attributes\n",
+    "- Attributs MBR\n",
+    "- Atributos MBR\n",
+    "- Attributi MBR\n",
+    "- Атрибуты MBR\n",
+    "- MBR-Attribute\n",
+    "- Atributos MBR\n"
+  ],
+  "- emuMMC GPT Partition address and size\n": [
+    "- emuMMC GPT Partition address and size\n",
+    "- Adresse et taille de partition GPT emuMMC\n",
+    "- Dirección y tamaño de partición GPT emuMMC\n",
+    "- Indirizzo e dimensione partizione GPT emuMMC\n",
+    "- Адрес и размер раздела GPT emuMMC\n",
+    "- Adresse und Größe der emuMMC-GPT-Partition\n",
+    "- Endereço e tamanho da partição GPT emuMMC\n"
+  ],
+  "- GPT OOB/Empty Partitions (removal)\n": [
+    "- GPT OOB/Empty Partitions (removal)\n",
+    "- Partitions GPT hors limites/vides (suppression)\n",
+    "- Particiones GPT fuera de límites/vacías (eliminar)\n",
+    "- Partizioni GPT fuori limite/vuote (rimozione)\n",
+    "- Разделы GPT вне границ/пустые (удаление)\n",
+    "- GPT-Partitionen außerhalb der Grenzen/leer (Entfernung)\n",
+    "- Partições GPT fora dos limites/vazias (remoção)\n"
+  ],
+  "#FF8000 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.": [
+    "#FF8000 Warning: Do you really want to continue?!#\n\nPress #FF8000 POWER# to Continue.\nPress #FF8000 VOL# to abort.",
+    "#FF8000 Attention : voulez-vous vraiment continuer ?!#\n\nAppuyez sur #FF8000 POWER# pour continuer.\nAppuyez sur #FF8000 VOL# pour annuler.",
+    "#FF8000 Advertencia: ¿seguro que quieres continuar?#\n\nPulsa #FF8000 POWER# para continuar.\nPulsa #FF8000 VOL# para cancelar.",
+    "#FF8000 Attenzione: continuare davvero?#\n\nPremi #FF8000 POWER# per continuare.\nPremi #FF8000 VOL# per annullare.",
+    "#FF8000 Внимание: вы действительно хотите продолжить?!#\n\nНажмите #FF8000 POWER# для продолжения.\nНажмите #FF8000 VOL# для отмены.",
+    "#FF8000 Warnung: Wirklich fortfahren?!#\n\nZum Fortfahren #FF8000 POWER# drücken.\nZum Abbrechen #FF8000 VOL# drücken.",
+    "#FF8000 Aviso: pretende mesmo continuar?!#\n\nPrima #FF8000 POWER# para continuar.\nPrima #FF8000 VOL# para cancelar."
+  ],
+  " HOS (FAT32):#": [
+    " HOS (FAT32):#",
+    " HOS (FAT32) :#",
+    " HOS (FAT32):#",
+    " HOS (FAT32):#",
+    " HOS (FAT32):#",
+    " HOS (FAT32):#",
+    " HOS (FAT32):#"
+  ],
+  " eMMC (USER):#": [
+    " eMMC (USER):#",
+    " eMMC (USER) :#",
+    " eMMC (USER):#",
+    " eMMC (USER):#",
+    " eMMC (USER):#",
+    " eMMC (USER):#",
+    " eMMC (USER):#"
+  ],
+  " emuMMC (RAW):#": [
+    " emuMMC (RAW):#",
+    " emuMMC (RAW) :#",
+    " emuMMC (RAW):#",
+    " emuMMC (RAW):#",
+    " emuMMC (RAW):#",
+    " emuMMC (RAW):#",
+    " emuMMC (RAW):#"
+  ],
+  " Linux (EXT4):#": [
+    " Linux (EXT4):#",
+    " Linux (EXT4) :#",
+    " Linux (EXT4):#",
+    " Linux (EXT4):#",
+    " Linux (EXT4):#",
+    " Linux (EXT4):#",
+    " Linux (EXT4):#"
+  ],
+  " Android (USER):#": [
+    " Android (USER):#",
+    " Android (USER) :#",
+    " Android (USER):#",
+    " Android (USER):#",
+    " Android (USER):#",
+    " Android (USER):#",
+    " Android (USER):#"
+  ],
+  "Note 1: Only up to #C7EA46 1.2GB# can be backed up. If more, you will be asked to back them manually at the next step.\nNote 2: Resized emuMMC formats the USER partition. A save data manager can be used to move them over.\nNote 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.\n": [
+    "Note 1: Only up to #C7EA46 1.2GB# can be backed up. If more, you will be asked to back them manually at the next step.\nNote 2: Resized emuMMC formats the USER partition. A save data manager can be used to move them over.\nNote 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.\n",
+    "Note 1 : la sauvegarde est limitée à #C7EA46 1,2 Go#. Au-delà, une sauvegarde manuelle sera demandée à l'étape suivante.\nNote 2 : redimensionner l'emuMMC formate la partition USER. Un gestionnaire de sauvegardes peut transférer les données.\nNote 3 : #C7EA46 Installer Linux# et #C7EA46 Installer Android# écrivent les fichiers si les partitions et fichiers d'installation adéquats sont trouvés.\n",
+    "Nota 1: solo se pueden copiar hasta #C7EA46 1,2 GB#. Si hay más, se pedirá una copia manual en el siguiente paso.\nNota 2: redimensionar la emuMMC formatea la partición USER. Usa un gestor de partidas para trasladar los datos.\nNota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escriben los archivos si se encuentran particiones y archivos de instalación adecuados.\n",
+    "Nota 1: è possibile salvare al massimo #C7EA46 1,2 GB#. Oltre questo limite verrà richiesto un backup manuale al passaggio successivo.\nNota 2: ridimensionare l'emuMMC formatta la partizione USER. Un gestore dei salvataggi può trasferire i dati.\nNota 3: #C7EA46 Installa Linux# e #C7EA46 Installa Android# scrivono i file se vengono trovati partizioni e file di installazione adatti.\n",
+    "Примечание 1: можно сохранить не более #C7EA46 1,2 ГБ#. При превышении на следующем шаге потребуется ручная копия.\nПримечание 2: изменение размера emuMMC форматирует раздел USER. Данные можно перенести менеджером сохранений.\nПримечание 3: #C7EA46 Установить Linux# и #C7EA46 Установить Android# запишут файлы при наличии подходящих разделов и установочных файлов.\n",
+    "Hinweis 1: Es können höchstens #C7EA46 1,2 GB# gesichert werden. Bei mehr Daten wird im nächsten Schritt zur manuellen Sicherung aufgefordert.\nHinweis 2: Eine Größenänderung der emuMMC formatiert USER. Spielstände können mit einem Speicherdatenmanager übertragen werden.\nHinweis 3: #C7EA46 Linux installieren# und #C7EA46 Android installieren# schreiben die Dateien, wenn geeignete Partitionen und Installationsdateien gefunden werden.\n",
+    "Nota 1: apenas é possível copiar até #C7EA46 1,2 GB#. Acima disso, será pedida uma cópia manual no passo seguinte.\nNota 2: redimensionar a emuMMC formata a partição USER. Pode usar um gestor de gravações para transferir os dados.\nNota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escrevem os ficheiros se forem encontradas partições e ficheiros de instalação adequados.\n"
+  ],
+  "Note 1: Any partition existing after the selected ones gets removed from the table.\nNote 2: The HOS USER partition gets formatted. A save data manager can be used to move them over.\nNote 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.\n": [
+    "Note 1: Any partition existing after the selected ones gets removed from the table.\nNote 2: The HOS USER partition gets formatted. A save data manager can be used to move them over.\nNote 3: The #C7EA46 Flash Linux# and #C7EA46 Flash Android# will flash files if suitable partitions and installer files are found.\n",
+    "Note 1 : toutes les partitions situées après celles sélectionnées sont retirées de la table.\nNote 2 : la partition HOS USER est formatée. Un gestionnaire de sauvegardes peut transférer les données.\nNote 3 : #C7EA46 Installer Linux# et #C7EA46 Installer Android# écrivent les fichiers si les partitions et fichiers d'installation adéquats sont trouvés.\n",
+    "Nota 1: se eliminarán de la tabla todas las particiones situadas después de las seleccionadas.\nNota 2: se formateará la partición HOS USER. Usa un gestor de partidas para trasladar los datos.\nNota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escriben los archivos si se encuentran particiones y archivos de instalación adecuados.\n",
+    "Nota 1: tutte le partizioni successive a quelle selezionate vengono rimosse dalla tabella.\nNota 2: la partizione HOS USER viene formattata. Un gestore dei salvataggi può trasferire i dati.\nNota 3: #C7EA46 Installa Linux# e #C7EA46 Installa Android# scrivono i file se vengono trovati partizioni e file di installazione adatti.\n",
+    "Примечание 1: все разделы после выбранных будут удалены из таблицы.\nПримечание 2: раздел HOS USER будет отформатирован. Данные можно перенести менеджером сохранений.\nПримечание 3: #C7EA46 Установить Linux# и #C7EA46 Установить Android# запишут файлы при наличии подходящих разделов и установочных файлов.\n",
+    "Hinweis 1: Alle Partitionen nach den ausgewählten werden aus der Tabelle entfernt.\nHinweis 2: Die Partition HOS USER wird formatiert. Spielstände können mit einem Speicherdatenmanager übertragen werden.\nHinweis 3: #C7EA46 Linux installieren# und #C7EA46 Android installieren# schreiben die Dateien, wenn geeignete Partitionen und Installationsdateien gefunden werden.\n",
+    "Nota 1: todas as partições após as selecionadas serão removidas da tabela.\nNota 2: a partição HOS USER será formatada. Pode usar um gestor de gravações para transferir os dados.\nNota 3: #C7EA46 Instalar Linux# e #C7EA46 Instalar Android# escrevem os ficheiros se forem encontradas partições e ficheiros de instalação adequados.\n"
+  ]
+}

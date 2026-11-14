@@ -1,0 +1,25 @@
+build/
+build-jc/
+build-ram/
+build-gui/
+*.bin
+# ...except the GUI's rasterised fonts, generated once by tools/mkfont.py.
+!gui/res/fonts.bin
+*.elf
+*.o
+*.d
+
+# Captured UART logs from the host viewer or external terminals.
+hwtest_uart_*.txt
+
+# Python artefacts in host_tools/.
+host_tools/__pycache__/
+*.pyc
+
+# Dear ImGui auto-saved window layout for the host viewer.
+hwtest_viewer.ini
+
+# UART captures from the hardware test loop (hw_run.py and friends).
+hw_*.txt
+wireless_hw.txt
+*.txt.sweep
