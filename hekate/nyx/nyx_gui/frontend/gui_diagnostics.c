@@ -68,12 +68,12 @@ static void notice(const char *title, const char *message)
 static const char *state_name(nyx_diag_state_t state)
 {
     switch (state) {
-    case NYX_DIAG_PASS: return "OK";
-    case NYX_DIAG_WARN: return "AVERTISSEMENT";
-    case NYX_DIAG_FAIL: return "DEFAUT";
-    case NYX_DIAG_ERROR: return "ERREUR";
-    case NYX_DIAG_OBSERVATION: return "OBSERVATION";
-    default: return "NON EXECUTE";
+    case NYX_DIAG_PASS: return nyx_tr("OK");
+    case NYX_DIAG_WARN: return nyx_tr("AVERTISSEMENT");
+    case NYX_DIAG_FAIL: return nyx_tr("DEFAUT");
+    case NYX_DIAG_ERROR: return nyx_tr("ERREUR");
+    case NYX_DIAG_OBSERVATION: return nyx_tr("OBSERVATION");
+    default: return nyx_tr("NON EXECUTE");
     }
 }
 
@@ -87,10 +87,13 @@ static void render_report_page(void)
     if (!page) { lv_label_set_text(report_label, "Memoire insuffisante."); return; }
     if (count && report) memcpy(page, report + report_start + offset, count);
     page[count] = 0;
-    lv_label_set_text(report_label, count ? page : "Aucun rapport pour cette selection.");
+    if (count)
+        (lv_label_set_text)(report_label, page);
+    else
+        lv_label_set_text(report_label, "Aucun rapport pour cette selection.");
     free(page);
     char position[80];
-    s_printf(position, "Page %d / %d", report_page + 1,
+    s_printf(position, nyx_tr("Page %d / %d"), report_page + 1,
         report_length ? (report_length + REPORT_PAGE - 1) / REPORT_PAGE : 1);
     lv_label_set_text(report_position, position);
 }
@@ -127,10 +130,10 @@ static lv_res_t show_report(lv_obj_t *btn)
 static lv_res_t export_report(lv_obj_t *btn)
 {
     (void)btn;
-    char path[128] = {0}, message[240];
+    char path[128] = {0}, message[1024];
     int result = nyx_diag_export(path);
-    if (result) s_printf(message, "Echec de l'export du rapport (code %d).\nVerifiez la carte SD.", result);
-    else s_printf(message, "Rapport enregistre :\n%s", path);
+    if (result) s_printf(message, nyx_tr("Echec de l'export du rapport (code %d).\nVerifiez la carte SD."), result);
+    else s_printf(message, nyx_tr("Rapport enregistre :\n%s"), path);
     notice("Exporter le rapport", message);
     return LV_RES_OK;
 }
@@ -152,13 +155,13 @@ static void show_results(int result)
         const nyx_diag_probe_t *p = nyx_diag_probe(i);
         if (p && p->state <= NYX_DIAG_ERROR) counts[p->state]++;
     }
-    char summary[320];
-    s_printf(summary, "%d OK  /  %d avert.  /  %d defaut(s)  /  %d erreur(s)  /  %d observation(s)\n%s%s",
+    char summary[2048];
+    s_printf(summary, nyx_tr("%d OK  /  %d avert.  /  %d defaut(s)  /  %d erreur(s)  /  %d observation(s)\n%s%s"),
         counts[NYX_DIAG_PASS], counts[NYX_DIAG_WARN], counts[NYX_DIAG_FAIL],
         counts[NYX_DIAG_ERROR], counts[NYX_DIAG_OBSERVATION],
-        result ? "Execution ou restauration incomplete. " : "",
-        nyx_diag_truncated() ? "Rapport tronque : consultez le marqueur de fin." :
-        "Les observations sans verdict ne constituent pas un test reussi.");
+        result ? nyx_tr("Execution ou restauration incomplete. ") : "",
+        nyx_diag_truncated() ? nyx_tr("Rapport tronque : consultez le marqueur de fin.") :
+        nyx_tr("Les observations sans verdict ne constituent pas un test reussi."));
     text(results_window, summary, 32, 16, 1180, true);
     lv_obj_t *list = lv_list_create(results_window, NULL);
     lv_obj_set_size(list, 1180, 440);
@@ -166,8 +169,8 @@ static void show_results(int result)
     for (u32 i = 0; i < NYX_DIAG_PROBE_COUNT; i++) {
         const nyx_diag_probe_t *p = nyx_diag_probe(i);
         if (!p || p->state == NYX_DIAG_NOT_RUN) continue;
-        char row[192];
-        s_printf(row, "[%s] %s / %s", state_name(p->state), p->name, p->function);
+        char row[512];
+        s_printf(row, "[%s] %s / %s", state_name(p->state), nyx_tr(p->name), p->function);
         lv_obj_t *entry = lv_list_add(list, NULL, row, show_report);
         lv_obj_set_free_num(entry, i);
         lv_label_set_style(lv_list_get_btn_label(entry), &hint_small_style);
@@ -190,8 +193,8 @@ static void resume_probes(u32 selected, void *context)
 static void progress(u32 current, u32 total, const char *message, void *context)
 {
     progress_t *p = context;
-    char value[256];
-    s_printf(value, "%d / %d\n%s", current, total, message ? message : "Diagnostic");
+    char value[1024];
+    s_printf(value, "%d / %d\n%s", current, total, nyx_tr(message ? message : "Diagnostic"));
     lv_label_set_text(p->label, value);
     lv_bar_set_value(p->bar, total ? current * 100 / total : 0);
     lv_refr_now();
@@ -241,8 +244,8 @@ static lv_res_t show_group(lv_obj_t *btn)
     for (u32 i = 1; i < NYX_DIAG_PROBE_COUNT; i++) {
         const nyx_diag_probe_t *p = nyx_diag_probe(i);
         if (p && (p->group & groups[index].groups)) {
-            char label[160];
-            s_printf(label, "%s / %s", p->name, p->function);
+            char label[512];
+            s_printf(label, "%s / %s", nyx_tr(p->name), p->function);
             lv_obj_t *entry = lv_list_add(list, NULL, label, run_selection);
             lv_obj_set_free_num(entry, ONE_PROBE | i);
             lv_label_set_style(lv_list_get_btn_label(entry), &hint_small_style);
@@ -253,18 +256,18 @@ static lv_res_t show_group(lv_obj_t *btn)
 
 static const char *ram_state(u32 state)
 {
-    if (state == NYX_RAM_RESULT_PASS) return "OK";
-    if (state == NYX_RAM_RESULT_FAIL) return "DEFAUT";
-    if (state == NYX_RAM_RESULT_ABORT) return "INTERROMPU";
-    return "ERREUR";
+    if (state == NYX_RAM_RESULT_PASS) return nyx_tr("OK");
+    if (state == NYX_RAM_RESULT_FAIL) return nyx_tr("DEFAUT");
+    if (state == NYX_RAM_RESULT_ABORT) return nyx_tr("INTERROMPU");
+    return nyx_tr("ERREUR");
 }
 
 static lv_res_t launch_ram(lv_obj_t *btn)
 {
     (void)btn;
     int result = nyx_launch_ram_service();
-    char message[256];
-    s_printf(message, "Le service RAM n'a pas pu etre lance (code %d).\nVerifiez bootloader/sys/hwtest_ram.bin et bootloader/update.bin.", result);
+    char message[1024];
+    s_printf(message, nyx_tr("Le service RAM n'a pas pu etre lance (code %d).\nVerifiez bootloader/sys/hwtest_ram.bin et bootloader/update.bin."), result);
     notice("Test RAM", message);
     return LV_RES_OK;
 }
@@ -282,8 +285,8 @@ static lv_res_t show_ram_service(lv_obj_t *btn)
         32, 94, 1180, true);
     button(win, "Lancer le test RAM", 32, 250, 480, launch_ram, 0);
     if (last_ram_valid) {
-        char message[320];
-        s_printf(message, "Dernier resultat : %s\n%d / %d motifs, zone prevue : %d MiB sur %d MiB\n%d erreur(s), duree %d s, erreurs MTC : %08X",
+        char message[1024];
+        s_printf(message, nyx_tr("Dernier resultat : %s\n%d / %d motifs, zone prevue : %d MiB sur %d MiB\n%d erreur(s), duree %d s, erreurs MTC : %08X"),
             ram_state(last_ram.result), last_ram.patterns_completed, last_ram.patterns_total,
             last_ram.tested_mib, last_ram.dram_mib, last_ram.errors,
             last_ram.elapsed_ms / 1000, last_ram.mtc_errors);

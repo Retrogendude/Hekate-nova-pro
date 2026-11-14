@@ -278,9 +278,8 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 {
 	lv_obj_t *win;
 
-	emmc_btn_ctxt.restore = false;
-	if (strcmp(lv_label_get_text(lv_obj_get_child(btn, NULL)), SYMBOL_UPLOAD"  Backup eMMC"))
-		emmc_btn_ctxt.restore = true;
+	// Navigation identity is independent of the displayed language.
+	emmc_btn_ctxt.restore = lv_obj_get_free_num(btn) == 1;
 
 	if (!emmc_btn_ctxt.restore)
 		win = nyx_create_standard_window(SYMBOL_SD" Backup", NULL);

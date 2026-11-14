@@ -9,7 +9,8 @@ project = work / 'hekate-6.5.4'
 arm = Path('C:/devkitPro/devkitARM/bin')
 out = project / 'output'
 logs = []
-scripts = ['check_nyx_config_writer.py', 'check_payload_reader.py',
+scripts = ['check_nyx_config_writer.py', 'check_language_config.py',
+           'check_language_actions.py', 'check_localization.py', 'check_unicode_fonts.py', 'check_payload_reader.py',
            'test_native_backend_host.py', 'test_native_verdict_host.py',
            'check_ram_handoff.py', 'check_ram_payload.py']
 for script in scripts:
@@ -51,7 +52,12 @@ summary = {
     'nyx_bytes': (out/'nyx.bin').stat().st_size,
     'ram_service_bytes': ram.stat().st_size,
     'hardware_validation': 'not performed',
-    'tests': {'config_writer_cases': 69, 'payload_reader_assertions': 108,
+    'languages': ['English', 'Français', 'Español', 'Italiano', 'Русский', 'Deutsch', 'Português'],
+    'ui_chrome': 'transparent; opaque dark overlay bases retained for readability',
+    'tests': {'config_writer_cases': 76, 'language_config_cases': 21,
+              'language_action_cases': 49, 'translation_runtime_cases': 95,
+              'unicode_fonts': '707 glyphs at 20 and 30px; catalog coverage, offsets, shared chains',
+              'payload_reader_assertions': 108,
               'report_export_cases': 10, 'verdict_cases': 6, 'ram_contract_checks': 28,
               'ram_decoder_and_binary': 'passed'},
 }

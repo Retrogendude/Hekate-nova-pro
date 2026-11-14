@@ -6,6 +6,7 @@ workspace = Path(__file__).resolve().parent.parent
 source_root = workspace / 'work' / 'hekate-6.5.4'
 config_source = (source_root / 'nyx/nyx_gui/config.c').read_text(encoding='utf-8')
 header = (source_root / 'nyx/nyx_gui/config.h').read_text(encoding='utf-8')
+localization_header = (source_root / 'nyx/nyx_gui/localization.h').read_text(encoding='utf-8')
 
 def function(name):
     signature = re.search(r'^(?:void|int) ' + name + r'\([^\n]*\)\s*\n\{', config_source, re.M)
@@ -19,6 +20,7 @@ defaults = function('set_nyx_default_configuration')
 writer = function('create_nyx_config_entry')
 config_type = re.search(r'typedef struct _nyx_config\s*\{.*?\} nyx_config;', header, re.S).group()
 layout_macros = '\n'.join(re.findall(r'^#define HOME_LAYOUT_\w+\s+\d+', header, re.M))
+language_macros = '\n'.join(re.findall(r'^#define I18N_\w+\s+\d+', localization_header, re.M))
 
 preamble = r'''
 #include <stdio.h>
@@ -95,10 +97,12 @@ static void set_distinct_values(void) {
     n_cfg.jc_disable = 0;
     n_cfg.jc_force_right = 1;
     n_cfg.bpmp_clock = 5;
+    n_cfg.language = I18N_RU;
 }
 int main(void) {
     reset(false);
     require(n_cfg.home_layout == HOME_LAYOUT_TILES, "default tiles");
+    require(n_cfg.language == I18N_EN, "default English language");
     require(n_cfg.theme_bg == 0x141a19 && n_cfg.theme_color == 0, "modern default theme");
     cases++;
     int successful_writes = 0;
@@ -109,11 +113,20 @@ int main(void) {
         sprintf(expected,
             "[config]\nthemebg=1a2b3c\nthemecolor=173\nentries5col=1\ntimeoffset=1234abcd"
             "\ntimedst=1\nhomescreen=3\nhome_layout=%u\nverification=2\numsemmcrw=1"
-            "\njcdisable=0\njcforceright=1\nbpmpclock=5\n", layout);
+            "\njcdisable=0\njcforceright=1\nbpmpclock=5\nlanguage=%u\n", layout, I18N_RU);
         require(!strcmp(written, expected), "exact full configuration and bases");
         require(closes == 1 && unmounts == 1 && !mounted, "success cleanup");
         require(n_cfg.home_layout == layout, "valid layout remains chosen");
+        require(n_cfg.language == I18N_RU, "valid language remains chosen independently");
+        require(writes == 27, "all 27 configuration writes execute");
         successful_writes = writes; cases++;
+    }
+    unsigned invalid_language[] = {I18N_LANGUAGE_COUNT, 17, UINT32_MAX};
+    for (unsigned i = 0; i < sizeof(invalid_language)/sizeof(*invalid_language); i++) {
+        reset(false); n_cfg.language = invalid_language[i];
+        require(create_nyx_config_entry(false) == 0, "invalid language write succeeds with fallback");
+        require(n_cfg.language == I18N_EN && strstr(written, "\nlanguage=0\n"), "invalid language normalized");
+        cases++;
     }
     unsigned invalid[] = {2, 17, UINT32_MAX};
     for (unsigned i = 0; i < sizeof(invalid)/sizeof(*invalid); i++) {
@@ -145,12 +158,12 @@ int main(void) {
             require(unmounts == !initial, "write failure mount ownership"); cases++;
         }
     }
-    printf("PASS: %d executed C cases; both layout values, exact existing field serialization, invalid values, mount/open/write/close failures and mount ownership. %d write failure positions covered.\n", cases, successful_writes);
+    printf("PASS: %d executed C cases; both layout values, exact field and language serialization, invalid values, mount/open/write/close failures and mount ownership. %d write failure positions covered.\n", cases, successful_writes);
     return 0;
 }
 '''
 
-generated = preamble + '\n' + layout_macros + '\n' + config_type + '\nstatic nyx_config n_cfg;\n' + defaults + '\n' + writer + '\n' + tests
+generated = preamble + '\n' + layout_macros + '\n' + language_macros + '\n' + config_type + '\nstatic nyx_config n_cfg;\n' + defaults + '\n' + writer + '\n' + tests
 harness = workspace / 'work' / 'nyx_config_writer_harness.c'
 executable = workspace / 'work' / 'nyx_config_writer_harness.exe'
 harness.write_text(generated, encoding='utf-8')

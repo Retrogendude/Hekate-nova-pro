@@ -22,6 +22,7 @@
 #include <bdk.h>
 
 #include "config.h"
+#include "localization.h"
 #include "hos/hos.h"
 #include <ianos/ianos.h>
 #include <libs/compr/blz.h>
@@ -339,6 +340,9 @@ skip_main_cfg_parse:
 					n_cfg.home_screen    = atoi(kv->val);
 				else if (!strcmp("home_layout",  kv->key))
 					n_cfg.home_layout = !strcmp(kv->val, "1") ? HOME_LAYOUT_CAROUSEL : HOME_LAYOUT_TILES;
+				else if (!strcmp("language",     kv->key))
+					n_cfg.language = kv->val[0] >= '0' && kv->val[0] < '0' + I18N_LANGUAGE_COUNT && !kv->val[1]
+						? (u32)(kv->val[0] - '0') : I18N_EN;
 				else if (!strcmp("verification", kv->key))
 					n_cfg.verification   = atoi(kv->val);
 				else if (!strcmp("umsemmcrw",    kv->key))

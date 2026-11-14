@@ -1,4 +1,4 @@
-# Hekate 6.5.4 — deux dispositions d'accueil, prototype 5
+# Hekate 6.5.4 — interface et langues, prototype 6
 
 Cette version intègre deux dispositions de l'accueil Nyx, sélectionnables
 dans les réglages. Les fonctions Hekate et le nouvel onglet Diagnostic restent
@@ -34,8 +34,26 @@ Le mode ne promet pas une navigation directe à la croix directionnelle :
 les Joy-Con conservent le fonctionnement de pointeur déjà présent dans Nyx.
 
 Les deux modes utilisent des formes et des polices natives, sans images
-supplémentaires à déposer sur la carte SD. Les libellés français des sources
-utilisent l'ASCII compatible avec les polices embarquées.
+supplémentaires à déposer sur la carte SD. Une icône de puce identifie
+Diagnostic dans la barre d'onglets et sur sa carte d'accueil.
+
+## Langues
+
+Ouvrir « Nyx Settings → Language », choisir une langue puis « Save & reload ».
+Le menu propose English, Français, Español, Italiano, Русский, Deutsch et
+Português. Fermer annule la sélection. Les modifications déjà présentes dans
+les réglages Nyx sont également enregistrées par cette commande.
+
+Le champ `language` de `bootloader/nyx.ini` vaut respectivement 0 à 6 dans cet
+ordre. Une valeur absente ou invalide utilise l'anglais. Le choix de langue
+est indépendant de `home_layout`.
+
+Les menus, commandes principales, catégories de diagnostic, messages et
+avertissements répertoriés utilisent un catalogue de sept langues. Les noms
+de démarrage, chemins et rapports techniques restent tels quels. Certaines
+informations techniques et le programme RAM séparé restent en anglais.
+Les accents et le cyrillique sont pris en charge par les polices Unicode
+embarquées Noto Sans, sous licence SIL OFL fournie avec les sources.
 
 ## Sauvegarde et diagnostic
 
@@ -49,7 +67,11 @@ sous-menus : fenêtres, panneaux, boutons, listes, réglages, sélecteurs,
 interrupteurs, boîtes de dialogue et barre d'onglets. Les couleurs d'alerte
 et les textes numériques à police fixe sont conservés. Les fonds et teintes
 personnalisés restent pris en compte. Le thème par défaut utilise le fond
-141A19, les panneaux 202B27, l'accent 93E1AE et les angles arrondis.
+141A19, l'accent 93E1AE et les angles arrondis. Les cartes, disques d'icônes,
+panneaux, boutons et sélections ont un fond transparent ; contours et texte
+signalent la sélection. Les fenêtres superposées, dialogues, clavier et
+listes déroulées gardent un fond sombre pour éviter les textes superposés.
+Les indicateurs et barres de progression conservent leur couleur.
 
 Le Diagnostic contient désormais toute la table des sondes HWTest, l'export
 et le service RAM avec retour à Hekate. Voir DIAGNOSTIC-INTEGRATION.md.
@@ -60,11 +82,11 @@ La compilation complète a réussi le 4 novembre 2026 avec devkitARM GCC 16.1.0.
 Hekate, Nyx et les modules ont été générés. Les tailles du payload et de
 Hekate non compressé respectent les limites du Makefile. Les fichiers binaires
 ont été comparés à leur ELF lié. Le programme Wi-Fi AArch64 et le service
-RAM séparé ont également été construits. La sauvegarde des réglages a passé 69 cas C
+RAM séparé ont également été construits. La sauvegarde des réglages a passé 76 cas C
 exécutés avec une carte SD simulée, y compris les erreurs d'écriture.
 
-Aucun essai sur console n'a encore été effectué. La maquette interactive
-présente le choix dans les réglages et ne lit ni n'écrit une carte SD réelle.
+Aucun essai sur console n'a encore été effectué. Les traductions, polices et
+leur gestion mémoire ont été contrôlées sur ordinateur avec le code C réel.
 
 Pour la validation matérielle, vérifier les deux dispositions sur l'écran 1280 × 720,
 les raccourcis, les réglages, la conservation du choix après rechargement,

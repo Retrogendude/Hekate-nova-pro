@@ -190,7 +190,7 @@ static lv_res_t _create_mbox_hid(usb_ctxt_t *usbs)
 	else
 		strcat(txt_buf, "Touchpad");
 
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_obj_t *lbl_status = lv_label_create(mbox, NULL);
@@ -264,7 +264,7 @@ static lv_res_t _create_mbox_ums(usb_ctxt_t *usbs)
 		}
 	}
 
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_obj_t *lbl_status = lv_label_create(mbox, NULL);
@@ -908,7 +908,7 @@ static int _fix_attributes(lv_obj_t *lb_val, char *path, u32 *total)
 					total[3]++;
 			}
 
-			lv_label_set_text(lb_val, path);
+			(lv_label_set_text)(lb_val, path);
 			manual_system_maintenance(true);
 
 			// Enter the directory.
@@ -984,7 +984,7 @@ static lv_res_t _create_window_unset_abit_tool(lv_obj_t *btn)
 					          total[2], total[3]);
 		}
 
-		lv_label_set_text(lb_desc2, txt_buf);
+		(lv_label_set_text)(lb_desc2, txt_buf);
 		lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
 		lv_obj_align(desc2, val, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 0);
 
@@ -1011,7 +1011,7 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 	char *txt_buf = malloc(SZ_16K);
 	strcpy(txt_buf, "#FF8000 Don't touch the screen!#\n\nThe tuning process will start in ");
 	u32 text_idx = strlen(txt_buf);
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 6);
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -1026,13 +1026,13 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 		goto out;
 
 	manual_system_maintenance(true);
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	u32 seconds = 5;
 	while (seconds)
 	{
 		s_printf(txt_buf + text_idx, "%d seconds...", seconds);
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 		manual_system_maintenance(true);
 		msleep(1000);
 		seconds--;
@@ -1095,7 +1095,7 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 		}
 		s_printf(txt_buf + strlen(txt_buf), " (%d), Chn: %d#\n\n", err[0], err[1]);
 		strcat(txt_buf, "#FFFF00 The touchscreen calibration failed!");
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 		goto out2;
 	}
 
@@ -1217,7 +1217,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		const pkg1_id_t *pkg1_id = pkg1_identify(pkg1 + pk1_offset, build_date);
 
 		s_printf(txt_buf, "#00DDFF Found %s pkg1 ('%s')#\n\n", !idx ? "Main" : "Safe", build_date);
-		lv_label_set_text(lb_log, txt_buf);
+		(lv_label_set_text)(lb_log, txt_buf);
 		manual_system_maintenance(true);
 		free(build_date);
 
@@ -1229,13 +1229,13 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (!pkg1_id)
 		{
 			strcat(txt_buf, "#FFDD00 Unknown pkg1 version!#");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			if (!res)
 			{
 				strcat(txt_buf, "\nEncrypted pkg1 extracted to pkg1_enc.bin");
-				lv_label_set_text(lb_log, txt_buf);
+				(lv_label_set_text)(lb_log, txt_buf);
 				manual_system_maintenance(true);
 			}
 
@@ -1268,7 +1268,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				strcat(txt_buf, "#FFDD00 Pkg1 decryption failed!#\n");
 				if (h_cfg.t210b01)
 					strcat(txt_buf, "#FFDD00 Is BEK missing?#\n");
-				lv_label_set_text(lb_log, txt_buf);
+				(lv_label_set_text)(lb_log, txt_buf);
 				goto out;
 			}
 		}
@@ -1303,7 +1303,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				"#C7EA46 Warmboot size:       #0x%05X\n\n",
 				hdr_pk11->ldr_size, hdr_pk11->sm_size, hdr_pk11->wb_size);
 
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump package1.1.
@@ -1311,7 +1311,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(pkg1, SZ_256K, path))
 				goto out;
 			strcat(txt_buf, "Package1 extracted to pkg1_decr.bin\n");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump nxbootloader.
@@ -1319,7 +1319,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(loader, hdr_pk11->ldr_size, path))
 				goto out;
 			strcat(txt_buf, "NX Bootloader extracted to nxloader.bin\n");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump secmon.
@@ -1327,7 +1327,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(secmon, hdr_pk11->sm_size, path))
 				goto out;
 			strcat(txt_buf, "Secure Monitor extracted to secmon.bin\n");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump warmboot.
@@ -1345,7 +1345,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 					goto out;
 			}
 			strcat(txt_buf, "Warmboot extracted to warmboot.bin\n\n");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 		}
 
@@ -1376,13 +1376,13 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (!pkg2_hdr)
 		{
 			strcat(txt_buf, "#FFDD00 Pkg2 decryption failed!#");
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			if (!res)
 			{
 				strcat(txt_buf, "\npkg2 encrypted extracted to pkg2_encr.bin\n");
-				lv_label_set_text(lb_log, txt_buf);
+				(lv_label_set_text)(lb_log, txt_buf);
 				manual_system_maintenance(true);
 			}
 
@@ -1398,7 +1398,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			"#C7EA46 INI1 size:     #0x%06X\n\n",
 			pkg2_hdr->sec_size[PKG2_SEC_KERNEL], pkg2_hdr->sec_size[PKG2_SEC_INI1]);
 
-		lv_label_set_text(lb_log, txt_buf);
+		(lv_label_set_text)(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump pkg2.1.
@@ -1406,7 +1406,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (sd_save_to_file(pkg2, pkg2_hdr->sec_size[PKG2_SEC_KERNEL] + pkg2_hdr->sec_size[PKG2_SEC_INI1], path))
 			goto out;
 		strcat(txt_buf, "Package2 extracted to pkg2_decr.bin\n");
-		lv_label_set_text(lb_log, txt_buf);
+		(lv_label_set_text)(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump kernel.
@@ -1414,7 +1414,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (sd_save_to_file(pkg2_hdr->data, pkg2_hdr->sec_size[PKG2_SEC_KERNEL], path))
 			goto out;
 		strcat(txt_buf, "Kernel extracted to kernel.bin\n");
-		lv_label_set_text(lb_log, txt_buf);
+		(lv_label_set_text)(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump INI1.
@@ -1439,7 +1439,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			goto out;
 
 		strcat(txt_buf, "INI1 extracted to ini1.bin\n");
-		lv_label_set_text(lb_log, txt_buf);
+		(lv_label_set_text)(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		char filename[32];
@@ -1485,7 +1485,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				goto out;
 
 			s_printf(txt_buf + strlen(txt_buf), "- Extracted %s.kip1\n", kip_name);
-			lv_label_set_text(lb_log, txt_buf);
+			(lv_label_set_text)(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			ptr += kip1_size;
@@ -1544,6 +1544,7 @@ static void _create_tab_tools_emmc_sd_usb(lv_theme_t *th, lv_obj_t *parent)
 	lv_obj_t *label_btn = lv_label_create(btn, NULL);
 	lv_btn_set_fit(btn, true, true);
 	lv_label_set_static_text(label_btn, SYMBOL_UPLOAD"  Backup eMMC");
+	lv_obj_set_free_num(btn, 0);
 	lv_obj_align(btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, create_window_backup_restore_tool);
 
@@ -1561,6 +1562,7 @@ static void _create_tab_tools_emmc_sd_usb(lv_theme_t *th, lv_obj_t *parent)
 	lv_obj_t *btn2 = lv_btn_create(h1, btn);
 	label_btn = lv_label_create(btn2, NULL);
 	lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  Restore eMMC");
+	lv_obj_set_free_num(btn2, 1);
 	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
 	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, create_window_backup_restore_tool);
 
@@ -1746,7 +1748,7 @@ static void _create_tab_tools_arc_rcm_pkg12(lv_theme_t *th, lv_obj_t *parent)
 
 	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
 	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_text(label_txt4, txt_buf);
+	(lv_label_set_text)(label_txt4, txt_buf);
 	free(txt_buf);
 
 	lv_obj_set_style(label_txt4, &hint_small_style);

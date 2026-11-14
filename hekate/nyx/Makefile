@@ -43,7 +43,7 @@ OBJS += actmon bpmp ccplex clock di vic i2c irq timer \
 		hw_init
 
 # Utilities.
-OBJS += btn dirlist ianos ini util config sprintf
+OBJS += btn dirlist ianos ini util config sprintf localization unicode_fonts
 
 # Native HWTest-RCM probes. RAM stress testing is an isolated service payload.
 OBJS += nyx_diagnostics hwtest_pages dx verdict \

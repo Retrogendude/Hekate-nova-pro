@@ -1,10 +1,10 @@
 {
-  "tag": "v5",
-  "source_archive": "hekate-6.5.4-diagnostics-complets-sources.zip",
-  "source_archive_sha256": "471331c5ae6aa4fb62a712e34e344506552377a7d86d8f4972d92b21d56e3c1c",
+  "tag": "v6",
+  "source_archive": "hekate-6.5.4-interface-langues-sources.zip",
+  "source_archive_sha256": "b9403738c537a6d910ef5f3a112b7271b49ab90bb49b0a6b1558bb024612b60b",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",
   "original_commit_history": false,
-  "kind": "source-archive-only"
+  "kind": "source-and-compiled-delivery"
 }

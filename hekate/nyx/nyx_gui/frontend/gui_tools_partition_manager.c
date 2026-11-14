@@ -163,7 +163,7 @@ static int _stat_and_copy_files(const char *src, const char *dst, char *path, u3
 		return res;
 
 	if (labels)
-		lv_label_set_text(labels[0], path);
+		(lv_label_set_text)(labels[0], path);
 
 	dirLength = strlen(path);
 
@@ -189,7 +189,7 @@ static int _stat_and_copy_files(const char *src, const char *dst, char *path, u3
 
 		if (labels)
 		{
-			lv_label_set_text(labels[1], fno.fname);
+			(lv_label_set_text)(labels[1], fno.fname);
 			manual_system_maintenance(true);
 		}
 
@@ -279,7 +279,7 @@ static int _stat_and_copy_files(const char *src, const char *dst, char *path, u3
 			{
 				// Clear folder path.
 				path[dirLength] = 0;
-				lv_label_set_text(labels[0], path);
+				(lv_label_set_text)(labels[0], path);
 			}
 		}
 	}
@@ -859,7 +859,7 @@ static lv_res_t _action_flash_linux_data(lv_obj_t * btns, const char * txt)
 			if (res)
 			{
 				s_printf(txt_buf, "#FFDD00 Error:# Failed to open part %d#", currPartIdx);
-				lv_label_set_text(lbl_status, txt_buf);
+				(lv_label_set_text)(lbl_status, txt_buf);
 				manual_system_maintenance(true);
 
 				goto exit;
@@ -917,7 +917,7 @@ static lv_res_t _action_flash_linux_data(lv_obj_t * btns, const char * txt)
 		{
 			lv_bar_set_value(bar, pct);
 			s_printf(txt_buf, " #DDDDDD "SYMBOL_DOT"# %d%%", pct);
-			lv_label_set_text(label_pct, txt_buf);
+			(lv_label_set_text)(label_pct, txt_buf);
 			manual_system_maintenance(true);
 			prevPct = pct;
 		}
@@ -1137,7 +1137,7 @@ static lv_res_t _action_check_flash_linux(lv_obj_t *btn)
 		"#C7EA46 Status:# Found installation files and partition.\n"
 		"#00DDFF Offset:# %08x, #00DDFF Size:# %X, #00DDFF Image size:# %d MiB\n"
 		"\nDo you want to continue?", l4t_flash_ctxt.offset_sct, size_sct, l4t_flash_ctxt.image_size_sct >> 11);
-	lv_label_set_text(lbl_status, txt_buf);
+	(lv_label_set_text)(lbl_status, txt_buf);
 	free(txt_buf);
 	lv_mbox_add_btns(mbox, mbox_btn_map2, _action_flash_linux_data);
 	goto exit;
@@ -1291,7 +1291,7 @@ static lv_res_t _action_flash_android_data(lv_obj_t * btns, const char * txt)
 		s_printf(txt_buf, "#FF8000 Warning:# Kernel partition not found!\n");
 
 boot_img_not_found:
-	lv_label_set_text(lbl_status, txt_buf);
+	(lv_label_set_text)(lbl_status, txt_buf);
 	manual_system_maintenance(true);
 
 	// Check if Recovery should be flashed.
@@ -1352,7 +1352,7 @@ boot_img_not_found:
 		strcat(txt_buf, "#FF8000 Warning:# Recovery partition not found!\n");
 
 recovery_not_found:
-	lv_label_set_text(lbl_status, txt_buf);
+	(lv_label_set_text)(lbl_status, txt_buf);
 	manual_system_maintenance(true);
 
 	// Check if Device Tree should be flashed.
@@ -1412,7 +1412,7 @@ recovery_not_found:
 		strcat(txt_buf, "#FF8000 Warning:# DTB partition not found!");
 
 dtb_not_found:
-	lv_label_set_text(lbl_status, txt_buf);
+	(lv_label_set_text)(lbl_status, txt_buf);
 
 	// Check if Recovery is flashed unconditionally.
 	u8 *rec = malloc(SD_BLOCKSIZE);
@@ -1434,7 +1434,7 @@ error:
 	{
 		// If a Recovery partition was found, ask user if rebooting into it is wanted.
 		strcat(txt_buf,"\n\nDo you want to reboot into Recovery\nto finish Android installation?");
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_mbox_add_btns(mbox, mbox_btn_map2, _action_reboot_recovery);
 	}
 	else
@@ -1619,14 +1619,14 @@ static lv_res_t _sd_create_mbox_start_partitioning()
 	// Use safety wait if backup is not possible.
 	char *txt_buf = malloc(SZ_4K);
 	strcpy(txt_buf, "#FF8000 SD Partition Manager#\n\nSafety wait ends in ");
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	u32 seconds = 5;
 	u32 text_idx = strlen(txt_buf);
 	while (seconds)
 	{
 		s_printf(txt_buf + text_idx, "%d seconds...", seconds);
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 		manual_system_maintenance(true);
 		msleep(1000);
 		seconds--;
@@ -1886,14 +1886,14 @@ static lv_res_t _emmc_create_mbox_start_partitioning()
 	// Use safety wait if backup is not possible.
 	char *txt_buf = malloc(SZ_4K);
 	strcpy(txt_buf, "#FF8000 eMMC Partition Manager#\n\nSafety wait ends in ");
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	u32 seconds = 5;
 	u32 text_idx = strlen(txt_buf);
 	while (seconds)
 	{
 		s_printf(txt_buf + text_idx, "%d seconds...", seconds);
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 		manual_system_maintenance(true);
 		msleep(1000);
 		seconds--;
@@ -1964,7 +1964,7 @@ static lv_res_t _emmc_create_mbox_start_partitioning()
 	{
 no_hos_user_part:
 		s_printf(txt_buf, "#FF0000 HOS USER partition doesn't exist!#\nRestore HOS backup first...");
-		lv_label_set_text(lbl_extra, txt_buf);
+		(lv_label_set_text)(lbl_extra, txt_buf);
 
 		emmc_gpt_free(&gpt);
 		emmc_end();
@@ -1990,7 +1990,7 @@ no_hos_user_part:
 	if (mkfs_error)
 	{
 		s_printf(txt_buf, "#FF0000 Failed (%d)!#\nPlease try again...\n", mkfs_error);
-		lv_label_set_text(lbl_extra, txt_buf);
+		(lv_label_set_text)(lbl_extra, txt_buf);
 
 		free(buff);
 		emmc_end();
@@ -2136,7 +2136,7 @@ static lv_res_t _create_mbox_partitioning_warn()
 				"#FFDD00 Use USB UMS to copy them over!#");
 		}
 
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 
 		if (part_info.backup_possible)
 			lv_mbox_add_btns(mbox, mbox_btn_map1, _create_mbox_partitioning_option1);
@@ -2147,7 +2147,7 @@ static lv_res_t _create_mbox_partitioning_warn()
 	{
 		s_printf(txt_buf, "#FFDD00 Warning: This will partition the eMMC!#\n\n"
 						  "#FFDD00 The USER partition will also be formatted!#");
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_mbox_add_btns(mbox, mbox_btn_map1, _create_mbox_partitioning_option1);
 	}
 
@@ -2528,7 +2528,7 @@ static void _create_mbox_check_files_total_size()
 			"#96FF00 The SD Card files will be backed up automatically!#\n"
 			"#FFDD00 Any other partition will be wiped!#\n"
 			"#00DDFF Total files:# %d, #00DDFF Total size:# %d MiB", total_files, total_size >> 20);
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 	}
 	else
 	{
@@ -2626,7 +2626,7 @@ static void _create_mbox_check_files_total_size()
 
 	lv_obj_t *lbl_table = lv_label_create(h1, NULL);
 	lv_label_set_style(lbl_table, &monospace_text);
-	lv_label_set_text(lbl_table, txt_buf);
+	(lv_label_set_text)(lbl_table, txt_buf);
 	lv_obj_align(lbl_table, h1, LV_ALIGN_IN_TOP_MID, 0, LV_DPI);
 
 	if (!part_info.backup_possible)
@@ -2847,7 +2847,7 @@ check_changes:
 			s_printf(txt_buf + strlen(txt_buf), "- GPT OOB/Empty Partitions (removal)\n");
 	}
 
-	lv_label_set_text(lbl_status, txt_buf);
+	(lv_label_set_text)(lbl_status, txt_buf);
 	lv_label_set_style(lbl_status, &monospace_text);
 
 	free(txt_buf);
@@ -3254,7 +3254,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 	lv_label_set_recolor(lbl_sl_hos, true);
 	lv_label_set_align(lbl_sl_hos, LV_LABEL_ALIGN_RIGHT);
 	s_printf(txt_buf, "#96FF00 %4d GiB#", (part_info.total_sct - AU_ALIGN_SECTORS) >> 11 >> 10);
-	lv_label_set_text(lbl_sl_hos, txt_buf);
+	(lv_label_set_text)(lbl_sl_hos, txt_buf);
 	lv_obj_align(lbl_sl_hos, cont_lbl, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
 	part_info.lbl_hos = lbl_sl_hos;
 

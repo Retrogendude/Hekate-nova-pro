@@ -55,7 +55,7 @@ static lv_res_t _create_window_dump_done(int error, char *dump_filenames)
 		char *sn = emmcsn_path_impl(NULL, NULL, NULL, NULL);
 		s_printf(txt_buf, "Dumping to SD card finished!\nFiles: #C7EA46 backup/%s/dumps/#\n%s", sn, dump_filenames);
 	}
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action); // Important. After set_text.
@@ -364,7 +364,7 @@ static lv_res_t _create_mbox_cal0(lv_obj_t *btn)
 	bool valid_cal0 = !memcmp(hash, cal0->body_sha256, 0x20);
 	s_printf(txt_buf + strlen(txt_buf), "#FF8000 SHA256 Hash Match:# %s", valid_cal0 ? "Pass" : "Failed");
 
-	lv_label_set_text(lb_desc, txt_buf);
+	(lv_label_set_text)(lb_desc, txt_buf);
 
 out:
 	free(txt_buf);
@@ -871,7 +871,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 		FUSE(FUSE_OPT_WAFER_ID), die_x, die_y,
 		uptime_s / 3600, (uptime_s / 60) % 60, uptime_s % 60);
 
-	lv_label_set_text(lb_val, txt_buf);
+	(lv_label_set_text)(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -1284,7 +1284,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 	else
 		strcat(txt_buf, "\n\n#FF8000 This unit is patched#\n#FF8000 to the RCM bug!#");
 
-	lv_label_set_text(lb_desc2, txt_buf);
+	(lv_label_set_text)(lb_desc2, txt_buf);
 
 	free(txt_buf);
 
@@ -1335,7 +1335,7 @@ static lv_res_t _create_window_bootrom_info_status(lv_obj_t *btn)
 	if (res != 0)
 		s_printf(txt_buf + strlen(txt_buf), "#FFDD00 Failed to read ipatches. Error: %d#", res);
 
-	lv_label_set_text(lb_desc, txt_buf);
+	(lv_label_set_text)(lb_desc, txt_buf);
 
 	free(txt_buf);
 
@@ -1562,8 +1562,8 @@ static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 	else
 		strcpy(txt_buf2, "#00DDFF Advanced Health Status#\n#FFDD00 Empty!#");
 
-	lv_label_set_text(lb_desc, txt_buf);
-	lv_label_set_text(lb_desc2, txt_buf2);
+	(lv_label_set_text)(lb_desc, txt_buf);
+	(lv_label_set_text)(lb_desc2, txt_buf2);
 
 out:
 	free(buf);
@@ -1723,8 +1723,8 @@ static lv_res_t _create_mbox_sd_vendor_info(lv_obj_t * btn)
 
 	lv_mbox_set_text(mbox, "#C7EA46 SD Vendor/Reserved Data#");
 
-	lv_label_set_text(lb_desc, txt_buf);
-	lv_label_set_text(lb_desc2, txt_buf2);
+	(lv_label_set_text)(lb_desc, txt_buf);
+	(lv_label_set_text)(lb_desc2, txt_buf2);
 
 	sd_unmount();
 
@@ -1759,7 +1759,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 
 	s_printf(txt_buf, "#FF8000 %s Benchmark#\n[Raw Reads] Abort: VOL- & VOL+", sd_bench ? "SD Card" : "eMMC");
 
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 	txt_buf[0] = 0;
 
 	lv_obj_t *h1 = lv_cont_create(mbox, NULL);
@@ -1889,7 +1889,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		u32 rate_1k = (u64)size_bytes_seq * 1000 * 1000 * 1000 / mb_div / timer;
 		s_printf(txt_buf + strlen(txt_buf), " SEQ 16MB - Rate: #C7EA46 %3d.%02d %s#",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text);
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -1952,7 +1952,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		s_printf(txt_buf + strlen(txt_buf), "        AVG #C7EA46 95th#  #FF3C28 5th#\n");
 		s_printf(txt_buf + strlen(txt_buf), " SEQ  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -2028,7 +2028,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
 		if (iter_curr == iters - 1)
 			txt_buf[strlen(txt_buf) - 1] = 0; // Cut off last new line.
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -2045,7 +2045,7 @@ error:
 		else
 			s_printf(txt_buf + strlen(txt_buf), "\n#FFDD00                 IO Error occurred!                #");
 
-		lv_label_set_text(lbl_status, txt_buf);
+		(lv_label_set_text)(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 	}
 
@@ -2065,7 +2065,7 @@ error:
 
 out:
 	s_printf(txt_buf, "#FF8000 %s Benchmark#\n[Raw Reads]", sd_bench ? "SD Card" : "eMMC");
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	// Update SDMMC error info in case it changed.
 	if (sd_bench && bench_sd_err_label)
@@ -2075,7 +2075,7 @@ out:
 			sd_errors[SD_ERROR_INIT_FAIL], nyx_str->info.sd_errors[SD_ERROR_INIT_FAIL],
 			sd_errors[SD_ERROR_RW_FAIL],   nyx_str->info.sd_errors[SD_ERROR_RW_FAIL],
 			sd_errors[SD_ERROR_RW_RETRY],  nyx_str->info.sd_errors[SD_ERROR_RW_RETRY]);
-		lv_label_set_text(bench_sd_err_label, txt_buf);
+		(lv_label_set_text)(bench_sd_err_label, txt_buf);
 	}
 
 	free(txt_buf);
@@ -2282,7 +2282,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	lv_obj_t * lb_val = lv_label_create(info, lb_desc);
 
-	lv_label_set_text(lb_val, txt_buf);
+	(lv_label_set_text)(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(info));
 	lv_obj_align(info, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2339,7 +2339,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	emmc_gpt_free(&gpt);
 
-	lv_label_set_text(lb_desc2, txt_buf);
+	(lv_label_set_text)(lb_desc2, txt_buf);
 	lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
 	lv_obj_align(desc2, info, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 6, 0);
 
@@ -2373,7 +2373,7 @@ out_error:
 			emmc_errors[EMMC_ERROR_RW_FAIL],
 			emmc_errors[EMMC_ERROR_RW_RETRY]);
 
-		lv_mbox_set_text(mbox, txt_buf);
+		(lv_mbox_set_text)(mbox, txt_buf);
 		lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action);
 		lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -2590,7 +2590,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		break;
 	}
 
-	lv_label_set_text(lb_val, txt_buf);
+	(lv_label_set_text)(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2722,7 +2722,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		wp_info,
 		sd_storage.cid.rsvd, sd_storage.scr.vendor);
 
-	lv_label_set_text(lb_val2, txt_buf);
+	(lv_label_set_text)(lb_val2, txt_buf);
 
 	lv_obj_set_width(lb_val2, lv_obj_get_width(val2));
 	lv_obj_align(val2, desc2, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2784,7 +2784,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		sd_errors[SD_ERROR_RW_FAIL],   nyx_str->info.sd_errors[SD_ERROR_RW_FAIL],
 		sd_errors[SD_ERROR_RW_RETRY],  nyx_str->info.sd_errors[SD_ERROR_RW_RETRY]);
 
-	lv_label_set_text(lb_val4, txt_buf);
+	(lv_label_set_text)(lb_val4, txt_buf);
 
 	lv_obj_set_width(lb_val4, lv_obj_get_width(val4));
 	lv_obj_align(val4, desc4, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2809,7 +2809,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		(u32)(sd_fs.free_clst * sd_fs.csize >> SECTORS_TO_MIB_COEFF),
 		(u32)(sd_fs.n_fatent  * sd_fs.csize >> SECTORS_TO_MIB_COEFF));
 
-	lv_label_set_text(lb_val3, txt_buf);
+	(lv_label_set_text)(lb_val3, txt_buf);
 
 	lv_obj_set_width(lb_val3, lv_obj_get_width(val3));
 
@@ -2940,7 +2940,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 		break;
 	}
 
-	lv_label_set_text(lb_val, txt_buf);
+	(lv_label_set_text)(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -3068,7 +3068,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	else
 		strcat(txt_buf, "#FF8000 "SYMBOL_WARNING" Error!#");
 
-	lv_label_set_text(lb_val2, txt_buf);
+	(lv_label_set_text)(lb_val2, txt_buf);
 
 	lv_obj_set_width(lb_val2, lv_obj_get_width(val2));
 	lv_obj_align(val2, desc2, LV_ALIGN_OUT_RIGHT_MID, 0, 0);

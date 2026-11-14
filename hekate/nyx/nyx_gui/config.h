@@ -60,6 +60,7 @@ typedef struct _nyx_config
 	u32 jc_force_right;
 	u32 bpmp_clock;
 	u32 home_layout; // Appended: keep all previous field offsets unchanged.
+	u32 language; // Appended: UI locale, persisted independently of home layout.
 } nyx_config;
 
 extern hekate_config h_cfg;

@@ -21,6 +21,7 @@
 #include "gui.h"
 #include "gui_info.h"
 #include "../config.h"
+#include "../localization.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
 #include <libs/lvgl/lvgl.h>
 
@@ -1405,7 +1406,7 @@ disabled_or_cal0_issue:;
 			s_printf(txt_buf, "#FFDD00 Failed to get Lite Gamepad info!#\n#FFDD00 Error: %d#", error);
 	}
 
-	lv_mbox_set_text(mbox, txt_buf);
+	(lv_mbox_set_text)(mbox, txt_buf);
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action); // Important. After set_text.
 
@@ -1507,6 +1508,96 @@ static lv_res_t _create_window_home_layout(lv_obj_t *btn)
 	lv_obj_set_top(ddlist, true);
 	return LV_RES_OK;
 }
+/* Locale choice is pending until the explicit save/reload action. */
+static u32 language_pending;
+static lv_obj_t *language_parent_close_btn;
+
+static lv_res_t _language_action(lv_obj_t *ddlist)
+{
+	u32 selected = lv_ddlist_get_selected(ddlist);
+	language_pending = selected < I18N_LANGUAGE_COUNT ? selected : I18N_EN;
+	return LV_RES_OK;
+}
+
+static lv_res_t _close_language_window(lv_obj_t *btn)
+{
+	language_pending = n_cfg.language;
+	lv_res_t result = nyx_win_close_action(btn);
+	close_btn = language_parent_close_btn;
+	language_parent_close_btn = NULL;
+	/* Restore the parent Nyx Settings save action. */
+	lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_nyx_options_action);
+	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
+	lv_obj_set_click(status_bar.mid, true);
+	return result;
+}
+
+static lv_res_t _save_language(lv_obj_t *btn)
+{
+	(void)btn;
+	bool was_mounted = sd_get_card_mounted();
+	if (sd_mount())
+	{
+		_home_layout_notice(nyx_tr("SD card unavailable. The language was not changed."));
+		return LV_RES_OK;
+	}
+	if (f_stat("bootloader/sys/nyx.bin", NULL) != FR_OK)
+	{
+		if (!was_mounted)
+			sd_unmount();
+		_home_layout_notice(nyx_tr("Nyx cannot be reloaded: bootloader/sys/nyx.bin is missing. The language was not changed."));
+		return LV_RES_OK;
+	}
+
+	u32 previous = n_cfg.language;
+	n_cfg.language = language_pending < I18N_LANGUAGE_COUNT ? language_pending : I18N_EN;
+	if (create_nyx_config_entry(true))
+	{
+		n_cfg.language = previous;
+		_home_layout_notice(nyx_tr("Could not save the language. Check the SD card and try again."));
+		return LV_RES_OK;
+	}
+	nyx_changes_made = false;
+	reload_nyx(NULL, false);
+	_home_layout_notice(nyx_tr("Language saved. Nyx could not be reloaded. The choice will apply the next time Nyx starts."));
+	return LV_RES_OK;
+}
+
+static lv_res_t _create_window_language(lv_obj_t *btn)
+{
+	(void)btn;
+	language_pending = n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN;
+	language_parent_close_btn = close_btn;
+	lv_obj_t *win = nyx_create_standard_window(nyx_tr("Language"), _close_language_window);
+	lv_win_add_btn(win, NULL, nyx_tr("Save & reload"), _save_language);
+
+	lv_obj_t *title = lv_label_create(win, NULL);
+	lv_label_set_text(title, nyx_tr("Choose the interface language"));
+	lv_obj_set_pos(title, 50, 30);
+	lv_obj_t *ddlist = lv_ddlist_create(win, NULL);
+	lv_ddlist_set_draw_arrow(ddlist, true);
+	/* Stable persisted order; endonyms stay recognizable in every locale. */
+	(lv_ddlist_set_options)(ddlist,
+		"English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês");
+	lv_ddlist_set_selected(ddlist, language_pending);
+	lv_ddlist_set_action(ddlist, _language_action);
+	lv_obj_set_pos(ddlist, 50, 95);
+
+	lv_obj_t *help = lv_label_create(win, NULL);
+	lv_label_set_style(help, &hint_small_style);
+	lv_label_set_long_mode(help, LV_LABEL_LONG_BREAK);
+	lv_obj_set_width(help, 1100);
+	lv_label_set_text(help, nyx_tr(
+		"Save & reload stores all Nyx settings on the SD card, then reloads the interface.\n"
+		"Closing this window cancels the pending language choice."));
+	lv_obj_set_pos(help, 50, 225);
+	lv_obj_set_top(ddlist, true);
+	/* A generic Save button must not misleadingly save the old locale. */
+	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_TRANSP);
+	lv_obj_set_click(status_bar.mid, false);
+	return LV_RES_OK;
+}
+
 static lv_res_t _home_screen_action(lv_obj_t *ddlist)
 {
 	u32 new_selection = lv_ddlist_get_selected(ddlist);
@@ -1576,6 +1667,7 @@ lv_res_t create_win_nyx_options(lv_obj_t *parrent_btn)
 
 	lv_obj_t *win = nyx_create_standard_window(SYMBOL_HOME" Nyx Settings", _action_win_nyx_options_close);
 	lv_win_add_btn(win, NULL, SYMBOL_HOME" Disposition", _create_window_home_layout);
+	lv_win_add_btn(win, NULL, nyx_tr("Language"), _create_window_language);
 
 	static lv_style_t h_style;
 	lv_style_copy(&h_style, lv_theme_get_current()->panel);

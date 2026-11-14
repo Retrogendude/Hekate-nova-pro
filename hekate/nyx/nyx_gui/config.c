@@ -20,6 +20,7 @@
 #include <bdk.h>
 
 #include "config.h"
+#include "localization.h"
 #include <libs/fatfs/ff.h>
 
 void set_default_configuration()
@@ -55,6 +56,7 @@ void set_nyx_default_configuration()
 	n_cfg.timedst        = 1;
 	n_cfg.home_screen    = 0;
 	n_cfg.home_layout    = HOME_LAYOUT_TILES;
+	n_cfg.language       = I18N_EN;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -276,6 +278,14 @@ int create_nyx_config_entry(bool force_unmount)
 	if (f_puts("\nbpmpclock=", &fp) < 0)
 		goto out;
 	itoa(n_cfg.bpmp_clock, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
+
+	if (n_cfg.language >= I18N_LANGUAGE_COUNT)
+		n_cfg.language = I18N_EN;
+	if (f_puts("\nlanguage=", &fp) < 0)
+		goto out;
+	itoa(n_cfg.language, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0)
 		goto out;
 

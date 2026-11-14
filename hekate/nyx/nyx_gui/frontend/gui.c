@@ -632,9 +632,11 @@ console:
 
 	if (jc_pad->b && close_btn)
 	{
-		lv_action_t close_btn_action = lv_btn_get_action(close_btn, LV_BTN_ACTION_CLICK);
-		close_btn_action(close_btn);
+		lv_obj_t *button = close_btn;
+		lv_action_t close_btn_action = lv_btn_get_action(button, LV_BTN_ACTION_CLICK);
 		close_btn = NULL;
+		if (close_btn_action)
+			close_btn_action(button);
 	}
 
 	return false; // No buffering so no more data read.
@@ -831,31 +833,33 @@ lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 	lv_obj_t *label_btn = lv_obj_get_child(btn, NULL);
 	lv_obj_t *label_btn2 = lv_obj_get_child(btn, label_btn);
 
-	char label_text[64];
+	const char *state = nyx_tr((lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL) ? "ON" : "OFF");
+	const char *color = (lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL) ? text_color : "#D0D0D0";
 	if (!label_btn2)
 	{
-		strcpy(label_text, lv_label_get_text(label_btn));
-		label_text[strlen(label_text) - 15] = 0;
-
-		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-		{
-			strcat(label_text, "#D0D0D0    OFF#");
-			lv_label_set_text(label_btn, label_text);
+		const char *current = lv_label_get_text(label_btn);
+		/* The final recolored span is the state. Byte counts vary by locale. */
+		u32 prefix = strlen(current);
+		if (prefix && current[prefix - 1] == '#') {
+			--prefix;
+			while (prefix && current[prefix - 1] != '#') --prefix;
+			if (prefix) --prefix;
 		}
-		else
-		{
-			s_printf(label_text, "%s%s%s", label_text, text_color, "    ON #");
-			lv_label_set_text(label_btn, label_text);
+		char *label_text = malloc(prefix + strlen(color) + strlen(state) + 8);
+		if (label_text) {
+			memcpy(label_text, current, prefix); label_text[prefix] = 0;
+			strcat(label_text, color); strcat(label_text, "    ");
+			strcat(label_text, state); strcat(label_text, "#");
+			lv_label_set_text(label_btn, label_text); free(label_text);
 		}
 	}
 	else
 	{
-		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-			lv_label_set_text(label_btn, "#D0D0D0 OFF#");
-		else
-		{
-			s_printf(label_text, "%s%s", text_color, " ON #");
-			lv_label_set_text(label_btn, label_text);
+		char *label_text = malloc(strlen(color) + strlen(state) + 4);
+		if (label_text) {
+			strcpy(label_text, color); strcat(label_text, " ");
+			strcat(label_text, state); strcat(label_text, "#");
+			lv_label_set_text(label_btn, label_text); free(label_text);
 		}
 	}
 
@@ -1304,7 +1308,10 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT.
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
-	btn_onoff_pr_hos_style.body.empty = 0;
+	btn_onoff_pr_hos_style.body.empty = 1;
+	btn_onoff_pr_hos_style.body.border.width = 2;
+	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
+	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
 
 	lv_obj_t *label_btn = lv_label_create(btn, NULL);
 	lv_obj_t *label_btnsw = NULL;
@@ -1354,7 +1361,10 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
-	btn_onoff_pr_hos_style.body.empty = 0;
+	btn_onoff_pr_hos_style.body.empty = 1;
+	btn_onoff_pr_hos_style.body.border.width = 2;
+	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
+	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
 
 	lv_obj_t *label_btn = lv_label_create(btn, NULL);
 
@@ -1678,19 +1688,14 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 
 	lv_obj_t *label_btn = lv_obj_get_child(btn, NULL);
 
-	char label_text[64];
-	strcpy(label_text, lv_label_get_text(label_btn));
-	label_text[strlen(label_text) - 12] = 0;
-
-	if (!launch_logs_enable)
-	{
-		strcat(label_text, "#D0D0D0 OFF#");
-		lv_label_set_text(label_btn, label_text);
-	}
-	else
-	{
-		s_printf(label_text, "%s%s%s", label_text, text_color, " ON #");
-		lv_label_set_text(label_btn, label_text);
+	const char *title = nyx_tr("Logs");
+	const char *state = nyx_tr(launch_logs_enable ? "ON" : "OFF");
+	const char *color = launch_logs_enable ? text_color : "#D0D0D0";
+	char *label_text = malloc(strlen(title) + strlen(state) + strlen(color) + 16);
+	if (label_text) {
+		strcpy(label_text, SYMBOL_LIST" "); strcat(label_text, title); strcat(label_text, " ");
+		strcat(label_text, color); strcat(label_text, " "); strcat(label_text, state); strcat(label_text, "#");
+		lv_label_set_text(label_btn, label_text); free(label_text);
 	}
 
 	return LV_RES_OK;
@@ -1755,6 +1760,9 @@ static lv_res_t _create_window_home_launch(lv_obj_t *btn)
 	btn_home_transp_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	btn_home_transp_pr.body.grad_color = btn_home_transp_pr.body.main_color;
 	btn_home_transp_pr.body.opa = LV_OPA_30;
+	btn_home_transp_pr.body.empty = 1;
+	btn_home_transp_pr.body.border.width = 2;
+	btn_home_transp_pr.body.border.opa = LV_OPA_COVER;
 
 	static lv_style_t btn_label_home_transp;
 	lv_style_copy(&btn_label_home_transp, lv_theme_get_current()->cont);
@@ -2028,7 +2036,7 @@ ini_parsing:
 			lv_btn_set_action(btns, LV_BTN_ACTION_CLICK, _launch_more_cfg_action);
 
 		// Set button's label text.
-		lv_label_set_text(launch_ctxt.label[curr_btn_idx], ini_sec->name);
+		(lv_label_set_text)(launch_ctxt.label[curr_btn_idx], ini_sec->name);
 		lv_obj_set_opa_scale(launch_ctxt.label[curr_btn_idx], LV_OPA_COVER);
 
 		// Set rolling text if name is too big.
@@ -2110,7 +2118,7 @@ static const char *const home_action_details[HOME_ACTION_COUNT] = {
 	"Verifier l'ecran, le retroeclairage et l'identite de la RAM."
 };
 static const char *const home_action_icons[HOME_ACTION_COUNT] = {
-	SYMBOL_DOT, SYMBOL_CLOCK, SYMBOL_OK, SYMBOL_LIST, SYMBOL_TOOLS
+	SYMBOL_DOT, SYMBOL_CLOCK, SYMBOL_OK, SYMBOL_LIST, SYMBOL_CHIP
 };
 
 static void _home_modern_init_styles(lv_theme_t *th)
@@ -2128,7 +2136,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_transp.body.padding.ver = 0;
 
 	lv_style_copy(&home_card_rel, th->btn.rel);
-	home_card_rel.body.empty = 0;
+	home_card_rel.body.empty = 1;
 	home_card_rel.body.opa = LV_OPA_COVER;
 	home_card_rel.body.main_color = th->btn.rel->body.main_color;
 	home_card_rel.body.grad_color = home_card_rel.body.main_color;
@@ -2154,14 +2162,16 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	lv_style_copy(&home_primary_rel, &home_card_rel);
 	home_primary_rel.body.main_color = th->btn.pr->text.color;
 	home_primary_rel.body.grad_color = home_primary_rel.body.main_color;
-	home_primary_rel.body.border.width = 0;
+	home_primary_rel.body.border.width = 2;
+	home_primary_rel.body.border.color = th->btn.pr->text.color;
 	lv_color32_t accent = { .full = lv_color_to32(home_primary_rel.body.main_color) };
 	// Custom accent hues can be dark blue; keep action labels legible too.
 	unsigned brightness = (77 * accent.red + 150 * accent.green + 29 * accent.blue) >> 8;
-	home_primary_rel.text.color = brightness < 128 ? LV_COLOR_HEX(0xF2F7F3) : LV_COLOR_HEX(0x102019);
+	home_primary_rel.text.color = brightness < 128 ? LV_COLOR_HEX(0xF2F7F3) : th->btn.pr->text.color;
 	lv_style_copy(&home_primary_pr, &home_primary_rel);
 	home_primary_pr.body.main_color = lv_color_mix(home_primary_rel.body.main_color, LV_COLOR_WHITE, 200);
 	home_primary_pr.body.grad_color = home_primary_pr.body.main_color;
+	home_primary_pr.body.border.width = 3;
 	lv_style_copy(&home_title, th->label.prim);
 	home_title.text.font = &interui_30;
 	home_title.text.color = th->label.prim->text.color;
@@ -2567,30 +2577,35 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	monospace_text.text.line_space = 0;
 
 	lv_style_copy(&btn_transp_rel, th->btn.rel);
+	btn_transp_rel.body.empty = 1;
 	btn_transp_rel.body.main_color = th->btn.rel->body.main_color;
 	btn_transp_rel.body.grad_color = btn_transp_rel.body.main_color;
 	btn_transp_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_pr, th->btn.pr);
+	btn_transp_pr.body.empty = 1;
 	btn_transp_pr.body.main_color = th->btn.pr->body.main_color;
 	btn_transp_pr.body.grad_color = btn_transp_pr.body.main_color;
 	btn_transp_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_rel, th->btn.tgl_rel);
+	btn_transp_tgl_rel.body.empty = 1;
 	btn_transp_tgl_rel.body.main_color = th->btn.tgl_rel->body.main_color;
 	btn_transp_tgl_rel.body.grad_color = btn_transp_tgl_rel.body.main_color;
 	btn_transp_tgl_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_pr, th->btn.tgl_pr);
+	btn_transp_tgl_pr.body.empty = 1;
 	btn_transp_tgl_pr.body.main_color = th->btn.tgl_pr->body.main_color;
 	btn_transp_tgl_pr.body.grad_color = btn_transp_tgl_pr.body.main_color;
 	btn_transp_tgl_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_ina, th->btn.ina);
+	btn_transp_ina.body.empty = 1;
 	btn_transp_ina.body.main_color = th->btn.ina->body.main_color;
 	btn_transp_ina.body.grad_color = btn_transp_ina.body.main_color;
 	btn_transp_ina.body.border.color = th->btn.ina->body.border.color;
@@ -2598,21 +2613,25 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	btn_transp_ina.body.opa = LV_OPA_50;
 
 	lv_style_copy(&ddlist_transp_bg, th->ddlist.bg);
+	ddlist_transp_bg.body.empty = 1;
 	ddlist_transp_bg.body.main_color = th->ddlist.bg->body.main_color;
 	ddlist_transp_bg.body.grad_color = ddlist_transp_bg.body.main_color;
 	ddlist_transp_bg.body.opa = 180; // 70.6%.
 
 	lv_style_copy(&ddlist_transp_sel, th->ddlist.sel);
+	ddlist_transp_sel.body.empty = 1;
 	ddlist_transp_sel.body.main_color = th->ddlist.sel->body.main_color;
 	ddlist_transp_sel.body.grad_color = ddlist_transp_sel.body.main_color;
 	ddlist_transp_sel.body.opa = 180; // 70.6%.
 
 	lv_style_copy(&tabview_btn_pr, th->tabview.btn.pr);
+	tabview_btn_pr.body.empty = 1;
 	tabview_btn_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	tabview_btn_pr.body.grad_color = tabview_btn_pr.body.main_color;
 	tabview_btn_pr.body.opa = 35; // 13.7%.
 
 	lv_style_copy(&tabview_btn_tgl_pr, th->tabview.btn.tgl_pr);
+	tabview_btn_tgl_pr.body.empty = 1;
 	tabview_btn_tgl_pr.body.main_color = LV_COLOR_HEX(0xFFFFFF);
 	tabview_btn_tgl_pr.body.grad_color = tabview_btn_tgl_pr.body.main_color;
 	tabview_btn_tgl_pr.body.opa = 35; // 13.7%.
@@ -2700,7 +2719,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 	create_tab_options(th, tab_options);
 
 	// Append to preserve existing Options tab index and saved navigation.
-	lv_obj_t *tab_diag = lv_tabview_add_tab(tv, "Diagnostic");
+	lv_obj_t *tab_diag = lv_tabview_add_tab(tv, SYMBOL_CHIP" Diagnostic");
 	create_tab_diagnostics(th, tab_diag);
 
 	lv_tabview_set_tab_act(tv, 1, false);
@@ -2768,6 +2787,7 @@ void nyx_load_and_run()
 	memset(&system_tasks, 0, sizeof(system_maintenance_tasks_t));
 
 	lv_init();
+	nyx_localization_init();
 	gfx_con.fillbg = 1;
 
 	// Initialize framebuffer drawing functions.
