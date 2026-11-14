@@ -9,6 +9,7 @@
 #include <libs/fatfs/ff.h>
 #include <string.h>
 #include "gui_tv.h"
+#include "gui_bluetooth.h"
 #include "gui_nova.h"
 #include "../localization.h"
 #include "../config.h"
@@ -268,6 +269,7 @@ void gui_tv_shutdown(bool save_report)
 // Strong override of the BDK teardown hook; no SD access after sd_end().
 void hw_display_external_end(void)
 {
+    gui_bluetooth_shutdown();
     tv.hardware_exit = true;
     gui_tv_shutdown(false);
     tv.hardware_exit = false;

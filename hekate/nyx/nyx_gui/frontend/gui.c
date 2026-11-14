@@ -20,6 +20,7 @@
 
 #include "gui.h"
 #include "gui_tv.h"
+#include "gui_bluetooth.h"
 #include <display/nova_splash.h>
 #include "gui_emummc_tools.h"
 #include "gui_tools.h"
@@ -330,6 +331,7 @@ static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const
 	// Draw to intermediate non-rotated framebuffer.
 	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
 	gui_tv_dirty(y1, y2);
+	gui_bluetooth_poll();
 	display_frame_dirty = true;
 	if ((x2 - x1 + 1) > 600)
 		display_frame_ready = true;
@@ -426,13 +428,13 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 
 static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 {
-	if (diagnostics_suspended || (n_cfg.jc_disable && !nyx_interactive_joycon_active()))
+	if (diagnostics_suspended || (n_cfg.jc_disable && !gui_bluetooth_active() && !nyx_interactive_joycon_active()))
 	{
 		data->state = LV_INDEV_STATE_REL;
 		return false;
 	}
 	// Poll Joy-Con.
-	jc_gamepad_rpt_t *jc_pad = joycon_poll();
+	jc_gamepad_rpt_t *jc_pad = gui_bluetooth_merge(n_cfg.jc_disable ? NULL : joycon_poll());
 	if(nyx_interactive_joycon(jc_pad)){data->state=LV_INDEV_STATE_REL;return false;}
 
 	if (!jc_pad)
@@ -698,6 +700,7 @@ extern int touch_power_on_safe(void);
 
 void gui_diagnostics_suspend(u32 groups)
 {
+	gui_bluetooth_shutdown();
 	gui_tv_shutdown(false);
 	nyx_background_pause(true);
 	(void)groups;
@@ -2466,6 +2469,7 @@ void nyx_load_and_run()
 		// Minerva not supported on T210B01 yet. Slight power saving via spinlock.
 		while (true)
 		{
+			gui_bluetooth_poll();
 			lv_task_handler();
 			usleep(400);
 		}
@@ -2477,6 +2481,7 @@ void nyx_load_and_run()
 		{
 			minerva_change_freq(FREQ_1600);  // Takes 295 us.
 
+			gui_bluetooth_poll();
 			lv_task_handler();
 
 			minerva_change_freq(FREQ_800);   // Takes 80 us.

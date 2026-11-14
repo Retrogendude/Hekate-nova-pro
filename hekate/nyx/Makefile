@@ -66,6 +66,10 @@ OBJS += diskio ff ffunicode ffsystem \
 		lv_page lv_roller lv_slider lv_sw lv_tabview lv_ta lv_win lv_log lv_imgbtn \
 		lv_theme lv_theme_hekate
 
+OBJS += ad_parser nova_bt_radio nova_bt_protocol nova_bt_stack gui_bluetooth btstack_linked_list btstack_memory btstack_memory_pool btstack_run_loop btstack_util hci hci_cmd hci_dump l2cap l2cap_signaling hid_host sdp_client sdp_util
+
+CFLAGS_BT = -I$(SOURCEDIR)/bluetooth -I$(SOURCEDIR)/libs/btstack
+
 OBJS := $(addsuffix .o, $(OBJS))
 OBJS := $(addprefix $(BUILDDIR)/, $(OBJS))
 
@@ -134,7 +138,7 @@ $(BUILDDIR)/$(TARGET).elf: $(OBJS) $(TRACK_LDFLAGS)
 
 $(BUILDDIR)/%.o: %.c $(TRACK_CFLAGS) | $(BUILDDIR)
 	@$(NYXECHO) Building $@
-	@$(CC) $(CFLAGS) $(BDKINC) -MMD -MP -c $< -o $@
+	@$(CC) $(CFLAGS) $(CFLAGS_BT) $(BDKINC) -MMD -MP -c $< -o $@
 
 $(BUILDDIR)/%.o: %.S $(TRACK_CFLAGS) | $(BUILDDIR)
 	@$(NYXECHO) Building $@
@@ -170,4 +174,4 @@ $(BUILDDIR)/cpu_stub_bin.c: $(BUILDDIR)/cpu_stub.bin $(DIAGDIR)/embed_cpu_stub.p
 	@$(PYTHON) $(DIAGDIR)/embed_cpu_stub.py $< $@
 
 $(BUILDDIR)/cpu_stub_bin.o: $(BUILDDIR)/cpu_stub_bin.c $(TRACK_CFLAGS)
-	@$(CC) $(CFLAGS) $(BDKINC) -MMD -MP -c $< -o $@
+	@$(CC) $(CFLAGS) $(CFLAGS_BT) $(BDKINC) -MMD -MP -c $< -o $@

@@ -747,19 +747,34 @@ u32 nyx_nova_temperature_rgb(u32 degrees)
 void nyx_nova_about(lv_obj_t *page)
 {
     nyx_nova_page(page,0);
-    static const char *titles[]={"Créateurs","Remerciements","Logiciels libres"};
+    static const char *titles[]={"Créateurs","Remerciements","Logiciels libres","Changelog"};
     static const char *icons[]={"brand-mark","badge-check","layers-2"};
     static const char *credits[]={
         "hekate\n(c) 2018, naehrwert, st4rk\n(c) 2018-2026, CTCaer\n\nNyx\n(c) 2019-2026, CTCaer\n\nHekate 6.5.4 / Nyx 1.9.4",
         "derrek, nedwill, plutoo\nshuffle2, smea, thexyz\nyellows8\n\nfincs, hexkyz, SciresM\nShiny Quagsire, WinterMute\nswitchbrew",
-        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne"
+        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne\nBTstack (c) BlueKitchen GmbH\nLicence personnelle / non commerciale"
     };
     (void)icons;
+    /* A real card beneath the transparent tabs keeps wallpaper behind credits. */
+    nyx_nova_panel(page,28,134,1224,378);
     lv_obj_t *tabs=lv_tabview_create(page,NULL);
     lv_obj_set_size(tabs,1212,366);lv_obj_set_pos(tabs,34,140);lv_tabview_set_sliding(tabs,false);
-    for(u32 i=0;i<4;++i){
+    for(u32 i=0;i<5;++i){
         lv_obj_t *section=lv_tabview_add_tab(tabs,i?titles[i-1]:"Nova Pro");
         nyx_nova_fixed_page(section);
+        if(i==4){
+            static const char *changes[]={
+                "v21 · Wireless Joy-Con (experimental)\nBluetooth service; requires console testing.\nCredits background and USB frame fixed.",
+                "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
+                "v19 · Persistent TV output\nTV output stays active across menus.",
+                "v18 · Customization\nPNG icons and SD partition menus."
+            };
+            for(u32 j=0;j<4;j++){
+                lv_obj_t *entry=nyx_nova_text(section,changes[j],20+(j%2)*606,12+(j/2)*142,566,NOVA_BODY);
+                nyx_nova_fit_text(entry,132);
+            }
+            continue;
+        }
         const char *text=i?credits[i-1]:
             "Hekate Nova Pro " NYX_NOVA_VERSION "\n\n"
             "Retrogen : conception et adaptation\n"

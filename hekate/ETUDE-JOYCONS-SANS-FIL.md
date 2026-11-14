@@ -1,3 +1,5 @@
+> Historique v20 : cette étude précède le prototype 21-BT. Pour les fonctions désormais intégrées et leurs limites, consulter LIRE-MOI-V21-BT.md.
+
 # Joy-Con sans fil directement dans Hekate : état et piste de développement
 
 La fonction est envisageable, mais elle n'est pas disponible dans cette

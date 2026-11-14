@@ -20,6 +20,7 @@
 
 #include "gui.h"
 #include "gui_tv.h"
+#include "gui_bluetooth.h"
 #include "gui_options.h"
 #include "gui_info.h"
 #include "gui_appearance.h"
@@ -1352,11 +1353,8 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     _settings_toggle(tv_card, "Automatic dock detection", _tv_auto_action, n_cfg.tv_auto);
     _settings_help(tv_card, "Enable automatic detection, then select Save to keep your choice after restarting Nyx.");
     tv_card = _settings_card(tv_page, 2, 2);
-    _settings_heading(tv_card, "TV controls");
-    lv_obj_t *tv_help = nyx_nova_text(tv_card,
-        nyx_tr("Close the TV window to keep using Nova. VOL- stops TV output."),
-        24, 82, lv_obj_get_width(tv_card) - 48, NOVA_BODY);
-    nyx_nova_fit_text(tv_help, lv_obj_get_height(tv_card) - 106);
+    _settings_button(tv_card, "Wireless Joy-Con", gui_bluetooth_open);
+    _settings_help(tv_card, "Experimental Bluetooth. Read the existing pairing from attached Joy-Con, then detach them and start the service. VOL- stops TV output.");
     tv_card = _settings_card(tv_page, 3, 2);
     _settings_choices(tv_card, "TV display", "TV only\nTV + console", n_cfg.tv_keep_screen, 2, _tv_screen_action, false);
     _settings_help(tv_card, "TV only turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.");

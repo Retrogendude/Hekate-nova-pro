@@ -21,6 +21,7 @@
 
 #include "gui.h"
 #include "gui_tv.h"
+#include "gui_bluetooth.h"
 #include "../fonts/font_manager.h"
 #include "gui_layout.h"
 #include "gui_tools.h"
@@ -193,6 +194,7 @@ static lv_res_t _create_mbox_hid(usb_ctxt_t *usbs)
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_top(mbox, true);
 
+	gui_bluetooth_shutdown();
 	gui_tv_shutdown(false);
 	usb_device_gadget_hid(usbs);
 	gui_tv_resume_detection();
@@ -289,6 +291,7 @@ static lv_res_t _create_mbox_ums(usb_ctxt_t *usbs)
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_top(mbox, true);
 
+	gui_bluetooth_shutdown();
 	gui_tv_shutdown(false);
 	// Dim backlight after restoring the console display.
 	display_backlight_brightness(20, 1000);
@@ -666,6 +669,9 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
     nyx_nova_fixed_page(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page);
     lv_obj_t *panel=nyx_nova_panel(win,34,22,1212,72);
     lv_obj_t *readonly=nyx_nova_switch_row(panel,"Read-Only","eMMC / emuMMC : accès protégé en lecture seule par défaut.","shield-check",_emmc_read_only_toggle,!n_cfg.ums_emmc_rw,20,0,1172,72);
+    /* The surrounding panel owns the frame; the row only owns the switch. */
+    for(u32 state=LV_BTN_STYLE_REL;state<=LV_BTN_STYLE_INA;++state)
+        lv_btn_set_style(readonly,state,&lv_style_transp_tight);
     _emmc_read_only_toggle(readonly);
     static const char *titles[]={"SD Card","eMMC RAW GPP","eMMC BOOT0","eMMC BOOT1","emuMMC RAW GPP","emuMMC BOOT0","emuMMC BOOT1","Gamepad"};
     static const char *icons[]={"card-sim","hard-drive","memory-stick","memory-stick","database","memory-stick","memory-stick","gamepad-2"};

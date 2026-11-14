@@ -1,0 +1,10 @@
+#ifndef GUI_BLUETOOTH_H
+#define GUI_BLUETOOTH_H
+#include "gui.h"
+#include <input/joycon.h>
+lv_res_t gui_bluetooth_open(lv_obj_t *button);
+void gui_bluetooth_shutdown(void);
+bool gui_bluetooth_active(void);
+void gui_bluetooth_poll(void);
+jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired);
+#endif

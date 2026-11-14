@@ -1,0 +1,3 @@
+https://github.com/bluekitchen/btstack
+Revision 9edb5d82ea6ec4466a393415d65030929330acdf
+Unmodified selected sources and headers. Personal experimental build.

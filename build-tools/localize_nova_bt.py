@@ -1,0 +1,96 @@
+from pathlib import Path
+import json,re
+root=Path(__file__).resolve().parent/'hekate-nova-pro-v21-bt/nyx/nyx_gui'
+phrases={}
+def add(en,fr,es,it,ru,de,pt):phrases[en]=[en,fr,es,it,ru,de,pt]
+add('Wireless Joy-Con','Joy-Con sans fil','Joy-Con inalámbricos','Joy-Con wireless','Беспроводные Joy-Con','Kabellose Joy-Con','Joy-Con sem fios')
+add('Bluetooth off','Bluetooth désactivé','Bluetooth desactivado','Bluetooth disattivato','Bluetooth выключен','Bluetooth aus','Bluetooth desativado')
+add('Starting Bluetooth...','Démarrage du Bluetooth…','Iniciando Bluetooth…','Avvio Bluetooth…','Запуск Bluetooth…','Bluetooth startet…','A iniciar Bluetooth…')
+add('Bluetooth ready','Bluetooth prêt','Bluetooth listo','Bluetooth pronto','Bluetooth готов','Bluetooth bereit','Bluetooth pronto')
+add('Bluetooth error','Erreur Bluetooth','Error de Bluetooth','Errore Bluetooth','Ошибка Bluetooth','Bluetooth-Fehler','Erro de Bluetooth')
+add('Left Joy-Con','Joy-Con gauche','Joy-Con izquierdo','Joy-Con sinistro','Левый Joy-Con','Linker Joy-Con','Joy-Con esquerdo')
+add('Right Joy-Con','Joy-Con droit','Joy-Con derecho','Joy-Con destro','Правый Joy-Con','Rechter Joy-Con','Joy-Con direito')
+add('Receiving inputs','Commandes reçues','Recibiendo entradas','Comandi ricevuti','Приём команд','Eingaben empfangen','A receber comandos')
+add('No input','Aucune commande','Sin entradas','Nessun comando','Нет команд','Keine Eingaben','Sem comandos')
+add('HCI packets RX / TX','Paquets HCI reçus / émis','Paquetes HCI RX / TX','Pacchetti HCI RX / TX','Пакеты HCI RX / TX','HCI-Pakete RX / TX','Pacotes HCI RX / TX')
+add('Error code','Code erreur','Código de error','Codice errore','Код ошибки','Fehlercode','Código de erro')
+add('Read pairing','Lire les appairages','Leer emparejamientos','Leggi abbinamenti','Читать сопряжения','Kopplungen lesen','Ler emparelhamentos')
+add('Start Bluetooth','Activer Bluetooth','Activar Bluetooth','Attiva Bluetooth','Включить Bluetooth','Bluetooth starten','Ativar Bluetooth')
+add('Stop Bluetooth','Arrêter Bluetooth','Detener Bluetooth','Ferma Bluetooth','Выключить Bluetooth','Bluetooth stoppen','Parar Bluetooth')
+add('Clear session keys','Effacer les clés','Borrar claves','Cancella chiavi','Очистить ключи','Schlüssel löschen','Apagar chaves')
+add('Session keys cleared.','Clés de session effacées.','Claves de sesión borradas.','Chiavi di sessione cancellate.','Ключи сеанса удалены.','Sitzungsschlüssel gelöscht.','Chaves da sessão apagadas.')
+add('Pairing records imported','Appairages importés','Emparejamientos importados','Abbinamenti importati','Сопряжения загружены','Kopplungen importiert','Emparelhamentos importados')
+add('Bluetooth service could not start.','Impossible de démarrer le service Bluetooth.','No se pudo iniciar el servicio Bluetooth.','Impossibile avviare il servizio Bluetooth.','Не удалось запустить службу Bluetooth.','Bluetooth-Dienst konnte nicht starten.','Não foi possível iniciar o serviço Bluetooth.')
+add('Attachable Joy-Con and the wired Joy-Con driver are required for pairing import.',
+    'Des Joy-Con sur les rails et leur pilote filaire actif sont nécessaires pour lire les appairages.',
+    'Para leer los emparejamientos se necesitan Joy-Con acoplados y su controlador por cable activo.',
+    'Per leggere gli abbinamenti servono Joy-Con agganciati e il driver cablato attivo.',
+    'Для чтения сопряжений нужны Joy-Con на рельсах и включённый проводной драйвер.',
+    'Zum Lesen der Kopplungen sind angesteckte Joy-Con und ihr aktiver Kabeltreiber nötig.',
+    'Para ler os emparelhamentos são necessários Joy-Con encaixados e o controlador por cabo ativo.')
+add('Read pairing while the Joy-Con are attached, then detach them and start Bluetooth. Press a Joy-Con button to wake it.',
+    'Lire les appairages avec les Joy-Con sur les rails, puis les détacher et activer Bluetooth. Appuyer sur un bouton pour les réveiller.',
+    'Lee los emparejamientos con los Joy-Con acoplados, retíralos y activa Bluetooth. Pulsa un botón para despertarlos.',
+    'Leggi gli abbinamenti con i Joy-Con agganciati, poi staccali e attiva Bluetooth. Premi un pulsante per riattivarli.',
+    'Прочитайте сопряжения с Joy-Con на рельсах, затем отсоедините их и включите Bluetooth. Нажмите кнопку для пробуждения.',
+    'Kopplungen mit angesteckten Joy-Con lesen, dann abnehmen und Bluetooth starten. Eine Taste zum Aufwecken drücken.',
+    'Lê os emparelhamentos com os Joy-Con encaixados, retira-os e ativa Bluetooth. Prime um botão para os despertar.')
+add('Experimental ROM service. Console validation required. Keys stay in RAM; existing pairing is not changed.',
+    'Service ROM expérimental à valider sur console. Clés en mémoire vive ; appairages existants conservés.',
+    'Servicio ROM experimental pendiente de validar en consola. Claves en RAM; se conservan los emparejamientos.',
+    'Servizio ROM sperimentale da verificare sulla console. Chiavi in RAM; abbinamenti esistenti conservati.',
+    'Экспериментальная служба ROM требует проверки на консоли. Ключи в ОЗУ; сопряжения не меняются.',
+    'Experimenteller ROM-Dienst: Prüfung auf der Konsole nötig. Schlüssel im RAM; Kopplungen bleiben erhalten.',
+    'Serviço ROM experimental por validar na consola. Chaves na RAM; emparelhamentos existentes mantidos.')
+add('Experimental Bluetooth. Read the existing pairing from attached Joy-Con, then detach them and start the service. VOL- stops TV output.',
+    'Bluetooth expérimental : lire les appairages des Joy-Con attachés, puis les détacher et activer le service. VOL− arrête la sortie TV.',
+    'Bluetooth experimental: lee los emparejamientos con los Joy-Con acoplados, retíralos y activa el servicio. VOL− detiene la TV.',
+    'Bluetooth sperimentale: leggi gli abbinamenti dei Joy-Con agganciati, staccali e avvia il servizio. VOL− ferma la TV.',
+    'Экспериментальный Bluetooth: прочитайте сопряжения Joy-Con на рельсах, отсоедините их и запустите службу. VOL− выключает ТВ.',
+    'Experimentelles Bluetooth: Kopplungen angesteckter Joy-Con lesen, abnehmen und Dienst starten. VOL− stoppt TV.',
+    'Bluetooth experimental: lê os emparelhamentos dos Joy-Con encaixados, retira-os e ativa o serviço. VOL− para a TV.')
+add('Changelog','Changelog','Cambios','Novità','Изменения','Änderungen','Alterações')
+add('v21 · Wireless Joy-Con (experimental)\nBluetooth service; requires console testing.\nCredits background and USB frame fixed.',
+    'v21 · Joy-Con sans fil (expérimental)\nService Bluetooth à tester sur console.\nFond des crédits et cadre USB corrigés.',
+    'v21 · Joy-Con inalámbricos (experimental)\nServicio Bluetooth por probar en consola.\nFondo de créditos y marco USB corregidos.',
+    'v21 · Joy-Con wireless (sperimentale)\nServizio Bluetooth da provare su console.\nSfondo dei crediti e cornice USB corretti.',
+    'v21 · Беспроводные Joy-Con (тест)\nBluetooth требует проверки на консоли.\nИсправлены фон титров и рамка USB.',
+    'v21 · Kabellose Joy-Con (experimentell)\nBluetooth-Dienst auf Konsole testen.\nHintergrund der Credits und USB-Rahmen korrigiert.',
+    'v21 · Joy-Con sem fios (experimental)\nServiço Bluetooth por testar na consola.\nFundo dos créditos e moldura USB corrigidos.')
+add('v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.',
+    'v20 · TV / Dock\nDétection automatique du dock.\nTV seule ou TV + console.',
+    'v20 · TV / Base\nDetección automática de la base.\nSolo TV o TV + consola.',
+    'v20 · TV / Dock\nRilevamento automatico del dock.\nSolo TV o TV + console.',
+    'v20 · ТВ / Док\nАвтообнаружение док-станции.\nТолько ТВ или ТВ + консоль.',
+    'v20 · TV / Dock\nAutomatische Dock-Erkennung.\nNur TV oder TV + Konsole.',
+    'v20 · TV / Base\nDeteção automática da base.\nSó TV ou TV + consola.')
+add('v19 · Persistent TV output\nTV output stays active across menus.',
+    'v19 · Sortie TV persistante\nLa TV reste active dans les menus.',
+    'v19 · Salida de TV persistente\nLa TV permanece activa en los menús.',
+    'v19 · Uscita TV persistente\nLa TV resta attiva nei menu.',
+    'v19 · Постоянный вывод на ТВ\nТВ остаётся активным в меню.',
+    'v19 · Dauerhafte TV-Ausgabe\nTV bleibt beim Menüwechsel aktiv.',
+    'v19 · Saída de TV persistente\nA TV mantém-se ativa nos menus.')
+add('v18 · Customization\nPNG icons and SD partition menus.',
+    'v18 · Personnalisation\nIcônes PNG et menus de partition SD.',
+    'v18 · Personalización\nIconos PNG y menús de partición SD.',
+    'v18 · Personalizzazione\nIcone PNG e menu delle partizioni SD.',
+    'v18 · Оформление\nЗначки PNG и меню разделов SD.',
+    'v18 · Anpassung\nPNG-Symbole und SD-Partitionsmenüs.',
+    'v18 · Personalização\nÍcones PNG e menus de partição SD.')
+# Preserve the existing catalog and regenerate its pattern indices after sorting.
+catalog=root/'localization_catalog.inc';lines={}
+for line in catalog.read_text(encoding='utf-8').splitlines():
+    if line.startswith('    {"'):lines[json.JSONDecoder().raw_decode(line.strip()[1:])[0]]=line
+for key,values in phrases.items():
+    assert len(values)==7
+    lines[key]='    {'+json.dumps(key,ensure_ascii=False)+', {'+', '.join(json.dumps(v,ensure_ascii=False)for v in values)+'}},'
+keys=sorted(lines);patterns=[i for i,k in enumerate(keys)if '%'in k and len(re.findall(r'[A-Za-z]',k))>=5]
+first=[keys[i].encode('utf-8')[0]for i in patterns]
+tail='static const uint16_t locale_pattern_rows[] = {'+', '.join(map(str,patterns))+'};\n'
+tail+='static const uint16_t locale_pattern_start[257] = {'+', '.join(str(sum(ch<code for ch in first))for code in range(257))+'};\n'
+catalog.write_text('/* Nova catalog: en fr es it ru de pt. */\nstatic const locale_entry locale_catalog[] = {\n'+'\n'.join(lines[k]for k in keys)+'\n};\n'+tail,encoding='utf-8')
+data=json.loads((root/'localization_catalog.json').read_text(encoding='utf-8'));data.update(phrases)
+(root/'localization_catalog.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
+(root/'localization_bt_v21.json').write_text(json.dumps(phrases,ensure_ascii=False,indent=2),encoding='utf-8')
+print(f'PASS: {len(phrases)} Bluetooth/changelog phrases in seven languages.')

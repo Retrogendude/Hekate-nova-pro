@@ -1,9 +1,9 @@
-Hekate Nova Pro 20-Dock : make -j4 avec devkitARM et les outils du projet.
-Base 6.5.4 / Nyx 1.9.4 ; les ressources Nova sont reprises de v18.
-HWTest-RCM et ses ressources RAM restent identiques a v18.
-Les scripts Windows attendent les sources dans work/hekate-nova-pro-v20-dock,
-les fixtures dans work/nova-dock-tests et le compilateur natif dans
-work/toolchains/w64devkit. Ils documentent la configuration de ce workspace.
-Les rendus natifs attendent aussi l archive officielle 6.5.4/1.9.4 et les
-polices de test documentees dans les scripts. Ils ne simulent pas HDMI.
-Lire LIRE-MOI-V20-DOCK.md et TV-SOURCES.md avant essai ou redistribution.
+Prototype personnel Hekate Nova Pro 21-BT. Lire LIRE-MOI-V21-BT.md.
+devkitARM, GNU make et Python : make -j4 -r dans les sources.
+BDK et pile BTstack Classic inclus, cette derniere avec sa licence propre.
+Aucun micrologiciel Bluetooth proprietaire fourni. RF non valide sur console.
+La suite Windows documente les chemins du workspace (work/hekate-nova-pro-v21-bt,
+work/toolchains/w64devkit, outils devkitPro, archive officielle pour le rendu).
+Les fixtures font fonctionner les vrais corps C avec entrees materielles substituees.
+Les tests de comparaison demandent aussi le projet v20 et les references amont.
+Le compagnon RAM et les ressources de la v18 sont conserves.
