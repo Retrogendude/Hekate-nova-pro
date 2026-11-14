@@ -1,4 +1,5 @@
 # Nova25 — reconnection policy and retained diagnostic evidence
+**Languages:** **Français** · [English](AUTH-SOURCES-V25.en.md) · [Español](AUTH-SOURCES-V25.es.md) · [Русский](AUTH-SOURCES-V25.ru.md)
 
 ## Physical evidence supplied for Nova24
 

@@ -1,4 +1,5 @@
 # Hekate Nova Pro 28 — réactivité et diagnostic des appairages
+**Languages:** **Français** · [English](LIRE-MOI-V28.en.md) · [Español](LIRE-MOI-V28.es.md) · [Русский](LIRE-MOI-V28.ru.md)
 
 Cette version réduit les attentes Bluetooth répétées pendant le dessin des
 menus : la lecture série utilise un budget court de 250 microsecondes dans

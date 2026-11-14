@@ -1,4 +1,5 @@
 # Audit graphique Nova30 — 13 novembre 2026
+**Languages:** **Français** · [English](AUDIT-NOVA30-GUI.en.md) · [Español](AUDIT-NOVA30-GUI.es.md) · [Русский](AUDIT-NOVA30-GUI.ru.md)
 
 Le reflet sélectionné produisait des invalidations toutes les20ms, alors que
 le rafraîchissement LVGL intervient toutes les33ms. La file contient32zones.

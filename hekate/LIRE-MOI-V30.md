@@ -1,4 +1,5 @@
 # Hekate Nova Pro 30 — Bluetooth en arrière-plan et fluidité
+**Languages:** **Français** · [English](LIRE-MOI-V30.en.md) · [Español](LIRE-MOI-V30.es.md) · [Русский](LIRE-MOI-V30.ru.md)
 
 Au démarrage de Nova, le pilote vérifie la présence physique sur les rails.
 

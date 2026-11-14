@@ -1,4 +1,5 @@
 # Hekate Nova Pro — reflet v14
+**Languages:** **Français** · [English](CORRECTIONS-NOVA-PRO-V14.en.md) · [Español](CORRECTIONS-NOVA-PRO-V14.es.md) · [Русский](CORRECTIONS-NOVA-PRO-V14.ru.md)
 
 Le reflet blanc traverse toujours la tuile entière, avec une bordure fixe. Cette mise à jour le rend plus large, plus doux sur les bords et plus rapide.
 

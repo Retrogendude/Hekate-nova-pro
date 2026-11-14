@@ -1,4 +1,5 @@
 # Nova27 — adaptation of HWTest-RCM's Bluetooth GUI host
+**Languages:** **Français** · [English](HWTEST-BLUETOOTH-SOURCES.en.md) · [Español](HWTEST-BLUETOOTH-SOURCES.es.md) · [Русский](HWTEST-BLUETOOTH-SOURCES.ru.md)
 
 Reference: Creased/HWTest-RCM, commit
 `74b66aab2352ae35912744fcd5441b07a0146307`, inspected on2026-11-13.

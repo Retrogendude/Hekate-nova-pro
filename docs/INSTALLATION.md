@@ -1,4 +1,5 @@
 # Utiliser les archives
+**Languages:** **Français** · [English](INSTALLATION.en.md) · [Español](INSTALLATION.es.md) · [Русский](INSTALLATION.ru.md)
 
 **[Consulter la notice d’utilisation complète](NOTICE-UTILISATION.md)** pour les étapes d’installation et les réglages des fonds d’écran, polices, icônes et fonctions de Nova.
 

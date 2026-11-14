@@ -1,4 +1,5 @@
 # hekate - Nyx
+**Languages:** **Français** · [English](README.en.md) · [Español](README.es.md) · [Русский](README.ru.md)
 
 ![Image of Hekate](https://user-images.githubusercontent.com/3665130/60391760-bc1e8c00-9afe-11e9-8b7a-b065873081b2.png)
 

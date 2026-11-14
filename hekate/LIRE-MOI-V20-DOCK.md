@@ -1,4 +1,5 @@
 # Hekate Nova Pro 20-Dock
+**Languages:** **Français** · [English](LIRE-MOI-V20-DOCK.en.md) · [Español](LIRE-MOI-V20-DOCK.es.md) · [Русский](LIRE-MOI-V20-DOCK.ru.md)
 
 Cette version ajoute la détection automatique du dock aux fonctions TV de
 Nova19-TV. Le branchement de référence est une Switch OLED insérée directement

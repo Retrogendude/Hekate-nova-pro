@@ -1,4 +1,5 @@
 # Hekate Nova Pro — version 11
+**Languages:** **Français** · [English](NOVA-PRO-V11.en.md) · [Español](NOVA-PRO-V11.es.md) · [Русский](NOVA-PRO-V11.ru.md)
 
 Cette version applique les douze modifications consignées dans MODIFICATIONS-NOVA-PRO.md. La maquette Nova reste la base, avec les changements expressément demandés : commandes directes, reflet, suppression des badges, nouvelles interactions et personnalisation.
 

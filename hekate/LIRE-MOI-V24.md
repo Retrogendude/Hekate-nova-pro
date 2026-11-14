@@ -1,4 +1,5 @@
 # Hekate Nova Pro 24 — correction de l’import des clés Joy-Con
+**Languages:** **Français** · [English](LIRE-MOI-V24.en.md) · [Español](LIRE-MOI-V24.es.md) · [Русский](LIRE-MOI-V24.ru.md)
 
 Base : Hekate 6.5.5 / Nyx 1.9.5. Interface Nova et réglages conservés.
 

@@ -1,6 +1,7 @@
 > Historique v20 : cette étude précède le prototype 21-BT. Pour les fonctions désormais intégrées et leurs limites, consulter LIRE-MOI-V21-BT.md.
 
 # Joy-Con sans fil directement dans Hekate : état et piste de développement
+**Languages:** **Français** · [English](ETUDE-JOYCONS-SANS-FIL.en.md) · [Español](ETUDE-JOYCONS-SANS-FIL.es.md) · [Русский](ETUDE-JOYCONS-SANS-FIL.ru.md)
 
 La fonction est envisageable, mais elle n'est pas disponible dans cette
 livraison. Le travail nécessaire dépasse l'ajout d'un interrupteur Bluetooth.

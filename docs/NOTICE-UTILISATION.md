@@ -1,4 +1,5 @@
 # Hekate Nova Pro — notice d’utilisation
+**Languages:** **Français** · [English](NOTICE-UTILISATION.en.md) · [Español](NOTICE-UTILISATION.es.md) · [Русский](NOTICE-UTILISATION.ru.md)
 
 Guide pour la **bêta v32**, sur base Hekate 6.5.5 / Nyx 1.9.5. Mise à jour : 14 novembre 2026.
 

@@ -1,4 +1,5 @@
 # Présentation actuelle — Nova Pro 11
+**Languages:** **Français** · [English](DIAGNOSTIC-INTEGRATION.en.md) · [Español](DIAGNOSTIC-INTEGRATION.es.md) · [Русский](DIAGNOSTIC-INTEGRATION.ru.md)
 
 Les douze catégories utilisent la sélection puis l'ouverture sur deux appuis. Les sondes et résultats sont présentés dans des cartes paginées, avec noms lisibles et accès aux rapports. Les 42 fonctions de mesure, leurs protections et le service RAM isolé restent ceux de l'intégration décrite ci-dessous. Le retour RAM et les limites des payloads sont contrôlés dans la vérification v11 ; les essais physiques restent nécessaires.
 

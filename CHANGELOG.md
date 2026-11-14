@@ -1,4 +1,5 @@
 # Historique de Hekate Nova Pro
+**Languages:** **Français** · [English](CHANGELOG.en.md) · [Español](CHANGELOG.es.md) · [Русский](CHANGELOG.ru.md)
 
 Historique importé depuis les archives conservées. Les tags décrivent des instantanés de sources, pas les commits de développement d’origine. Les notices détaillées sont conservées pour chaque version. Les prototypes et versions Bluetooth restent des préversions.
 

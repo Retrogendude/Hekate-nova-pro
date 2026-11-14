@@ -1,4 +1,5 @@
 # Hekate Nova Pro27 — profil Bluetooth adapté de HWTest-RCM
+**Languages:** **Français** · [English](LIRE-MOI-V27.en.md) · [Español](LIRE-MOI-V27.es.md) · [Русский](LIRE-MOI-V27.ru.md)
 
 La v27 reprend les réglages du service de manettes sans fil de HWTest-RCM :
 débit radio de base, gestion de veille, rythme de transmission et lecture série

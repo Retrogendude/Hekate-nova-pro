@@ -1,4 +1,5 @@
 # Hekate Nova Pro 23 — essai de connexion Joy-Con
+**Languages:** **Français** · [English](LIRE-MOI-V23.en.md) · [Español](LIRE-MOI-V23.es.md) · [Русский](LIRE-MOI-V23.ru.md)
 
 Base conservée : Hekate 6.5.5 / Nyx 1.9.5. Interface Nova, réglages, dock et
 diagnostics conservés. La connexion radio de cette version reste à valider sur

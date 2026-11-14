@@ -1,4 +1,5 @@
 # Personnalisation actuelle — Nova Pro 11
+**Languages:** **Français** · [English](PERSONNALISATION.en.md) · [Español](PERSONNALISATION.es.md) · [Русский](PERSONNALISATION.ru.md)
 
 Consulter [NOVA-PRO-V11.md](NOVA-PRO-V11.md) pour les couleurs indépendantes, le fond d'écran fixe, les transparences, le reflet et les sous-menus. Le carrousel, les sept langues et les polices SD restent disponibles. Les vagues, particules et aurores sont supprimées ; leurs descriptions ci-dessous appartiennent à l'historique.
 

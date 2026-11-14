@@ -1,4 +1,5 @@
 # hekate - Bootlogo
+**Languages:** **Français** · [English](README_BOOTLOGO.en.md) · [Español](README_BOOTLOGO.es.md) · [Русский](README_BOOTLOGO.ru.md)
 
 The bootlogo can be any size with a maximum of 720 x 1280.
 
