@@ -38,7 +38,6 @@ extern lv_res_t launch_payload(lv_obj_t *list);
 
 static bool disp_init_done = false;
 static bool do_auto_reload = false;
-static lv_obj_t *home_tabview;
 
 lv_style_t hint_small_style;
 lv_style_t hint_small_style_white;
@@ -2001,140 +2000,138 @@ failed_sd_mount:
 	return LV_RES_OK;
 }
 
-/* Console-home styles stay alive for every object that references them.
- * Only this page is restyled; user wallpaper and other Nyx screens remain usable. */
-static lv_style_t home_card_rel[6], home_card_pr[6];
-static lv_style_t home_title_style, home_detail_style, home_icon_style;
-
-static void _home_init_styles(lv_theme_t *th)
-{
-	static const u32 colors[6][2] = {
-		{ 0x154979, 0x255DA3 }, // Boot entries.
-		{ 0x573692, 0x7545B4 }, // Extra configurations.
-		{ 0x12675C, 0x1F7969 }, // Payloads.
-		{ 0x85451F, 0x9C5928 }, // emuMMC.
-		{ 0x164B62, 0x246C83 }, // Hardware diagnostics.
-		{ 0x343D55, 0x45536F }  // Nyx settings.
-	};
-	for (u32 i = 0; i < 6; i++)
-	{
-		lv_style_copy(&home_card_rel[i], th->btn.rel);
-		home_card_rel[i].body.empty = 0;
-		home_card_rel[i].body.opa = LV_OPA_COVER;
-		home_card_rel[i].body.main_color = LV_COLOR_HEX(colors[i][0]);
-		home_card_rel[i].body.grad_color = LV_COLOR_HEX(colors[i][1]);
-		home_card_rel[i].body.radius = 18;
-		home_card_rel[i].body.border.width = 3;
-		home_card_rel[i].body.border.opa = LV_OPA_TRANSP;
-		home_card_rel[i].body.border.color = LV_COLOR_WHITE;
-		home_card_rel[i].body.shadow.width = 0;
-		home_card_rel[i].body.padding.hor = 0;
-		home_card_rel[i].body.padding.ver = 0;
-		home_card_rel[i].text.color = LV_COLOR_WHITE;
-		lv_style_copy(&home_card_pr[i], &home_card_rel[i]);
-		home_card_pr[i].body.border.opa = LV_OPA_COVER;
-		home_card_pr[i].body.main_color = LV_COLOR_HEX(colors[i][1]);
-	}
-	lv_style_copy(&home_title_style, th->label.prim);
-	home_title_style.text.color = LV_COLOR_WHITE;
-	lv_style_copy(&home_detail_style, &hint_small_style_white);
-	home_detail_style.text.color = LV_COLOR_HEX(0xEFF5FF);
-	lv_style_copy(&home_icon_style, &home_title_style);
-	home_icon_style.text.font = &hekate_symbol_120;
-}
-
-static lv_obj_t *_home_card(lv_obj_t *parent, u32 color, lv_coord_t x,
-	lv_coord_t y, lv_coord_t w, lv_coord_t h, const char *icon,
-	const char *title, const char *detail, lv_action_t action)
-{
-	lv_obj_t *btn = lv_btn_create(parent, NULL);
-	lv_btn_set_style(btn, LV_BTN_STYLE_REL, &home_card_rel[color]);
-	lv_btn_set_style(btn, LV_BTN_STYLE_PR, &home_card_pr[color]);
-	lv_btn_set_layout(btn, LV_LAYOUT_OFF);
-	lv_btn_set_fit(btn, false, false);
-	lv_obj_set_size(btn, w, h);
-	lv_obj_set_pos(btn, x, y);
-	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, action);
-	if (icon)
-	{
-		lv_obj_t *label = lv_label_create(btn, NULL);
-		lv_obj_set_style(label, &home_icon_style);
-		lv_label_set_text(label, icon);
-		lv_obj_set_pos(label, 24, 12);
-	}
-	lv_obj_t *label = lv_label_create(btn, NULL);
-	lv_obj_set_style(label, &home_title_style);
-	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-	lv_obj_set_width(label, w - 48);
-	lv_label_set_text(label, title);
-	lv_obj_set_pos(label, 24, icon ? 150 : 14);
-	label = lv_label_create(btn, NULL);
-	lv_obj_set_style(label, &home_detail_style);
-	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-	lv_obj_set_width(label, w - 48);
-	lv_label_set_text(label, detail);
-	lv_obj_set_pos(label, 24, icon ? 194 : 52);
-	return btn;
-}
-
-static lv_res_t _home_open_diagnostics(lv_obj_t *btn)
-{
-	(void)btn;
-	// Diagnostic is appended after Options; existing saved indices stay valid.
-	if (home_tabview)
-		lv_tabview_set_tab_act(home_tabview, 5, false);
-	return LV_RES_OK;
-}
-
 static void _create_tab_home(lv_theme_t *th, lv_obj_t *parent)
 {
-	static lv_style_t home_page_style;
-	lv_style_copy(&home_page_style, &lv_style_transp);
-	home_page_style.body.padding.hor = 0;
-	home_page_style.body.padding.ver = 0;
-	lv_page_set_style(parent, LV_PAGE_STYLE_BG, &home_page_style);
-	lv_page_set_style(parent, LV_PAGE_STYLE_SCRL, &home_page_style);
 	lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
 	lv_page_set_scrl_fit(parent, false, false);
-	lv_page_set_scrl_width(parent, LV_HOR_RES);
 	lv_page_set_scrl_height(parent, 592);
-	_home_init_styles(th);
+
+	char btn_colored_text[64];
+
+	// Set brand label.
 	lv_obj_t *label_brand = lv_label_create(parent, NULL);
 	lv_label_set_recolor(label_brand, true);
-	char brand[64];
-	s_printf(brand, "%s%s", text_color, "hekate#");
-	lv_label_set_text(label_brand, brand);
-	lv_obj_set_pos(label_brand, 32, 20);
+	s_printf(btn_colored_text, "%s%s", text_color, " hekate#");
+	lv_label_set_text(label_brand, btn_colored_text);
+	lv_obj_set_pos(label_brand, 50, 48);
+
+	// Set tagline label.
 	lv_obj_t *label_tagline = lv_label_create(parent, NULL);
 	lv_obj_set_style(label_tagline, &hint_small_style_white);
-	lv_label_set_static_text(label_tagline, "Tout pour demarrer, gerer et verifier ta console.");
-	lv_obj_set_pos(label_tagline, 32, 65);
-	lv_obj_t *btn = _home_card(parent, 0, 32, 120, 272, 250,
-		SYMBOL_DOT, "Demarrer", "Choisir un systeme\na lancer", _create_window_home_launch);
-	lv_obj_set_free_num(btn, 0);
-	btn = _home_card(parent, 1, 336, 120, 272, 250,
-		SYMBOL_CLOCK, "Configurations", "Voir les autres\nprofils de demarrage", _create_window_home_launch);
-	lv_obj_set_free_num(btn, 1);
-	_home_card(parent, 2, 640, 120, 272, 250,
-		SYMBOL_OK, "Payloads", "Lancer un outil\ndepuis la carte SD", _create_mbox_payloads);
-	_home_card(parent, 3, 944, 120, 272, 250,
-		SYMBOL_LIST, "emuMMC", "Gerer la copie\ndu systeme", create_win_emummc_tools);
-	_home_card(parent, 4, 32, 398, 740, 92, NULL,
-		"Diagnostic", "Ecran, retroeclairage et identite de la RAM", _home_open_diagnostics);
-	_home_card(parent, 5, 796, 398, 420, 92, NULL,
-		"Reglages Nyx", "Personnaliser l'interface", create_win_nyx_options);
-	// Existing power confirmations remain in charge of reboot and shutdown.
-	lv_obj_t *btn_power_off = lv_btn_create(parent, NULL);
-	_create_text_button(th, NULL, btn_power_off, SYMBOL_POWER" Eteindre", _create_mbox_poweroff);
-	lv_obj_align(btn_power_off, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, -32, -16);
-	lv_obj_t *btn_reboot = lv_btn_create(parent, NULL);
-	_create_text_button(th, NULL, btn_reboot, SYMBOL_REBOOT" Redemarrer", _create_mbox_reboot);
-	lv_obj_align(btn_reboot, btn_power_off, LV_ALIGN_OUT_LEFT_MID, -8, 0);
-	lv_obj_t *btn_reload = lv_btn_create(parent, NULL);
-	_create_text_button(th, NULL, btn_reload, SYMBOL_REFRESH" Recharger", _create_mbox_reload);
-	lv_obj_align(btn_reload, btn_reboot, LV_ALIGN_OUT_LEFT_MID, -8, 0);
-}
+	lv_label_set_static_text(label_tagline, "THE ALL IN ONE BOOTLOADER FOR ALL YOUR NEEDS");
+	lv_obj_set_pos(label_tagline, 50, 82);
 
+	static lv_style_t icons;
+	lv_style_copy(&icons, th->label.prim);
+	icons.text.font = &hekate_symbol_120;
+
+	// Launch button.
+	lv_obj_t *btn_launch = lv_btn_create(parent, NULL);
+	lv_obj_set_free_num(btn_launch, 0);
+	if (hekate_bg)
+	{
+		lv_btn_set_style(btn_launch, LV_BTN_STYLE_REL, &btn_transp_rel);
+		lv_btn_set_style(btn_launch, LV_BTN_STYLE_PR, &btn_transp_pr);
+	}
+	lv_obj_t *label_btn = lv_label_create(btn_launch, NULL);
+	lv_label_set_recolor(label_btn, true);
+	lv_obj_set_style(label_btn, &icons);
+	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_DOT"#");
+	lv_label_set_text(label_btn, btn_colored_text);
+	lv_btn_set_action(btn_launch, LV_BTN_ACTION_CLICK, _create_window_home_launch);
+	lv_obj_set_size(btn_launch, 256, 256);
+	lv_obj_set_pos(btn_launch, 50, 160);
+	lv_btn_set_layout(btn_launch, LV_LAYOUT_OFF);
+	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
+	lv_obj_t *label_btn2 = lv_label_create(btn_launch, NULL);
+	lv_label_set_recolor(label_btn2, true);
+	s_printf(btn_colored_text, "%s%s", text_color, " Launch#");
+	lv_label_set_text(label_btn2, btn_colored_text);
+	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
+
+	// More Configs button.
+	lv_obj_t *btn_more_cfg = lv_btn_create(parent, btn_launch);
+	lv_obj_set_free_num(btn_more_cfg, 1);
+	label_btn = lv_label_create(btn_more_cfg, label_btn);
+	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_CLOCK"#");
+	lv_label_set_text(label_btn, btn_colored_text);
+	lv_btn_set_action(btn_more_cfg, LV_BTN_ACTION_CLICK, _create_window_home_launch);
+	lv_btn_set_layout(btn_more_cfg, LV_LAYOUT_OFF);
+	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
+	label_btn2 = lv_label_create(btn_more_cfg, label_btn2);
+	s_printf(btn_colored_text, "%s%s", text_color, " More Configs#");
+	lv_label_set_text(label_btn2, btn_colored_text);
+	lv_obj_set_pos(btn_more_cfg, 341, 160);
+	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
+
+	// Quick Launch button.
+	// lv_obj_t *btn_quick_launch = lv_btn_create(parent, NULL);
+	// lv_obj_t *label_quick_launch = lv_label_create(btn_quick_launch, NULL);
+	// lv_label_set_static_text(label_quick_launch, SYMBOL_EDIT" Quick Launch");
+	// lv_obj_set_width(btn_quick_launch, 256);
+	// lv_obj_set_pos(btn_quick_launch, 343, 448);
+	// lv_btn_set_action(btn_quick_launch, LV_BTN_ACTION_CLICK, NULL);
+	// if (hekate_bg)
+	// {
+	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_REL, &btn_transp_rel);
+	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_PR, &btn_transp_pr);
+	// 	lv_btn_set_style(btn_quick_launch, LV_BTN_STYLE_INA, &btn_transp_ina);
+	// }
+
+	lv_obj_t *btn_nyx_options = lv_btn_create(parent, NULL);
+	_create_text_button(th, NULL, btn_nyx_options, SYMBOL_SETTINGS" Nyx Settings", NULL);
+	//lv_obj_set_width(btn_nyx_options, 256);
+	lv_btn_set_action(btn_nyx_options, LV_BTN_ACTION_CLICK, create_win_nyx_options);
+	lv_obj_align(btn_nyx_options, NULL, LV_ALIGN_IN_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 12);
+
+	// Payloads button.
+	lv_obj_t *btn_payloads = lv_btn_create(parent, btn_launch);
+	label_btn = lv_label_create(btn_payloads, label_btn);
+	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_OK"#");
+	lv_label_set_text(label_btn, btn_colored_text);
+	lv_btn_set_action(btn_payloads, LV_BTN_ACTION_CLICK, _create_mbox_payloads);
+	lv_btn_set_layout(btn_payloads, LV_LAYOUT_OFF);
+	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
+	label_btn2 = lv_label_create(btn_payloads, label_btn2);
+	s_printf(btn_colored_text, "%s%s", text_color, " Payloads#");
+	lv_label_set_text(label_btn2, btn_colored_text);
+	lv_obj_set_pos(btn_payloads, 632, 160);
+	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
+
+	lv_obj_t *line_sep = lv_line_create(parent, NULL);
+	static const lv_point_t line_pp[] = { {0, 0}, {0, LV_DPI * 3} };
+	lv_line_set_points(line_sep, line_pp, 2);
+	lv_line_set_style(line_sep, th->line.decor);
+	lv_obj_align(line_sep, btn_payloads, LV_ALIGN_OUT_RIGHT_MID, 35, 0);
+
+	// emuMMC manage button.
+	lv_obj_t *btn_emummc = lv_btn_create(parent, btn_launch);
+	label_btn = lv_label_create(btn_emummc, label_btn);
+	s_printf(btn_colored_text, "%s%s", text_color, " "SYMBOL_LIST"#");
+	lv_label_set_text(label_btn, btn_colored_text);
+	lv_btn_set_action(btn_emummc, LV_BTN_ACTION_CLICK, create_win_emummc_tools);
+	lv_btn_set_layout(btn_emummc, LV_LAYOUT_OFF);
+	lv_obj_align(label_btn, NULL, LV_ALIGN_CENTER, 0, -28);
+	lv_obj_set_pos(btn_emummc, 959, 160);
+	label_btn2 = lv_label_create(btn_emummc, label_btn2);
+	s_printf(btn_colored_text, "%s%s", text_color, " emuMMC#");
+	lv_label_set_text(label_btn2, btn_colored_text);
+	lv_obj_align(label_btn2, NULL, LV_ALIGN_IN_TOP_MID, 0, 174);
+
+	// Create bottom right power buttons.
+	lv_obj_t *btn_reboot = lv_btn_create(parent, NULL);
+	lv_obj_t *btn_power_off = lv_btn_create(parent, NULL);
+	lv_obj_t *btn_reload = lv_btn_create(parent, NULL);
+
+	_create_text_button(th, NULL, btn_power_off, SYMBOL_POWER" Power Off", _create_mbox_poweroff);
+	lv_obj_align(btn_power_off, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, -LV_DPI / 4, -LV_DPI / 12);
+
+	_create_text_button(th, NULL, btn_reboot, SYMBOL_REBOOT" Reboot", _create_mbox_reboot);
+	lv_obj_align(btn_reboot, btn_power_off, LV_ALIGN_OUT_LEFT_MID, 0, 0);
+
+	_create_text_button(th, NULL, btn_reload, SYMBOL_REFRESH" Reload", _create_mbox_reload);
+	lv_obj_align(btn_reload, btn_reboot, LV_ALIGN_OUT_LEFT_MID, 0, 0);
+}
 
 static lv_res_t _save_options_action(lv_obj_t *btn)
 {
@@ -2405,7 +2402,6 @@ static void _nyx_main_menu(lv_theme_t * th)
 
 	// Add tabview page to screen.
 	lv_obj_t *tv = lv_tabview_create(scr, NULL);
-	home_tabview = tv;
 	if (hekate_bg)
 	{
 		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_PR, &tabview_btn_pr);
@@ -2422,13 +2418,13 @@ static void _nyx_main_menu(lv_theme_t * th)
 			 (nyx_str->info_ex.rsvd_flags & RSVD_FLAG_DRAM_8GB) ? '*' : 0);
 	lv_obj_t *tab_about = lv_tabview_add_tab(tv, version);
 
-	lv_obj_t *tab_home = lv_tabview_add_tab(tv, SYMBOL_HOME" Accueil");
+	lv_obj_t *tab_home = lv_tabview_add_tab(tv, SYMBOL_HOME" Home");
 
-	lv_obj_t *tab_tools = lv_tabview_add_tab(tv, SYMBOL_TOOLS" Outils");
+	lv_obj_t *tab_tools = lv_tabview_add_tab(tv, SYMBOL_TOOLS" Tools");
 	lv_page_set_style(tab_tools, LV_PAGE_STYLE_BG, &no_padding);
 	lv_page_set_style(tab_tools, LV_PAGE_STYLE_SCRL, &no_padding);
 
-	lv_obj_t *tab_info = lv_tabview_add_tab(tv, SYMBOL_INFO" Console");
+	lv_obj_t *tab_info = lv_tabview_add_tab(tv, SYMBOL_INFO" Console Info");
 	lv_page_set_style(tab_info, LV_PAGE_STYLE_BG, &no_padding);
 	lv_page_set_style(tab_info, LV_PAGE_STYLE_SCRL, &no_padding);
 

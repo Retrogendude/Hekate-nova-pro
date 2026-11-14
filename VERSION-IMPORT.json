@@ -1,7 +1,7 @@
 {
-  "tag": "v2",
-  "source_archive": "hekate-6.5.4-interface-console-prototype-2.zip",
-  "source_archive_sha256": "6a480ca4a9332d4fa5736dcb7769bdc932a73e270892f6b8b564e537a35c9bc5",
+  "tag": "v3",
+  "source_archive": "hekate-6.5.4-interface-originale-prototype-3.zip",
+  "source_archive_sha256": "8dec92b2ac8dc7cf36822b246033f0ea96133b250a541b5f9964ccb5762c02d4",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",
