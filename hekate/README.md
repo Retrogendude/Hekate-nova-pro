@@ -187,13 +187,12 @@ Use `Nyx Settings` in Nyx to edit the following configuration:
 
 | Config option      | Description                                                |
 | ------------------ | ---------------------------------------------------------- |
-| themebg=141a19     | Sets Nyx background color in HEX. This custom build defaults to the modern dark theme. |
-| themecolor=0       | Sets Nyx highlight hue. 0 selects the custom green accent; existing custom hues remain supported. |
+| themebg=2d2d2d     | Sets Nyx background color in HEX. 0x0B0B0B to 0xC7C7C7.    |
+| themecolor=167     | Sets Nyx color of text highlights.                         |
 | entries5col=0      | 1: Sets Launch entry columns from 4 to 5 per line. For a total of 10 entries. |
 | timeoffset=0       | Sets time offset in HEX. Must be in epoch format           |
 | timedst=1          | Enables automatic daylight saving hour adjustment          |
 | homescreen=0       | Sets home screen. 0: Home menu, 1: All configs (merges Launch and More configs), 2: Launch, 3: More Configs. |
-| home_layout=0     | Home menu layout in this prototype. 0: Tiles (default), 1: Carousel. Change it in Nyx Settings, then save and reload. |
 | verification=1     | 0: Disable Backup/Restore verification, 1: Sparse (block based, fast and mostly reliable), 2: Full (sha256 based, slow and 100% reliable). |
 | ------------------ | ----- *The following can be edited via nyx.ini only* ----- |
 | umsemmcrw=0        | 1: eMMC/emuMMC UMS will be mounted as writable by default. |

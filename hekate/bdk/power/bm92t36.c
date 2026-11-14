@@ -136,3 +136,28 @@ void bm92t36_get_source_info(bool *inserted, usb_pd_objects_t *usb_pd)
 		usb_pd->selected_pdo.voltage  = (pdos[0].volt * 50) / 1000;
 	}
 }
+
+
+// Read the same status registers directly from I2C. This function is
+// intentionally read-only: it sends no BM92T36 configuration/PD commands.
+static int _bm92t36_read_u16(u16 *value, u32 reg)
+{
+	u8 buf[2] = { 0, 0 };
+	int result = _bm92t36_read_reg(buf, sizeof(buf), reg);
+	*value = (u16)buf[0] | ((u16)buf[1] << 8);
+	return result;
+}
+
+void bm92t36_get_diagnostics(bm92t36_diag_t *diag)
+{
+	if (!diag)
+		return;
+
+	memset(diag, 0, sizeof(*diag));
+	diag->status1_result = _bm92t36_read_u16(&diag->status1, STATUS1_REG);
+	diag->status2_result = _bm92t36_read_u16(&diag->status2, STATUS2_REG);
+	diag->dp_status_first_result = _bm92t36_read_u16(&diag->dp_status_first, DP_STATUS_REG);
+	diag->dp_status_second_result = _bm92t36_read_u16(&diag->dp_status_second, DP_STATUS_REG);
+	diag->reg1c_result = _bm92t36_read_u16(&diag->reg1c, 0x1C);
+	diag->reg1d_result = _bm92t36_read_u16(&diag->reg1d, 0x1D);
+}

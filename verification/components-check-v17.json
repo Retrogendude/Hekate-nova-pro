@@ -1,5 +1,0 @@
-{
-  "summary": "PASS: scoped component evidence, skipped/absent/partial states, no false storage PASS, invalid records, measured causes, cross-checks and bounded summary/detail.\nPASS: 349 component assertions.\n",
-  "component_count": 15,
-  "hardware_io": "not linked or executed"
-}

@@ -53,7 +53,7 @@ $(BUILDDIR)/$(TARGET).elf: $(OBJS)
 	@$(CC) $(LDFLAGS) -T link.ld $^ -o $@
 
 $(BUILDDIR)/%.o: %.c
-	@$(CC) $(CFLAGS) $(BDKINC) -MMD -MP -c $< -o $@
+	@$(CC) $(CFLAGS) $(BDKINC) -c $< -o $@
 
 $(BUILDDIR)/%.o: %.S
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -63,9 +63,3 @@ $(OBJS): $(BUILDDIR)
 $(BUILDDIR):
 	@mkdir -p "$(BUILDDIR)"
 	@mkdir -p "$(OUTPUTDIR)"
-
-# The packed Hekate image is regenerated before this submake. Rebuild the
-# loader whenever either half changes; otherwise an incremental build silently
-# ships the previous boot screen and firmware inside the new payload file.
-$(BUILDDIR)/loader.o: payload_00.h payload_01.h ../Versions.inc
--include $(OBJS:.o=.d)

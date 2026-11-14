@@ -73,7 +73,7 @@ static void _create_window_emummc()
 
 	static lv_style_t h_style;
 	lv_style_copy(&h_style, lv_cont_get_style(h1));
-	h_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
+	h_style.body.main_color = LV_COLOR_HEX(0x1d1d1d);
 	h_style.body.grad_color = h_style.body.main_color;
 	h_style.body.opa = LV_OPA_COVER;
 
@@ -618,8 +618,6 @@ typedef struct _emummc_images_t
 	u32 part_end[3];
 	char part_path[3 * 128];
 	lv_obj_t *win;
-    lv_obj_t *file_items,*file_counter;
-    u32 file_count,file_page;
 } emummc_images_t;
 
 static lv_res_t _create_mbox_emummc_migrate(lv_obj_t *btn)
@@ -814,58 +812,11 @@ static lv_res_t _save_disable_emummc_cfg_action(lv_obj_t * btn)
 
 static lv_res_t _save_file_emummc_cfg_action(lv_obj_t *btn)
 {
-	u32 index=lv_obj_get_free_num(btn);
-    if(!emummc_img->dirlist||index>=emummc_img->file_count)return LV_RES_OK;
-    char path[512];s_printf(path,"emuMMC/%s",emummc_img->dirlist->name[index]);
-    save_emummc_cfg(0,0,path);
+	save_emummc_cfg(0, 0, lv_list_get_btn_text(btn));
 	_create_emummc_saved_mbox();
 	sd_unmount();
 
 	return LV_RES_INV;
-}
-
-
-static void _fill_emummc_files(void)
-{
-    lv_obj_t *holder=emummc_img->file_items;lv_obj_clean(holder);
-    int width=lv_obj_get_width(holder),height=lv_obj_get_height(holder),row_height=(height-36)/4;
-    for(u32 row=0;row<4;++row){
-        u32 index=emummc_img->file_page*4+row;if(index>=emummc_img->file_count)break;
-        lv_obj_t *button=lv_btn_create(holder,NULL);lv_btn_set_fit(button,false,false);lv_btn_set_layout(button,LV_LAYOUT_OFF);
-        lv_obj_set_pos(button,0,row*(row_height+12));lv_obj_set_size(button,width,row_height);lv_obj_set_free_num(button,index);
-        lv_btn_set_action(button,LV_BTN_ACTION_CLICK,_save_file_emummc_cfg_action);
-        lv_obj_t *label=nyx_nova_text(button,"",16,(row_height-26)/2,width-32,NOVA_BODY);
-        (lv_label_set_text)(label,emummc_img->dirlist->name[index]);lv_label_set_align(label,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(label,30);
-    }
-    if(!emummc_img->file_count){lv_obj_t *label=nyx_nova_text(holder,"No emuMMC found.",0,height/2-30,width,NOVA_BODY);lv_label_set_align(label,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(label,60);}
-    char position[32];s_printf(position,"%d / %d",emummc_img->file_page+1,(emummc_img->file_count+3)/4?(emummc_img->file_count+3)/4:1);(lv_label_set_text)(emummc_img->file_counter,position);
-}
-static lv_res_t _step_emummc_files(lv_obj_t *button)
-{
-    u32 pages=(emummc_img->file_count+3)/4;if(!pages)pages=1;
-    emummc_img->file_page=(emummc_img->file_page+(lv_obj_get_free_num(button)?1:pages-1))%pages;_fill_emummc_files();return LV_RES_OK;
-}
-static void _create_change_emummc_ui(lv_obj_t *win,u32 file_count)
-{
-    lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);int height=lv_obj_get_height(page)-36;
-    emummc_img->file_count=file_count;emummc_img->file_page=0;
-    lv_obj_t *left=nyx_nova_panel(page,34,18,594,height),*right=nyx_nova_panel(page,652,18,594,height);
-    lv_obj_t *title=nyx_nova_text(left,"SD Raw Partitions",24,22,546,NOVA_TITLE);lv_label_set_align(title,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(title,38);
-    title=nyx_nova_text(right,"SD File Based",24,22,546,NOVA_TITLE);lv_label_set_align(title,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(title,38);
-    int row_height=(height-112)/3;
-    for(u32 i=0;i<3;++i){
-        char name[32],details[256];s_printf(name,"SD RAW %d",i+1);
-        s_printf(details,nyx_tr("Sector start: 0x%08X\nFolder: %s"),emummc_img->part_sector[i],&emummc_img->part_path[i*128]);
-        lv_obj_t *button=nyx_nova_action(left,name,details,"database",_save_raw_emummc_cfg_action,i,24,78+i*(row_height+12),546,row_height);
-        ((lv_btn_ext_t *)lv_obj_get_ext_attr(button))->idx=i;
-        if(!emummc_img->part_sector[i]||emummc_img->part_type[i]==0x83||!emummc_img->part_path[i*128]){lv_obj_set_click(button,false);lv_btn_set_state(button,LV_BTN_STATE_INA);}
-    }
-    emummc_img->file_items=nyx_nova_panel(right,24,78,546,height-164);lv_cont_set_style(emummc_img->file_items,&lv_style_transp_tight);
-    for(u32 i=0;i<2;++i){
-        lv_obj_t *button=lv_btn_create(right,NULL);lv_btn_set_fit(button,false,false);lv_btn_set_layout(button,LV_LAYOUT_OFF);lv_obj_set_size(button,170,42);lv_obj_set_pos(button,i?400:24,height-60);lv_obj_set_free_num(button,i);lv_btn_set_action(button,LV_BTN_ACTION_CLICK,_step_emummc_files);
-        lv_obj_t *label=nyx_nova_text(button,i?"Suivant":"Précédent",8,10,154,NOVA_SMALL);lv_label_set_align(label,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(label,26);
-    }
-    emummc_img->file_counter=nyx_nova_text(right,"",210,height-48,170,NOVA_SMALL);lv_label_set_align(emummc_img->file_counter,LV_LABEL_ALIGN_CENTER);_fill_emummc_files();
 }
 
 static lv_res_t _action_win_change_emummc_close(lv_obj_t *btn)
@@ -903,7 +854,6 @@ static lv_res_t _create_change_emummc_window(lv_obj_t *btn_caller)
 
 	emummc_img->dirlist = dirlist("emuMMC", NULL, DIR_SHOW_DIRS);
 
-	u32 file_based_idx = 0;
 	if (!emummc_img->dirlist)
 		goto out0;
 
@@ -950,6 +900,7 @@ static lv_res_t _create_change_emummc_window(lv_obj_t *btn_caller)
 	}
 
 	emummc_idx = 0;
+	u32 file_based_idx = 0;
 
 	// Sanitize the directory list with sd file based ones.
 	while (emummc_img->dirlist->name[emummc_idx])
@@ -967,8 +918,130 @@ static lv_res_t _create_change_emummc_window(lv_obj_t *btn_caller)
 	emummc_img->dirlist->name[file_based_idx] = NULL;
 
 out0:;
-    _create_change_emummc_ui(win,emummc_img->dirlist?file_based_idx:0);
+	static lv_style_t h_style;
+	lv_style_copy(&h_style, &lv_style_transp);
+	h_style.body.padding.inner = 0;
+	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
+	h_style.body.padding.ver = LV_DPI / 6;
 
+	// Create SD Raw Partitions container.
+	lv_obj_t *h1 = lv_cont_create(win, NULL);
+	lv_cont_set_style(h1, &h_style);
+	lv_cont_set_fit(h1, false, true);
+	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
+	lv_obj_set_click(h1, false);
+	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
+
+	lv_obj_t *label_sep = lv_label_create(h1, NULL);
+	lv_label_set_static_text(label_sep, "");
+
+	lv_obj_t *label_txt = lv_label_create(h1, NULL);
+	lv_label_set_static_text(label_txt, "SD Raw Partitions");
+	lv_obj_set_style(label_txt, lv_theme_get_current()->label.prim);
+	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -(LV_DPI / 2));
+
+	lv_obj_t *line_sep = lv_line_create(h1, NULL);
+	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
+	lv_line_set_points(line_sep, line_pp, 2);
+	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
+	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
+
+	lv_obj_t *btn = NULL;
+	lv_btn_ext_t *ext;
+	lv_obj_t *btn_label = NULL;
+	lv_obj_t *lv_desc = NULL;
+	char *txt_buf = malloc(SZ_16K);
+
+	// Create RAW buttons.
+	for (u32 raw_btn_idx = 0; raw_btn_idx < 3; raw_btn_idx++)
+	{
+		btn = lv_btn_create(h1, btn);
+		ext = lv_obj_get_ext_attr(btn);
+		ext->idx = raw_btn_idx;
+		btn_label = lv_label_create(btn, btn_label);
+
+		lv_btn_set_state(btn, LV_BTN_STATE_REL);
+		lv_obj_set_click(btn, true);
+
+		if (emummc_img->part_type[raw_btn_idx] != 0x83)
+		{
+			s_printf(txt_buf, "SD RAW %d", raw_btn_idx + 1);
+			lv_label_set_text(btn_label, txt_buf);
+		}
+
+		if (!emummc_img->part_sector[raw_btn_idx] || emummc_img->part_type[raw_btn_idx] == 0x83 || !emummc_img->part_path[raw_btn_idx * 128])
+		{
+			lv_btn_set_state(btn, LV_BTN_STATE_INA);
+			lv_obj_set_click(btn, false);
+
+			if (emummc_img->part_type[raw_btn_idx] == 0x83)
+				lv_label_set_static_text(btn_label, "Linux");
+		}
+
+		if (!raw_btn_idx)
+		{
+			lv_btn_set_fit(btn, false, true);
+			lv_obj_set_width(btn, LV_DPI * 3);
+			lv_obj_align(btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 2, LV_DPI / 5);
+		}
+		else
+			lv_obj_align(btn, lv_desc, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+
+		lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _save_raw_emummc_cfg_action);
+
+		lv_desc = lv_label_create(h1, lv_desc);
+		lv_label_set_recolor(lv_desc, true);
+		lv_obj_set_style(lv_desc, &hint_small_style);
+
+		s_printf(txt_buf, "Sector start: 0x%08X\nFolder: %s", emummc_img->part_sector[raw_btn_idx], &emummc_img->part_path[raw_btn_idx * 128]);
+		lv_label_set_text(lv_desc, txt_buf);
+		lv_obj_align(lv_desc, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 5);
+	}
+	free(txt_buf);
+
+	// Create SD File Based container.
+	lv_obj_t *h2 = lv_cont_create(win, NULL);
+	lv_cont_set_style(h2, &h_style);
+	lv_cont_set_fit(h2, false, true);
+	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
+	lv_obj_set_click(h2, false);
+	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
+	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 17 / 29, 0);
+
+	label_sep = lv_label_create(h2, NULL);
+	lv_label_set_static_text(label_sep, "");
+
+	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
+	lv_label_set_static_text(label_txt3, "SD File Based");
+	lv_obj_set_style(label_txt3, lv_theme_get_current()->label.prim);
+	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 7);
+
+	line_sep = lv_line_create(h2, line_sep);
+	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 2), LV_DPI / 8);
+	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
+
+	lv_obj_t *list_sd_based = lv_list_create(h2, NULL);
+	lv_obj_align(list_sd_based, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 2, LV_DPI / 4);
+
+	lv_obj_set_size(list_sd_based, LV_HOR_RES * 4 / 10, LV_VER_RES * 6 / 10);
+	lv_list_set_single_mode(list_sd_based, true);
+
+	if (!emummc_img->dirlist)
+		goto out1;
+
+	emummc_idx = 0;
+
+	// Add file based to the list.
+	while (emummc_img->dirlist->name[emummc_idx])
+	{
+		s_printf(path, "emuMMC/%s", emummc_img->dirlist->name[emummc_idx]);
+
+		lv_list_add(list_sd_based, NULL, path, _save_file_emummc_cfg_action);
+
+		emummc_idx++;
+	}
+
+out1:
 	free(path);
 	sd_unmount();
 
@@ -977,27 +1050,151 @@ out0:;
 
 lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 {
-    (void)btn;
-    lv_obj_t *win=nyx_create_standard_window(SYMBOL_EDIT" emuMMC Manage",NULL);
-    emummc_manage_window=win;emummc_tools=(void *)create_win_emummc_tools;
-    sd_mount();emummc_cfg_t info;load_emummc_cfg(&info);sd_unmount();
-    lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);
-    int height=lv_obj_get_height(page)-36;
-    lv_obj_t *panel=nyx_nova_panel(win,34,18,594,height);
-    nyx_nova_icon_box(panel,"database",24,24,48,false);
-    lv_obj_t *state=nyx_nova_text(panel,info.enabled?"Enabled":"Disabled",90,38,456,NOVA_TITLE);
-    nyx_nova_fit_text(state,36);
-    char details[1024],paths[2][256];
-    const char *sources[]={info.path?info.path:"",info.nintendo_path?info.nintendo_path:""};
-    for(u32 i=0;i<2;++i){u32 length=strlen(sources[i]),copy=length>252?252:length;while(copy&&((u8)sources[i][copy]&0xC0)==0x80)--copy;memcpy(paths[i],sources[i],copy);paths[i][copy]=0;if(copy<length)strcat(paths[i],"…");}
-    if(info.enabled&&info.sector)s_printf(details,nyx_tr("Type : partition SD\nSecteur : 0x%08X\nDossier Nintendo : %s"),info.sector,paths[1]);
-    else if(info.enabled)s_printf(details,nyx_tr("Type : fichiers SD\nDossier : %s\nDossier Nintendo : %s"),paths[0],paths[1]);
-    else strcpy(details,nyx_tr("emuMMC is disabled and eMMC will be used for boot."));
-    lv_obj_t *text=nyx_nova_text(panel,details,24,112,546,NOVA_BODY);nyx_nova_fit_text(text,height-140);
-    free(info.path);free(info.nintendo_path);
-    int tile_height=(height-32)/3;
-    nyx_nova_action(win,"Change emuMMC","Choisir une image emuMMC sur la carte SD.","settings-2",_create_change_emummc_window,0,652,18,594,tile_height);
-    nyx_nova_action(win,"Create emuMMC","Créer une copie sous forme de fichiers ou dans une partition SD.","database",_create_mbox_emummc_create,0,652,34+tile_height,594,tile_height);
-    nyx_nova_action(win,"Migrate emuMMC","Migrer une sauvegarde ou réparer une partition emuMMC existante.","refresh-cw",_create_mbox_emummc_migrate,0,652,50+tile_height*2,594,tile_height);
-    return LV_RES_OK;
+	lv_obj_t *win = nyx_create_standard_window(SYMBOL_EDIT"  emuMMC Manage", NULL);
+
+	// Set resources to be managed by other windows.
+	emummc_manage_window = win;
+	emummc_tools = (void *)create_win_emummc_tools;
+
+	sd_mount();
+
+	emummc_cfg_t emu_info;
+	load_emummc_cfg(&emu_info);
+
+	sd_unmount();
+
+	static lv_style_t h_style;
+	lv_style_copy(&h_style, &lv_style_transp);
+	h_style.body.padding.inner = 0;
+	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
+	h_style.body.padding.ver = LV_DPI / 9;
+
+	// Create emuMMC Info & Selection container.
+	lv_obj_t *h1 = lv_cont_create(win, NULL);
+	lv_cont_set_style(h1, &h_style);
+	lv_cont_set_fit(h1, false, true);
+	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
+	lv_obj_set_click(h1, false);
+	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
+
+	lv_obj_t *label_sep = lv_label_create(h1, NULL);
+	lv_label_set_static_text(label_sep, "");
+
+	lv_obj_t *label_txt = lv_label_create(h1, NULL);
+	lv_label_set_static_text(label_txt, "emuMMC Info & Selection");
+	lv_obj_set_style(label_txt, lv_theme_get_current()->label.prim);
+	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 11);
+
+	lv_obj_t *line_sep = lv_line_create(h1, NULL);
+	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
+	lv_line_set_points(line_sep, line_pp, 2);
+	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
+	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
+
+	// Create emuMMC info labels.
+	lv_obj_t *label_btn = lv_label_create(h1, NULL);
+	lv_label_set_recolor(label_btn, true);
+	lv_label_set_static_text(label_btn, emu_info.enabled ? "#96FF00 "SYMBOL_OK"  Enabled!#" : "#FF8000 "SYMBOL_CLOSE"  Disabled!#");
+	lv_obj_align(label_btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
+
+	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
+	lv_label_set_recolor(label_txt2, true);
+	char *txt_buf = (char *)malloc(SZ_16K);
+
+	if (emu_info.enabled)
+	{
+		if (emu_info.sector)
+			s_printf(txt_buf, "#00DDFF Type:# SD Raw Partition\n#00DDFF Sector:# 0x%08X\n#00DDFF Nintendo folder:# %s\n",
+				emu_info.sector, emu_info.nintendo_path ? emu_info.nintendo_path : "");
+		else
+			s_printf(txt_buf, "#00DDFF Type:# SD File\n#00DDFF Base folder:# %s\n#00DDFF Nintendo folder:# %s\n",
+				emu_info.path ? emu_info.path : "", emu_info.nintendo_path ? emu_info.nintendo_path : "");
+
+		lv_label_set_text(label_txt2, txt_buf);
+	}
+	else
+	{
+		lv_label_set_static_text(label_txt2, "emuMMC is disabled and eMMC will be used for boot.\n\n\n");
+	}
+
+	if (emu_info.path)
+		free(emu_info.path);
+	if (emu_info.nintendo_path)
+		free(emu_info.nintendo_path);
+	free(txt_buf);
+
+	lv_obj_set_style(label_txt2, &hint_small_style);
+	lv_obj_align(label_txt2, label_btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+
+	// Create Change emuMMC button.
+	lv_obj_t *btn2 = lv_btn_create(h1, NULL);
+	lv_btn_set_fit(btn2, true, true);
+	label_btn = lv_label_create(btn2, NULL);
+	lv_label_set_static_text(label_btn, SYMBOL_SETTINGS"  Change emuMMC");
+	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 10);
+	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, _create_change_emummc_window);
+
+	label_txt2 = lv_label_create(h1, NULL);
+	lv_label_set_recolor(label_txt2, true);
+	lv_label_set_static_text(label_txt2,
+		"Choose between images created in the emuMMC folder\n"
+		"or in SD card partitions. You can have at most 3 partition\n"
+		"based and countless file based.");
+
+	lv_obj_set_style(label_txt2, &hint_small_style);
+	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+
+	// Create emuMMC Tools container.
+	lv_obj_t *h2 = lv_cont_create(win, NULL);
+	lv_cont_set_style(h2, &h_style);
+	lv_cont_set_fit(h2, false, true);
+	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
+	lv_obj_set_click(h2, false);
+	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
+	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 17 / 29, 0);
+
+	label_sep = lv_label_create(h2, NULL);
+	lv_label_set_static_text(label_sep, "");
+
+	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
+	lv_label_set_static_text(label_txt3, "emuMMC Tools");
+	lv_obj_set_style(label_txt3, lv_theme_get_current()->label.prim);
+	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 5);
+
+	line_sep = lv_line_create(h2, line_sep);
+	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
+
+	// Create Create emuMMC button.
+	lv_obj_t *btn3 = lv_btn_create(h2, btn2);
+	label_btn = lv_label_create(btn3, NULL);
+	lv_btn_set_fit(btn3, true, true);
+	lv_label_set_static_text(label_btn, SYMBOL_DRIVE"  Create emuMMC");
+	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
+	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, _create_mbox_emummc_create);
+
+	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
+	lv_label_set_recolor(label_txt4, true);
+	lv_label_set_static_text(label_txt4,
+		"Allows you to create a new #C7EA46 SD File# or #C7EA46 SD Raw Partition#\n"
+		"emuMMC. You can create it from eMMC or a eMMC Backup.\n");
+
+	lv_obj_set_style(label_txt4, &hint_small_style);
+	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+
+	// Create Migrate emuMMC button.
+	lv_obj_t *btn4 = lv_btn_create(h2, btn2);
+	label_btn = lv_label_create(btn4, NULL);
+	lv_label_set_static_text(label_btn, SYMBOL_SHUFFLE"  Migrate emuMMC");
+	lv_obj_align(btn4, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
+	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, NULL);
+	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _create_mbox_emummc_migrate);
+
+	label_txt4 = lv_label_create(h2, NULL);
+	lv_label_set_recolor(label_txt4, true);
+	lv_label_set_static_text(label_txt4,
+		"Migrate a backup to a #C7EA46 SD File emuMMC# or repair an existing\n#C7EA46 SD Raw Partition emuMMC#.\n");
+	lv_obj_set_style(label_txt4, &hint_small_style);
+	lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+
+	return LV_RES_OK;
 }

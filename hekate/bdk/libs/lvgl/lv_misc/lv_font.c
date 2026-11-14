@@ -180,7 +180,7 @@ uint8_t lv_font_get_bpp(const lv_font_t * font, uint32_t letter)
 {
     const lv_font_t * font_i = font;
     while(font_i != NULL) {
-        if(font_i->get_width && font_i->get_width(font_i, letter) >= 0) {
+        if(letter >= font_i->unicode_first && letter <= font_i->unicode_last) {
             return font_i->bpp;
         }
         font_i = font_i->next_page;
@@ -211,36 +211,19 @@ const uint8_t * lv_font_get_bitmap_continuous(const lv_font_t * font, uint32_t u
  * @param unicode_letter an unicode letter which bitmap should be get
  * @return pointer to the bitmap or NULL if not found
  */
-static int32_t sparse_glyph_index(const lv_font_t * font, uint32_t unicode_letter)
-{
-    if(!font->unicode_list || unicode_letter < font->unicode_first ||
-       unicode_letter > font->unicode_last) return -1;
-
-    /* Counted sparse fonts use sorted codepoints. A linear scan of Nyx's
-     * 707-glyph fallback used to run repeatedly for each measured/drawn
-     * character, including glyphs outside a clipped scrolling region. */
-    if(font->glyph_cnt) {
-        uint32_t low = 0, high = font->glyph_cnt;
-        while(low < high) {
-            uint32_t middle = low + (high - low) / 2;
-            uint32_t current = font->unicode_list[middle];
-            if(current == unicode_letter) return middle;
-            if(current < unicode_letter) low = middle + 1;
-            else high = middle;
-        }
-        return -1;
-    }
-
-    /* Preserve the legacy sentinel-only font representation. */
-    for(uint32_t i = 0; font->unicode_list[i]; ++i)
-        if(font->unicode_list[i] == unicode_letter) return i;
-    return -1;
-}
-
 const uint8_t * lv_font_get_bitmap_sparse(const lv_font_t * font, uint32_t unicode_letter)
 {
-    int32_t index = sparse_glyph_index(font, unicode_letter);
-    return index < 0 ? NULL : &font->glyph_bitmap[font->glyph_dsc[index].glyph_index];
+    /*Check the range*/
+    if(unicode_letter < font->unicode_first || unicode_letter > font->unicode_last) return NULL;
+
+    uint32_t i;
+    for(i = 0; font->unicode_list[i] != 0; i++) {
+        if(font->unicode_list[i] == unicode_letter) {
+            return &font->glyph_bitmap[font->glyph_dsc[i].glyph_index];
+        }
+    }
+
+    return NULL;
 }
 
 /**
@@ -268,11 +251,19 @@ int16_t lv_font_get_width_continuous(const lv_font_t * font, uint32_t unicode_le
  */
 int16_t lv_font_get_width_sparse(const lv_font_t * font, uint32_t unicode_letter)
 {
-    int32_t index = sparse_glyph_index(font, unicode_letter);
-    return index < 0 ? -1 : font->glyph_dsc[index].w_px;
+    /*Check the range*/
+    if(unicode_letter < font->unicode_first || unicode_letter > font->unicode_last) return -1;
+
+    uint32_t i;
+    for(i = 0; font->unicode_list[i] != 0; i++) {
+        if(font->unicode_list[i] == unicode_letter) {
+            return font->glyph_dsc[i].w_px;
+        }
+    }
+
+    return -1;
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-

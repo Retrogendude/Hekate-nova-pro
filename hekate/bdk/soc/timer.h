@@ -46,7 +46,6 @@
 #define TIMER_WDT4_UNLOCK_PATTERN (0x10C + 0x80)
 #define  TIMER_MAGIC_PTRN  0xC45A
 
-extern void (*timer_progress_hook)(u32 now_us); // Optional bounded foreground progress callback.
 u32  get_tmr_us();
 u32  get_tmr_ms();
 u32  get_tmr_s();

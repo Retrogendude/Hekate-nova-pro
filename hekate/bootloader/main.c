@@ -23,7 +23,6 @@
 
 #include "config.h"
 #include "gfx/logos.h"
-#include <display/nova_splash.h>
 #include "gfx/tui.h"
 #include "hos/hos.h"
 #include "hos/secmon_exo.h"
@@ -580,15 +579,13 @@ out:
 
 static void _nyx_load_run()
 {
-	render_static_bootlogo();
-	nova_splash_stage(gfx_ctxt.fb,0,35);
 	u8 *nyx = sd_file_read("bootloader/sys/nyx.bin", NULL);
-	if (!nyx) { nova_splash_stop(); return; }
+	if (!nyx)
+		return;
 
 	sd_end();
 
-	nova_splash_animate(gfx_ctxt.fb,0,35,300);
-	nova_splash_stage(gfx_ctxt.fb,35,50);
+	render_static_bootlogo();
 	display_backlight_brightness(h_cfg.backlight, 1000);
 
 	// Check if Nyx version is old.
@@ -642,8 +639,7 @@ static void _nyx_load_run()
 	reloc_meta_t *reloc = (reloc_meta_t *)(IPL_LOAD_ADDR + RELOC_META_OFF);
 	memcpy((u8 *)nyx_str->hekate, (u8 *)reloc->start, reloc->end - reloc->start);
 
-	// Do one last training, without framebuffer callbacks during training.
-	nova_splash_pause();
+	// Do one last training.
 	minerva_periodic_training();
 
 	bpmp_mmu_disable();
@@ -652,7 +648,6 @@ static void _nyx_load_run()
 	// Some cards (Sandisk U1), do not like a fast power cycle.
 	sdmmc_storage_init_wait_sd();
 
-	nova_splash_animate(gfx_ctxt.fb,35,50,200);
 	void (*nyx_ptr)() = (void *)nyx;
 	(*nyx_ptr)();
 }
@@ -1431,7 +1426,7 @@ ment_t ment_top[] = {
 	MDEF_END()
 };
 
-menu_t menu_top = { ment_top, "hekate v6.5.4", 0, 0 };
+menu_t menu_top = { ment_top, "hekate v6.5.5", 0, 0 };
 
 extern void pivot_stack(u32 stack_top);
 

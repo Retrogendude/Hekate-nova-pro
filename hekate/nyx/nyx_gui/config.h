@@ -43,9 +43,6 @@ typedef struct _hekate_config
 	hos_eks_mbr_t *eks;
 } hekate_config;
 
-#define HOME_LAYOUT_TILES    0
-#define HOME_LAYOUT_CAROUSEL 1
-
 typedef struct _nyx_config
 {
 	u32 theme_bg; // COLOR_BG_BASE_MIN - COLOR_BG_BASE_MAX.
@@ -59,26 +56,6 @@ typedef struct _nyx_config
 	u32 jc_disable;
 	u32 jc_force_right;
 	u32 bpmp_clock;
-	u32 home_layout; // Appended: keep all previous field offsets unchanged.
-	u32 language; // Appended: UI locale, persisted independently of home layout.
-	char font_file[64]; // Empty selects the embedded font; basename under /fonts.
-	u32 font_size; // 20..36 px, even values.
-	u32 background_effect; // 0 none, 1 waves, 2 particles, 3 aurora.
-	u32 background_speed; // 1 slow, 2 normal, 3 fast.
-	u32 background_opacity; // 10..50 percent.
-	u32 nova_halo; // Nova selected-tile white sheen, 0 off / 1 on.
-	u32 nova_text_color; // Independent 24-bit RGB colors, appended for compatibility.
-	u32 nova_border_color;
-	u32 nova_reflection_color;
-	u32 nova_menu_opacity; // 0..100, panel background only; text stays opaque.
-	u32 nova_icon_opacity; // 0..100, icon background only; glyph stays opaque.
-	char wallpaper_file[64]; // Safe BMP basename under /wallpapers; empty = none.
-	u32 nova_logo_color; // Independent alpha-mask tint, RGB24.
-	u32 nova_icon_color;
-	u32 nova_selection_color; // Selected card background, RGB24.
-	char launch_image[64]; // Optional BMP for the Launch tile only, under /wallpapers.
-	u32 boot_logo_color; // Independent splash emblem tint, RGB24.
-	u32 boot_bar_color; // Independent splash progress tint, RGB24.
 } nyx_config;
 
 extern hekate_config h_cfg;
@@ -88,7 +65,5 @@ void set_default_configuration();
 void set_nyx_default_configuration();
 int create_config_entry();
 int create_nyx_config_entry(bool force_unmount);
-bool nyx_appearance_key(const char *key, const char *value);
-void nyx_sanitize_appearance(void);
 
 #endif /* _CONFIG_H_ */

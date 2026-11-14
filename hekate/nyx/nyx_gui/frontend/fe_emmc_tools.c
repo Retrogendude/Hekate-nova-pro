@@ -41,14 +41,6 @@ extern nyx_config n_cfg;
 
 extern char *emmcsn_path_impl(char *path, char *sub_dir, char *filename, sdmmc_storage_t *storage);
 
-/* Translate log fragments without modifying filenames or transfer buffers. */
-static void _emmc_log_append(lv_obj_t *label, const char *text)
-{
-    char *translated = nyx_translate_text(text);
-    lv_label_ins_text(label, LV_LABEL_POS_LAST, translated ? translated : text);
-    free(translated);
-}
-
 static void _get_valid_partition(u32 *sector_start, u32 *sector_size, u32 *part_idx, bool backup)
 {
 	sd_mount();
@@ -179,7 +171,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 				s_printf(gui->txt_buf,
 						"\n#FF0000 Hash file could not be written (error %d)!#\n"
 						"#FF0000 Aborting..#\n", res);
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				return VERIF_STATUS_ERROR;
@@ -225,7 +217,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 						"\n#FF0000 Failed to read %d blocks (@LBA %08X),#\n"
 						"#FF0000 from eMMC! Verification failed..#\n",
 						num, lba_curr);
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					free(clmt);
@@ -246,7 +238,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 						"\n#FF0000 Failed to read %d blocks (@LBA %08X),#\n"
 						"#FF0000 from SD card! Verification failed..#\n",
 						num, lba_curr);
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					free(clmt);
@@ -267,7 +259,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 						"\n#FF0000 SD & eMMC data (@LBA %08X) do not match!#\n"
 						"\n#FF0000 Verification failed..#\n",
 						lba_curr);
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					free(clmt);
@@ -316,7 +308,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 			if (btn_read_vol() == (BTN_VOL_UP | BTN_VOL_DOWN))
 			{
 				strcpy(gui->txt_buf, "#FFDD00 Verification was cancelled!#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				msleep(1000);
@@ -342,7 +334,7 @@ static int _emmc_sd_copy_verify(emmc_tool_gui_t *gui, sdmmc_storage_t *storage, 
 	else
 	{
 		strcpy(gui->txt_buf, "\n#FFDD00 File not found or could not be loaded!#\n#FFDD00 Verification failed..#\n");
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		return VERIF_STATUS_ERROR;
@@ -385,7 +377,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		if (!part_idx || !sector_size)
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 Failed to find a partition...#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -399,7 +391,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		}
 	}
 
-	s_printf(gui->txt_buf, nyx_tr("#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n"),
+	s_printf(gui->txt_buf, "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n",
 		(u32)(sd_fs.free_clst * sd_fs.csize >> SECTORS_TO_MIB_COEFF),
 		totalSectors >> SECTORS_TO_MIB_COEFF);
 	lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
@@ -423,13 +415,13 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		isSmallSdCard = true;
 
 		strcpy(gui->txt_buf, "\n#FFBA00 Free space is smaller than backup size.#\n");
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		if (!maxSplitParts)
 		{
 			strcpy(gui->txt_buf, "#FFDD00 Not enough free space for Partial Backup!#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -439,7 +431,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 	if (f_open(&partialIdxFp, partialIdxFilename, FA_READ) == FR_OK && totalSectors > (FAT32_FILESIZE_LIMIT / EMMC_BLOCKSIZE))
 	{
 		strcpy(gui->txt_buf, "\n#AEFD14 Partial Backup in progress. Continuing...#\n");
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		partialDumpInProgress = true;
@@ -452,7 +444,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		if (!maxSplitParts)
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 Not enough free space for Partial Backup!#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -464,7 +456,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 	else if (isSmallSdCard)
 	{
 		s_printf(gui->txt_buf, "\n#FFBA00 Partial Backup enabled (%d MiB parts)...#\n", multipartSplitSize >> 20);
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 	}
 
@@ -498,7 +490,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		lv_obj_del(warn_mbox_bg);
 	}
 
-	s_printf(gui->txt_buf, nyx_tr("#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#"),
+	s_printf(gui->txt_buf, "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
 		gui->base_path, outFilename + strlen(gui->base_path));
 	lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 	manual_system_maintenance(true);
@@ -507,7 +499,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 	if (res)
 	{
 		s_printf(gui->txt_buf, "\n#FF0000 Error (%d) while creating#\n#FFDD00 %s#\n", res, outFilename);
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		return 1;
@@ -559,7 +551,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 					break;
 				case VERIF_STATUS_ERROR:
 					strcpy(gui->txt_buf, "\n#FFDD00 Please try again...#\n");
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 					return 1;
 				case VERIF_STATUS_ABORT:
@@ -585,7 +577,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 				else
 				{
 					strcpy(gui->txt_buf, "\n#FF0000 Error creating partial.idx file!#\n");
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					return 1;
@@ -611,8 +603,8 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 			// Create next part.
 			s_printf(gui->txt_buf, "%s#", outFilename + strlen(gui->base_path));
 			lv_label_cut_text(gui->label_info,
-				lv_txt_get_encoded_length(lv_label_get_text(gui->label_info)) - lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) - 1,
-				lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) + 1);
+				strlen(lv_label_get_text(gui->label_info)) - strlen(outFilename + strlen(gui->base_path)) - 1,
+				strlen(outFilename + strlen(gui->base_path)) + 1);
 			lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 			lbaStartPart = lba_curr;
@@ -620,7 +612,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 			if (res)
 			{
 				s_printf(gui->txt_buf, "\n#FF0000 Error (%d) while creating#\n#FFDD00 %s#\n", res, outFilename);
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				return 1;
@@ -657,14 +649,14 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 					"#FFDD00 from emuMMC @ %08X (try %d). #",
 					num, lba_curr + sd_sector_off, lba_curr, ++retryCount);
 			}
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			msleep(150);
 			if (retryCount >= 3)
 			{
 				strcpy(gui->txt_buf, "#FF0000 Aborting...#\nPlease try again...\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				f_close(&fp);
@@ -676,7 +668,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 			else
 			{
 				strcpy(gui->txt_buf, "#FFDD00 Retrying...#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 			}
 
@@ -692,7 +684,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		if (res)
 		{
 			s_printf(gui->txt_buf, "\n#FF0000 Fatal error (%d) when writing to SD Card#\nPlease try again...\n", res);
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			f_close(&fp);
@@ -729,7 +721,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		if (btn_read_vol() == (BTN_VOL_UP | BTN_VOL_DOWN))
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 The backup was cancelled!#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			msleep(1500);
@@ -755,7 +747,7 @@ static int _dump_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_part,
 		if (_emmc_sd_copy_verify(gui, storage, lbaStartPart, outFilename, part) == VERIF_STATUS_ERROR)
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 Please try again...#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -844,7 +836,7 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 				i, bootPart.name, bootPart.lba_start, bootPart.lba_end);
 			lv_label_set_text(gui->label_info, txt_buf);
 			s_printf(txt_buf, "%02d: %s... ", i, bootPart.name);
-			_emmc_log_append(gui->label_log, txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 			manual_system_maintenance(true);
 
 			emmc_set_partition(i + 1);
@@ -862,7 +854,7 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 			else
 				strcpy(txt_buf, "Done!\n");
 
-			_emmc_log_append(gui->label_log, txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 			manual_system_maintenance(true);
 		}
 	}
@@ -890,7 +882,7 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 					i, part->name, part->lba_start, part->lba_end);
 				lv_label_set_text(gui->label_info, txt_buf);
 				s_printf(txt_buf, "%02d: %s... ", i, part->name);
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 				manual_system_maintenance(true);
 				i++;
 
@@ -900,13 +892,13 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 				if (res)
 				{
 					strcpy(txt_buf, "#FFDD00 Failed!#\n");
-					_emmc_log_append(gui->label_log, txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 					break;
 				}
 				else
 					strcpy(txt_buf, "Done!\n");
 
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 				manual_system_maintenance(true);
 			}
 			emmc_gpt_free(&gpt);
@@ -927,7 +919,7 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 					i, rawPart.name, rawPart.lba_start, rawPart.lba_end);
 				lv_label_set_text(gui->label_info, txt_buf);
 				s_printf(txt_buf, "%02d: %s... ", i, rawPart.name);
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 				manual_system_maintenance(true);
 
 				i++;
@@ -945,7 +937,7 @@ void dump_emmc_selected(emmcPartType_t dumpType, emmc_tool_gui_t *gui)
 				else
 					strcpy(txt_buf, "Done!\n");
 
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 				manual_system_maintenance(true);
 			}
 		}
@@ -1011,14 +1003,14 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 	{
 		// If not, check if there are partial files and the total size matches.
 		strcpy(gui->txt_buf, "\nNo single file, checking for part files...\n");
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		outFilename[sdPathLen++] = '.';
 
 		_update_filename(outFilename, sdPathLen, numSplitParts);
 
-		s_printf(gui->txt_buf, nyx_tr("#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#"),
+		s_printf(gui->txt_buf, "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
 			gui->base_path, outFilename + strlen(gui->base_path));
 		lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 
@@ -1029,15 +1021,15 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 
 			s_printf(gui->txt_buf, "%s#", outFilename + strlen(gui->base_path));
 			lv_label_cut_text(gui->label_info,
-				lv_txt_get_encoded_length(lv_label_get_text(gui->label_info)) - lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) - 1,
-				lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) + 1);
+				strlen(lv_label_get_text(gui->label_info)) - strlen(outFilename + strlen(gui->base_path)) - 1,
+				strlen(outFilename + strlen(gui->base_path)) + 1);
 			lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			if ((u32)((u64)totalCheckFileSize >> (u64)9) > totalSectors)
 			{
 				strcpy(gui->txt_buf, "\n#FF8000 Size of SD Card split backup exceeds#\n#FF8000 eMMC's selected part size!#\n#FFDD00 Aborting...#");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				return 1;
@@ -1047,7 +1039,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 				if (!gui->raw_emummc)
 				{
 					s_printf(gui->txt_buf, "\n#FFDD00 Error file not found#\n#FFDD00 %s.#\n\n", outFilename);
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					// Attempt a smaller restore.
@@ -1066,7 +1058,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 				if (!numSplitParts)
 				{
 					strcpy(gui->txt_buf, "\n#FFDD00 Restore folder is empty.#\n\n");
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					return 1;
@@ -1079,7 +1071,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 				if (check_4MB_aligned && (((u64)fno.fsize) % SZ_4M))
 				{
 					strcpy(gui->txt_buf, "\n#FFDD00 The split file must be a#\n#FFDD00 multiple of 4 MiB.#\n#FFDD00 Aborting...#");
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 
 					return 1;
@@ -1092,7 +1084,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 		}
 
 		s_printf(gui->txt_buf, "%X sectors total.\n", (u32)((u64)totalCheckFileSize >> (u64)9));
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 
 		if ((u32)((u64)totalCheckFileSize >> (u64)9) != totalSectors)
@@ -1107,7 +1099,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 			{
 				lv_obj_del(warn_mbox_bg);
 				strcpy(gui->txt_buf, "\n#FF0000 Size of SD Card split backup does not match#\n#FF0000 eMMC's selected part size!#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				return 1;
@@ -1129,14 +1121,14 @@ multipart_not_allowed:
 	{
 		s_printf(gui->txt_buf, "%s#", outFilename + strlen(gui->base_path));
 		lv_label_cut_text(gui->label_info,
-			lv_txt_get_encoded_length(lv_label_get_text(gui->label_info)) - lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) - 1,
-			lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) + 1);
+			strlen(lv_label_get_text(gui->label_info)) - strlen(outFilename + strlen(gui->base_path)) - 1,
+			strlen(outFilename + strlen(gui->base_path)) + 1);
 		lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 	}
 	else
 	{
-		s_printf(gui->txt_buf, nyx_tr("#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#"),
+		s_printf(gui->txt_buf, "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
 			gui->base_path, outFilename + strlen(gui->base_path));
 			lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 	}
@@ -1146,13 +1138,13 @@ multipart_not_allowed:
 		if (res != FR_NO_FILE)
 		{
 			s_printf(gui->txt_buf, "\n#FF0000 Error (%d) while opening file. Continuing...#\n", res);
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 		}
 		else
 		{
 			s_printf(gui->txt_buf, "\n#FFDD00 Error (%d) file not found. Continuing...#\n", res);
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 		}
 
@@ -1163,7 +1155,7 @@ multipart_not_allowed:
 		if (((u32)((u64)f_size(&fp) >> (u64)9)) > totalSectors)
 		{
 			strcpy(gui->txt_buf, "\n#FF8000 Size of SD Card backup exceeds#\n#FF8000 eMMC's selected part size!#\n#FFDD00 Aborting...#");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			f_close(&fp);
@@ -1182,7 +1174,7 @@ multipart_not_allowed:
 			{
 				lv_obj_del(warn_mbox_bg);
 				strcpy(gui->txt_buf, "\n#FF0000 Size of the SD Card backup does not match#\n#FF0000 eMMC's selected part size.#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				f_close(&fp);
@@ -1200,7 +1192,7 @@ multipart_not_allowed:
 		fileSize = (u64)f_size(&fp);
 		s_printf(gui->txt_buf, "\nTotal restore size: %d MiB.\n",
 			(u32)((use_multipart ? (u64)totalCheckFileSize : fileSize) >> (u64)9) >> SECTORS_TO_MIB_COEFF);
-		_emmc_log_append(gui->label_log, gui->txt_buf);
+		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 		manual_system_maintenance(true);
 	}
 
@@ -1226,7 +1218,7 @@ multipart_not_allowed:
 		if (!part_idx || !sector_size)
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 Failed to find a partition...#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -1257,7 +1249,7 @@ multipart_not_allowed:
 					break;
 				case VERIF_STATUS_ERROR:
 					strcpy(gui->txt_buf, "\n#FFDD00 Please try again...#\n");
-					_emmc_log_append(gui->label_log, gui->txt_buf);
+					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 					return 1;
 				case VERIF_STATUS_ABORT:
@@ -1273,8 +1265,8 @@ multipart_not_allowed:
 			// Read from next part.
 			s_printf(gui->txt_buf, "%s#", outFilename + strlen(gui->base_path));
 			lv_label_cut_text(gui->label_info,
-				lv_txt_get_encoded_length(lv_label_get_text(gui->label_info)) - lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) - 1,
-				lv_txt_get_encoded_length(outFilename + strlen(gui->base_path)) + 1);
+				strlen(lv_label_get_text(gui->label_info)) - strlen(outFilename + strlen(gui->base_path)) - 1,
+				strlen(outFilename + strlen(gui->base_path)) + 1);
 			lv_label_ins_text(gui->label_info, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
@@ -1285,7 +1277,7 @@ multipart_not_allowed:
 			if (res)
 			{
 				s_printf(gui->txt_buf, "\n#FF0000 Error (%d) while opening file#\n#FFDD00 %s!#\n", res, outFilename);
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				return 1;
@@ -1307,7 +1299,7 @@ multipart_not_allowed:
 				"\n#FF0000 Fatal error (%d) when reading from SD!#\n"
 				"#FF0000 This device may be in an inoperative state!#\n"
 				"#FFDD00 Please try again now!#\n", res);
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			f_close(&fp);
@@ -1327,7 +1319,7 @@ multipart_not_allowed:
 				"\n#FFDD00 Error writing %d blocks @ LBA %08X,#\n"
 				"#FFDD00 from eMMC (try %d). #",
 				num, lba_curr, ++retryCount);
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			msleep(150);
@@ -1336,7 +1328,7 @@ multipart_not_allowed:
 				strcpy(gui->txt_buf, "#FF0000 Aborting...#\n"
 					"#FF0000 This device may be in an inoperative state!#\n"
 					"#FFDD00 Please try again now!#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 
 				f_close(&fp);
@@ -1346,7 +1338,7 @@ multipart_not_allowed:
 			else
 			{
 				strcpy(gui->txt_buf, "#FFDD00 Retrying...#\n");
-				_emmc_log_append(gui->label_log, gui->txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 				manual_system_maintenance(true);
 			}
 			if (!gui->raw_emummc)
@@ -1383,7 +1375,7 @@ multipart_not_allowed:
 		if (_emmc_sd_copy_verify(gui, storage, lbaStartPart, outFilename, part) == VERIF_STATUS_ERROR)
 		{
 			strcpy(gui->txt_buf, "\n#FFDD00 Please try again...#\n");
-			_emmc_log_append(gui->label_log, gui->txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			return 1;
@@ -1514,7 +1506,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				i, bootPart.name, bootPart.lba_start, bootPart.lba_end);
 			lv_label_set_text(gui->label_info, txt_buf);
 			s_printf(txt_buf, "%02d: %s... ", i, bootPart.name);
-			_emmc_log_append(gui->label_log, txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 			manual_system_maintenance(true);
 
 			emmc_set_partition(i + 1);
@@ -1531,7 +1523,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				strcpy(txt_buf, "Done!\n");
 
 			if (res <= 1)
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 
 			manual_system_maintenance(true);
 		}
@@ -1553,7 +1545,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				i, part->name, part->lba_start, part->lba_end);
 			lv_label_set_text(gui->label_info, txt_buf);
 			s_printf(txt_buf, "%02d: %s... ", i, part->name);
-			_emmc_log_append(gui->label_log, txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 			manual_system_maintenance(true);
 			i++;
 
@@ -1566,7 +1558,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				strcpy(txt_buf, "Done!\n");
 
 			if (res <= 1)
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 
 			manual_system_maintenance(true);
 		}
@@ -1588,7 +1580,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				i, rawPart.name, rawPart.lba_start, rawPart.lba_end);
 			lv_label_set_text(gui->label_info, txt_buf);
 			s_printf(txt_buf, "%02d: %s... ", i, rawPart.name);
-			_emmc_log_append(gui->label_log, txt_buf);
+			lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 			manual_system_maintenance(true);
 			i++;
 
@@ -1604,7 +1596,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 				strcpy(txt_buf, "Done!\n");
 
 			if (res <= 1)
-				_emmc_log_append(gui->label_log, txt_buf);
+				lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 
 			manual_system_maintenance(true);
 		}
