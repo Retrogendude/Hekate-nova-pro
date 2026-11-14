@@ -1,8 +1,8 @@
 {
-  "tag": "tv-experiment-01",
-  "source_archive": "hekate-tv-experiment-01-sources.zip",
-  "source_archive_sha256": "e8bc2344798462014b5236979c013f36dbe583e7ec70b7cc2a3573ace816e476",
-  "original_source_directory": "hekate-tv-6.5.5",
+  "tag": "tv-experiment-02",
+  "source_archive": "hekate-tv-experiment-02-sources.zip",
+  "source_archive_sha256": "cbe08ee9441b68a086e29cc358dac1d681500b2d70ef12325fbbd37dcb99468a",
+  "original_source_directory": "hekate-tv-02",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",
   "original_commit_history": false,

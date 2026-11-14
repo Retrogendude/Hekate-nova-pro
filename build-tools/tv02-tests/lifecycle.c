@@ -23,7 +23,7 @@ static void begin(void) {
  if(tv.win) _signal(tv.win,LV_SIGNAL_CLEANUP,NULL);
  memset(&tv,0,sizeof(tv));object_n=0;task_fail=0;hardware=0;alloc_fail=0;
  hwtype=0;id_ok=1;rail_fail=0;aux_fail=0;probe_fail=0;video_fail=0;hpd=1;mounts=1;save_fail=0;
- volume_keys=0;short_write=close_fail=0;next_state=DOCK_WAIT_PLUG;now=100;bpmp_fid_current=3;fake_mux=42;fake_gpio[0]=0;fake_gpio[1]=2;
+ history_collision_only=0;volume_keys=0;short_write=close_fail=0;next_state=DOCK_WAIT_PLUG;now=100;bpmp_fid_current=3;fake_mux=42;fake_gpio[0]=0;fake_gpio[1]=2;
  gui_tv_open(NULL);scenarios++;
 }
 static void stopped(void) {
@@ -57,6 +57,13 @@ int main(void) {
  begin();_start(NULL);close_fail=1;_cancel(NULL);assert(strstr(shown,"Impossible"));stopped();
  begin();int sv=saved;_cancel(NULL);_signal(tv.win,LV_SIGNAL_CLEANUP,NULL);assert(saved==sv); // preserve last report when no run
  begin();_start(NULL);volume_keys=BTN_VOL_DOWN;_tick(NULL);stopped();assert(strstr(shown,"Test arrete"));
+ 
+ begin();_start(NULL);now+=77;_cancel(NULL);assert(strstr(tv.log,"[00000000 ms] Hekate")&&strstr(tv.log,"[00000077 ms]"));
+ char first_path[64];strcpy(first_path,tv.run_path);int hn=history_n;
+ _cancel(NULL);assert(history_n==hn&&!strcmp(first_path,tv.run_path)); // same run updates its own report
+ _start(NULL);_cancel(NULL);assert(strcmp(first_path,tv.run_path)&&history_n==hn+1); // next attempt gets a new file
+ strcpy(first_path,tv.run_path);begin();_start(NULL);_cancel(NULL);assert(strcmp(first_path,tv.run_path)); // simulated reboot preserves files
+ begin();_start(NULL);history_collision_only=1;_cancel(NULL);assert(!tv.run_path[0]&&strstr(shown,"Impossible")); // bounded full history, last-run still attempted
  printf("PASS: %d TV lifecycle scenarios; no physical hardware exercised.\n",scenarios);
  return 0;
 }

@@ -511,9 +511,12 @@ const char *dock_state_name(dock_state_t s)
 
 static void _go(dock_t *d, dock_state_t s)
 {
+    bool retrying_hub = (d->state == DOCK_HUB_ACC && s == DOCK_HUB_SENT) ||
+                        (d->state == DOCK_HUB_SENT && s == DOCK_HUB_ACC);
     d->state = s;
     d->since = get_tmr_ms();
-    d->tries = 0;
+    if (!retrying_hub)
+        d->tries = 0;
     s_printf(d->log, "gui: dock %s: alert %04X s1 %04X s2 %04X dp %04X\n",
              dock_state_name(s), d->alerts, d->s1, d->s2, d->dp);
     d->log_new = true;
@@ -555,10 +558,11 @@ static void _cmd_go(dock_t *d, u16 cmd, dock_state_t next)
  * not reject it. */
 static int _cmd_done(dock_t *d)
 {
-    if (!_take(d, PD_AL_CMD_DONE))
+    if (!(d->alerts & PD_AL_CMD_DONE))
         return _timed_out(d) ? -1 : 0;
     if (d->s1 & PD_S1_CMD_BUSY)
-        return 0;
+        return _timed_out(d) ? -1 : 0;
+    _take(d, PD_AL_CMD_DONE);
     if ((d->s1 & PD_S1_LASTCMD_MASK) != 0)
         return -2;
     return 1;

@@ -1,4 +1,4 @@
-# Provenance du prototype TV 01
+# Provenance du prototype TV 02
 
 Base de travail : copie de `C:/Users/Retrogen/Desktop/nd5`, Hekate 6.5.5 /
 Nyx 1.9.5. Les ajouts BM92T36 et la fenêtre I2C de cette base sont conservés.
@@ -39,3 +39,17 @@ la version intégrée. Cette livraison est un prototype personnel de développem
 
 Les sources amont originales, leurs empreintes et les différences locales sont
 jointes à l'archive de sources, pour conserver leur provenance vérifiable.
+
+## Corrections du prototype 02
+
+Les paramètres SOR/PLL, le débit et les niveaux du lien vidéo n'ont pas changé.
+- `CMD_DONE` est conservé tant que `CMD_BUSY` reste actif ; le délai borne
+  également une attente où le contrôleur reste occupé.
+- Le budget de répétitions du hub reste intact pendant l'aller-retour
+  demande/acceptation.
+- Rapports relatifs au temps du lancement, fichiers `run-NNN.txt` créés sans
+  écraser les essais précédents, et `last-run.txt` pour le dernier essai.
+
+Une régression reproduit la perte de `CMD_DONE` dans le code du prototype 01.
+18 vérifications ciblées passent avec le correctif. Cela ne remplace pas
+l'identification de l'étape réelle d'échec au moyen du journal console.

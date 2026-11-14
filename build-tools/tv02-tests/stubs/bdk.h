@@ -45,7 +45,7 @@ static void *test_malloc(size_t n) {return alloc_fail?NULL:malloc(n);}
 static void test_free(void *p) {assert(!gpu_dma_active);frees++;free(p);}
 #define malloc test_malloc
 #define free test_free
-#define s_printf sprintf
+void s_printf(char *out, const char *format, ...);
 static lv_res_t base_signal(lv_obj_t *o,lv_signal_t s,void*p) {return 0;}
 static lv_obj_t *nyx_create_standard_window(const char*t,lv_action_t a) {lv_obj_t *o=&objects[object_n++];o->signal=base_signal;return o;}
 static lv_signal_func_t lv_obj_get_signal_func(lv_obj_t*o) {return o->signal;}
@@ -74,10 +74,25 @@ static void sd_unmount(void) {}
 static int f_mkdir(const char*p) {return 0;}
 static int sd_save_to_file(const void*b,u32 n,const char*p) {saved++;return save_fail;}
 
-static int f_open(FIL*f,const char*p,int flags) {saved++;return save_fail;}
+
+#define FA_CREATE_NEW 4
+#define FR_EXIST 8
+static char historical_files[1024][64];
+static int history_n, history_collision_only;
+static int f_open(FIL*f,const char*p,int flags) {
+ saved++;
+ if(save_fail) return save_fail;
+ if(flags & FA_CREATE_NEW) {
+  if(history_collision_only) return FR_EXIST;
+  for(int i=0;i<history_n;i++) if(!strcmp(p,historical_files[i])) return FR_EXIST;
+  assert(history_n<1024);snprintf(historical_files[history_n++],64,"%s",p);
+ }
+ return 0;
+}
 static int f_write(FIL*f,const void*p,u32 n,u32*written) {*written=short_write?n-1:n;return save_fail;}
 static int f_close(FIL*f) {return close_fail;}
 
 #define BTN_VOL_DOWN 2
 static int volume_keys;
 static u8 btn_read_vol(void) {return volume_keys;}
+

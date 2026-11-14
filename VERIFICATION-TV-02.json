@@ -1,17 +1,17 @@
 {
-  "experiment": "TV 01",
+  "experiment": "TV 02",
   "base": "Hekate 6.5.5 / Nyx 1.9.5 (nd5 copy)",
   "build_exit_code": 0,
-  "elapsed_seconds": 42.0,
+  "elapsed_seconds": 41.9,
   "hardware_validation": false,
   "source_sha256": {
     ".gitignore": "2888f5a39500c55ca6e3ce1dc51758281a20ef0d9c42a5b5f7dcc31360937db2",
     "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
-    "LIRE-MOI-TV-01.md": "ab90ebb4af7b8e695d91facf3b7afbd8a56839b91cab7b08a80d16e3846c3912",
+    "LIRE-MOI-TV-02.md": "538f6b809cbae0d289a75a5c5e6fc016d7582411a0062207f5e2af9c3bfdeffb",
     "Makefile": "c74610cf6ff509ed00ca117f616a32807fc236ed6b9d1bb8cad2b84fa2c42b1c",
     "README.md": "a4da6b96392532a77f2268b00cb0ea204c1fc891b0ae83629f42c63dba768aa3",
     "README_BOOTLOGO.md": "810f9a46949be1a88b63a06088eeeebeb04598db8fe0ef0293eac77560a8b2f5",
-    "TV-SOURCES.md": "ddb77cdb984eb811969c0fe6a7eaae697e0395b1712b8f85f5e57f3e6b7816e3",
+    "TV-SOURCES.md": "88b2eb58483e9ad7740087c982310bbf4b33a9582b923a783f54352ff4588533",
     "Versions.inc": "72ee0e50f0e1ee75a6f28c5663dd15e8f7db6152eef3d5c393751e7a891c5fb4",
     "bdk/bdk.h": "1c93c18b30d89c8918f53741c96ae3d88deb7d6e0fa41b18dca270abfbedba65",
     "bdk/exception_handlers.S": "34a2453de4e5fa9dfd6408b4898b406b403a13e1ed24d83c746f00b068301213",
@@ -83,7 +83,7 @@
     "nyx/nyx_gui/frontend/gui_tools.h": "deb110a141eeace0a8d7c9f9f355fde0e398e32a651335d69e5102b77aba6776",
     "nyx/nyx_gui/frontend/gui_tools_partition_manager.c": "6334713dd27c6866dd0c50432b61983348a081918193b43cea92cb2aff3ab009",
     "nyx/nyx_gui/frontend/gui_tools_partition_manager.h": "4aaee7983524bffcae8dcb08196588939bfc1a36e551a8c12d2ed0c0a587694f",
-    "nyx/nyx_gui/frontend/gui_tv.c": "e0b1656548fc0068249bd98e91eefd124e68267b2710d2a440a11ba8d1bf1ada",
+    "nyx/nyx_gui/frontend/gui_tv.c": "f5c2b2597fac592edfc9c22b3865ab8991a35a6035f557907e58e58576153c4b",
     "nyx/nyx_gui/frontend/gui_tv.h": "159de73c8685ce65ad291adf1b3e16fc54bd708c9c3d387910d106772ce719e6",
     "nyx/nyx_gui/gfx/gfx.c": "6525c6a58a64db68bc4ee9f443bfe72f5b51351d157dc734accde5fe7d21b83f",
     "nyx/nyx_gui/gfx/gfx.h": "6508174dfe2162e31040a82f08ee5dabc79b1fd603fb86d71b2458c688ed93b9",
@@ -451,7 +451,7 @@
     "bdk/ianos/elfload/elfreloc_arm.c": "7f089dbee56dbd5d9e98569afc8e6ecdd7a796762dd004f628b01d9d66026246",
     "bdk/display/tv/dpout.c": "6f66fadedd2cfb54662a714aba9eed29e57fb1fe8a92f4bbc50fada8e83e1d44",
     "bdk/display/tv/dpout.h": "1fb6395d9f037bb49275a4e86e5ef054ca860a641397ba82b0214ad5ab097c9a",
-    "bdk/display/tv/usbpd.c": "02f2f115b2f4a7a7cf0b1f319172b4b5f0c1c4cdbf483940b232459e5c683586",
+    "bdk/display/tv/usbpd.c": "5d8ad418906a019c9169979202cc910fd712f0ae3d4b9607fda194b2dc3fcf7a",
     "bdk/display/tv/usbpd.h": "b5228120b849bcef68cd14be9dba84920e453947da10847f4821c04275e095ad"
   },
   "binaries": {
@@ -476,15 +476,16 @@
       "sha256": "ed851685e6248e0e1219a6b60ac04808234cf6e3a0a75c7a8a4d1e94946c6484"
     },
     "nyx.bin": {
-      "size": 506821,
-      "sha256": "c8ebbbb7f15f03aa7afaa245ac4b274dc54fd18bbb38f88f2dbfda5f6b198f82"
+      "size": 506885,
+      "sha256": "1997372210d6299ab59f3878172532fab73640ab2686aa586b316418c86beed5"
     }
   },
   "tests": {
     "lifecycle": {
-      "result": "PASS: 22 TV lifecycle scenarios; no physical hardware exercised.",
-      "source_sha256": "e0b1656548fc0068249bd98e91eefd124e68267b2710d2a440a11ba8d1bf1ada",
+      "result": "PASS: 25 TV lifecycle scenarios; no physical hardware exercised.",
+      "source_sha256": "f5c2b2597fac592edfc9c22b3865ab8991a35a6035f557907e58e58576153c4b",
       "hardware_validation": false,
+      "real_bdk_formatter": true,
       "pointer_alignment_cast_widened_for_64_bit_host": true
     },
     "policy": {
@@ -492,8 +493,14 @@
       "hardware_validation": false,
       "source_sha256": {
         "dpout.c": "6f66fadedd2cfb54662a714aba9eed29e57fb1fe8a92f4bbc50fada8e83e1d44",
-        "usbpd.c": "02f2f115b2f4a7a7cf0b1f319172b4b5f0c1c4cdbf483940b232459e5c683586"
+        "usbpd.c": "5d8ad418906a019c9169979202cc910fd712f0ae3d4b9607fda194b2dc3fcf7a"
       }
+    },
+    "protocol": {
+      "result": "PASS: 18 protocol regression checks (no hardware).",
+      "source": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-tv-02\\bdk\\display\\tv\\usbpd.c",
+      "source_sha256": "5d8ad418906a019c9169979202cc910fd712f0ae3d4b9607fda194b2dc3fcf7a",
+      "hardware_validation": false
     }
   }
 }

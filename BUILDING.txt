@@ -1,6 +1,6 @@
-Sources du prototype TV personnel 01, distinct de Nova Pro v18.
+Sources du prototype TV personnel 02, distinct de Nova Pro v18.
 Compilation standard : make -j4 avec devkitARM, Python3, un GCC natif et les outils Unix de devkitPro.
-Les scripts de verification Windows attendent work/hekate-tv-6.5.5,
-work/tv-tests et work/toolchains/w64devkit dans le workspace.
+Les scripts de verification Windows attendent work/hekate-tv-02,
+work/tv02-tests et work/toolchains/w64devkit dans le workspace.
 Les tests PC ne valident pas le fonctionnement du dock sur console.
 Lire TV-SOURCES.md avant toute redistribution publique.

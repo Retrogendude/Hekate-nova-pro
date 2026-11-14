@@ -6,7 +6,7 @@ import sys
 import time
 
 workspace = Path(__file__).resolve().parent.parent
-source = workspace / 'work' / 'hekate-tv-6.5.5'
+source = workspace / 'work' / 'hekate-tv-02'
 host = workspace / 'work' / 'toolchains' / 'w64devkit' / 'bin'
 arm = Path('C:/devkitPro/devkitARM')
 tools_environment = workspace / 'work' / 'build-environment'
@@ -25,7 +25,7 @@ args = [str(host / 'make.exe'), '-j4',
         'IPLECHO=echo', 'NYXECHO=echo'] + sys.argv[1:]
 env = os.environ.copy()
 env['PATH'] = build_path
-log = workspace / 'work' / 'hekate-tv-build.log'
+log = workspace / 'work' / 'hekate-tv-02-build.log'
 start = time.time()
 print('Building Hekate and Nyx with devkitARM and portable native tools.', flush=True)
 with log.open('w', encoding='utf-8') as output:

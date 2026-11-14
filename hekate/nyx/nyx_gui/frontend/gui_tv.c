@@ -30,7 +30,7 @@ static struct {
     u32 hpd_mux;
     u8 rails[2];
     int dirty_first, dirty_last;
-    char log[TV_LOG_SIZE], message[768];
+    char log[TV_LOG_SIZE], message[768], run_path[64];
 } tv;
 
 static lv_res_t _cancel(lv_obj_t *btn);
@@ -38,10 +38,15 @@ static lv_res_t _cancel(lv_obj_t *btn);
 static void _log(const char *line)
 {
     u32 n = strlen(line);
-    if (tv.log_size + n + 2 >= TV_LOG_SIZE) {
+    char prefix[24];
+    s_printf(prefix, "[%08d ms] ", (u32)(get_tmr_ms() - tv.started));
+    u32 p = strlen(prefix);
+    if (tv.log_size + n + p + 2 >= TV_LOG_SIZE) {
         tv.log_full = true;
         return;
     }
+    memcpy(tv.log + tv.log_size, prefix, p);
+    tv.log_size += p;
     memcpy(tv.log + tv.log_size, line, n);
     tv.log_size += n;
     tv.log[tv.log_size++] = '\n';
@@ -54,27 +59,47 @@ static void _show(const char *text)
     lv_label_set_text(tv.status, text);
 }
 
+static int _write_report(FIL *fp)
+{
+    static const char clipped[] = "\n[Log full: subsequent messages omitted]\n";
+    u32 written;
+    int r = f_write(fp, tv.log, tv.log_size, &written);
+    if (!r && written != tv.log_size) r = 1;
+    if (!r && tv.log_full) {
+        r = f_write(fp, clipped, sizeof(clipped) - 1, &written);
+        if (!r && written != sizeof(clipped) - 1) r = 1;
+    }
+    int closed = f_close(fp);
+    return r ? r : closed;
+}
+
 static bool _save(void)
 {
     if (!tv.log_size || !sd_mount())
         return false;
     f_mkdir("bootloader/tv-test");
-    static const char clipped[] = "\n[Log full: subsequent messages omitted]\n";
     FIL fp;
-    int r = f_open(&fp, "bootloader/tv-test/last-run.txt", FA_CREATE_ALWAYS | FA_WRITE);
-    if (!r) {
-        u32 written;
-        r = f_write(&fp, tv.log, tv.log_size, &written);
-        if (!r && written != tv.log_size) r = 1;
-        if (!r && tv.log_full) {
-            r = f_write(&fp, clipped, sizeof(clipped) - 1, &written);
-            if (!r && written != sizeof(clipped) - 1) r = 1;
+    int history_error = 1;
+    if (!tv.run_path[0]) {
+        // CREATE_NEW preserves preceding attempts even after a cold restart.
+        for (u32 i = 1; i <= 999; i++) {
+            s_printf(tv.run_path, "bootloader/tv-test/run-%03d.txt", i);
+            history_error = f_open(&fp, tv.run_path, FA_CREATE_NEW | FA_WRITE);
+            if (history_error != FR_EXIST)
+                break;
         }
-        int closed = f_close(&fp);
-        if (!r) r = closed;
+        if (history_error)
+            tv.run_path[0] = 0;
+    } else {
+        history_error = f_open(&fp, tv.run_path, FA_CREATE_ALWAYS | FA_WRITE);
     }
+    if (!history_error)
+        history_error = _write_report(&fp);
+    int r = f_open(&fp, "bootloader/tv-test/last-run.txt", FA_CREATE_ALWAYS | FA_WRITE);
+    if (!r)
+        r = _write_report(&fp);
     sd_unmount();
-    return r == 0;
+    return r == 0 && history_error == 0;
 }
 
 static void _stop(void)
@@ -218,9 +243,11 @@ static lv_res_t _start(lv_obj_t *btn)
     }
     tv.log_size = 0;
     tv.log_full = false;
+    tv.run_path[0] = 0;
+    tv.started = get_tmr_ms();
     memset(&tv.sink, 0, sizeof(tv.sink));
     memset(&tv.video, 0, sizeof(tv.video));
-    _log("Hekate 6.5.5 / Nyx 1.9.5 - TV experiment 01");
+    _log("Hekate 6.5.5 / Nyx 1.9.5 - TV experiment 02");
     _log("HWTest-RCM upstream 3731bfb471515a5f83709aa496c9cdb0a9aeff83");
     tv.clock = bpmp_fid_current;
     tv.clock_saved = true;
@@ -261,7 +288,6 @@ static lv_res_t _start(lv_obj_t *btn)
     dpout_set_logger(_log);
     dpout_lane_test(false, false);
     dock_start(&tv.dock);
-    tv.started = get_tmr_ms();
     tv.running = true;
     _show("Negociation du dock en cours... Arreter ou VOL- pour annuler.");
     return LV_RES_OK;
@@ -301,7 +327,7 @@ lv_res_t gui_tv_open(lv_obj_t *btn)
     if (tv.win)
         return LV_RES_OK;
     memset(&tv, 0, sizeof(tv));
-    tv.win = nyx_create_standard_window("TV USB-C / Dock - EXPERIMENTAL 01", NULL);
+    tv.win = nyx_create_standard_window("TV USB-C / Dock - EXPERIMENTAL 02", NULL);
     tv.signal = lv_obj_get_signal_func(tv.win);
     lv_obj_set_signal_func(tv.win, _signal);
     lv_win_add_btn(tv.win, NULL, "Demarrer", _start);
@@ -319,7 +345,7 @@ lv_res_t gui_tv_open(lv_obj_t *btn)
           "L'ecran de la console reste allume. Aucun reset du controleur automatique.\n"
           "Le test negocie l'alimentation et DisplayPort avec le dock.\n"
           "Fermer, Arreter ou VOL- termine le test. Switch Lite non prise en charge.\n\n"
-          "Journal : bootloader/tv-test/last-run.txt");
+          "Journaux : bootloader/tv-test/last-run.txt et run-NNN.txt");
     tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
     if (!tv.task)
         _show("Impossible de creer la tache de test. Fermez cette fenetre.");
