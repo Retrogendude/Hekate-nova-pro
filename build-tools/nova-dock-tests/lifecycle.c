@@ -3,6 +3,9 @@
 #include <display/tv/dpout.h>
 #include <display/tv/usbpd.h>
 static int next_state=DOCK_WAIT_PLUG;
+static int passive_calls,passive_result,passive_inserted,passive_dock;
+int pd_dock_attached(bool*inserted,bool*dock) {passive_calls++;*inserted=passive_inserted;*dock=passive_dock;return passive_result;}
+
 void pd_snapshot(pd_snapshot_t*s,bool alert) {assert(!alert);snapshot_calls++;memset(s,0,sizeof(*s));s->ok=id_ok;fake_mux=99;fake_gpio[0]|=2;fake_gpio[1]&=~2;}
 void dock_start(dock_t*d) {starts++;memset(d,0,sizeof(*d));d->state=DOCK_WAIT_PLUG;}
 void dock_step(dock_t*d) {d->state=next_state;if(next_state==DOCK_FAILED){d->failed_at="TEST";strcpy(d->fail,"injected failure");}}
@@ -21,7 +24,7 @@ void dpout_lane_test(bool a,bool b) {assert(!a&&!b);}
 static int scenarios;
 static void begin(void) {
  gui_tv_shutdown(false);if(tv.win) _signal(tv.win,LV_SIGNAL_CLEANUP,NULL);
- memset(&tv,0,sizeof(tv));object_n=0;task_fail=0;hardware=0;alloc_fail=0;
+ memset(&tv,0,sizeof(tv));n_cfg.tv_auto=0;n_cfg.tv_keep_screen=1;h_cfg.backlight=130;bl_level=110;bl_calls=0;passive_result=passive_calls=passive_inserted=passive_dock=0;object_n=0;task_fail=0;hardware=0;alloc_fail=0;
  hwtype=0;id_ok=1;rail_fail=0;aux_fail=0;probe_fail=0;video_fail=0;hpd=1;mounts=0;save_fail=0;
  history_collision_only=0;volume_keys=0;short_write=close_fail=0;next_state=DOCK_WAIT_PLUG;now=100;bpmp_fid_current=3;fake_mux=42;fake_gpio[0]=0;fake_gpio[1]=2;
  gui_tv_open(NULL);scenarios++;
@@ -73,6 +76,39 @@ int main(void) {
  begin();_start(NULL);int sv2=saved;hw_display_external_end();stopped();assert(!tv.task&&saved==sv2); // no SD access after sd_end
  begin();_start(NULL);gui_tv_shutdown(true);stopped();assert(!tv.task); // explicit shutdown with report
  begin();_start(NULL);mounts=1;sv2=saved;_cancel(NULL);assert(saved==sv2&&strstr(shown,"could not be saved"));stopped();
+ 
+ begin();_signal(tv.win,LV_SIGNAL_CLEANUP,NULL);gui_tv_auto_configure();now+=10000;_tick(NULL);assert(!tv.task&&!passive_calls); // OFF has no polling task
+ begin();n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();n=starts;
+ now+=1999;_tick(NULL);assert(!passive_calls&&starts==n);now++;_tick(NULL);assert(passive_calls==1&&!tv.running);
+ now+=500;_tick(NULL);assert(tv.running&&starts==n+1);_cancel(NULL);now+=5000;_tick(NULL);assert(starts==n+1&&!tv.running); // VOL/Stop holds current connection
+ passive_inserted=passive_dock=0;now+=500;_tick(NULL);assert(!tv.auto_attempted);
+ passive_inserted=passive_dock=1;now+=500;_tick(NULL);now+=500;_tick(NULL);assert(tv.running&&starts==n+2);_cancel(NULL); // re-dock rearms
+ begin();n_cfg.tv_auto=1;passive_inserted=passive_dock=1;id_ok=0;gui_tv_auto_configure();now+=2000;_tick(NULL);now+=500;_tick(NULL);assert(!tv.running&&tv.auto_attempted);
+ sn=snapshot_calls;now+=5000;_tick(NULL);assert(snapshot_calls==sn); // failed start not repeated continuously
+ begin();n_cfg.tv_auto=1;passive_inserted=1;passive_dock=0;gui_tv_auto_configure();n=starts;
+ for(int i=0;i<10;i++){now+=500;_tick(NULL);}assert(starts==n&&!tv.running); // charger is ignored
+ begin();n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();now+=2000;_tick(NULL);passive_result=1;
+ now+=500;_tick(NULL);assert(!tv.auto_samples&&!tv.running);passive_result=0;now+=2000;_tick(NULL);assert(!tv.running);now+=500;_tick(NULL);assert(tv.running);
+ _cancel(NULL);passive_result=1;now+=500;_tick(NULL);assert(tv.auto_attempted);passive_result=0;now+=500;_tick(NULL);assert(!tv.running); // I2C error cannot fake removal
+ begin();n_cfg.tv_auto=1;hwtype=FUSE_NX_HW_TYPE_HOAG;gui_tv_auto_configure();now+=10000;_tick(NULL);assert(!passive_calls&&!hardware); // no auto on Lite
+ begin();n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();_start(NULL);gui_tv_shutdown(false);assert(tv.auto_suspended&&!tv.task);
+ n=passive_calls;now+=10000;_tick(NULL);assert(passive_calls==n);gui_tv_resume_detection();assert(tv.task&&!tv.auto_suspended);
+ now+=2000;_tick(NULL);now+=500;_tick(NULL);assert(tv.running);_cancel(NULL); // resume after exclusive operation
+ begin();n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();_start(NULL);_cancel(NULL);gui_tv_shutdown(false);gui_tv_resume_detection();
+ now+=3000;_tick(NULL);now+=500;_tick(NULL);assert(!tv.running&&tv.auto_attempted); // manual stop survives diagnostic suspension
+ begin();n_cfg.tv_keep_screen=0;_start(NULL);next_state=DOCK_DONE;tv.dock.dp_on=tv.dock.hpd=true;_tick(NULL);assert(tv.mirrored&&gui_tv_console_dark()&&bl_level==0);
+ h_cfg.backlight=190;hpd=0;_tick(NULL);stopped();assert(!gui_tv_console_dark()&&bl_level==170); // current brightness restored
+ begin();n_cfg.tv_keep_screen=0;_start(NULL);next_state=DOCK_DONE;tv.dock.dp_on=tv.dock.hpd=true;_tick(NULL);int bc=bl_calls;
+ hw_display_external_end();stopped();assert(!gui_tv_console_dark()&&bl_level==0&&bl_calls==bc); // no backlight flash before OS teardown
+ begin();_start(NULL);next_state=DOCK_DONE;tv.dock.dp_on=tv.dock.hpd=true;_tick(NULL);assert(!tv.console_dark);
+ n_cfg.tv_keep_screen=0;gui_tv_screen_configure();assert(tv.console_dark&&bl_level==0);n_cfg.tv_keep_screen=1;gui_tv_screen_configure();assert(!tv.console_dark&&bl_level==110);
+ 
+ begin();_start(NULL);n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();_cancel(NULL);n=starts;
+ now+=3000;_tick(NULL);now+=500;_tick(NULL);assert(starts==n&&!tv.running&&tv.auto_attempted); // enable while active then Stop holds
+ begin();n_cfg.tv_auto=1;passive_result=1;gui_tv_auto_configure();now+=2000;_tick(NULL);assert(passive_calls==1);
+ now+=500;_tick(NULL);assert(passive_calls==1);now+=1500;_tick(NULL);now+=2000;_tick(NULL);assert(passive_calls==3&&tv.auto_errors==3);
+ now+=2000;_tick(NULL);assert(passive_calls==3);now+=3000;_tick(NULL);assert(passive_calls==4); // I2C failures back off
+ begin();now=UINT32_MAX-1000;n_cfg.tv_auto=1;passive_inserted=passive_dock=1;gui_tv_auto_configure();now+=2000;_tick(NULL);now+=500;_tick(NULL);assert(tv.running); // auto timer rollover
  printf("PASS: %d TV lifecycle scenarios; no physical hardware exercised.\n",scenarios);
  return 0;
 }

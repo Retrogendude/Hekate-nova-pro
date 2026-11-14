@@ -1,6 +1,6 @@
 from pathlib import Path
 import json, re
-root = Path(__file__).resolve().parent / 'hekate-nova-pro-v19-tv/nyx/nyx_gui'
+root = Path(__file__).resolve().parent / 'hekate-nova-pro-v20-dock/nyx/nyx_gui'
 phrases = {}
 def add(en, fr, es, it, ru, de, pt): phrases[en] = [en, fr, es, it, ru, de, pt]
 add('TV / Dock','TV / Dock','TV / Base','TV / Dock','ТВ / Док','TV / Dock','TV / Base')
@@ -120,6 +120,52 @@ add('Use the console directly in the official dock.\nConnect dock power and HDMI
     'Die Konsole direkt in das offizielle Dock einsetzen.\nStrom und HDMI anschließen, dann TV starten.\n\nStart außerhalb des Docks möglich: innerhalb von 45 Sekunden andocken.\nFenster schließen, um Nova am TV zu verwenden.\nVOL- stoppt die TV-Ausgabe. Der Konsolenbildschirm bleibt an.',
     'Coloque a consola diretamente na base oficial.\nLigue alimentação e HDMI e ative a TV.\n\nPode iniciar fora da base e colocar a consola em até 45 segundos.\nFeche esta janela para usar o Nova na TV.\nVOL- desliga a saída. O ecrã da consola continua ligado.')
 
+
+add('Automatic dock detection','Détection automatique du dock','Detección automática de la base','Rilevamento automatico dock','Автоопределение дока','Automatische Dock-Erkennung','Deteção automática da base')
+add('Enable automatic detection, then select Save to keep your choice after restarting Nyx.',
+    'Activez la détection automatique, puis Enregistrer pour conserver ce choix au redémarrage de Nyx.',
+    'Activa la detección automática y pulsa Guardar para conservarla al reiniciar Nyx.',
+    'Attiva il rilevamento automatico e scegli Salva per mantenerlo al riavvio di Nyx.',
+    'Включите автоопределение и нажмите «Сохранить», чтобы сохранить выбор после перезапуска Nyx.',
+    'Automatische Erkennung aktivieren und Speichern wählen, damit die Wahl nach dem Nyx-Neustart bleibt.',
+    'Ative a deteção automática e selecione Guardar para manter a escolha ao reiniciar o Nyx.')
+add('Close the TV window to keep using Nova. VOL- stops TV output.',
+    'Fermez la fenêtre TV pour utiliser Nova. VOL- coupe la sortie TV.',
+    'Cierra la ventana de TV para usar Nova. VOL- detiene la salida de TV.',
+    'Chiudi la finestra TV per usare Nova. VOL- interrompe l’uscita TV.',
+    'Закройте окно ТВ для работы с Nova. VOL- отключает вывод на ТВ.',
+    'TV-Fenster schließen, um Nova zu nutzen. VOL- stoppt die TV-Ausgabe.',
+    'Feche a janela de TV para usar o Nova. VOL- desliga a saída de TV.')
+add('Console screen with TV','Écran console avec la TV','Pantalla de consola con TV','Schermo console con TV','Экран консоли с ТВ','Konsolenbildschirm mit TV','Ecrã da consola com TV')
+add('OFF turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.',
+    'OFF éteint l’écran de la console après activation de la TV. Il se rallume à l’arrêt de la TV. Sélectionnez Enregistrer pour mémoriser ce choix.',
+    'OFF apaga la pantalla de la consola al iniciar la TV. Se enciende al detenerla. Pulsa Guardar para conservar la elección.',
+    'OFF spegne lo schermo della console dopo l’avvio TV. Si riaccende quando la TV si ferma. Scegli Salva per mantenere la scelta.',
+    'OFF выключает экран консоли после запуска ТВ. Он включится после остановки ТВ. Нажмите «Сохранить», чтобы запомнить выбор.',
+    'OFF schaltet den Konsolenbildschirm nach TV-Start aus. Beim TV-Stopp geht er wieder an. Speichern übernimmt die Wahl.',
+    'OFF desliga o ecrã da consola após ativar a TV. Volta a ligar ao parar a TV. Selecione Guardar para memorizar a escolha.')
+old='Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\nYou can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\nVOL- stops TV output. The console screen stays on.'
+new=old.replace('VOL- stops TV output. The console screen stays on.', 'VOL- stops TV output and restores the console screen.')
+translations=list(phrases[old]);translations[0]=new
+for i,(a,b) in enumerate([
+('L’écran de la console reste allumé.','L’écran de la console se rallume.'),
+('La pantalla de la consola sigue encendida.','La pantalla de la consola vuelve a encenderse.'),
+('Lo schermo della console resta acceso.','Lo schermo della console si riaccende.'),
+('Экран консоли остаётся включённым.','Экран консоли включится снова.'),
+('Der Konsolenbildschirm bleibt an.','Der Konsolenbildschirm geht wieder an.'),
+('O ecrã da consola continua ligado.','O ecrã da consola volta a ligar.')],1):translations[i]=translations[i].replace(a,b)
+phrases[new]=translations
+
+
+add('TV display','Affichage TV','Pantalla de TV','Visualizzazione TV','Вывод ТВ','TV-Anzeige','Apresentação TV')
+add('TV only','TV seule','Solo TV','Solo TV','Только ТВ','Nur TV','Só TV')
+add('TV + console','TV + console','TV + consola','TV + console','ТВ + консоль','TV + Konsole','TV + consola')
+old_help='OFF turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.'
+new_help=old_help.replace('OFF turns off','TV only turns off')
+values=list(phrases[old_help]);values[0]=new_help
+for i in range(1,7): values[i]=values[i].replace('OFF',phrases['TV only'][i],1)
+phrases[new_help]=values
+
 catalog = root / 'localization_catalog.inc'
 lines = {}
 for line in catalog.read_text(encoding='utf-8').splitlines():
@@ -135,9 +181,9 @@ first = [keys[i].encode('utf-8')[0] for i in patterns]
 starts = [sum(ch < code for ch in first) for code in range(257)]
 tail = 'static const uint16_t locale_pattern_rows[] = {' + ', '.join(map(str,patterns)) + '};\n'
 tail += 'static const uint16_t locale_pattern_start[257] = {' + ', '.join(map(str,starts)) + '};\n'
-catalog.write_text('/* Nova catalog, including TV v19. en fr es it ru de pt. */\nstatic const locale_entry locale_catalog[] = {\n' + '\n'.join(lines[key] for key in keys) + '\n};\n' + tail, encoding='utf-8')
+catalog.write_text('/* Nova catalog, including Dock v20. en fr es it ru de pt. */\nstatic const locale_entry locale_catalog[] = {\n' + '\n'.join(lines[key] for key in keys) + '\n};\n' + tail, encoding='utf-8')
 data = json.loads((root / 'localization_catalog.json').read_text(encoding='utf-8'))
 data.update(phrases)
 (root / 'localization_catalog.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
-(root / 'localization_tv_v19.json').write_text(json.dumps(phrases, ensure_ascii=False, indent=2), encoding='utf-8')
+(root / 'localization_dock_v20.json').write_text(json.dumps(phrases, ensure_ascii=False, indent=2), encoding='utf-8')
 print(f'PASS: {len(phrases)} TV phrases in seven languages.')

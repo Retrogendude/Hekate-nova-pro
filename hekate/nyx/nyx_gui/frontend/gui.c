@@ -752,6 +752,7 @@ void gui_diagnostics_resume(u32 groups)
 		}
 	}
 	diagnostics_suspended = false;
+	gui_tv_resume_detection();
 }
 
 bool gui_diagnostics_inputs_ready(void)
@@ -2455,6 +2456,9 @@ void nyx_load_and_run()
 		lv_task_t *task_run_sd_errors = lv_task_create(_nyx_sd_card_issues_warning, LV_TASK_ONESHOT, LV_TASK_PRIO_LOWEST, NULL);
 		lv_task_once(task_run_sd_errors);
 	}
+
+	// Start the optional dock watcher only after all GUI/input initialization.
+	gui_tv_auto_configure();
 
 	// Gui loop.
 	if (h_cfg.t210b01)

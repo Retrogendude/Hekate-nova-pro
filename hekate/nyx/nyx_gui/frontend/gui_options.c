@@ -323,7 +323,8 @@ static lv_res_t _autoboot_delay_action(lv_obj_t *ddlist)
 
 static lv_res_t _slider_brightness_action(lv_obj_t * slider)
 {
-	display_backlight_brightness(lv_slider_get_value(slider) - 20, 0);
+	if (!gui_tv_console_dark())
+		display_backlight_brightness(lv_slider_get_value(slider) - 20, 0);
 	h_cfg.backlight = lv_slider_get_value(slider);
 	ini_changes_made = true;
 
@@ -1310,6 +1311,27 @@ static lv_obj_t *_settings_toggle(lv_obj_t *card, const char *title, lv_action_t
     return button;
 }
 
+static lv_res_t _tv_auto_action(lv_obj_t *button)
+{
+    n_cfg.tv_auto = !n_cfg.tv_auto;
+    nyx_changes_made = true;
+    lv_btn_set_state(button, n_cfg.tv_auto ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
+    nyx_generic_onoff_toggle(button);
+    gui_tv_auto_configure();
+    return LV_RES_OK;
+}
+
+static lv_res_t _tv_screen_action(lv_obj_t *button)
+{
+    u32 selected = lv_obj_get_free_num(button);
+    if (selected > 1)
+        return LV_RES_OK;
+    n_cfg.tv_keep_screen = selected;
+    nyx_changes_made = true;
+    gui_tv_screen_configure();
+    return LV_RES_OK;
+}
+
 lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
 {
     (void)parent_button;
@@ -1323,15 +1345,21 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     lv_obj_t *interface_page = lv_tabview_add_tab(tabs, "Interface"); settings_page(interface_page);
     lv_obj_t *system = lv_tabview_add_tab(tabs, "System"); settings_page(system);
     lv_obj_t *tv_page = lv_tabview_add_tab(tabs, "TV / Dock"); settings_page(tv_page);
-    lv_obj_t *tv_card = _settings_card(tv_page, 0, 1);
+    lv_obj_t *tv_card = _settings_card(tv_page, 0, 2);
     _settings_button(tv_card, "USB-C TV / Dock", gui_tv_open);
     _settings_help(tv_card, "Connect the console directly to the official dock, then start TV output.");
-    tv_card = _settings_card(tv_page, 1, 1);
+    tv_card = _settings_card(tv_page, 1, 2);
+    _settings_toggle(tv_card, "Automatic dock detection", _tv_auto_action, n_cfg.tv_auto);
+    _settings_help(tv_card, "Enable automatic detection, then select Save to keep your choice after restarting Nyx.");
+    tv_card = _settings_card(tv_page, 2, 2);
     _settings_heading(tv_card, "TV controls");
     lv_obj_t *tv_help = nyx_nova_text(tv_card,
-        nyx_tr("TV output stays active when you return to the menus. VOL- stops it. Restart it manually after undocking."),
+        nyx_tr("Close the TV window to keep using Nova. VOL- stops TV output."),
         24, 82, lv_obj_get_width(tv_card) - 48, NOVA_BODY);
     nyx_nova_fit_text(tv_help, lv_obj_get_height(tv_card) - 106);
+    tv_card = _settings_card(tv_page, 3, 2);
+    _settings_choices(tv_card, "TV display", "TV only\nTV + console", n_cfg.tv_keep_screen, 2, _tv_screen_action, false);
+    _settings_help(tv_card, "TV only turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.");
     lv_obj_t *card = _settings_card(interface_page, 0, 2);
     _settings_button(card, SYMBOL_EDIT" Appearance & language", nyx_create_appearance_window);
     _settings_help(card, "Choose your language, reading comfort and background in one place.");

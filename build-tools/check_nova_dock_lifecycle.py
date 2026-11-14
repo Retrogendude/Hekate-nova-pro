@@ -7,11 +7,11 @@ from pathlib import Path
 import subprocess, hashlib, json
 
 work = Path(__file__).resolve().parent
-tests = work / 'nova-tv-tests'
-project = work / 'hekate-nova-pro-v19-tv'
+tests = work / 'nova-dock-tests'
+project = work / 'hekate-nova-pro-v20-dock'
 source = project / 'nyx/nyx_gui/frontend/gui_tv.c'
 code = source.read_text()
-for header in ('gui_tv.h', 'gui_nova.h', '../localization.h'):
+for header in ('gui_tv.h', 'gui_nova.h', '../localization.h', '../config.h'):
     code = code.replace('#include \"' + header + '\"', '')
 assert code.count('(u32)tv.allocation') == 1
 code = code.replace('(u32)tv.allocation', '(uintptr_t)tv.allocation')
@@ -25,7 +25,7 @@ command = [str(work / 'toolchains/w64devkit/bin/gcc.exe'),
 subprocess.run(command, check=True)
 result = subprocess.run([str(tests / 'lifecycle.exe')], check=True, text=True, capture_output=True)
 print(result.stdout.strip())
-(work / 'nova-tv-lifecycle-check.json').write_text(json.dumps({
+(work / 'nova-dock-lifecycle-check.json').write_text(json.dumps({
     'result': result.stdout.strip(),
     'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
     'hardware_validation': False,

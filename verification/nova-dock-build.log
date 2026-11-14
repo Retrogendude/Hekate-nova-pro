@@ -10,8 +10,8 @@ Building build/hekate/nova_splash.o
 Building build/hekate/tui.o
 Building build/hekate/fe_info.o
 Building build/hekate/fe_tools.o
-Building build/hekate/bpmp.o
 Building build/hekate/ccplex.o
+Building build/hekate/bpmp.o
 Building build/hekate/clock.o
 Building build/hekate/di.o
 Building build/hekate/i2c.o
@@ -85,17 +85,17 @@ C:/devkitPro/devkitA64/bin/../lib/gcc/aarch64-none-elf/16.1.0/../../../../aarch6
 Building ../build/nyx/nova_splash.o
 Building ../build/nyx/gui.o
 Building ../build/nyx/gui_tv.o
-./nyx_gui/frontend/gui.c:1391:13: warning: '_create_text_button' defined but not used [-Wunused-function]
- 1391 | static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, const char *btn_name, lv_action_t action)
+./nyx_gui/frontend/gui.c:1392:13: warning: '_create_text_button' defined but not used [-Wunused-function]
+ 1392 | static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, const char *btn_name, lv_action_t action)
       |             ^~~~~~~~~~~~~~~~~~~
 Building ../build/nyx/gui_info.o
 Building ../build/nyx/gui_tools.o
 Building ../build/nyx/gui_options.o
-./nyx_gui/frontend/gui_options.c:1110:17: warning: '_create_window_language' defined but not used [-Wunused-function]
- 1110 | static lv_res_t _create_window_language(lv_obj_t *btn)
+./nyx_gui/frontend/gui_options.c:1111:17: warning: '_create_window_language' defined but not used [-Wunused-function]
+ 1111 | static lv_res_t _create_window_language(lv_obj_t *btn)
       |                 ^~~~~~~~~~~~~~~~~~~~~~~
-./nyx_gui/frontend/gui_options.c:1020:17: warning: '_create_window_home_layout' defined but not used [-Wunused-function]
- 1020 | static lv_res_t _create_window_home_layout(lv_obj_t *btn)
+./nyx_gui/frontend/gui_options.c:1021:17: warning: '_create_window_home_layout' defined but not used [-Wunused-function]
+ 1021 | static lv_res_t _create_window_home_layout(lv_obj_t *btn)
       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
 Building ../build/nyx/gui_appearance.o
 Building ../build/nyx/gui_readability.o
@@ -104,7 +104,6 @@ Building ../build/nyx/gui_choices.o
 Building ../build/nyx/gui_nova.o
 Building ../build/nyx/gui_nova_reflection.o
 Building ../build/nyx/gui_nova_theme.o
-Building ../build/nyx/gui_color_picker.o
 ./nyx_gui/frontend/gui_nova_reflection.c: In function 'reflection_border_draw':
 ./nyx_gui/frontend/gui_nova_reflection.c:154:13: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
   154 |             if(left<clip->x1)left=clip->x1;if(right>clip->x2)right=clip->x2;
@@ -119,16 +118,17 @@ Building ../build/nyx/gui_color_picker.o
 ./nyx_gui/frontend/gui_nova_theme.c:123:30: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
   123 |     if(!mounted)sd_unmount();if(!pixels)return;
       |                              ^~
+Building ../build/nyx/gui_color_picker.o
 Building ../build/nyx/nova_image.o
 Building ../build/nyx/lodepng_nyx.o
 Building ../build/nyx/gui_nova_report.o
 Building ../build/nyx/gui_diagnostics.o
 Building ../build/nyx/gui_component_summary.o
 Building ../build/nyx/gui_interactive.o
+Building ../build/nyx/gui_stick.o
 ./nyx_gui/frontend/gui_interactive.c:66:13: warning: 'gui_uart_puts' defined but not used [-Wunused-function]
    66 | static void gui_uart_puts(const char *text){(void)text;}
       |             ^~~~~~~~~~~~~
-Building ../build/nyx/gui_stick.o
 Building ../build/nyx/gui_emmc_tools.o
 Building ../build/nyx/gui_emummc_tools.o
 Building ../build/nyx/gui_tools_partition_manager.o
@@ -209,10 +209,10 @@ Building ../build/nyx/probe_storage.o
 Building ../build/nyx/probe_gamecard.o
 Building ../build/nyx/probe_lowlevel.o
 Building ../build/nyx/als.o
+Building ../build/nyx/hos.o
 ../bdk/input/als.c:57:28: warning: 'opt_win_cal_aula' defined but not used [-Wunused-const-variable=]
    57 | static const opt_win_cal_t opt_win_cal_aula[] = {
       |                            ^~~~~~~~~~~~~~~~
-Building ../build/nyx/hos.o
 Building ../build/nyx/pkg1.o
 Building ../build/nyx/pkg2.o
 Building ../build/nyx/diskio.o
@@ -299,7 +299,7 @@ nyx was built with the following flags:
 CFLAGS:  -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -O2 -g -gdwarf-4 -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -std=gnu11 -DNYX_LOAD_ADDR=0x81000000 -DNYX_MAGIC=0x43544347  -DNYX_VER_MJ=1 -DNYX_VER_MN=9 -DNYX_VER_HF=4 -DNYX_VER_RL=0 -DBDK_MINERVA_CFG_FROM_RAM -DBDK_HW_EXTRA_DEINIT -DBDK_SDMMC_EXTRA_PRINT -DGFX_INC='../nyx/nyx_gui/gfx/gfx.h' -DFFCFG_INC='../nyx/nyx_gui/libs/fatfs/ffconf.h' -DHAVE_CPU_STUB=1
 LDFLAGS: -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -nostartfiles -lgcc -Wl,--nmagic,--gc-sections -Xlinker --defsym=NYX_LOAD_ADDR=0x81000000
 --------------------------------------
-Nyx size: 2124009 Bytes
+Nyx size: 2132889 Bytes
 --------------------------------------
 make[1]: warning: -j4 forced in submake: resetting jobserver mode.
 --------------------------------------

@@ -107,3 +107,8 @@ static void nyx_nova_fixed_page(lv_obj_t*o) {}
 static lv_obj_t*nyx_nova_panel(lv_obj_t*p,int x,int y,int w,int h) {return p;}
 static lv_obj_t*nyx_nova_text(lv_obj_t*p,const char*t,int x,int y,int w,int role) {return p;}
 static const char*nyx_tr(const char*t) {return t;}
+
+static struct {u32 tv_auto,tv_keep_screen;} n_cfg;
+static struct {u32 backlight;} h_cfg;
+static int bl_level=110,bl_calls;
+static void display_backlight_brightness(int level,int ms) {bl_level=level;bl_calls++;}

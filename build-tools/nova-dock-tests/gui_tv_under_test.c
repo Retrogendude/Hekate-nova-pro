@@ -1,4 +1,4 @@
-/* Hekate TV experiment. Manual start only; no changes on normal boot.
+/* Optional dock service. Automatic detection is disabled unless enabled in Nyx.
  * Integration code licensed under GPL-2.0, as Hekate.
  * Dock/video driver provenance is recorded in TV-SOURCES.md.
  */
@@ -8,6 +8,7 @@
 #include <power/max77620.h>
 #include <libs/fatfs/ff.h>
 #include <string.h>
+
 
 
 
@@ -29,6 +30,9 @@ static struct {
     bpmp_freq_t clock;
     bool clock_saved, running, mirrored, rails_saved, log_full;
     bool pad_saved, hpd_gpio, hpd_oe;
+    bool auto_attempted, auto_suspended, resume_arm;
+    bool console_dark, hardware_exit;
+    u32 auto_since, auto_poll_at, auto_samples, auto_errors;
     u32 hpd_mux;
     u8 rails[2];
     int dirty_first, dirty_last;
@@ -36,6 +40,101 @@ static struct {
 } tv;
 
 static lv_res_t _cancel(lv_obj_t *btn);
+static lv_res_t _begin(bool automatic);
+static void _tick(void *param);
+
+bool gui_tv_console_dark(void)
+{
+    return tv.console_dark;
+}
+
+void gui_tv_screen_configure(void)
+{
+    bool dark = tv.mirrored && !n_cfg.tv_keep_screen;
+    if (dark && !tv.console_dark) {
+        display_backlight_brightness(0, 150);
+        tv.console_dark = true;
+    } else if (!dark && tv.console_dark) {
+        if (!tv.hardware_exit) {
+            int level = (int)h_cfg.backlight - 20;
+            if (level < 10) level = 10;
+            if (level > 200) level = 200;
+            display_backlight_brightness(level, 150);
+        }
+        tv.console_dark = false;
+    }
+}
+
+static bool _auto_enabled(void)
+{
+    return n_cfg.tv_auto == 1 && !tv.auto_suspended && fuse_read_hw_type() != FUSE_NX_HW_TYPE_HOAG;
+}
+
+static void _auto_poll(void)
+{
+    u32 now = get_tmr_ms();
+    u32 interval = tv.auto_errors >= 3 ? 5000 : tv.auto_errors ? 2000 : 500;
+    if (!_auto_enabled() || (u32)(now - tv.auto_since) < 2000 ||
+        (u32)(now - tv.auto_poll_at) < interval)
+        return;
+    tv.auto_poll_at = now;
+    bool inserted, dock;
+    bpmp_freq_t clock = bpmp_fid_current;
+    bpmp_clk_rate_set(BPMP_CLK_NORMAL);
+    int r = pd_dock_attached(&inserted, &dock);
+    bpmp_clk_rate_set(clock);
+    if (r) {
+        if (tv.auto_errors < 3) tv.auto_errors++;
+        tv.auto_samples = 0; // An I2C error is not an unplug event.
+        return;
+    }
+    tv.auto_errors = 0;
+    if (!inserted) {
+        tv.auto_attempted = false;
+        tv.auto_samples = 0;
+        return;
+    }
+    if (!dock || tv.auto_attempted) {
+        tv.auto_samples = 0;
+        return;
+    }
+    if (++tv.auto_samples >= 2) {
+        tv.auto_samples = 0;
+        tv.auto_attempted = true; // One automatic attempt per physical insertion.
+        _begin(true);
+    }
+}
+
+void gui_tv_auto_configure(void)
+{
+    tv.auto_suspended = false;
+    tv.resume_arm = false;
+    tv.auto_attempted = false;
+    tv.auto_samples = 0;
+    tv.auto_errors = 0;
+    tv.auto_since = tv.auto_poll_at = get_tmr_ms();
+    if (_auto_enabled() && !tv.task)
+        tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
+    if (!_auto_enabled() && !tv.running && !tv.mirrored && !tv.win && tv.task) {
+        lv_task_del(tv.task);
+        tv.task = NULL;
+    }
+}
+
+void gui_tv_resume_detection(void)
+{
+    if (!tv.auto_suspended)
+        return;
+    tv.auto_suspended = false;
+    if (tv.resume_arm)
+        tv.auto_attempted = false;
+    tv.resume_arm = false;
+    tv.auto_samples = 0;
+    tv.auto_errors = 0;
+    tv.auto_since = tv.auto_poll_at = get_tmr_ms();
+    if (_auto_enabled() && !tv.task)
+        tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
+}
 
 static void _log(const char *line)
 {
@@ -114,6 +213,7 @@ static void _stop(void)
 {
     // Stop DMA before freeing its framebuffer, including partial starts.
     tv.mirrored = false;
+    gui_tv_screen_configure();
     if (tv.clock_saved)
         bpmp_clk_rate_set(BPMP_CLK_NORMAL);
     dpout_video_stop();
@@ -140,7 +240,7 @@ static void _stop(void)
         free(tv.allocation);
     tv.allocation = NULL;
     tv.fb = NULL;
-    if (!tv.win && tv.task) {
+    if (!tv.win && tv.task && !_auto_enabled()) {
         lv_task_del(tv.task);
         tv.task = NULL;
     }
@@ -149,6 +249,8 @@ static void _stop(void)
 void gui_tv_shutdown(bool save_report)
 {
     bool was_active = tv.running || tv.mirrored || tv.clock_saved;
+    tv.resume_arm |= was_active && n_cfg.tv_auto == 1;
+    tv.auto_suspended = true;
     if (was_active)
         _log("Stopping external display before subsystem handoff.");
     _stop();
@@ -166,7 +268,9 @@ void gui_tv_shutdown(bool save_report)
 // Strong override of the BDK teardown hook; no SD access after sd_end().
 void hw_display_external_end(void)
 {
+    tv.hardware_exit = true;
     gui_tv_shutdown(false);
+    tv.hardware_exit = false;
 }
 
 void gui_tv_dirty(int y1, int y2)
@@ -204,8 +308,12 @@ static void _tick(void *param)
         }
         return;
     }
-    if (!tv.running)
+    if (!tv.running) {
+        if (_auto_enabled() && (btn_read_vol() & BTN_VOL_DOWN))
+            tv.auto_attempted = true;
+        _auto_poll();
         return;
+    }
     // Includes the upstream's unbounded cable/hub waits; unsigned for rollover.
     if ((u32)(get_tmr_ms() - tv.started) >= TV_RUN_LIMIT_MS) {
         _log("Session timeout after 45 seconds.");
@@ -264,13 +372,14 @@ static void _tick(void *param)
         tv.dirty_last = 719;
         // Only PD negotiation needs the base clock. Restore UI performance.
         bpmp_clk_rate_set(tv.clock);
+        gui_tv_screen_configure();
     }
     bool saved = _save();
     _show(tv.message);
     _log(saved ? "Report saved to SD." : "Report not saved (SD unavailable or write failed).");
 }
 
-static lv_res_t _start(lv_obj_t *btn)
+static lv_res_t _begin(bool automatic)
 {
     if (!tv.task)
         tv.task = lv_task_create(_tick, 40, LV_TASK_PRIO_MID, NULL);
@@ -284,13 +393,14 @@ static lv_res_t _start(lv_obj_t *btn)
         _show("Switch Lite does not support TV output.");
         return LV_RES_OK;
     }
+    tv.auto_attempted = true;
     tv.log_size = 0;
     tv.log_full = false;
     tv.run_path[0] = 0;
     tv.started = get_tmr_ms();
     memset(&tv.sink, 0, sizeof(tv.sink));
     memset(&tv.video, 0, sizeof(tv.video));
-    _log("Hekate Nova Pro 19-TV - manual dock output");
+    _log(automatic ? "Hekate Nova Pro 20-Dock - automatic dock output" : "Hekate Nova Pro 20-Dock - manual dock output");
     _log("HWTest-RCM upstream 3731bfb471515a5f83709aa496c9cdb0a9aeff83");
     tv.clock = bpmp_fid_current;
     tv.clock_saved = true;
@@ -336,8 +446,16 @@ static lv_res_t _start(lv_obj_t *btn)
     return LV_RES_OK;
 }
 
+static lv_res_t _start(lv_obj_t *btn)
+{
+    (void)btn;
+    return _begin(false);
+}
+
 static lv_res_t _cancel(lv_obj_t *btn)
 {
+    tv.auto_attempted = true;
+    tv.auto_samples = 0;
     if (!tv.log_size) {
         _show("TV output is off. Start TV connects to the dock.");
         return LV_RES_OK;
@@ -358,7 +476,7 @@ static lv_res_t _signal(lv_obj_t *obj, lv_signal_t sign, void *param)
         tv.win = NULL;
         tv.status = NULL;
         tv.panel = NULL;
-        if (!tv.running && !tv.mirrored) {
+        if (!tv.running && !tv.mirrored && !_auto_enabled()) {
             if (tv.task) lv_task_del(tv.task);
             tv.task = NULL;
             dpout_set_logger(NULL);
@@ -384,7 +502,7 @@ lv_res_t gui_tv_open(lv_obj_t *btn)
     if (!tv.message[0])
         _show("Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\n"
               "You can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\n"
-              "VOL- stops TV output. The console screen stays on.");
+              "VOL- stops TV output and restores the console screen.");
     else
         _show(tv.message);
     if (!tv.task)

@@ -79,6 +79,8 @@ typedef struct _nyx_config
 	char launch_image[64]; // Optional BMP for the Launch tile only, under /wallpapers.
 	u32 boot_logo_color; // Independent splash emblem tint, RGB24.
 	u32 boot_bar_color; // Independent splash progress tint, RGB24.
+	u32 tv_auto; // Appended: automatic official dock detection, off by default.
+	u32 tv_keep_screen; // 1 keeps LCD visible; 0 blanks it after TV initialization.
 } nyx_config;
 
 extern hekate_config h_cfg;

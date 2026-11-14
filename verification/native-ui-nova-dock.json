@@ -1,5 +1,5 @@
 {
-  "native_scenes": 532,
+  "native_scenes": 616,
   "fonts": [
     "Lecture.nyxf",
     "Lecture-renforcee.nyxf",
@@ -14,6 +14,6 @@
   ],
   "tv_settings_and_status_views": 6,
   "failures": [],
-  "elapsed_seconds": 4.4,
+  "elapsed_seconds": 4.5,
   "hardware_io": "substituted; no console or SD operations performed"
 }

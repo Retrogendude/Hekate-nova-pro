@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v19-tv'
-directory=work/'lvgl-preview-nova-tv';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v20-dock'
+directory=work/'lvgl-preview-nova-dock';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -50,6 +50,9 @@ static struct {lv_obj_t *bar_bg,*mid,*time_temp,*temp_symbol,*temp_degrees,*batt
 static bool ini_changes_made,nyx_changes_made,autoboot_first_time;
 static lv_obj_t *autoboot_btn;
 static lv_res_t gui_tv_open(lv_obj_t *btn);
+static void gui_tv_auto_configure(void){}
+static void gui_tv_screen_configure(void){}
+static bool gui_tv_console_dark(void){return false;}
 static char *text_color="#FF0000";
 #define s_printf sprintf
 static lv_obj_t *close_btn,*autorcm_btn;
@@ -422,6 +425,10 @@ static void preview_click(lv_obj_t *button){
  assert(button&&lv_obj_get_click(button));lv_area_t coords;lv_obj_get_coords(button,&coords);int x=(coords.x1+coords.x2)/2,y=(coords.y1+coords.y2)/2;
  assert(preview_hit(x,y)==button);preview_click_point(x,y);
 }
+static lv_obj_t*find_choice_action(lv_obj_t*object,lv_action_t action,u32 value){
+ if(type_is(object,"lv_btn")&&lv_btn_get_action(object,LV_BTN_ACTION_CLICK)==choice_pressed&&lv_obj_get_free_num(object)==value){choices_ext*ext=lv_obj_get_ext_attr(lv_obj_get_parent(object));if(ext->action==action)return object;}
+ for(lv_obj_t*c=lv_obj_get_child(object,NULL);c;c=lv_obj_get_child(object,c)){lv_obj_t*r=find_choice_action(c,action,value);if(r)return r;}return NULL;
+}
 static lv_obj_t *find_action(lv_obj_t *object,lv_action_t action){
  if(type_is(object,"lv_btn")&&lv_btn_get_action(object,LV_BTN_ACTION_CLICK)==action)return object;
  for(lv_obj_t *child=lv_obj_get_child(object,NULL);child;child=lv_obj_get_child(object,child)){lv_obj_t *found=find_action(child,action);if(found)return found;}
@@ -532,7 +539,7 @@ static lv_res_t gui_tv_open(lv_obj_t *btn)
     if (!tv.message[0])
         _show("Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\n"
               "You can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\n"
-              "VOL- stops TV output. The console screen stays on.");
+              "VOL- stops TV output and restores the console screen.");
     else
         _show(tv.message);
     if (!tv.task)
@@ -549,6 +556,8 @@ assert(argc==7);strcpy(font_root,argv[1]);
 FILE*f=fopen(argv[2],"rb");assert(f);fseek(f,0,SEEK_END);u32 bytes=ftell(f);rewind(f);void*res=VirtualAlloc((void*)0xEE000000,bytes,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);assert(res==(void*)0xEE000000);assert(fread(res,1,bytes,f)==bytes);fclose(f);
 n_cfg.boot_logo_color=n_cfg.boot_bar_color=0x55C9F1;n_cfg.timedst=1;n_cfg.nova_logo_color=n_cfg.nova_icon_color=0x55C9F1;n_cfg.nova_selection_color=0x1C2937;n_cfg.theme_bg=0x141A19;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=100;n_cfg.nova_icon_opacity=100;n_cfg.font_size=atoi(argv[5]);strcpy(n_cfg.font_file,getenv("NYX_PREVIEW_FONT")?getenv("NYX_PREVIEW_FONT"):"Lecture.nyxf");n_cfg.language=atoi(argv[4]);n_cfg.background_effect=0;n_cfg.background_speed=2;n_cfg.background_opacity=20;n_cfg.nova_halo=1;n_cfg.verification=1;h_cfg.autonogc=1;h_cfg.backlight=130;
 h_cfg.rcm_patched=getenv("NYX_PREVIEW_PATCHED")!=NULL;
+if(getenv("NYX_TEST_DOCK_AUTO"))n_cfg.tv_auto=atoi(getenv("NYX_TEST_DOCK_AUTO"));
+if(getenv("NYX_TEST_DOCK_SCREEN"))n_cfg.tv_keep_screen=atoi(getenv("NYX_TEST_DOCK_SCREEN"));
 if(getenv("NYX_RGB_LOGO"))n_cfg.nova_logo_color=strtoul(getenv("NYX_RGB_LOGO"),NULL,16);
 if(getenv("NYX_RGB_ICONS"))n_cfg.nova_icon_color=strtoul(getenv("NYX_RGB_ICONS"),NULL,16);
 if(getenv("NYX_RGB_SELECTION"))n_cfg.nova_selection_color=strtoul(getenv("NYX_RGB_SELECTION"),NULL,16);
@@ -824,6 +833,13 @@ if(getenv("NYX_TEST_HANDS")){
  if(!strcmp(argv[3],"screen-patterns")){nyx_component_result result;assert(nyx_component_get(11,&result)&&result.state>=NYX_COMPONENT_WARN);char *saved=nyx_component_detail_text(11);assert(saved&&strstr(saved,"0x1F"));free(saved);}
  verify_tree(lv_scr_act());verify_tree(lv_layer_top());printf("PASS: hands-on input, coverage, full-screen colors and POWER cleanup.\n");
 }
+if(!strcmp(argv[3],"nyx")&&atoi(argv[6])==2){
+ lv_indev_drv_t click_driver;lv_indev_drv_init(&click_driver);click_driver.type=LV_INDEV_TYPE_POINTER;click_driver.read=preview_pointer_read;preview_pointer_state=LV_INDEV_STATE_REL;lv_indev_drv_register(&click_driver);
+ lv_obj_t*a=find_action(root,_tv_auto_action);assert(a);
+ u32 automatic=n_cfg.tv_auto,keep=n_cfg.tv_keep_screen;
+ preview_click(a);assert(n_cfg.tv_auto==!automatic&&nyx_changes_made);preview_click(a);assert(n_cfg.tv_auto==automatic);
+ lv_obj_t*b=find_choice_action(root,_tv_screen_action,!keep);assert(b);preview_click(b);assert(n_cfg.tv_keep_screen==!keep);b=find_choice_action(root,_tv_screen_action,keep);assert(b);preview_click(b);assert(n_cfg.tv_keep_screen==keep);
+}
 printf("PASS UI %s language=%s size=%s tab=%s controls=%u\n",argv[3],argv[4],argv[5],argv[6],geometry_checks);return 0;}
 '''
 (directory/'preview.c').write_text(body,encoding='utf-8')
@@ -864,7 +880,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova-tv-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova-dock-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

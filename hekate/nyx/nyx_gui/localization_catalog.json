@@ -37222,5 +37222,95 @@
     "Вставьте консоль прямо в официальный док.\nПодключите питание и HDMI, затем включите ТВ.\n\nМожно начать вне дока и вставить консоль в течение 45 секунд.\nЗакройте это окно для работы с Nova на ТВ.\nVOL- отключает вывод. Экран консоли остаётся включённым.",
     "Die Konsole direkt in das offizielle Dock einsetzen.\nStrom und HDMI anschließen, dann TV starten.\n\nStart außerhalb des Docks möglich: innerhalb von 45 Sekunden andocken.\nFenster schließen, um Nova am TV zu verwenden.\nVOL- stoppt die TV-Ausgabe. Der Konsolenbildschirm bleibt an.",
     "Coloque a consola diretamente na base oficial.\nLigue alimentação e HDMI e ative a TV.\n\nPode iniciar fora da base e colocar a consola em até 45 segundos.\nFeche esta janela para usar o Nova na TV.\nVOL- desliga a saída. O ecrã da consola continua ligado."
+  ],
+  "Automatic dock detection": [
+    "Automatic dock detection",
+    "Détection automatique du dock",
+    "Detección automática de la base",
+    "Rilevamento automatico dock",
+    "Автоопределение дока",
+    "Automatische Dock-Erkennung",
+    "Deteção automática da base"
+  ],
+  "Enable automatic detection, then select Save to keep your choice after restarting Nyx.": [
+    "Enable automatic detection, then select Save to keep your choice after restarting Nyx.",
+    "Activez la détection automatique, puis Enregistrer pour conserver ce choix au redémarrage de Nyx.",
+    "Activa la detección automática y pulsa Guardar para conservarla al reiniciar Nyx.",
+    "Attiva il rilevamento automatico e scegli Salva per mantenerlo al riavvio di Nyx.",
+    "Включите автоопределение и нажмите «Сохранить», чтобы сохранить выбор после перезапуска Nyx.",
+    "Automatische Erkennung aktivieren und Speichern wählen, damit die Wahl nach dem Nyx-Neustart bleibt.",
+    "Ative a deteção automática e selecione Guardar para manter a escolha ao reiniciar o Nyx."
+  ],
+  "Close the TV window to keep using Nova. VOL- stops TV output.": [
+    "Close the TV window to keep using Nova. VOL- stops TV output.",
+    "Fermez la fenêtre TV pour utiliser Nova. VOL- coupe la sortie TV.",
+    "Cierra la ventana de TV para usar Nova. VOL- detiene la salida de TV.",
+    "Chiudi la finestra TV per usare Nova. VOL- interrompe l’uscita TV.",
+    "Закройте окно ТВ для работы с Nova. VOL- отключает вывод на ТВ.",
+    "TV-Fenster schließen, um Nova zu nutzen. VOL- stoppt die TV-Ausgabe.",
+    "Feche a janela de TV para usar o Nova. VOL- desliga a saída de TV."
+  ],
+  "Console screen with TV": [
+    "Console screen with TV",
+    "Écran console avec la TV",
+    "Pantalla de consola con TV",
+    "Schermo console con TV",
+    "Экран консоли с ТВ",
+    "Konsolenbildschirm mit TV",
+    "Ecrã da consola com TV"
+  ],
+  "OFF turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.": [
+    "OFF turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.",
+    "OFF éteint l’écran de la console après activation de la TV. Il se rallume à l’arrêt de la TV. Sélectionnez Enregistrer pour mémoriser ce choix.",
+    "OFF apaga la pantalla de la consola al iniciar la TV. Se enciende al detenerla. Pulsa Guardar para conservar la elección.",
+    "OFF spegne lo schermo della console dopo l’avvio TV. Si riaccende quando la TV si ferma. Scegli Salva per mantenere la scelta.",
+    "OFF выключает экран консоли после запуска ТВ. Он включится после остановки ТВ. Нажмите «Сохранить», чтобы запомнить выбор.",
+    "OFF schaltet den Konsolenbildschirm nach TV-Start aus. Beim TV-Stopp geht er wieder an. Speichern übernimmt die Wahl.",
+    "OFF desliga o ecrã da consola após ativar a TV. Volta a ligar ao parar a TV. Selecione Guardar para memorizar a escolha."
+  ],
+  "Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\nYou can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\nVOL- stops TV output and restores the console screen.": [
+    "Use the console directly in the official dock.\nConnect dock power and HDMI, then select Start TV.\n\nYou can start outside the dock, then dock within 45 seconds.\nClose this window to keep using Nova on your TV.\nVOL- stops TV output and restores the console screen.",
+    "Insérez la console directement dans le dock officiel.\nBranchez son alimentation et le HDMI, puis activez la TV.\n\nVous pouvez démarrer hors du dock, puis l’insérer sous 45 secondes.\nFermez cette fenêtre pour utiliser Nova sur votre TV.\nVOL- coupe la sortie TV. L’écran de la console se rallume.",
+    "Coloca la consola directamente en la base oficial.\nConecta alimentación y HDMI, y activa la TV.\n\nPuedes iniciar fuera de la base e insertar la consola antes de 45 segundos.\nCierra esta ventana para usar Nova en la TV.\nVOL- detiene la salida. La pantalla de la consola vuelve a encenderse.",
+    "Inserisci la console direttamente nel dock ufficiale.\nCollega alimentazione e HDMI, poi attiva la TV.\n\nPuoi avviare fuori dal dock e inserire la console entro 45 secondi.\nChiudi questa finestra per usare Nova sulla TV.\nVOL- interrompe l’uscita. Lo schermo della console si riaccende.",
+    "Вставьте консоль прямо в официальный док.\nПодключите питание и HDMI, затем включите ТВ.\n\nМожно начать вне дока и вставить консоль в течение 45 секунд.\nЗакройте это окно для работы с Nova на ТВ.\nVOL- отключает вывод. Экран консоли включится снова.",
+    "Die Konsole direkt in das offizielle Dock einsetzen.\nStrom und HDMI anschließen, dann TV starten.\n\nStart außerhalb des Docks möglich: innerhalb von 45 Sekunden andocken.\nFenster schließen, um Nova am TV zu verwenden.\nVOL- stoppt die TV-Ausgabe. Der Konsolenbildschirm geht wieder an.",
+    "Coloque a consola diretamente na base oficial.\nLigue alimentação e HDMI e ative a TV.\n\nPode iniciar fora da base e colocar a consola em até 45 segundos.\nFeche esta janela para usar o Nova na TV.\nVOL- desliga a saída. O ecrã da consola volta a ligar."
+  ],
+  "TV display": [
+    "TV display",
+    "Affichage TV",
+    "Pantalla de TV",
+    "Visualizzazione TV",
+    "Вывод ТВ",
+    "TV-Anzeige",
+    "Apresentação TV"
+  ],
+  "TV only": [
+    "TV only",
+    "TV seule",
+    "Solo TV",
+    "Solo TV",
+    "Только ТВ",
+    "Nur TV",
+    "Só TV"
+  ],
+  "TV + console": [
+    "TV + console",
+    "TV + console",
+    "TV + consola",
+    "TV + console",
+    "ТВ + консоль",
+    "TV + Konsole",
+    "TV + consola"
+  ],
+  "TV only turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.": [
+    "TV only turns off the console screen after TV output starts. The screen returns when TV output stops. Select Save to remember this choice.",
+    "TV seule éteint l’écran de la console après activation de la TV. Il se rallume à l’arrêt de la TV. Sélectionnez Enregistrer pour mémoriser ce choix.",
+    "Solo TV apaga la pantalla de la consola al iniciar la TV. Se enciende al detenerla. Pulsa Guardar para conservar la elección.",
+    "Solo TV spegne lo schermo della console dopo l’avvio TV. Si riaccende quando la TV si ferma. Scegli Salva per mantenere la scelta.",
+    "Только ТВ выключает экран консоли после запуска ТВ. Он включится после остановки ТВ. Нажмите «Сохранить», чтобы запомнить выбор.",
+    "Nur TV schaltet den Konsolenbildschirm nach TV-Start aus. Beim TV-Stopp geht er wieder an. Speichern übernimmt die Wahl.",
+    "Só TV desliga o ecrã da consola após ativar a TV. Volta a ligar ao parar a TV. Selecione Guardar para memorizar a escolha."
   ]
 }

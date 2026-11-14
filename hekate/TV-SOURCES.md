@@ -1,4 +1,4 @@
-# Origine de l'intégration TV Nova 19-TV
+# Origine de l'intégration TV Nova 20-Dock
 
 Base Nova Pro v18 : copie séparée de `work/hekate-6.5.4`, sans remplacement de
 la version déjà livrée. Pilote vidéo `dpout.c/.h` identique au prototype TV01.
@@ -16,7 +16,7 @@ tensions, niveaux de pilotage, taux de lien ou chronogrammes pour ce port.
 Changements Nova : session indépendante de la fenêtre de réglages, recopie des
 lignes modifiées de son tampon 1280x720, arrêt avant fin matérielle/USB/diagnostic,
 fréquence de menu restaurée après connexion, nouvelles vues dans le thème Nova
-et 26 phrases traduites dans les sept langues disponibles. Les noms d'étapes,
+et 36 phrases TV/dock traduites dans les sept langues disponibles. Les noms d'étapes,
 registres et détails bruts du pilote restent des informations de diagnostic.
 
 Réparation distincte de l'enregistrement SD : utilisation de `sd_mount() == 0`
@@ -32,3 +32,28 @@ Hekate et l'intégration suivent les licences fournies dans le projet.
 Le dépôt HWTest-RCM consulté ne précise pas de licence autonome pour ces
 nouveaux fichiers : clarification nécessaire avant une diffusion publique de
 l'ensemble. Livraison personnelle de développement, avec provenance conservée.
+
+## Détection automatique dans 20-Dock
+
+Préférences `tv_auto` (défaut0) et `tv_keep_screen` (défaut1) ajoutées en fin
+de la configuration Nyx pour préserver les anciens champs. Chargement strict,
+écriture atomique par le mécanisme existant. Activation avec Enregistrer.
+
+Le détecteur passif lit STATUS1, l'offre PDO et l'identifiant du contrôleur
+quand aucun câble n'est signalé. Il ne lit pas ALERT_STATUS et n'envoie aucune
+commande. Il utilise la signature d'alimentation déjà reconnue par ce pilote
+pour un dock Nintendo ; l'identification/négociation complète vient ensuite.
+Deux échantillons positifs sont requis après un délai initial de2secondes.
+Une tentative par insertion détectée ; les erreurs ou un arrêt manuel ne
+déclenchent pas de répétition immédiate. Les erreurs de lecture espacent les
+sondages à2puis5secondes et ne sont pas assimilées à un retrait.
+
+Le service suspend sa surveillance pendant USB/diagnostics et rétablit celle-ci
+à leur retour, sans annuler un arrêt manuel préalable. Le choix TV seule
+éteint le rétroéclairage après initialisation vidéo, et le rétablit à l'arrêt
+avec la luminosité courante. La sortie vers un autre système évite un flash
+de rétroéclairage juste avant la fin du pilote LCD.
+
+Aucun service Bluetooth nouveau n'est intégré : voir l'étude Joy-Con dédiée.
+La nouvelle détection automatique et la commutation d'écran restent à valider
+sur console, séparément du succès du prototype01 en dock direct.

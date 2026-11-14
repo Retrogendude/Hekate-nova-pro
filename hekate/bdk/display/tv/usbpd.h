@@ -70,6 +70,10 @@ typedef struct {
 /* Reading the alert register may clear it, so while a handshake runs the
  * snapshot leaves it to the handshake (read_alert false). */
 void pd_snapshot(pd_snapshot_t *s, bool read_alert);
+/* Passive polling: STATUS1, source PDOs and idle device ID; no alerts/commands.
+ * Nintendo dock signature follows this driver's existing _choose() policy.
+ * Nonzero means a failed read or silent/unrecognized chip, not cable removal. */
+int pd_dock_attached(bool *inserted, bool *official_dock);
 const char *pd_lastcmd_name(u16 status1);
 
 /* ---- the controller's pins, and what HOS does to it at boot ---- */

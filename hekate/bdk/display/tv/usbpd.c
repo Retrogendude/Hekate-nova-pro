@@ -238,6 +238,41 @@ static u32 _read_pdos(u32 *mv, u32 *ma, u32 *raw)
     return n;
 }
 
+int pd_dock_attached(bool *inserted, bool *official_dock)
+{
+    u8 status[2], pdos[29];
+    *inserted = false;
+    *official_dock = false;
+    int r = _rd(STATUS1_REG, status, sizeof(status));
+    if (r)
+        return r;
+    *inserted = ((status[0] | status[1] << 8) & PD_S1_INSERT) != 0;
+    if (!*inserted) {
+        u8 id[2];
+        r = _rd(DEV_ID_REG, id, sizeof(id));
+        if (r)
+            return r;
+        // All-zero replies from an unresponsive controller are not an unplug.
+        if ((id[0] | (u16)id[1] << 8) != 0x03B0)
+            return 1;
+        return 0;
+    }
+    r = _rd(READ_PDOS_SRC_REG, pdos, sizeof(pdos));
+    if (r)
+        return r;
+    if (pdos[0] != 8)
+        return 0;
+    u32 mv[2], ma[2];
+    for (u32 i = 0; i < 2; i++) {
+        const u8 *b = pdos + 1 + i * 4;
+        u32 pdo = (u32)b[0] | (u32)b[1] << 8 | (u32)b[2] << 16 | (u32)b[3] << 24;
+        _pdo_decode(pdo, &mv[i], &ma[i]);
+    }
+    *official_dock = mv[0] == DOCK_ID_MV && ma[0] == DOCK_ID_MA &&
+                     mv[1] == DOCK_MV && ma[1] >= DOCK_MA_MIN && ma[1] <= DOCK_MA_MAX;
+    return 0;
+}
+
 /* The hot plug detect line: read as a GPIO until the AUX stage takes the
  * pad for DPAUX1, which has to own it (SFIO mode) to see HPD itself. */
 static bool _hpd(void)

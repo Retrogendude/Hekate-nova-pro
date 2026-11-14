@@ -195,6 +195,7 @@ static lv_res_t _create_mbox_hid(usb_ctxt_t *usbs)
 
 	gui_tv_shutdown(false);
 	usb_device_gadget_hid(usbs);
+	gui_tv_resume_detection();
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action);
 
@@ -288,11 +289,11 @@ static lv_res_t _create_mbox_ums(usb_ctxt_t *usbs)
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_top(mbox, true);
 
-	// Dim backlight.
-	display_backlight_brightness(20, 1000);
-
 	gui_tv_shutdown(false);
+	// Dim backlight after restoring the console display.
+	display_backlight_brightness(20, 1000);
 	usb_device_gadget_ums(usbs);
+	gui_tv_resume_detection();
 
 	// Restore backlight.
 	display_backlight_brightness(h_cfg.backlight - 20, 1000);

@@ -79,6 +79,8 @@ void set_nyx_default_configuration()
 	n_cfg.jc_disable     = 0;
 	n_cfg.jc_force_right = 0;
 	n_cfg.bpmp_clock     = 0;
+	n_cfg.tv_auto        = 0;
+	n_cfg.tv_keep_screen = 1;
 }
 
 static bool valid_font_basename(const char *value)
@@ -415,6 +417,16 @@ int create_nyx_config_entry(bool force_unmount)
 	itoa(n_cfg.jc_force_right, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0)
 		goto out;
+
+	n_cfg.tv_keep_screen = n_cfg.tv_keep_screen != 0;
+	if (f_puts("\ntv_keep_screen=", &fp) < 0) goto out;
+	itoa(n_cfg.tv_keep_screen, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+
+	n_cfg.tv_auto = n_cfg.tv_auto == 1;
+	if (f_puts("\ntv_auto=", &fp) < 0) goto out;
+	itoa(n_cfg.tv_auto, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
 
 	if (f_puts("\nbpmpclock=", &fp) < 0)
 		goto out;

@@ -2,8 +2,8 @@
 from pathlib import Path
 import hashlib, json, re, subprocess
 work = Path(__file__).resolve().parent
-tests = work / 'nova-tv-tests'
-root = work / 'hekate-nova-pro-v19-tv/bdk/display/tv'
+tests = work / 'nova-dock-tests'
+root = work / 'hekate-nova-pro-v20-dock/bdk/display/tv'
 a = (root / 'dpout.c').read_text()
 b = (root / 'usbpd.c').read_text()
 
@@ -38,7 +38,7 @@ subprocess.run([str(work / 'toolchains/w64devkit/bin/gcc.exe'), str(tests / 'pol
                 '-o', str(tests / 'policy.exe'), '-Wall', '-Wextra', '-Werror'], check=True)
 result = subprocess.run([str(tests / 'policy.exe')], check=True, text=True, capture_output=True)
 print(result.stdout.strip())
-(work / 'nova-tv-policy-check.json').write_text(json.dumps({
+(work / 'nova-dock-policy-check.json').write_text(json.dumps({
     'result': result.stdout.strip(), 'hardware_validation': False,
     'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
                       for name in ('dpout.c', 'usbpd.c')},
