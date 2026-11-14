@@ -239,10 +239,10 @@ void nyx_nova_navigation(lv_obj_t *screen, lv_obj_t *tabs, const char *version, 
     int widths[5], total = 0, gap = 18, available = 778;
     for (u32 row = 0; row < 5; ++row) {
         const char *text = nyx_tr(nova_navigation_names[order[row]]);
-        widths[row] = lv_txt_get_width(text, strlen(text), nova_white.text.font, 0, LV_TXT_FLAG_NONE) + 32;
+        widths[row] = lv_txt_get_width(text, strlen(text), nova_white.text.font, 0, LV_TXT_FLAG_NONE) + 60;
         total += widths[row];
     }
-    if (total + 4 * gap > available) gap = 6;
+    if (total + 4 * gap > available) gap = 10;
     int x = 218;
     for (u32 row = 0; row < 5; ++row) {
         u32 tab = order[row];
@@ -252,8 +252,8 @@ void nyx_nova_navigation(lv_obj_t *screen, lv_obj_t *tabs, const char *version, 
         lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_PR, &nova_clear);
         lv_obj_set_size(button, width, 52); lv_obj_set_pos(button, x, 12);
         lv_obj_set_free_num(button, tab); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, nova_navigate);
-        nova_nav_icons[tab] = nyx_nova_glyph(button, nova_navigation_icons[tab], 0, 17, 18);
-        nova_nav_labels[tab] = nyx_nova_text(button, nova_navigation_names[tab], 26, 14, width - 26, NOVA_BODY);
+        nova_nav_icons[tab] = nyx_nova_glyph(button, nova_navigation_icons[tab], 12, 17, 18);
+        nova_nav_labels[tab] = nyx_nova_text(button, nova_navigation_names[tab], 40, 14, width - 52, NOVA_BODY);
         nyx_nova_fit_text(nova_nav_labels[tab], 26);
         x += width + gap;
     }
@@ -261,7 +261,7 @@ void nyx_nova_navigation(lv_obj_t *screen, lv_obj_t *tabs, const char *version, 
     for (u32 i = 0; i < 4; ++i) {
         lv_obj_t *button = lv_btn_create(screen, NULL); nova_quick_buttons[i] = button;
         lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
-        lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_frame); lv_btn_set_style(button, LV_BTN_STYLE_PR, &nova_selected);
+        lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_frame); lv_btn_set_style(button, LV_BTN_STYLE_PR, lv_theme_get_current()->btn.pr);
         lv_obj_set_size(button, 44, 44); lv_obj_set_pos(button, 1034 + i * 56, 16);
         nyx_nova_glyph(button, quick_icons[i], 10, 10, 24);
         lv_btn_set_action(button, LV_BTN_ACTION_CLICK, nova_quick_actions[i]);
@@ -431,8 +431,6 @@ void nyx_nova_grid_begin(lv_obj_t *page, u32 kind)
     nyx_nova_page(page, kind == NOVA_TOOLS ? 2 : kind == NOVA_INFO ? 3 : 5);
     int y = lv_obj_get_height(page) - 104;
     lv_obj_t *detail = nyx_nova_panel(page, 34, y, LV_HOR_RES - 68, 76);
-    lv_obj_t *edge = lv_cont_create(detail, NULL); lv_cont_set_style(edge, &nova_dot_active);
-    lv_cont_set_fit(edge, false, false); lv_obj_set_size(edge, 3, 76); lv_obj_set_pos(edge, 0, 0); lv_obj_set_click(edge, false);
     ext->detail_title = nyx_nova_text(detail, "", 24, 13, 1020, NOVA_BODY);
     ext->detail_text = nyx_nova_text(detail, "", 24, 42, 1020, NOVA_SMALL); lv_label_set_style(ext->detail_text, &nova_dim);
     lv_obj_t *help = lv_btn_create(detail, NULL); lv_btn_set_fit(help, false, false); lv_btn_set_layout(help, LV_LAYOUT_OFF);
@@ -520,6 +518,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
     lv_obj_t *card = nyx_nova_panel(parent, x, y, width, height);
     lv_cont_set_style(card, hero ? &nova_selected : &nova_panel);
     nova_home_cards[index]=card;
+    if (!index) nyx_nova_launch_backdrop(card);
 
     lv_obj_t *button = lv_btn_create(card, NULL);
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
@@ -616,6 +615,7 @@ void nyx_nova_carousel(lv_obj_t *page, lv_action_t activate)
         lv_btn_set_fit(card, false, false); lv_btn_set_layout(card, LV_LAYOUT_OFF);
         lv_btn_set_style(card, LV_BTN_STYLE_REL, &nova_panel); lv_btn_set_style(card, LV_BTN_STYLE_PR, &nova_selected);
         lv_obj_set_size(card, 320, 244); lv_obj_set_pos(card, i * 344, 0);
+        if(!i)nyx_nova_launch_backdrop(card);
         lv_obj_set_free_num(card, i); lv_btn_set_action(card, LV_BTN_ACTION_CLICK, nova_carousel_select);
         home_carousel.icons[i] = nyx_nova_icon_box(card, nova_reference_home[i].icon, 124, 26, 72, i == 0);
         lv_obj_t *title = nyx_nova_text(card, nova_reference_home[i].title, 22, 128, 276, NOVA_TITLE); nyx_nova_fit_text(title, 54);
@@ -670,8 +670,8 @@ static lv_obj_t *nova_toggle_base(lv_obj_t *parent, lv_action_t action, bool ena
     nova_toggle_ext *ext = lv_obj_allocate_ext_attr(button, sizeof(*ext));
     if (!ext) { lv_obj_del(button); return NULL; }
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
-    lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_PR, &nova_clear);
-    lv_btn_set_style(button, LV_BTN_STYLE_TGL_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_TGL_PR, &nova_clear);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_PR, lv_theme_get_current()->btn.pr);
+    lv_btn_set_style(button, LV_BTN_STYLE_TGL_REL, lv_theme_get_current()->btn.tgl_rel); lv_btn_set_style(button, LV_BTN_STYLE_TGL_PR, lv_theme_get_current()->btn.tgl_pr);
     lv_obj_set_size(button, width, height); lv_btn_set_toggle(button, true); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     ext->track = lv_cont_create(button, NULL); lv_cont_set_style(ext->track, &nova_track_off); lv_cont_set_fit(ext->track, false, false);
     lv_obj_set_size(ext->track, 64, 34); lv_obj_set_pos(ext->track, track_x, track_y); lv_obj_set_click(ext->track, false);

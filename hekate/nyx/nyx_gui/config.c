@@ -72,6 +72,8 @@ void set_nyx_default_configuration()
 	n_cfg.nova_logo_color = 0x55C9F1;
 	n_cfg.nova_icon_color = 0x55C9F1;
 	n_cfg.nova_selection_color = 0x1C2937;
+	n_cfg.launch_image[0] = 0;
+	n_cfg.boot_logo_color = n_cfg.boot_bar_color = 0x55C9F1;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -129,6 +131,10 @@ void nyx_sanitize_appearance(void)
 	if (n_cfg.nova_icon_opacity > 100) n_cfg.nova_icon_opacity = 100;
 	n_cfg.wallpaper_file[sizeof(n_cfg.wallpaper_file) - 1] = 0;
 	if (!valid_wallpaper_basename(n_cfg.wallpaper_file)) n_cfg.wallpaper_file[0] = 0;
+	n_cfg.launch_image[sizeof(n_cfg.launch_image) - 1] = 0;
+	if (!valid_wallpaper_basename(n_cfg.launch_image)) n_cfg.launch_image[0] = 0;
+	if (n_cfg.boot_logo_color > 0xFFFFFF) n_cfg.boot_logo_color = 0x55C9F1;
+	if (n_cfg.boot_bar_color > 0xFFFFFF) n_cfg.boot_bar_color = 0x55C9F1;
 }
 
 static u32 appearance_number(const char *value, u32 fallback)
@@ -177,6 +183,12 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "nova_reflection_color")) n_cfg.nova_reflection_color = appearance_rgb(value, 0x55C9F1);
 	else if (!strcmp(key, "nova_menu_opacity")) n_cfg.nova_menu_opacity = appearance_percent(value);
 	else if (!strcmp(key, "nova_icon_opacity")) n_cfg.nova_icon_opacity = appearance_percent(value);
+	else if (!strcmp(key, "boot_logo_color")) n_cfg.boot_logo_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "boot_bar_color")) n_cfg.boot_bar_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "launch_image")) {
+		n_cfg.launch_image[0] = 0;
+		if (valid_wallpaper_basename(value)) strcpy(n_cfg.launch_image, value);
+	}
 	else if (!strcmp(key, "wallpaper_file")) {
 		n_cfg.wallpaper_file[0] = 0;
 		if (valid_wallpaper_basename(value)) strcpy(n_cfg.wallpaper_file, value);
@@ -453,6 +465,13 @@ int create_nyx_config_entry(bool force_unmount)
 	s_printf(lbuf, "%06X", n_cfg.nova_selection_color);
 	if (f_puts(lbuf, &fp) < 0) goto out;
 	if (f_puts("\nwallpaper_file=", &fp) < 0 || f_puts(n_cfg.wallpaper_file, &fp) < 0) goto out;
+	if (f_puts("\nlaunch_image=", &fp) < 0 || f_puts(n_cfg.launch_image, &fp) < 0) goto out;
+	if (f_puts("\nboot_logo_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.boot_logo_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nboot_bar_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.boot_bar_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
 
 	if (f_puts("\n", &fp) < 0)
 		goto out;

@@ -74,8 +74,45 @@ u8 battery_icons_blz[] = {
 	0x6A, 0x09, 0x00, 0x00
 };
 
+static u32 splash_rgb(const char *text)
+{
+    if(strlen(text)!=6)return 0x55C9F1;
+    u32 value=0;
+    for(u32 i=0;i<6;++i){
+        u32 c=text[i]|32;
+        if(c>='0'&&c<='9')c-='0';
+        else if(c>='a'&&c<='f')c=c-'a'+10;
+        else return 0x55C9F1;
+        value=(value<<4)|c;
+    }
+    return value;
+}
+static void splash_colors_load(void)
+{
+    static bool loaded;
+    if(loaded)return;
+    loaded=true;
+    bool mounted=sd_get_card_mounted();
+    if(sd_mount())return;
+    LIST_INIT(sections);
+    const char *path=f_stat("bootloader/nyx.ini",NULL)==FR_OK?"bootloader/nyx.ini":"bootloader/nyx.ini.nova.bak";
+    if(!ini_parse(&sections,path,false)){
+        LIST_FOREACH_ENTRY(ini_sec_t,section,&sections,link){
+            if(section->type!=INI_CHOICE||strcmp(section->name,"config"))continue;
+            LIST_FOREACH_ENTRY(ini_kv_t,kv,&section->kvs,link){
+                if(!strcmp(kv->key,"boot_logo_color"))nova_splash_logo_color=splash_rgb(kv->val);
+                else if(!strcmp(kv->key,"boot_bar_color"))nova_splash_bar_color=splash_rgb(kv->val);
+            }
+            break;
+        }
+    }
+    ini_free(&sections);
+    if(!mounted)sd_unmount();
+}
 u8 *render_static_bootlogo()
 {
+    nova_splash_stop();
+    splash_colors_load();
     nova_splash_render(gfx_ctxt.fb);
     nova_splash_progress(gfx_ctxt.fb,0,0);
     return NULL; /* No heap buffer is needed for the original Nova artwork. */

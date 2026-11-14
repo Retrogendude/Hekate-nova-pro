@@ -1,0 +1,6 @@
+{
+  "summary": "PASS: 5018 actual-C RAM mode/contract assertions; invalid selections, tampering, partial results and protected ranges.",
+  "hardware_io": "not executed",
+  "handoff_version": 2,
+  "reserved_first_mib": 4
+}

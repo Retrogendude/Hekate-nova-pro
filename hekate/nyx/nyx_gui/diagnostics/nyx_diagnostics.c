@@ -1,6 +1,7 @@
 /* Native host for HWTest-RCM 0.15. The original probe implementations are
  * retained under vendor/. Only this adapter owns UI/report lifetime. */
 #include "nyx_diagnostics.h"
+#include "component_summary.h"
 #include "vendor/hwtest.h"
 #include "../localization.h"
 #include <stdlib.h>
@@ -321,12 +322,14 @@ bool nyx_diag_running(void) { return running; }
 bool nyx_diag_truncated(void) { return truncated; }
 const char *nyx_diag_report(void) { return report ? report : "Aucun diagnostic execute.\n"; }
 u32 nyx_diag_finding_count(void) { return dx_count(); }
+bool nyx_diag_storage_ready(bool emmc) { return emmc?g_emmc_ok:g_sd_ok; }
 bool nyx_diag_finding(u32 index, nyx_diag_finding_t *out)
 {
     const dx_finding_t *f = dx_at(index);
     if (!f || !out) return false;
     out->key = f->key; out->severity = f->sev;
     memcpy(out->detail, f->detail, sizeof(out->detail));
+    out->detail[sizeof(out->detail)-1]=0;
     return true;
 }
 int nyx_diag_export(char *path)
@@ -343,8 +346,14 @@ int nyx_diag_export(char *path)
     int result = 3;
     if (fr == FR_OK) {
         fr = f_write(&file, report, report_used, &written);
+        bool complete=fr==FR_OK&&written==report_used;
+        char *summary=complete?nyx_component_summary_text():NULL;
+        if(summary){
+            UINT appended=0;u32 length=strlen(summary);
+            fr=f_write(&file,summary,length,&appended);complete=fr==FR_OK&&appended==length;free(summary);
+        }else complete=false;
         FRESULT closed = f_close(&file);
-        result = (fr == FR_OK && closed == FR_OK && written == report_used) ? 0 : 4;
+        result = complete && closed == FR_OK ? 0 : 4;
     }
     if (!mounted) sd_unmount();
     if (!result && path) strcpy(path, destination);

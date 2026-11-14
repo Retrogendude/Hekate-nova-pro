@@ -1291,7 +1291,7 @@ static lv_obj_t *_settings_button(lv_obj_t *card, const char *title, lv_action_t
     lv_obj_t *button = lv_btn_create(card, NULL);
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
     static lv_style_t clear;lv_style_copy(&clear,&lv_style_transp_tight);
-    lv_btn_set_style(button,LV_BTN_STYLE_REL,&clear);lv_btn_set_style(button,LV_BTN_STYLE_PR,&clear);
+    lv_btn_set_style(button,LV_BTN_STYLE_REL,&clear);lv_btn_set_style(button,LV_BTN_STYLE_PR,lv_theme_get_current()->btn.pr);
     lv_obj_set_size(button, lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
     lv_obj_set_pos(button, 14, 14); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     const char *icon=(strstr(title,"Color")||strstr(title,"couleurs"))?"paintbrush":strstr(title,"Clock")?"clock-3":strstr(title,"Joy-Con")?"gamepad-2":"settings-2";
@@ -1447,7 +1447,7 @@ static lv_obj_t *_nova_heading_button(lv_obj_t *panel, const char *title, const 
 {
     static lv_style_t transparent; lv_style_copy(&transparent, &lv_style_transp_tight);
     lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
-    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, &transparent);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, lv_theme_get_current()->btn.pr);
     lv_obj_set_size(button, lv_obj_get_width(panel) - 48, 42); lv_obj_set_pos(button, 24, 16);
     lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action); nyx_nova_glyph(button, icon, 0, 8, 24);
     lv_obj_t *label = nyx_nova_text(button, title, 38, 8, lv_obj_get_width(button) - 40, NOVA_TITLE); nyx_nova_fit_text(label, 30);
@@ -1462,7 +1462,7 @@ static lv_obj_t *_nova_setting_line(lv_obj_t *panel, const char *title, const ch
     lv_style_copy(&line, &lv_style_plain); line.body.main_color = line.body.grad_color = nyx_nova_color(NOVA_COLOR_BORDER); line.body.border.width = 0;
     int width = lv_obj_get_width(panel) - 48;
     lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
-    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, &transparent);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, lv_theme_get_current()->btn.pr);
     lv_obj_set_size(button, width, 44); lv_obj_set_pos(button, 24, y); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     lv_obj_t *title_label = nyx_nova_text(button, title, 0, 12, width / 2 - 10, NOVA_BODY); nyx_nova_fit_text(title_label, 28);
     lv_obj_t *value_label = nyx_nova_text(button, value, width / 2, 12, width / 2, NOVA_SMALL);
@@ -1479,7 +1479,7 @@ static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int
     normal.body.empty = 0; normal.body.main_color = normal.body.grad_color = nyx_nova_color(NOVA_COLOR_BACKGROUND);
     normal.body.radius = 5; normal.body.border.width = 1; normal.body.border.color = nyx_nova_color(NOVA_COLOR_BORDER);
     normal.body.padding.hor = normal.body.padding.ver = 0;
-    lv_style_copy(&active, &normal); active.body.border.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
+    lv_style_copy(&active, &normal); active.body.border.width = 2; active.body.border.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
     lv_style_copy(&label_active, nyx_nova_text_style(NOVA_SMALL)); label_active.text.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
     lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
     lv_btn_set_style(button, LV_BTN_STYLE_REL, selected ? &active : &normal); lv_btn_set_style(button, LV_BTN_STYLE_PR, &active);

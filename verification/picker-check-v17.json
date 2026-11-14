@@ -1,0 +1,18 @@
+{
+  "scenes": 112,
+  "languages": 7,
+  "sizes": [
+    20,
+    30,
+    32,
+    36
+  ],
+  "fonts": [
+    "Lecture.nyxf",
+    "Caviar.nyxf"
+  ],
+  "touch_test": true,
+  "exact_rgb_on_target_selection": true,
+  "status": "passed",
+  "scope": "actual rectangular widget, touch and independent appearance targets"
+}

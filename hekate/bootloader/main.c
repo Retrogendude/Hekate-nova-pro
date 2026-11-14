@@ -581,14 +581,14 @@ out:
 static void _nyx_load_run()
 {
 	render_static_bootlogo();
-	nova_splash_animate(gfx_ctxt.fb,0,15,200);
+	nova_splash_stage(gfx_ctxt.fb,0,35);
 	u8 *nyx = sd_file_read("bootloader/sys/nyx.bin", NULL);
-	if (!nyx)
-		return;
+	if (!nyx) { nova_splash_stop(); return; }
 
 	sd_end();
 
-	nova_splash_animate(gfx_ctxt.fb,15,35,300);
+	nova_splash_animate(gfx_ctxt.fb,0,35,300);
+	nova_splash_stage(gfx_ctxt.fb,35,50);
 	display_backlight_brightness(h_cfg.backlight, 1000);
 
 	// Check if Nyx version is old.
@@ -642,7 +642,8 @@ static void _nyx_load_run()
 	reloc_meta_t *reloc = (reloc_meta_t *)(IPL_LOAD_ADDR + RELOC_META_OFF);
 	memcpy((u8 *)nyx_str->hekate, (u8 *)reloc->start, reloc->end - reloc->start);
 
-	// Do one last training.
+	// Do one last training, without framebuffer callbacks during training.
+	nova_splash_pause();
 	minerva_periodic_training();
 
 	bpmp_mmu_disable();

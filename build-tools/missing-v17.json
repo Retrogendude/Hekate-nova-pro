@@ -1,0 +1,450 @@
+{
+  "Luminosité couleur": [
+    "gui_color_picker.c"
+  ],
+  "wallpapers": [
+    "gui_nova_theme.c"
+  ],
+  "rocket": [
+    "gui_nova_theme.c"
+  ],
+  "Aucune image": [
+    "gui_nova_theme.c"
+  ],
+  "Démarrage": [
+    "gui_nova_theme.c"
+  ],
+  "Tuile Launch": [
+    "gui_nova_theme.c"
+  ],
+  "brand-mark": [
+    "gui_nova_theme.c",
+    "gui_nova_theme.c"
+  ],
+  "settings-2": [
+    "gui_nova_theme.c"
+  ],
+  "Hekate Nova Pro": [
+    "gui_nova_theme.c",
+    "gui_nova_theme.c"
+  ],
+  "Logo de démarrage\nBarre de chargement": [
+    "gui_nova_theme.c"
+  ],
+  "Aperçu du démarrage": [
+    "gui_nova_theme.c"
+  ],
+  "Les deux couleurs sont indépendantes. Le changement s’applique au prochain démarrage.": [
+    "gui_nova_theme.c"
+  ],
+  "Image de la tuile Launch": [
+    "gui_nova_theme.c"
+  ],
+  "Choisissez un BMP du dossier wallpapers. L’image couvre uniquement la tuile Launch, sans modifier le fond d’écran.": [
+    "gui_nova_theme.c"
+  ],
+  "Grille tactile": [
+    "gui_interactive.c",
+    "gui_diagnostics.c"
+  ],
+  "Up": [
+    "gui_interactive.c"
+  ],
+  "Down": [
+    "gui_interactive.c"
+  ],
+  "Left": [
+    "gui_interactive.c"
+  ],
+  "Right": [
+    "gui_interactive.c"
+  ],
+  "Capture": [
+    "gui_interactive.c"
+  ],
+  "Stick": [
+    "gui_interactive.c",
+    "gui_interactive.c",
+    "gui_interactive.c"
+  ],
+  "  All %d buttons#": [
+    "gui_interactive.c"
+  ],
+  "%d of %d buttons": [
+    "gui_interactive.c"
+  ],
+  "#  Right Joy-Con": [
+    "gui_interactive.c"
+  ],
+  "#  Left Joy-Con": [
+    "gui_interactive.c"
+  ],
+  "Not attached  -  slide it onto the rail": [
+    "gui_interactive.c",
+    "gui_interactive.c"
+  ],
+  "Relâcher le stick une seconde, puis parcourir les quatre directions.": [
+    "gui_interactive.c"
+  ],
+  "very low": [
+    "gui_interactive.c"
+  ],
+  "low": [
+    "gui_interactive.c"
+  ],
+  "half": [
+    "gui_interactive.c"
+  ],
+  "Connected#  -  battery %s": [
+    "gui_interactive.c"
+  ],
+  " %d drop%s#": [
+    "gui_interactive.c"
+  ],
+  "s": [
+    "gui_interactive.c"
+  ],
+  "Amplitude G %d / D %d\nH %d / B %d · %d/4": [
+    "gui_interactive.c"
+  ],
+  "Repos %d, %d\nDérive non évaluée : parcourir les 4 directions.": [
+    "gui_interactive.c"
+  ],
+  "Repos %d, %d\nDécalage mesuré : %d%% · %s": [
+    "gui_interactive.c"
+  ],
+  "À contrôler": [
+    "gui_interactive.c"
+  ],
+  "Centré": [
+    "gui_interactive.c"
+  ],
+  "  Connection lost#  -  reseat it on the rail": [
+    "gui_interactive.c"
+  ],
+  "%s : connecté une fois=%d, connecté à la fin=%d, boutons=%d/9, pertes=%d, reconnexions=%d. Repos connu=%d (%d, %d), directions=%d/4, amplitudes brutes G/D/H/B=%d/%d/%d/%d.": [
+    "gui_interactive.c"
+  ],
+  "Droite": [
+    "gui_interactive.c"
+  ],
+  "Gauche": [
+    "gui_interactive.c"
+  ],
+  " Décalage mesuré=%d%%.": [
+    "gui_interactive.c"
+  ],
+  "Joy-Con/Lite (%d ms, Lite=%d).\n%s\n%s\nBoutons non pressés et directions non parcourues : NON TESTÉS. Aucun verdict de panne automatique.": [
+    "gui_interactive.c"
+  ],
+  " Joy-Con Test": [
+    "gui_interactive.c"
+  ],
+  "%d of %d areas": [
+    "gui_interactive.c"
+  ],
+  "Grille tactile : %d/%d zones parcourues, contrôleur initialisé=%d, fin demandée=%d, durée=%d ms. Les zones non parcourues sont NON TESTÉES. Ce contrôle manuel ne remplace pas le test matériel ITO.": [
+    "gui_interactive.c"
+  ],
+  "%d / %d zones parcourues.\n\nLes zones restantes sont NON TESTÉES. Ce contrôle manuel ne remplace pas le test matériel du contrôleur tactile.": [
+    "gui_interactive.c"
+  ],
+  "Again": [
+    "gui_interactive.c"
+  ],
+  "Done": [
+    "gui_interactive.c"
+  ],
+  "#  Touchscreen Test": [
+    "gui_interactive.c"
+  ],
+  "Slide a finger over every square. Dark squares have not been covered; this does not prove a defect.": [
+    "gui_interactive.c"
+  ],
+  " Finish": [
+    "gui_interactive.c"
+  ],
+  "POWER finishes too.": [
+    "gui_interactive.c"
+  ],
+  "  The touchscreen did not start.": [
+    "gui_interactive.c"
+  ],
+  "Mires R/V/B/blanc/noir : masques affichés=0x%02X, observés=0x%02X, anomalies signalées=0x%02X, durée=%d ms. Les masques sont dans cet ordre, bit 0=rouge. Déclaration visuelle de l’utilisateur, aucune détection automatique des pixels.": [
+    "gui_interactive.c"
+  ],
+  "Observation manuelle : anomalie visuelle signalée.": [
+    "gui_interactive.c"
+  ],
+  "Observation manuelle : aucune anomalie visuelle signalée. Les pixels ne sont pas vérifiés automatiquement.": [
+    "gui_interactive.c"
+  ],
+  "Mires de l'écran": [
+    "gui_interactive.c"
+  ],
+  "Aucune anomalie observée": [
+    "gui_interactive.c"
+  ],
+  "Anomalie observée": [
+    "gui_interactive.c"
+  ],
+  "Toucher la mire masque les commandes. VOL+/VOL- : changer. POWER : quitter. Observation visuelle uniquement, sans détection automatique des pixels.": [
+    "gui_interactive.c"
+  ],
+  "USB-C Power Delivery": [
+    "gui_diagnostics.c"
+  ],
+  "Bluetooth": [
+    "gui_diagnostics.c",
+    "component_summary.c"
+  ],
+  "Wi-Fi PCIe": [
+    "gui_diagnostics.c"
+  ],
+  "activity": [
+    "gui_diagnostics.c",
+    "gui_component_summary.c"
+  ],
+  "La nouvelle exécution n'a pas produit de résultats. Le rapport précédent reste conservé.": [
+    "gui_diagnostics.c"
+  ],
+  "Mesures capturées, mais restauration matérielle incomplète. Recharger Nyx avant de démarrer.": [
+    "gui_diagnostics.c"
+  ],
+  "Joy-Con interactif": [
+    "gui_diagnostics.c"
+  ],
+  "Mires écran": [
+    "gui_diagnostics.c"
+  ],
+  "Rapide\nAvancé\nPersonnalisé": [
+    "gui_diagnostics.c"
+  ],
+  "Rapide : adresse. Avancé : 7 motifs. Personnalisé : choisir au moins un motif.": [
+    "gui_diagnostics.c"
+  ],
+  "Adresse\nAdresse inversée\nZéros\nUns\nAlternance AA\nAlternance 55\nPseudo-aléatoire": [
+    "gui_diagnostics.c"
+  ],
+  "Programme séparé puis retour automatique à Hekate. Les zones réservées au retour restent exclues. Un matériel instable peut empêcher le retour.": [
+    "gui_diagnostics.c"
+  ],
+  "Rapide": [
+    "gui_diagnostics.c"
+  ],
+  "Avancé": [
+    "gui_diagnostics.c"
+  ],
+  "Personnalisé": [
+    "gui_diagnostics.c"
+  ],
+  "%s · %s · %s\n%d / %d motifs · zone prévue %d / %d MiB · %d s · %d erreur(s)\nMotifs choisis : %02X · terminés : %02X · MTC : %08X\nZone relue avec au moins un motif : %d MiB": [
+    "gui_diagnostics.c"
+  ],
+  "Dernier resultat": [
+    "gui_diagnostics.c"
+  ],
+  "RAM isolée : état=%s, mode=%d, sélection=0x%02X, achevés=0x%02X, motifs=%d/%d, zone prévue=%d MiB, préfixe relu=%d MiB, DRAM=%d MiB, durée=%d ms, erreurs=%d, erreurs MTC=%d. Les 4 premiers MiB sont réservés. Une interruption ne valide pas les motifs inachevés.": [
+    "gui_diagnostics.c"
+  ],
+  "Bilan et pistes de panne": [
+    "gui_component_summary.c"
+  ],
+  "Résultat et preuves": [
+    "gui_component_summary.c"
+  ],
+  "Rapports détaillés": [
+    "gui_component_summary.c"
+  ],
+  "Rapport enregistré": [
+    "gui_component_summary.c"
+  ],
+  "file-text": [
+    "gui_component_summary.c"
+  ],
+  " · couverture partielle": [
+    "gui_component_summary.c"
+  ],
+  "Bilan par composant": [
+    "gui_component_summary.c",
+    "component_summary.c"
+  ],
+  "Pistes": [
+    "gui_component_summary.c"
+  ],
+  "Rapport détaillé tronqué. PASS concerne uniquement les contrôles réellement réalisés.": [
+    "gui_component_summary.c"
+  ],
+  "PASS : contrôles réalisés uniquement. Les contrôles partiels et le stress RAM restent distincts.": [
+    "gui_component_summary.c"
+  ],
+  "Processeur / SoC": [
+    "component_summary.c"
+  ],
+  "Identité SoC et démarrage du service CPU0. Aucun stress CPU.": [
+    "component_summary.c"
+  ],
+  "Contrôler les alimentations et horloges CPU, puis les liaisons et les erreurs du service.": [
+    "component_summary.c"
+  ],
+  "Symétrie DRAM et verrouillage PLL. Le test RAM isolé est distinct.": [
+    "component_summary.c"
+  ],
+  "Comparer les rails mémoire, l'identité DRAM et les horloges. Compléter par le service RAM isolé.": [
+    "component_summary.c"
+  ],
+  "Santé déclarée, GPT, lectures et données logiques lorsqu'elles sont accessibles.": [
+    "component_summary.c"
+  ],
+  "Vérifier alimentation, bus eMMC et contenu logique. Une GPT invalide ne prouve pas une panne de puce.": [
+    "component_summary.c"
+  ],
+  "Initialisation et compteurs SD. Les reprises de lecture incluent SD et eMMC.": [
+    "component_summary.c"
+  ],
+  "Comparer avec une carte connue fonctionnelle et examiner le lecteur. Les reprises communes ne désignent pas seules la microSD.": [
+    "component_summary.c"
+  ],
+  "Alimentation / régulateurs": [
+    "component_summary.c"
+  ],
+  "PMIC et rails mesurés, selon les puces présentes sur le modèle.": [
+    "component_summary.c"
+  ],
+  "Contrôler tensions et liaisons I2C avant de conclure à une puce défectueuse.": [
+    "component_summary.c"
+  ],
+  "Contrôleur de charge": [
+    "component_summary.c"
+  ],
+  "Identification, alimentation et défauts déclarés du chargeur.": [
+    "component_summary.c"
+  ],
+  "Recouper chargeur, batterie et USB-C. Contrôler alimentation et bus commun avant remplacement.": [
+    "component_summary.c"
+  ],
+  "USB-C / Power Delivery": [
+    "component_summary.c"
+  ],
+  "Réponse du contrôleur USB-PD. Le transfert USB complet n'est pas certifié.": [
+    "component_summary.c"
+  ],
+  "Examiner connecteur, alimentation et liaison de contrôle USB-PD, puis recouper avec le chargeur.": [
+    "component_summary.c"
+  ],
+  "Batterie / jauge": [
+    "component_summary.c"
+  ],
+  "Santé déclarée, température et identification de la jauge.": [
+    "component_summary.c"
+  ],
+  "Vérifier connecteur, sonde de température et mesures de la jauge avec la chaîne de charge.": [
+    "component_summary.c"
+  ],
+  "Wi-Fi": [
+    "component_summary.c"
+  ],
+  "Énumération PCIe et lien avec le module. Le réseau complet n'est pas certifié.": [
+    "component_summary.c"
+  ],
+  "Recouper PCIe, alimentation radio, horloges et service CPU0. Vérifier les prérequis avant de suspecter le module.": [
+    "component_summary.c"
+  ],
+  "Échange HCI avec la partie Bluetooth du module radio.": [
+    "component_summary.c"
+  ],
+  "Contrôler alimentation radio, UART et liaisons communes Wi-Fi/Bluetooth.": [
+    "component_summary.c"
+  ],
+  "Codec, horloges et essai sonore. L'écoute reste une observation manuelle.": [
+    "component_summary.c"
+  ],
+  "Vérifier les rails et horloges du codec, puis les sorties et les connexions audio.": [
+    "component_summary.c"
+  ],
+  "Écran / rétroéclairage": [
+    "component_summary.c"
+  ],
+  "Identification de dalle et contrôle du rétroéclairage. Les pixels restent à observer.": [
+    "component_summary.c"
+  ],
+  "Comparer dalle, nappe et alimentation du rétroéclairage. Utiliser les mires pour l'observation des pixels.": [
+    "component_summary.c"
+  ],
+  "Identification et test électrique ITO. La grille manuelle est séparée.": [
+    "component_summary.c"
+  ],
+  "Examiner nappe, alimentation et résultat ITO, puis la couverture manuelle de la grille.": [
+    "component_summary.c"
+  ],
+  "Commandes / Joy-Con": [
+    "component_summary.c"
+  ],
+  "Inventaire matériel. Boutons, sticks et rails demandent le test interactif.": [
+    "component_summary.c"
+  ],
+  "Compléter le test interactif : boutons, repos, amplitude et reconnexions. Vérifier les rails si des coupures sont observées.": [
+    "component_summary.c"
+  ],
+  "Thermique / ventilation": [
+    "component_summary.c"
+  ],
+  "Capteur thermique, températures et réponse du ventilateur.": [
+    "component_summary.c"
+  ],
+  "Recouper températures, commande PWM, alimentation et réponse du ventilateur.": [
+    "component_summary.c"
+  ],
+  "NON TESTÉ": [
+    "component_summary.c"
+  ],
+  "PASS — contrôles réussis": [
+    "component_summary.c"
+  ],
+  "Contrôle interactif nécessaire.": [
+    "component_summary.c"
+  ],
+  "%d / %d résultats disponibles": [
+    "component_summary.c"
+  ],
+  "Mesures interactives enregistrées. Vérifier leur couverture dans le détail.": [
+    "component_summary.c"
+  ],
+  "Couverture partielle ou prérequis non vérifiés.": [
+    "component_summary.c"
+  ],
+  "Dernier contrôle complémentaire de cette session, distinct des mesures automatiques :": [
+    "component_summary.c"
+  ],
+  "PASS concerne uniquement les contrôles réalisés. Il ne certifie pas toutes les fonctions d'une puce.": [
+    "component_summary.c"
+  ],
+  "Le bilan normal n'exécute pas les motifs du test RAM isolé.": [
+    "component_summary.c"
+  ],
+  "Le rapport détaillé est tronqué. Les preuves disponibles et les contrôles non testés restent identifiés.": [
+    "component_summary.c"
+  ],
+  "Pistes de panne": [
+    "component_summary.c",
+    "component_summary.c"
+  ],
+  "USB-PD et chargeur présentent des anomalies : vérifier leurs alimentations et liaisons de contrôle communes avant de conclure à deux puces défectueuses.": [
+    "component_summary.c"
+  ],
+  "Le diagnostic Wi-Fi dépend du service CPU0. Son échec peut empêcher le contrôle radio ; le résultat Wi-Fi ne localise donc pas seul la panne.": [
+    "component_summary.c"
+  ],
+  "Aucune anomalie structurée relevée. Compléter les contrôles partiels et les observations manuelles.": [
+    "component_summary.c"
+  ],
+  "Une absence de réponse peut venir de l'alimentation ou d'une liaison. Ces pistes ne prescrivent pas le remplacement d'une puce.": [
+    "component_summary.c"
+  ],
+  "Preuves enregistrées": [
+    "component_summary.c"
+  ],
+  "Les rapports détaillés d'origine restent disponibles sans relancer les tests.": [
+    "component_summary.c"
+  ]
+}

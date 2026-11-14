@@ -1,9 +1,12 @@
-Hekate Nova Pro 16 : sources Hekate/Nyx et compagnon HWTest-RCM.
+Hekate Nova Pro 17 : sources Hekate/Nyx et compagnon HWTest-RCM.
 Construire hekate-6.5.4 avec make -j4 : devkitARM, devkitA64, Python3
 et un compilateur GCC natif sont necessaires. Les icones sont deja generees.
 Le service RAM se construit dans HWTest-RCM-0.15/ramtest.
 Les scripts build-tools documentent la construction et les tests du
 workspace Windows : ils attendent work/hekate-6.5.4, work/HWTest-RCM-0.15,
 work/toolchains/w64devkit et les ressources de test de ce workspace.
-Le dossier resources contient les sept packs de langue du service RAM.
+Le dossier resources contient les sept packs de langue du service RAM
+et le fichier Caviar utilise pour les verifications graphiques.
+La suite actuelle est verify_full_build_v17.py ; des tests historiques
+conservent le nom des versions precedentes.
 Aucun test PC ne remplace une validation sur console.

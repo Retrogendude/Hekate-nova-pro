@@ -27,6 +27,8 @@
 
 #define USE_RTC_TIMER
 
+void (*timer_progress_hook)(u32 now_us);
+
 u32 get_tmr_s()
 {
 	(void)RTC(APBDEV_RTC_MILLI_SECONDS);
@@ -37,12 +39,16 @@ u32 get_tmr_ms()
 {
 	// The registers must be read with the following order:
 	// RTC_MILLI_SECONDS (0x10) -> RTC_SHADOW_SECONDS (0xC)
-	return (u32)(RTC(APBDEV_RTC_MILLI_SECONDS) + (RTC(APBDEV_RTC_SHADOW_SECONDS) * 1000));
+	u32 now=(u32)(RTC(APBDEV_RTC_MILLI_SECONDS) + (RTC(APBDEV_RTC_SHADOW_SECONDS) * 1000));
+    if(timer_progress_hook)timer_progress_hook((u32)TMR(TIMERUS_CNTR_1US));
+    return now;
 }
 
 u32 get_tmr_us()
 {
-	return (u32)TMR(TIMERUS_CNTR_1US);
+	u32 now=(u32)TMR(TIMERUS_CNTR_1US);
+    if(timer_progress_hook)timer_progress_hook(now);
+    return now;
 }
 
 void msleep(u32 ms)
@@ -50,7 +56,7 @@ void msleep(u32 ms)
 #ifdef USE_RTC_TIMER
 	u32 start = (u32)RTC(APBDEV_RTC_MILLI_SECONDS) + (RTC(APBDEV_RTC_SHADOW_SECONDS) * 1000);
 	// Casting to u32 is important!
-	while (((u32)(RTC(APBDEV_RTC_MILLI_SECONDS) + (RTC(APBDEV_RTC_SHADOW_SECONDS) * 1000)) - start) <= ms)
+	while ((u32)(get_tmr_ms() - start) <= ms)
 		;
 #else
 	bpmp_msleep(ms);
@@ -66,7 +72,7 @@ void usleep(u32 us)
 	if ((start + us) < start)
 		bpmp_usleep(us);
 	else
-		while ((u32)(TMR(TIMERUS_CNTR_1US) - start) <= us) // Casting to u32 is important!
+		while ((u32)(get_tmr_us() - start) <= us) // Casting to u32 is important!
 			;
 #else
 	bpmp_usleep(us);

@@ -52,6 +52,7 @@ bool nyx_diag_truncated(void);
 const char *nyx_diag_report(void);
 u32 nyx_diag_finding_count(void);
 bool nyx_diag_finding(u32 index, nyx_diag_finding_t *out);
+bool nyx_diag_storage_ready(bool emmc);
 /* Exports only the captured report, never reruns probes. Output path is
  * populated on success. Requires 128 bytes at path, may be NULL. */
 int nyx_diag_export(char *path);

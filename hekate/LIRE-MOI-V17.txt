@@ -1,0 +1,66 @@
+HEKATE NOVA PRO 17
+Base : Hekate 6.5.4 / Nyx 1.9.4
+
+MISE A JOUR
+Copier le contenu du paquet sur la carte SD, en conservant bootloader,
+fonts et wallpapers a la racine. Injecter hekate_nova_pro_6.5.4_v17.bin.
+Les fichiers nyx.ini et hekate_ipl.ini ne sont pas fournis : vos preferences
+et profils de demarrage existants sont conserves.
+
+PERSONNALISATION
+Reglages Nyx > Themes et couleurs propose quatre onglets : couleurs,
+fond et transparence, demarrage, tuile Launch. Le selecteur rectangulaire
+conserve les changements et leur apercu en passant d'une cible a l'autre.
+Les couleurs du logo et de la barre de demarrage sont independantes.
+Les images BMP 24/32 bits, non compressees, de 1920 x 1080 maximum sont
+lues depuis wallpapers. Choisir Aucune image retire l'image de Launch.
+Son image remplit uniquement cette tuile, dans les deux dispositions.
+Sauvegarder et recharger applique les changements. Les couleurs du
+demarrage sont visibles au prochain demarrage de Hekate.
+
+Au premier lancement : Carbon, couleurs Nova, transparence des fenetres
+75 % (opacite 25 %), reglage date/heure d'origine et choix de langue.
+Les preferences existantes restent prioritaires. Reinitialiser permet de
+retrouver les valeurs Nova ; ce choix doit ensuite etre sauvegarde.
+
+DIAGNOSTIC
+Le test complet ouvre un bilan de 15 composants/ensembles avec resultats
+mesures, couverture et pistes de recherche. Le bouton Bilan par composant
+permet de le rouvrir depuis les resultats. Les rapports d'origine restent
+accessibles. Exporter enregistre aussi le bilan et les derniers controles
+complementaires de la session dans bootloader/diagnostics.
+
+Commandes : test Joy-Con/Lite avec boutons memorises, repos/amplitude des
+sticks, decalage mesure et pertes/reconnexions. POWER permet de sortir.
+Tactile : grille sur tout l'ecran ; POWER termine. Les zones non parcourues
+sont non testees, et ne sont pas declarees defectueuses.
+Ecran : mires rouge, vert, bleu, blanc et noir ; VOL+/VOL- change la mire,
+POWER quitte. Toucher le fond masque les commandes. Les observations sont
+manuelles et sont conservees dans le bilan de la session.
+RAM : modes rapide, avance ou personnalise avec au moins un motif. Le
+programme se lance separement et revient automatiquement a Hekate. Son
+resultat indique les motifs acheves, la zone relue, les erreurs et la duree.
+Les 4 premiers MiB restent reserves. Un materiel instable peut empecher le
+retour. Exporter apres un test complet inclut le resultat RAM retourne.
+
+PASS ne concerne que les controles effectues. Une identification seule ne
+certifie pas toutes les fonctions d'une puce. Les pistes de panne ne sont
+pas des consignes de remplacement. Les observations interactives ne sont
+pas conservees apres un redemarrage : exporter le rapport pour les garder.
+
+AFFICHAGE
+Logo de demarrage centre et barre rapprochee. Progression par etapes,
+animee pendant les attentes des pilotes qui interrogent le temps. Aucune
+nouvelle interruption materielle ; animation suspendue pendant le dernier
+entrainement memoire et arretee avant le transfert vers Nyx.
+Reflet blanc : passage de 240 ms, pauses alternant 3 et 5 secondes.
+La bordure bleu/violet reste animee. Les effets sont desactivables.
+Les animations de fond vagues/particules restent supprimees.
+
+VERIFICATIONS
+Compilation Hekate/Nyx et service RAM, tests PC du moteur graphique reel,
+des sept langues, de la sauvegarde et des chemins d'erreur, des protocoles
+RAM et des rapports. Voir documentation/VERIFICATION-V17.json et
+documentation/SUIVI-CAHIER-CHARGES-V17.md.
+Validation physique sur Switch non effectuee. Les surfaces redessinees
+mesurees sur PC ne donnent pas les FPS reels de la console.

@@ -1,5 +1,9 @@
 /* Native Nyx presentation for the supplied HWTest-RCM probes. GPL-2.0. */
 #include "gui_diagnostics.h"
+#include "../diagnostics/component_summary.h"
+#include "../diagnostics/diag_format.h"
+#include "gui_choices.h"
+#include "gui_interactive.h"
 #include "../diagnostics/nyx_diagnostics.h"
 #include "../diagnostics/ram_handoff.h"
 #include "../fonts/font_manager.h"
@@ -126,9 +130,12 @@ static lv_res_t show_report(lv_obj_t *btn)
     lv_obj_set_free_num(prev, 0);
     lv_obj_t *next = lv_win_add_btn(win, NULL, "Suivant", report_step);
     lv_obj_set_free_num(next, 1);
-    report_position = text(win, "", 28, 12, 1100, true);
-    report_label = text(win, "", 28, 56, 1180, true);
-    lv_label_set_style(report_label, &monospace_text);
+    lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);
+    report_position=text(page,"",34,12,1212,true);
+    lv_obj_t *body=lv_page_create(page,NULL);lv_obj_set_pos(body,34,56);lv_obj_set_size(body,1212,lv_obj_get_height(page)-74);
+    lv_page_set_style(body,LV_PAGE_STYLE_BG,&lv_style_transp_tight);lv_page_set_style(body,LV_PAGE_STYLE_SCRL,&lv_style_transp_tight);
+    lv_page_set_scrl_fit(body,false,true);lv_page_set_scrl_width(body,1212);lv_page_set_sb_mode(body,LV_SB_MODE_AUTO);
+    report_label=text(body,"",12,8,1176,true);lv_label_set_style(report_label,&monospace_text);
     render_report_page();
     return LV_RES_OK;
 }
@@ -156,6 +163,11 @@ static const char *const diagnostic_titles[NYX_DIAG_PROBE_COUNT]={
     "Mémoire DRAM","Horloges","Stockage","Numéros de série","Partitions","Santé eMMC","Table GPT","Démarrage BOOT0","AutoRCM","Contenu de la carte SD","Erreurs de stockage","Lecteur de jeux",
     "Bluetooth","Wi-Fi PCIe","Connexion Wi-Fi","Codec audio","Horloges audio","Test sonore","Dalle écran","Rétroéclairage","Écran tactile","Capteur de luminosité","Joy-Con","Boutons","GPIO","UART B","État de réinitialisation","Registres PMC"
 };
+const char *nyx_diag_probe_caption(u32 index)
+{
+    return index<NYX_DIAG_PROBE_COUNT?nyx_tr(diagnostic_titles[index]):nyx_tr("Diagnostic");
+}
+
 typedef struct {
     lv_cont_ext_t container;
     u32 indices[NYX_DIAG_PROBE_COUNT],count,page;
@@ -205,12 +217,17 @@ static void diagnostic_tiles(lv_obj_t *win,u32 group,bool results)
     diagnostic_tiles_fill(holder);
 }
 
+static lv_res_t show_components(lv_obj_t *button)
+{
+    (void)button;nyx_components_window(show_report,export_report);return LV_RES_OK;
+}
 static void show_results(int result)
 {
     results_window = nyx_create_standard_window("Diagnostic - Derniere execution", close_results);
     lv_obj_t *full = lv_win_add_btn(results_window, NULL, "Rapport", show_report);
     lv_obj_set_free_num(full, NYX_DIAG_PROBE_COUNT);
     lv_win_add_btn(results_window, NULL, "Exporter", export_report);
+    lv_win_add_btn(results_window, NULL, "Bilan par composant", show_components);
     u32 counts[6] = {0};
     for (u32 i = 0; i < NYX_DIAG_PROBE_COUNT; i++) {
         const nyx_diag_probe_t *p = nyx_diag_probe(i);
@@ -269,7 +286,10 @@ static lv_res_t run_selection(lv_obj_t *btn)
     nyx_diag_hooks_t hooks = { suspend_probes, progress, resume_probes, &p };
     int result = selection & ONE_PROBE ? nyx_diag_run_probe(selection & ~ONE_PROBE, &hooks) : nyx_diag_run(selection, &hooks);
     lv_obj_del(win);
+    if(result!=0&&result!=4){notice("Diagnostic", "La nouvelle exécution n'a pas produit de résultats. Le rapport précédent reste conservé.");return LV_RES_OK;}
     show_results(result);
+    if(selection==NYX_DIAG_G_ALL)nyx_components_window(show_report,export_report);
+    if(result==4)nyx_show_help("Mesures capturées, mais restauration matérielle incomplète. Recharger Nyx avant de démarrer.");
     return LV_RES_OK;
 }
 
@@ -285,6 +305,8 @@ static lv_res_t show_group(lv_obj_t *btn)
         return result;
     }
     lv_obj_t *win = nyx_create_standard_window(groups[index].title, NULL);
+    if(index==9){lv_win_add_btn(win,NULL,"Joy-Con interactif",nyx_joycon_test);lv_win_add_btn(win,NULL,"Grille tactile",nyx_touch_test);}
+    if(index==8)lv_win_add_btn(win,NULL,"Mires écran",nyx_screen_patterns);
     button(win, "Executer ce groupe", 32, 20, 416, run_selection, groups[index].groups);
     text(win, groups[index].groups == NYX_DIAG_G_SOUND ?
         "Un son est emis sur chaque sortie. Verifiez le resultat a l'ecoute." :
@@ -301,37 +323,59 @@ static const char *ram_state(u32 state)
     return nyx_tr("ERREUR");
 }
 
+static u32 ram_selected_mode=NYX_RAM_MODE_ADVANCED,ram_custom_mask=NYX_RAM_PATTERN_ALL;
+static lv_obj_t *ram_mode_choices,*ram_pattern_choices,*ram_start;
+
 static lv_res_t launch_ram(lv_obj_t *btn)
 {
     (void)btn;
-    int result = nyx_launch_ram_service();
+    u32 mask=ram_selected_mode==NYX_RAM_MODE_QUICK?1u:ram_selected_mode==NYX_RAM_MODE_ADVANCED?NYX_RAM_PATTERN_ALL:ram_custom_mask;
+    int result = nyx_launch_ram_service(ram_selected_mode,mask);
     char message[1024];
     s_printf(message, nyx_tr("Le service RAM n'a pas pu etre lance (code %d).\nVerifiez bootloader/sys/hwtest_ram.bin et bootloader/update.bin."), result);
     notice("Test RAM", message);
     return LV_RES_OK;
 }
 
+static void ram_controls_refresh(void)
+{
+    bool custom=ram_selected_mode==NYX_RAM_MODE_CUSTOM;
+    for(lv_obj_t *choice=lv_obj_get_child(ram_pattern_choices,NULL);choice;choice=lv_obj_get_child(ram_pattern_choices,choice)){
+        u32 index=lv_obj_get_free_num(choice);bool selected=custom?!!(ram_custom_mask&(1u<<index)):ram_selected_mode==NYX_RAM_MODE_ADVANCED||index==0;
+        lv_obj_set_click(choice,custom);lv_btn_set_state(choice,selected?LV_BTN_STATE_TGL_REL:LV_BTN_STATE_REL);
+    }
+    bool valid=!custom||ram_custom_mask;
+    lv_obj_set_click(ram_start,valid);lv_btn_set_state(ram_start,valid?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
+}
+static lv_res_t ram_mode_choice(lv_obj_t *choice)
+{
+    ram_selected_mode=lv_obj_get_free_num(choice);ram_controls_refresh();return LV_RES_OK;
+}
+static lv_res_t ram_pattern_choice(lv_obj_t *choice)
+{
+    ram_custom_mask^=1u<<lv_obj_get_free_num(choice);ram_controls_refresh();return LV_RES_OK;
+}
+
 static lv_res_t show_ram_service(lv_obj_t *btn)
 {
     (void)btn;
-    lv_obj_t *win = nyx_create_standard_window("Test RAM isole", NULL);
-    text(win, "Passe complete et retour automatique a Hekate", 32, 28, 1180, false);
-    text(win,
-        "Nyx sera quitte pour tester la memoire disponible avec les 7 motifs avances.\n"
-        "La zone de retour Hekate et les zones reservees restent exclues du test.\n"
-        "A la fin, Hekate est recharge et le resultat est affiche.\n"
-        "En cas de panne materielle ou de memoire instable, le retour peut echouer.",
-        32, 94, 1180, true);
-    button(win, "Lancer le test RAM", 32, 250, 480, launch_ram, 0);
-    if (last_ram_valid) {
+    lv_obj_t *win=nyx_create_standard_window("Test RAM isole",NULL);
+    lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);
+    ram_start=lv_win_add_btn(win,NULL,"Lancer le test RAM",launch_ram);
+    ram_mode_choices=nyx_choices_create(page,"Rapide\nAvancé\nPersonnalisé",ram_selected_mode,3,1212,48,ram_mode_choice,80,false);
+    lv_obj_set_pos(ram_mode_choices,34,18);
+    lv_obj_t *label=nyx_nova_text(page,"Rapide : adresse. Avancé : 7 motifs. Personnalisé : choisir au moins un motif.",34,82,1212,NOVA_SMALL);nyx_nova_fit_text(label,48);
+    ram_pattern_choices=nyx_choices_create(page,"Adresse\nAdresse inversée\nZéros\nUns\nAlternance AA\nAlternance 55\nPseudo-aléatoire",0,4,1212,54,ram_pattern_choice,81,false);
+    lv_obj_set_pos(ram_pattern_choices,34,142);
+    label=nyx_nova_text(page,"Programme séparé puis retour automatique à Hekate. Les zones réservées au retour restent exclues. Un matériel instable peut empêcher le retour.",34,278,1212,NOVA_SMALL);nyx_nova_fit_text(label,64);
+    if(last_ram_valid){
         char message[1024];
-        s_printf(message, nyx_tr("Dernier resultat : %s\n%d / %d motifs, zone prevue : %d MiB sur %d MiB\n%d erreur(s), duree %d s, erreurs MTC : %08X"),
-            ram_state(last_ram.result), last_ram.patterns_completed, last_ram.patterns_total,
-            last_ram.tested_mib, last_ram.dram_mib, last_ram.errors,
-            last_ram.elapsed_ms / 1000, last_ram.mtc_errors);
-        text(win, message, 32, 352, 1180, true);
+        const char *mode=last_ram.mode==NYX_RAM_MODE_QUICK?"Rapide":last_ram.mode==NYX_RAM_MODE_ADVANCED?"Avancé":"Personnalisé";
+        s_printf(message,"%s · %s · %s\n%d / %d motifs · zone prévue %d / %d MiB · %d s · %d erreur(s)\nMotifs choisis : %02X · terminés : %02X · MTC : %08X\nZone relue avec au moins un motif : %d MiB",
+            nyx_tr("Dernier resultat"),ram_state(last_ram.result),nyx_tr(mode),last_ram.patterns_completed,last_ram.patterns_total,last_ram.tested_mib,last_ram.dram_mib,last_ram.elapsed_ms/1000,last_ram.errors,last_ram.selected_mask,last_ram.completed_mask,last_ram.mtc_errors,last_ram.verified_mib);
+        label=nyx_nova_text(page,message,34,362,1212,NOVA_SMALL);nyx_nova_fit_text(label,126);
     }
-    return LV_RES_OK;
+    ram_controls_refresh();return LV_RES_OK;
 }
 
 static void notify_ram_result(void *context)
@@ -348,11 +392,13 @@ void create_tab_diagnostics(lv_theme_t *th, lv_obj_t *parent)
         nyx_nova_grid_add(parent, groups[i].detail, show_group, NULL, i);
     nyx_nova_grid_finish(parent);
     nyx_ram_handoff_t *saved = (nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR;
-    if (saved->result_magic == NYX_RAM_RESULT_MAGIC && saved->version == NYX_RAM_VERSION &&
-        saved->result >= NYX_RAM_RESULT_PASS && saved->result <= NYX_RAM_RESULT_ERROR &&
-        saved->result_hash == nyx_ram_hash(&saved->result, 8 * sizeof(u32))) {
+    if (nyx_ram_result_valid(saved)) {
         memcpy(&last_ram, saved, sizeof(last_ram));
         last_ram_valid = true;
+        char record[640];
+        nyx_diag_snprintf(record,sizeof(record),"RAM isolée : état=%s, mode=%d, sélection=0x%02X, achevés=0x%02X, motifs=%d/%d, zone prévue=%d MiB, préfixe relu=%d MiB, DRAM=%d MiB, durée=%d ms, erreurs=%d, erreurs MTC=%d. Les 4 premiers MiB sont réservés. Une interruption ne valide pas les motifs inachevés.",
+            ram_state(last_ram.result),last_ram.mode,last_ram.selected_mask,last_ram.completed_mask,last_ram.patterns_completed,last_ram.patterns_total,last_ram.tested_mib,last_ram.verified_mib,last_ram.dram_mib,last_ram.elapsed_ms,last_ram.errors,last_ram.mtc_errors);
+        nyx_component_observation(NYX_MANUAL_RAM,record,last_ram.errors||last_ram.mtc_errors);
         nyx_nova_diagnostic_result();
         saved->result_magic = 0;
         lv_task_t *task = lv_task_create(notify_ram_result, 600, LV_TASK_PRIO_MID, NULL);

@@ -76,6 +76,9 @@ typedef struct _nyx_config
 	u32 nova_logo_color; // Independent alpha-mask tint, RGB24.
 	u32 nova_icon_color;
 	u32 nova_selection_color; // Selected card background, RGB24.
+	char launch_image[64]; // Optional BMP for the Launch tile only, under /wallpapers.
+	u32 boot_logo_color; // Independent splash emblem tint, RGB24.
+	u32 boot_bar_color; // Independent splash progress tint, RGB24.
 } nyx_config;
 
 extern hekate_config h_cfg;

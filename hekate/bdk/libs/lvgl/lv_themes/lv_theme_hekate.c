@@ -171,13 +171,14 @@ static void btn_init(void)
 	pr.body.main_color = COLOR_PRESS;
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.shadow.width = 0;
-	pr.body.border.color = COLOR_OUTLINE;
+	pr.body.border.color = COLOR_HOS_TURQUOISE;
+	pr.body.border.opa = LV_OPA_COVER;
 	pr.text.color = COLOR_HOS_TXT_WHITE;
-	pr.body.border.width = 1;
+	pr.body.border.width = 2;
 
 	lv_style_copy(&tgl_rel, &rel);
 	tgl_rel.body.border.color = COLOR_HOS_TURQUOISE;
-	tgl_rel.body.border.width = 1;
+	tgl_rel.body.border.width = 2;
 	tgl_rel.body.main_color = COLOR_PRESS;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
 
@@ -882,7 +883,7 @@ static void win_init(void)
 
 	lv_style_copy(&pr, theme.btn.pr);
 	pr.body.radius = 8;
-	pr.body.border.width = 1;
+	pr.body.border.width = 2;
 
 	theme.win.bg = &window_bg;
 	theme.win.sb = &sb;

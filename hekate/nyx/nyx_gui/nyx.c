@@ -197,8 +197,9 @@ static u8 *_read_service_payload(const char *path, u32 limit, u32 *size)
 	return buffer;
 }
 
-int nyx_launch_ram_service(void)
+int nyx_launch_ram_service(u32 mode,u32 mask)
 {
+	if(!nyx_ram_selection_valid(mode,mask))return 7;
 	if (nyx_diag_running())
 		return 5;
 	/* A failed preparation must not leave an older automatic-run request. */
@@ -254,6 +255,9 @@ int nyx_launch_ram_service(void)
 	request.payload_size = return_size;
 	request.payload_hash = nyx_ram_hash(return_image, return_size);
 	request.auto_run = 1;
+	request.mode = mode;
+	request.selected_mask = mask;
+	request.request_hash = nyx_ram_request_hash(&request);
 	request.magic = NYX_RAM_HANDOFF_MAGIC;
 	memcpy((void *)NYX_RAM_HANDOFF_ADDR, &request, sizeof(request));
 	memcpy((void *)RCM_PAYLOAD_ADDR, ram_image, ram_size);
@@ -446,6 +450,7 @@ static void _show_errors(int sd_error)
 
 	if (*excp_enabled == EXCP_MAGIC || sd_error)
 	{
+		nova_splash_stop();
 		gfx_clear_grey(0);
 		gfx_con_setpos(0, 0, 0);
 		display_backlight_brightness(150, 1000);
@@ -559,9 +564,12 @@ void nyx_init_load_res()
 	minerva_change_freq(FREQ_1600);
 
 	// Load hekate/Nyx configuration.
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,50,65);
 	_load_saved_configuration();
+	nova_splash_set_colors(n_cfg.boot_logo_color,n_cfg.boot_bar_color);
 
 	nova_splash_animate((u32 *)IPL_FB_ADDRESS,50,65,300);
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,65,85);
 	// Load Nyx resources.
 	if (nyx_load_resources())
 	{
@@ -605,6 +613,7 @@ void nyx_init_load_res()
 	}
 
 	nova_splash_animate((u32 *)IPL_FB_ADDRESS,65,85,300);
+	nova_splash_stage((u32 *)IPL_FB_ADDRESS,85,100);
 	// Load default launch icons and background if it exists.
 	nyx_load_bg_icons();
 

@@ -87,6 +87,8 @@ static u32 g_platform;
 static u32 g_pass_index;
 static u32 g_pass_total;
 static u32 g_passes_completed;
+static u32 g_completed_mask;
+static u32 g_verified_regions;
 static u32 g_run_sequence;
 static pattern_t g_active_pattern;
 
@@ -112,10 +114,8 @@ typedef void (*chain_reloc_fn_t)(u32 src, u32 dst, u32 size, u32 entry);
 static bool nyx_return_valid(void)
 {
     const volatile nyx_ram_handoff_t *h = (const volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR;
-    return h->magic == NYX_RAM_HANDOFF_MAGIC && h->version == NYX_RAM_VERSION &&
-        h->auto_run == 1 && h->payload_size >= 0x100u &&
-        h->payload_size <= NYX_RAM_RETURN_MAX &&
-        nyx_ram_hash((const void *)NYX_RAM_RETURN_ADDR, h->payload_size) == h->payload_hash;
+    return nyx_ram_request_valid((const nyx_ram_handoff_t *)h) &&
+        nyx_ram_hash((const void *)NYX_RAM_RETURN_ADDR,h->payload_size)==h->payload_hash;
 }
 
 static void nyx_record_result(u32 elapsed_ms, bool infrastructure_error)
@@ -131,7 +131,11 @@ static void nyx_record_result(u32 elapsed_ms, bool infrastructure_error)
     h->dram_mib = g_ram_mb;
     h->elapsed_ms = elapsed_ms;
     h->mtc_errors = ram_mtc_errors();
-    h->result_hash = nyx_ram_hash((const void *)&h->result, 8u * sizeof(u32));
+    h->mode = g_mode;
+    h->selected_mask = g_pattern_mask;
+    h->completed_mask = g_completed_mask;
+    h->verified_mib = g_verified_regions * 4u;
+    h->result_hash = nyx_ram_hash((const void *)&h->result, NYX_RAM_RESULT_WORDS * sizeof(u32));
     h->result_magic = NYX_RAM_RESULT_MAGIC;
     bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_WAY, true);
 }
@@ -146,7 +150,7 @@ static bool nyx_return_to_hekate(void)
     if (ram_mtc_errors()) {
         h->mtc_errors = ram_mtc_errors();
         h->result = NYX_RAM_RESULT_ERROR;
-        h->result_hash = nyx_ram_hash((const void *)&h->result, 8u * sizeof(u32));
+        h->result_hash = nyx_ram_hash((const void *)&h->result, NYX_RAM_RESULT_WORDS * sizeof(u32));
     }
     u32 size = h->payload_size;
     u32 staged_size = ALIGN(size, 0x10);
@@ -566,6 +570,7 @@ static bool verify_sweep(pattern_t p, u32 salt)
 
         volatile u32 *win = map_region(phys);
         verify_region(win, phys, p, salt);
+        if(done+1>g_verified_regions)g_verified_regions=done+1;
 
         ++done;
         g_phase_done = done;
@@ -622,6 +627,7 @@ static bool run_pass(pattern_t p, u32 salt)
         g_errors - before, secs);
 #endif
     ++g_passes_completed;
+    g_completed_mask |= PAT_BIT(p);
     g_phase = PHASE_NONE;
     g_phase_done = 0;
     g_phase_total = 0;
@@ -920,6 +926,8 @@ static void reset_run_stats(void)
     g_pass_index = 0;
     g_pass_total = 0;
     g_passes_completed = 0;
+    g_completed_mask = 0;
+    g_verified_regions = 0;
     g_active_pattern = PAT_ADDR;
     g_phase = PHASE_NONE;
     g_phase_done = 0;
@@ -1072,8 +1080,9 @@ void ipl_main(void)
     for (;;) {
         reset_run_stats();
         if (g_from_nyx) {
-            g_mode = RAM_MODE_ADVANCED;
-            g_pattern_mask = PAT_ALL_MASK;
+            const nyx_ram_handoff_t *request=(const nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR;
+            g_mode=(ram_mode_t)request->mode;
+            g_pattern_mask=request->selected_mask;
             g_pass_total = count_selected_patterns(g_pattern_mask);
         } else {
             choose_mode();

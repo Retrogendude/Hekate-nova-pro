@@ -25,6 +25,7 @@
 #include "gui_info.h"
 #include "gui_options.h"
 #include "gui_diagnostics.h"
+#include "gui_interactive.h"
 #include "../diagnostics/nyx_diagnostics.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
 #include <libs/lvgl/lvgl.h>
@@ -375,6 +376,7 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 	}
 
 	int res = touch_poll(&touchpad);
+	if(nyx_interactive_touch(&touchpad)){data->state=LV_INDEV_STATE_REL;return false;}
 	if (touchpad.touch)
 		nyx_background_interaction();
 
@@ -422,13 +424,14 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 
 static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 {
-	if (diagnostics_suspended || n_cfg.jc_disable)
+	if (diagnostics_suspended || (n_cfg.jc_disable && !nyx_interactive_joycon_active()))
 	{
 		data->state = LV_INDEV_STATE_REL;
 		return false;
 	}
 	// Poll Joy-Con.
 	jc_gamepad_rpt_t *jc_pad = joycon_poll();
+	if(nyx_interactive_joycon(jc_pad)){data->state=LV_INDEV_STATE_REL;return false;}
 
 	if (!jc_pad)
 	{

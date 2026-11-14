@@ -44,6 +44,7 @@ void nyx_nova_reflection_interaction(void);
 void nyx_nova_reflection_reset(void);
 void nyx_nova_window(lv_obj_t *win);
 void nyx_nova_wallpaper_load(void);
+void nyx_nova_launch_backdrop(lv_obj_t *card);
 void nyx_nova_screen(lv_obj_t *screen);
 u32 nyx_nova_temperature_rgb(u32 degrees);
 void nyx_nova_backdrop(lv_obj_t *parent, int y);

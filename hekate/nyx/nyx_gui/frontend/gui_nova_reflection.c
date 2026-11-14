@@ -7,7 +7,8 @@
 #define REFLECTION_TARGETS 32
 #define REFLECTION_PERIOD 20
 #define REFLECTION_SWEEP 12
-#define REFLECTION_CYCLE 36
+#define REFLECTION_FIRST (REFLECTION_SWEEP + 150) /* 3 seconds after pass. */
+#define REFLECTION_CYCLE (REFLECTION_FIRST + REFLECTION_SWEEP + 250) /* Then 5 seconds. */
 #define REFLECTION_STRIPS 16
 #define REFLECTION_HALF 64
 typedef struct {
@@ -78,7 +79,14 @@ static const u32 reflection_gradient_row[]={
 static int reflection_center(const reflection_target *target)
 {
     int width=lv_obj_get_width(target->target),height=lv_obj_get_height(target->target);
-    return -REFLECTION_HALF+(int)(target->phase%REFLECTION_CYCLE)*(width+height/2+2*REFLECTION_HALF)/(REFLECTION_SWEEP-1);
+    u32 phase=target->phase%REFLECTION_CYCLE;
+    if(phase>=REFLECTION_FIRST)phase-=REFLECTION_FIRST;
+    return -REFLECTION_HALF+(int)phase*(width+height/2+2*REFLECTION_HALF)/(REFLECTION_SWEEP-1);
+}
+static bool reflection_sweeping(u32 phase)
+{
+    phase%=REFLECTION_CYCLE;
+    return phase<REFLECTION_SWEEP||(phase>=REFLECTION_FIRST&&phase<REFLECTION_FIRST+REFLECTION_SWEEP);
 }
 static void reflection_bounds(reflection_target *target)
 {
@@ -205,7 +213,7 @@ static void reflection_frame(void *unused)
         if(!reflection_visible(target->target,&visible)){target->painted=false;continue;}
         reflection_target before=*target;
         reflection_border_invalidate(target,&visible);
-        target->phase=reflection_phase;target->painted=reflection_phase%REFLECTION_CYCLE<REFLECTION_SWEEP;
+        target->phase=reflection_phase;target->painted=reflection_sweeping(reflection_phase);
         if(lv_obj_get_width(target->target)<100||lv_obj_get_height(target->target)<64)target->painted=false;
         if(target->painted)reflection_bounds(target);
         reflection_transition(&before,target,&visible);
@@ -226,7 +234,7 @@ void nyx_nova_reflect(lv_obj_t *object,bool selected)
     lv_obj_set_style(overlay,&lv_style_transp_tight);lv_obj_set_click(overlay,false);
     lv_obj_set_protect(overlay,LV_PROTECT_PARENT);
     lv_obj_set_size(overlay,lv_obj_get_width(object),lv_obj_get_height(object));lv_obj_set_pos(overlay,0,0);
-    vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_phase%REFLECTION_CYCLE<REFLECTION_SWEEP;
+    vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_sweeping(reflection_phase);
     reflection_bounds(vacant);lv_obj_set_free_ptr(overlay,vacant);
     if(!reflection_base_signal)reflection_base_signal=lv_obj_get_signal_func(overlay);
     lv_obj_set_signal_func(overlay,reflection_signal);lv_obj_set_design_func(overlay,reflection_design);
