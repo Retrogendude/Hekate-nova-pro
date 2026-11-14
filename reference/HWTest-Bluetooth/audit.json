@@ -1,0 +1,19 @@
+{
+  "commit": "74b66aab2352ae35912744fcd5441b07a0146307",
+  "repository": "https://github.com/Creased/HWTest-RCM",
+  "files": {
+    "hwtest-current-tree.json": "fe51486b621a0efb04a767a1ba8c71a7825693d8a2dabc2b62f0317b9bebd79b",
+    "hwtest-docs-bluetooth.md": "749862b65175d36c094d9eddabbb15a69bed9bf8394aa879ba1f0060c506b78e",
+    "hwtest-gui-gui_bt.c": "ee4a8c26698eeee6a80f62c274dbce5049e9897804156445f63077a2539b1c43",
+    "hwtest-gui-gui_bt.h": "cbb5849719ee80c278f8126e73e4b3fda2b7fa1a7b7ca1b76d76f33dc3916ad6",
+    "hwtest-gui-gui_btscreen.c": "6606ff207747df894c0092db3ec1324cb8ef8014de8f5a89d2488bddc5993115",
+    "hwtest-hwtest.h": "915e554d5810ee560e13f29f51a27d2ad9db37feaef05d9d1516ac6810e77f2c",
+    "hwtest-probe_bt.c": "fe30f843e880e424bfef05f1a28ca646a6df7e7408fdff6f1196bc19f02d39e1",
+    "hwtest-probe_wifi.c": "1102fcf191d04cf0eb0796c1f96fb6b1b52a00a1b98a648d7676a64d151983e0",
+    "hwtest-README.md": "500297de7df4fc2a9a26c3ffd6fc98fa65b8fa01e7176f1efaf55c3fc4bcf23c"
+  },
+  "probes_equal_after_normalizing_line_endings": {
+    "probe_bt.c": true,
+    "probe_wifi.c": true
+  }
+}

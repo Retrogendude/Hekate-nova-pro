@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v26'
-directory=work/'lvgl-preview-nova26';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v27'
+directory=work/'lvgl-preview-nova27';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -1005,7 +1005,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova26-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova27-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

@@ -4,20 +4,24 @@ The radio is substituted. This verifies software, not a physical RF link.
 from pathlib import Path
 import subprocess, json, hashlib
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v26/nyx/nyx_gui'
-d=w/'nova26-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v27/nyx/nyx_gui'
+d=w/'nova27-tests';d.mkdir(exist_ok=True)
 test=r'''
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#undef assert
+#define assert(x) do {if(!(x)){fprintf(stderr,"assertion %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1);}}while(0)
 #include <string.h>
 #include "nova_bt.h"
 static unsigned now,opened,closed,blocked,radio_error;
-static unsigned in_n,in_at,out_n;
+static unsigned in_n,in_at,out_n,fake_us,step_us=100,timed;static unsigned release_at[8192];
 static uint8_t in[8192],out[8192];
 uint32_t nova_bt_now(void){return now;}
+uint32_t nova_bt_now_us(void){fake_us+=step_us;return fake_us;}
 int nova_bt_radio_open(void){opened++;return 1;}
 void nova_bt_radio_close(void){closed++;}
-int nova_bt_radio_read(void){if(radio_error)return -2;return in_at<in_n?in[in_at++]:-1;}
+int nova_bt_radio_read(void){if(radio_error)return -2;return in_at<in_n&&(!timed||fake_us>=release_at[in_at])?in[in_at++]:-1;}
 int nova_bt_radio_write(uint8_t v){if(blocked)return 0;assert(out_n<sizeof out);out[out_n++]=v;return 1;}
 #include "nova_bt_stack.c"
 static unsigned delivered,got_type,got_size;static uint8_t got[1030];
@@ -79,6 +83,27 @@ int main(void)
     nova_bt_trace_reset();for(unsigned n=0;n<160;n++)nova_bt_trace_add(99,n,0,0);
     assert(nova_bt_trace_count()==128&&nova_bt_trace_get(0,&tr)&&tr.a==32);
     assert(nova_bt_trace_get(127,&tr)&&tr.a==159&&!nova_bt_trace_get(128,&tr));
+    /* Several L2CAP signals can share one ACL frame. Decode both semantic
+     * configurations, without logging a raw payload. */
+    nova_bt_trace_reset();uint8_t configs[34]={0x40,0x20,30,0,26,0,1,0,4,7,8,0,0x41,0,0,0,1,2,0xa0,2,5,8,10,0,0x80,0,0,0,0,0,1,2,0,4};
+    trace_frame(0,HCI_ACL_DATA_PACKET,configs,sizeof configs);
+    assert(nova_bt_trace_count()==4);assert(nova_bt_trace_get(0,&tr)&&tr.kind==6&&tr.b==0x0407);
+    assert(nova_bt_trace_get(1,&tr)&&tr.kind==17&&tr.a==0x41&&tr.c==672);
+    assert(nova_bt_trace_get(2,&tr)&&tr.kind==6&&tr.b==0x0508);
+    assert(nova_bt_trace_get(3,&tr)&&tr.kind==17&&tr.a==0x80&&tr.c==1024);
+    /* Model the >300us UART restart gaps measured in HWTest. The actual
+     * receive pump must keep reading through them, still bounded in time. */
+    parser_reset();btstack_run_loop_init(&run_loop);initialized=1;
+    memset(&status,0,sizeof status);status.state=NOVA_BT_OFF;
+    now=0;fake_us=0;step_us=10;timed=1;in_at=0;in_n=48;
+    for(unsigned j=0;j<in_n;j++){in[j]=j%3==0?4:j%3==1?0xff:0;release_at[j]=j<16?0:j<32?700:1400;}
+    nova_bt_poll();assert(delivered==16&&in_at==48&&status.rx_bytes==48);
+    assert(status.rx_max_us>=3400&&status.rx_max_us<=8100);
+    parser_reset();fake_us=0;step_us=100;timed=0;in_at=0;in_n=510;
+    for(unsigned j=0;j<in_n;j++)in[j]=j%3==0?4:j%3==1?0xff:0;
+    nova_bt_poll();assert(in_at<510&&status.rx_max_us<=8100);
+    for(unsigned j=0;j<10&&in_at<in_n;j++)nova_bt_poll();assert(in_at==510&&delivered==170);
+    initialized=0;in_n=in_at=out_n=0;timed=0;step_us=100;parser_reset();
     /* Real stack initialization through the asynchronous port. The virtual
      * controller sends standard Command Complete responses only. */
     failure=0;unsigned boot_commands=0;
@@ -145,6 +170,18 @@ if r.returncode:raise RuntimeError(r.stderr[-12000:])
 r=subprocess.run([str(d/'test.exe')],capture_output=True,text=True,timeout=20)
 print(r.stdout,r.stderr)
 assert r.returncode==0,r.returncode
+old_test=test.replace('#include "nova_bt_stack.c"','#include "'+(w/'hekate-nova-pro-v26/nyx/nyx_gui/bluetooth/nova_bt_stack.c').as_posix()+'"')
+(d/'old-burst.c').write_text(old_test)
+# The old trace also misses multi-command metadata, so remove only that
+# independent assertion block to reach the actual receive-pump regression.
+a=old_test.index('    nova_bt_trace_reset();uint8_t configs')
+b=old_test.index('    parser_reset();btstack_run_loop_init',a)
+old_test=old_test[:a]+old_test[b:];(d/'old-burst.c').write_text(old_test)
+old_exe=d/'old-burst.exe';old_args=[str(old_exe)if x==str(d/'test.exe')else str(d/'old-burst.c')if x==str(d/'test.c')else x for x in args]
+r0=subprocess.run(old_args,capture_output=True,text=True);assert r0.returncode==0,r0.stderr
+r0=subprocess.run([str(old_exe)],capture_output=True,text=True,timeout=10)
+assert r0.returncode==1 and 'delivered==16' in r0.stderr,(r0.returncode,r0.stderr)
+print('PASS: timed 700us UART restart gaps and 8ms pump budget; v26 fails the receive-pump regression; combined config messages decoded')
 files=list((p/'bluetooth').glob('*.[ch]'))
-(w/'nova26-bt-check.json').write_text(json.dumps({'passed':True,'physical_radio':False,'output':r.stdout,
+(w/'nova27-bt-check.json').write_text(json.dumps({'passed':True,'timed_uart_restart':True,'old_v26_burst_failure':True,'metadata_multi_command':True,'physical_radio':False,'output':r.stdout,
     'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2))

@@ -5,7 +5,7 @@ Also compile the previous import to demonstrate that this fixture rejects it.
 from pathlib import Path
 import subprocess, json, hashlib, re
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v26';d=w/'nova26-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v27';d=w/'nova27-tests';d.mkdir(exist_ok=True)
 bdk=(p/'bdk/input/joycon.c').read_text()
 gui=(p/'nyx/nyx_gui/frontend/gui_bluetooth.c').read_text()
 def function(text,start,end):return text[text.index(start):text.index(end,text.index(start))]
@@ -92,5 +92,5 @@ for old in (False,True):
  else:assert r.returncode==0,r.stderr;print(r.stdout);outputs.append(r.stdout.strip())
 r=subprocess.run([*args,'-c',str(d/'pairing.c'),'-o',str(d/'pairing.o')],capture_output=True,text=True)
 assert r.returncode==0,r.stderr
-(w/'nova26-pairing-check.json').write_text(json.dumps({'passed':True,'old_double_reversal_rejected':True,'synthetic_keys_only':True,'physical_rail_io':False,'logs':outputs,
+(w/'nova27-pairing-check.json').write_text(json.dumps({'passed':True,'old_double_reversal_rejected':True,'synthetic_keys_only':True,'physical_rail_io':False,'logs':outputs,
  'source_sha256':{n:hashlib.sha256((p/n).read_bytes()).hexdigest()for n in ['bdk/input/joycon.c','bdk/input/joycon.h','nyx/nyx_gui/frontend/gui_bluetooth.c'] }},indent=2))

@@ -15,6 +15,7 @@ typedef struct {
     uint8_t stage, auth_error;
     uint8_t auth_seen, encryption_seen, encryption_error, encrypted;
     uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
+    uint8_t br_only, radio_mode, mode_seen;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
@@ -24,6 +25,7 @@ typedef struct {
     uint16_t controller_manufacturer, controller_revision, controller_subversion;
     uint32_t rx_packets, tx_packets;
     uint32_t rx_acl, tx_acl;
+    uint32_t rx_bytes, rx_polls, rx_max_us;
     nova_bt_pad pad[2];
 } nova_bt_status;
 typedef struct {uint32_t ms;uint16_t kind,a,b,c;} nova_bt_trace;
@@ -41,6 +43,7 @@ int nova_bt_decode(nova_bt_pad *pad, unsigned side, const uint8_t *report, unsig
 int nova_bt_validate_peers(const nova_bt_peer peers[2]);
 /* Radio operations never wait for a byte. Startup alone has a bounded POR. */
 uint32_t nova_bt_now(void);
+uint32_t nova_bt_now_us(void);
 int nova_bt_radio_open(void);
 void nova_bt_radio_close(void);
 int nova_bt_radio_read(void); /* -1 empty, -2 UART fault */

@@ -54,6 +54,10 @@
       "output": "PASS: crossed HID control accepted; late timeout cannot close active sessions; pools return from six to four channels (peak 6)\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
     },
     {
+      "mode": "hwtest-rom",
+      "output": "PASS: HWTest ROM profile forces BR on both links, enables sniff/role policy, sets QoS and returns sniff links to active; full reports survive the EDR-drop model\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
       "mode": "outgoing",
       "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
     },
@@ -78,13 +82,14 @@
     "assertion": "!refused_cross",
     "physical_radio": false
   },
+  "hwtest_rom_regression": true,
   "physical_radio": false,
   "source_sha256": {
     "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-    "bluetooth/nova_bt.h": "0f8304cc2093da5f9678976ddffbc17a160a1a8c0dddd99e8892f3c63f0cbdb5",
+    "bluetooth/nova_bt.h": "a96afe77bc218719d8adc828696af85886e2f2a0583b12858b34a1e67746b42e",
     "bluetooth/nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
-    "bluetooth/nova_bt_radio.c": "bee7821707cac692c85317a4c8bfa87316ec3ef79a2f92f2aa2ed19e66c578a2",
-    "bluetooth/nova_bt_stack.c": "e1ad2f95bae0c5d93bfb193d3364c814abd4cbd19319fb19aee24d89989b2ae3",
+    "bluetooth/nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
+    "bluetooth/nova_bt_stack.c": "9a5b8efb874dee32d7370fcd945254c5a2f8ef43db452d04e568544ae838bcf3",
     "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
   },
   "hid_host_sha256": "46667bf5db4ef5139e3ff230759a7634d2a0c53f3d94377d31f8b2b66cc3887e"

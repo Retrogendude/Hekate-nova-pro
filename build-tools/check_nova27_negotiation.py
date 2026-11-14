@@ -4,7 +4,7 @@ The virtual peer intentionally ignores SDP, but implements standard HID channels
 """
 from pathlib import Path
 import subprocess,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v26/nyx/nyx_gui';d=w/'nova26-tests';d.mkdir(exist_ok=True)
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v27/nyx/nyx_gui';d=w/'nova27-tests';d.mkdir(exist_ok=True)
 c=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -20,7 +20,9 @@ extern void nova_test_import(nova_bt_peer out[2]);
 static const uint8_t golden_keys[2][16]={{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32}};
 static int wrong_key,wrong_host,ssp,incoming,encrypt_timeout,stall_first,incoming_collision;
 static unsigned accepts,create_count,conn_ready[2],encrypt_due[2];
-static int cross_control,cross_interrupt,late_success,orphan_timeout;
+static int cross_control,cross_interrupt,late_success,orphan_timeout,rom_profile;
+static unsigned br_set[2],br_commands,qos_commands,default_policy,exit_sniff,link_policy,edr_dropped;
+
 static unsigned refused_cross,duplicates_refused,peak_channels;
 static struct {unsigned side,psm,host,id,done;} abandoned[4];static unsigned na;
 static unsigned peer_interrupt_requested[2];
@@ -28,6 +30,7 @@ extern unsigned nova_test_l2cap_count(void);
 static int ignore_control,ignore_interrupt;static unsigned disconnect_requests;
 static struct {unsigned host,peer,psm,side,configured;} channels[8];static unsigned nc;
 uint32_t nova_bt_now(void){return now;}
+uint32_t nova_bt_now_us(void){static uint32_t us;us+=100;return us;}
 int nova_bt_radio_open(void){return 1;}void nova_bt_radio_close(void){}
 int nova_bt_radio_read(void){return reads_at<reads_n?reads[reads_at++]:-1;}
 int nova_bt_radio_write(uint8_t v){assert(writes_n<sizeof writes);writes[writes_n++]=v;return 1;}
@@ -42,6 +45,7 @@ static void ev(unsigned type,const uint8_t*p,unsigned n){uint8_t b[260]={4,type,
 static void cc(unsigned op,const uint8_t*p,unsigned n){uint8_t b[252]={1,op,op>>8,0};assert(n<=248);memcpy(b+4,p,n);ev(0x0e,b,n+4);}
 static void cs(unsigned op){uint8_t b[]={0,1,op,op>>8};ev(0x0f,b,4);}
 static void acl(unsigned side,unsigned cid,const uint8_t*p,unsigned n){
+ if(rom_profile&&n+4>27&&!br_set[side]){edr_dropped++;return;}
  uint8_t b[1100]={2};assert(n+9<=sizeof b);put(b+1,0x2040+side);put(b+3,n+4);put(b+5,n);put(b+7,cid);memcpy(b+9,p,n);queue(b,n+9);
 }
 static void sig(unsigned side,unsigned code,unsigned id,const uint8_t*p,unsigned n){uint8_t b[128]={code,id};assert(n+4<=sizeof b);put(b+2,n);memcpy(b+4,p,n);acl(side,1,b,n+4);}
@@ -65,6 +69,10 @@ static void cmd(const uint8_t*p,unsigned n){
  case 0x1005:len=7;b[1]=4;b[3]=8;break;
  case 0x1009:len=6;for(unsigned j=0;j<6;j++)b[j]=pair[0].host[5-j];if(wrong_host)b[0]^=1;break;
  case 0x0c14:len=248;break;
+ case 0x080f:default_policy=le(a);break;
+ case 0x080d:assert(le(a+2)==1);link_policy++;len=2;put(b,le(a));break;
+ case 0x0804:exit_sniff++;cs(op);put(b+1,le(a));b[3]=0;ev(0x14,b,6);return;
+ case 0x0807:qos_commands++;assert(a[3]==2&&a[4]==0x40&&a[5]==0x1f&&a[12]==0xc4&&a[13]==9);cs(op);memcpy(b+1,a,20);ev(0x0d,b,21);return;
  case 0x0405:{
    unsigned side=a[0]-1;assert(side<2);cs(op);create_count++;
    if(side==1&&!incoming)assert(!stall_first&&(nova_bt_get_status()->pad[0].hid_open||nova_bt_get_status()->pad[0].last_error));
@@ -86,7 +94,8 @@ static void cmd(const uint8_t*p,unsigned n){
  case 0x0413:{unsigned side=le(a)-0x40;assert(side<2&&conn_ready[side]&&a[2]==1);cs(op);
    if(encrypt_timeout){encrypt_due[side]=now+5000;return;}
    put(b+1,le(a));b[3]=a[2];ev(8,b,4);return;}
- case 0x040f:cs(op);put(b+1,le(a));put(b+3,le(a+2));ev(0x1d,b,5);return;
+ case 0x040f:{unsigned side=le(a)-0x40;assert(side<2);br_set[side]=(le(a+2)&0x3306)==0x3306;br_commands++;
+ cs(op);put(b+1,le(a));put(b+3,le(a+2));ev(0x1d,b,5);return;}
  case 0x041d:cs(op);put(b+1,le(a));b[3]=6;b[4]=15;ev(0x0c,b,8);return;
  case 0x080b:cs(op);memcpy(b+1,a,6);b[7]=0;ev(0x12,b,8);return;
  case 0x0419:cs(op);memcpy(b+1,a,6);memcpy(b+7,"Joy-Con",8);ev(7,b,255);return;
@@ -163,12 +172,13 @@ int main(int argc,char**argv){
  incoming=argc>1&&(!strcmp(argv[1],"incoming")||!strcmp(argv[1],"incoming-collision")||!strcmp(argv[1],"encryption-timeout"));
  encrypt_timeout=argc>1&&!strcmp(argv[1],"encryption-timeout");
  stall_first=argc>1&&!strcmp(argv[1],"stalled-first");
+ rom_profile=argc>1&&!strcmp(argv[1],"hwtest-rom");
  cross_control=argc>1&&(!strcmp(argv[1],"hid-cross-control")||!strcmp(argv[1],"hid-late-success")||!strcmp(argv[1],"hid-orphan-timeout"));
  cross_interrupt=argc>1&&!strcmp(argv[1],"hid-cross-interrupt");
  late_success=argc>1&&!strcmp(argv[1],"hid-late-success");
  orphan_timeout=argc>1&&!strcmp(argv[1],"hid-orphan-timeout");
  incoming_collision=argc>1&&!strcmp(argv[1],"incoming-collision");if(incoming)ssp=1;
- if(cross_control||cross_interrupt){incoming=1;ssp=1;}
+ if(cross_control||cross_interrupt||rom_profile){incoming=1;ssp=1;}
  nova_test_import(pair);
  if(wrong_key)for(unsigned i=0;i<2;i++)for(unsigned j=0;j<8;j++){uint8_t t=pair[i].key[j];pair[i].key[j]=pair[i].key[15-j];pair[i].key[15-j]=t;}
 
@@ -183,7 +193,7 @@ int main(int argc,char**argv){
    unsigned count=nova_test_l2cap_count();if(count>peak_channels)peak_channels=count;assert(count<=8);
    const nova_bt_status*s=nova_bt_get_status();
    if(refused_cross)break;
-   if(s->pad[0].reports&&s->pad[1].reports)break;
+   if(s->pad[0].report_id==0x30&&s->pad[1].report_id==0x30)break;
    if(s->pad[0].last_error==0x69 || s->pad[0].auth_error==5 || s->pad[0].encryption_error==8 || s->state==NOVA_BT_ERROR)break;
  }
  const nova_bt_status*s=nova_bt_get_status();
@@ -238,6 +248,14 @@ int main(int argc,char**argv){
    assert(s->pad[0].connected&&s->pad[1].connected);
    printf("PASS: crossed HID %s accepted; late %s cannot close active sessions; pools return from six to four channels (peak %u)\n",cross_control?"control":"interrupt",late_success?"success":orphan_timeout?"timeout":"failure",peak_channels);
   }
+  if(rom_profile){
+   assert(s->pad[0].report_id==0x30&&s->pad[1].report_id==0x30&&br_commands==2&&qos_commands==2&&default_policy==5&&!edr_dropped);
+   assert(s->pad[0].br_only&&s->pad[1].br_only);
+   for(unsigned i=0;i<2;i++){uint8_t mode[]={0,0x40+i,0,2,24,0};ev(0x14,mode,6);}
+   for(unsigned j=0;j<80;j++){nova_bt_poll();consume();now++;}
+   assert(exit_sniff==2&&link_policy==2&&s->pad[0].mode_seen&&!s->pad[0].radio_mode&&!s->pad[1].radio_mode);
+   puts("PASS: HWTest ROM profile forces BR on both links, enables sniff/role policy, sets QoS and returns sniff links to active; full reports survive the EDR-drop model");
+  }
   if(!(s->pad[0].reports&&s->pad[1].reports))fprintf(stderr,"state%d err%d L:%u/%u psm%x stage%u R:%u/%u psm%x stage%u auth%u ctrl%u int%u mode%u now%u\n",s->state,s->error,s->pad[0].reports,s->pad[0].last_error,s->pad[0].last_psm,s->pad[0].stage,s->pad[1].reports,s->pad[1].last_error,s->pad[1].last_psm,s->pad[1].stage,auth_count,psm_count[17],psm_count[19],mode_count,now);
   assert(accepts==(incoming?2u:0));assert(s->host_identity==1);assert(ssp_commands==(unsigned)ssp);assert(!psm_count[1]&&psm_count[17]==2&&psm_count[19]==(cross_control?0u:2u)&&mode_count==2&&auth_count==2);
   assert(s->pad[0].reports&&s->pad[1].reports&&s->pad[0].hid_open&&s->pad[1].hid_open);
@@ -269,7 +287,7 @@ for baseline in (False,True):
     if baseline:args+=['-DEXPECT_SDP_TIMEOUT']
     r=subprocess.run([*args,str(d/'negotiation.c'),*sources,'-o',str(exe)],capture_output=True,text=True)
     assert r.returncode==0,r.stderr
-    for mode in ([]if baseline else ['control-timeout','interrupt-timeout','wrong-key','wrong-host','ssp-sc','incoming','incoming-collision','encryption-timeout','stalled-first','hid-cross-control','hid-cross-interrupt','hid-late-success','hid-orphan-timeout'])+['']:
+    for mode in ([]if baseline else ['control-timeout','interrupt-timeout','wrong-key','wrong-host','ssp-sc','incoming','incoming-collision','encryption-timeout','stalled-first','hid-cross-control','hid-cross-interrupt','hid-late-success','hid-orphan-timeout','hwtest-rom'])+['']:
         try:r=subprocess.run([str(exe),*([mode]if mode else [])],capture_output=True,text=True,timeout=10)
         except subprocess.TimeoutExpired as e:
             print((e.stderr or b'')[-6000:]);raise
@@ -300,6 +318,16 @@ r=subprocess.run([str(old_hid_exe),'hid-cross-control'],capture_output=True,text
 assert r.returncode==1 and '!refused_cross' in r.stderr,(r.returncode,r.stderr)
 old_hid_failure={'source':'v25 hid_host.c','actual_l2cap_refusal':4,'assertion':'!refused_cross','physical_radio':False}
 print('PASS: actual v25 HID code reproduces refusal0004 on a crossed control request; v26 accepts it')
-(w/'nova26-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'old_policy_failures':old_failures,'v25_hid_regression':old_hid_failure,'physical_radio':False,
+# A controller model documented by HWTest: full EDR-sized inputs are lost
+# unless BR packet types are selected. Run the actual v26 stack on that model.
+(d/'v26-stack.c').write_text((w/'hekate-nova-pro-v26/nyx/nyx_gui/bluetooth/nova_bt_stack.c').read_text())
+v26_sources=[str(d/'v26-stack.c')if n==str(p/'bluetooth/nova_bt_stack.c')else n for n in sources]
+v26_exe=d/'negotiation-v26-rom.exe'
+r=subprocess.run([*old_args,str(d/'negotiation.c'),*v26_sources,'-o',str(v26_exe)],capture_output=True,text=True)
+assert r.returncode==0,r.stderr
+r=subprocess.run([str(v26_exe),'hwtest-rom'],capture_output=True,text=True,timeout=10)
+assert r.returncode==1 and 'report_id==0x30' in r.stderr,(r.returncode,r.stderr)
+print('PASS: actual v26 stack fails to receive full inputs in the HWTest EDR-drop model; v27 does')
+(w/'nova27-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'old_policy_failures':old_failures,'v25_hid_regression':old_hid_failure,'hwtest_rom_regression':True,'physical_radio':False,
     'source_sha256':{f.relative_to(p).as_posix():hashlib.sha256(f.read_bytes()).hexdigest()for f in (p/'bluetooth').glob('*.[ch]')},
     'hid_host_sha256':hashlib.sha256((lib/'classic/hid_host.c').read_bytes()).hexdigest()},indent=2))

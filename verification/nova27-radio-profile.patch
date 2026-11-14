@@ -1,0 +1,325 @@
+--- v26/nyx/nyx_gui/bluetooth/nova_bt.h
++++ v27/nyx/nyx_gui/bluetooth/nova_bt.h
+@@ -15,6 +15,7 @@
+     uint8_t stage, auth_error;
+     uint8_t auth_seen, encryption_seen, encryption_error, encrypted;
+     uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
++    uint8_t br_only, radio_mode, mode_seen;
+ } nova_bt_pad;
+ enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
+ typedef struct {
+@@ -24,6 +25,7 @@
+     uint16_t controller_manufacturer, controller_revision, controller_subversion;
+     uint32_t rx_packets, tx_packets;
+     uint32_t rx_acl, tx_acl;
++    uint32_t rx_bytes, rx_polls, rx_max_us;
+     nova_bt_pad pad[2];
+ } nova_bt_status;
+ typedef struct {uint32_t ms;uint16_t kind,a,b,c;} nova_bt_trace;
+@@ -41,6 +43,7 @@
+ int nova_bt_validate_peers(const nova_bt_peer peers[2]);
+ /* Radio operations never wait for a byte. Startup alone has a bounded POR. */
+ uint32_t nova_bt_now(void);
++uint32_t nova_bt_now_us(void);
+ int nova_bt_radio_open(void);
+ void nova_bt_radio_close(void);
+ int nova_bt_radio_read(void); /* -1 empty, -2 UART fault */
+--- v26/nyx/nyx_gui/bluetooth/nova_bt_radio.c
++++ v27/nyx/nyx_gui/bluetooth/nova_bt_radio.c
+@@ -8,21 +8,27 @@
+ #include <soc/t210.h>
+ #include <soc/timer.h>
+ #include <utils/util.h>
++#include <soc/i2c.h>
++#include <power/max7762x.h>
++#include <power/max77620.h>
+ 
+ #define U ((volatile uart_t *)(UART_BASE+0x300))
+ #define HMASK (BIT(1)|BIT(3)|BIT(4)|BIT(5)|BIT(7))
+ /* Same RX trigger encoding as the existing HWTest UART-D radio probe. */
+-#define RX_TRIGGER (3u<<6)
++#define RX_TRIGGER (2u<<6) /* HWTest GUI host: 8-byte receive watermark. */
+ static const u32 pads[]={0x1b8,0x1c0,0x1c4,0x1c8,PINMUX_AUX_AP_WAKE_NFC,
+     PINMUX_AUX_GPIO_PK3-12,PINMUX_AUX_GPIO_PK3-8,PINMUX_AUX_GPIO_PK3-4,
+     PINMUX_AUX_UARTX_TX(UART_D),PINMUX_AUX_UARTX_RX(UART_D),
+     PINMUX_AUX_UARTX_RTS(UART_D),PINMUX_AUX_UARTX_CTS(UART_D)};
+-static struct { int active;u32 pm[12],h[3],k[2],i,source,reset; } saved;
++static struct { int active;u32 pm[12],h[3],k[2],i,source,reset;u8 rails[2],ame,c32; } saved;
+ static unsigned tx_room;
+ /* Masked GPIO aliases do not overwrite neighbouring display/TV pins. */
+ static void masked(u32 alias,u32 mask,u32 value)
+ { GPIO(alias)=(mask<<8)|(value&mask); (void)GPIO(alias); }
+ uint32_t nova_bt_now(void){return get_tmr_ms();}
++uint32_t nova_bt_now_us(void){return get_tmr_us();}
++static void pmic_restore(u32 reg,u8 mask,u8 value)
++{u8 current=i2c_recv_byte(I2C_5,MAX77620_I2C_ADDR,reg);i2c_send_byte(I2C_5,MAX77620_I2C_ADDR,reg,(current&~mask)|(value&mask));}
+ int nova_bt_radio_open(void)
+ {
+     if(saved.active)return 0;
+@@ -34,6 +40,16 @@
+     saved.h[0]=GPIO(0x10c);saved.h[1]=GPIO(0x11c);saved.h[2]=GPIO(0x12c);
+     saved.k[0]=GPIO(0x208);saved.k[1]=GPIO(0x218);saved.i=GPIO(0x200);
+     saved.active=1;tx_room=0;
++    /* Same supplies/reference clock as HWTest-RCM's GUI Bluetooth host.
++     * Retain voltage settings; restore only the control bits we own. */
++    saved.rails[0]=i2c_recv_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_LDO1_CFG);
++    saved.rails[1]=i2c_recv_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_LDO7_CFG);
++    max7762x_regulator_enable(REGULATOR_LDO1,true);msleep(5);
++    max7762x_regulator_enable(REGULATOR_LDO7,true);msleep(5);
++    saved.ame=i2c_recv_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_AME_GPIO);
++    saved.c32=i2c_recv_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_CNFG1_32K);
++    i2c_send_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_AME_GPIO,saved.ame|BIT(4));
++    i2c_send_byte(I2C_5,MAX77620_I2C_ADDR,MAX77620_REG_CNFG1_32K,saved.c32|MAX77620_CNFG1_32K_OUT0_EN);msleep(10);
+     PINMUX_AUX(0x1c8)=PINMUX_INPUT_ENABLE|PINMUX_TRISTATE;
+     masked(0x18c,BIT(5),BIT(5));masked(0x19c,BIT(5),0);
+     PINMUX_AUX(0x1c0)=PINMUX_INPUT_ENABLE|PINMUX_PULL_DOWN;
+@@ -54,6 +70,8 @@
+     U->UART_MCR=0;U->UART_IIR_FCR=RX_TRIGGER|UART_IIR_FCR_EN_FIFO|UART_IIR_FCR_RX_CLR|UART_IIR_FCR_TX_CLR;
+     /* Both REG_ON low for 20 ms; no port-H writes during the 200 ms POR. */
+     msleep(20);masked(0x1ac,BIT(4),BIT(4));msleep(200);
++    /* The common cold reset need not hold Wi-Fi in reset for the session. */
++    masked(0x1ac,BIT(1),saved.h[2]);
+     PINMUX_AUX(pads[9])=PINMUX_INPUT_ENABLE|PINMUX_TRISTATE|PINMUX_PULL_UP;
+     U->UART_IIR_FCR=RX_TRIGGER|UART_IIR_FCR_EN_FIFO|UART_IIR_FCR_RX_CLR|UART_IIR_FCR_TX_CLR;
+     (void)U->UART_LSR;
+@@ -74,6 +92,10 @@
+     masked(0x1ac,HMASK,saved.h[2]);masked(0x18c,HMASK,saved.h[0]);masked(0x19c,HMASK,saved.h[1]);
+     masked(0x288,7,saved.k[0]);masked(0x298,7,saved.k[1]);masked(0x280,0xf0,saved.i);
+     for(unsigned j=0;j<12;j++)PINMUX_AUX(pads[j])=saved.pm[j];
++    pmic_restore(MAX77620_REG_LDO1_CFG,0xc0,saved.rails[0]);
++    pmic_restore(MAX77620_REG_LDO7_CFG,0xc0,saved.rails[1]);
++    pmic_restore(MAX77620_REG_AME_GPIO,BIT(4),saved.ame);
++    pmic_restore(MAX77620_REG_CNFG1_32K,MAX77620_CNFG1_32K_OUT0_EN,saved.c32);
+     saved.active=0;tx_room=0;
+ }
+ int nova_bt_radio_read(void)
+--- v26/nyx/nyx_gui/bluetooth/nova_bt_stack.c
++++ v27/nyx/nyx_gui/bluetooth/nova_bt_stack.c
+@@ -21,7 +21,26 @@
+ static void (*receive_packet)(uint8_t,uint8_t *,uint16_t);
+ static btstack_packet_callback_registration_t event_registration;
+ static uint8_t descriptors[1024];
+-static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, output[48];uint32_t next, mode_next;} link[2];
++static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, profile, output[48];uint32_t next, mode_next;} link[2];
++#define PROFILE_BR 1
++#define PROFILE_POLICY 2
++#define PROFILE_ACTIVE 4
++#define PROFILE_QOS 8
++/* Public BTstack commands, queued only when its command buffer is available. */
++static void profile_run(void)
++{
++    for(unsigned i=0;i<2;i++){
++        if(!link[i].profile||link[i].handle==HCI_CON_HANDLE_INVALID||!hci_connection_for_handle(link[i].handle))continue;
++        if(!hci_can_send_command_packet_now())return;
++        uint8_t flag;int result;
++        if(link[i].profile&PROFILE_BR){flag=PROFILE_BR;result=hci_send_cmd(&hci_change_connection_packet_type,link[i].handle,hci_usable_acl_packet_types());}
++        else if(link[i].profile&PROFILE_POLICY){flag=PROFILE_POLICY;result=hci_send_cmd(&hci_write_link_policy_settings,link[i].handle,LM_LINK_POLICY_ENABLE_ROLE_SWITCH);}
++        else if(link[i].profile&PROFILE_ACTIVE){flag=PROFILE_ACTIVE;result=gap_sniff_mode_exit(link[i].handle);}
++        else{flag=PROFILE_QOS;result=gap_qos_set(link[i].handle,HCI_SERVICE_TYPE_GUARANTEED,8000,0,2500,0xffffffffu);}
++        if(!result)link[i].profile&=~flag;
++        return;
++    }
++}
+ static int side_for(const uint8_t *addr);
+ static int side_handle(uint16_t handle)
+ {
+@@ -44,6 +63,8 @@
+     if(type==HCI_EVENT_PACKET&&!outgoing&&size>=2){
+         if(p[0]==HCI_EVENT_COMMAND_COMPLETE&&size>=6)nova_bt_trace_add(2,little_endian_read_16(p,3),p[5],0);
+         else if(p[0]==HCI_EVENT_COMMAND_STATUS&&size>=6)nova_bt_trace_add(3,little_endian_read_16(p,4),p[2],0);
++        else if(p[0]==HCI_EVENT_DISCONNECTION_COMPLETE&&(size!=6||(size>=6&&!p[5])))
++            nova_bt_trace_add(19,p[0],size,p[1]);
+         else if(p[0]==HCI_EVENT_CONNECTION_COMPLETE||p[0]==HCI_EVENT_DISCONNECTION_COMPLETE||
+                 p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE||p[0]==HCI_EVENT_ENCRYPTION_CHANGE||
+                 p[0]==HCI_EVENT_ENCRYPTION_CHANGE_V2||p[0]==HCI_EVENT_HARDWARE_ERROR)
+@@ -54,10 +75,29 @@
+     if((little_endian_read_16(p,0)&0x3000)==0x1000)return; /* continuation has no L2CAP header */
+     uint16_t handle=little_endian_read_16(p,0)&0xfff;
+     if(little_endian_read_16(p,6)==1&&size>=12){
+-        uint8_t code=p[8];uint16_t value=size>=14?little_endian_read_16(p,12):0;
+-        if((code==3||code==5)&&size>=18)value=little_endian_read_16(p,16);
+-        nova_bt_trace_add(outgoing?5:6,handle,(code<<8)|p[9],value);
+-        if(outgoing&&code==2&&size>=16){int i=side_handle(handle);if(i>=0){status.pad[i].last_psm=value;status.pad[i].stage=value==0x11?4:value==0x13?5:2;}}
++        /* A single ACL packet can contain several complete signal commands.
++         * Record decoded configuration fields only, never packet payloads. */
++        unsigned end=8+little_endian_read_16(p,4);if(end>size)end=size;
++        for(unsigned at=8;at+4<=end;){
++            uint8_t code=p[at],id=p[at+1];unsigned n=little_endian_read_16(p,at+2),data=at+4;
++            if(n>end-data)break;
++            uint16_t value=n>=2?little_endian_read_16(p,data):0;
++            if((code==3||code==5)&&n>=6)value=little_endian_read_16(p,data+4);
++            nova_bt_trace_add(outgoing?5:6,handle,(code<<8)|id,value);
++            if(code==4||code==5){
++                unsigned options=code==4?4:6;uint16_t mtu=0;
++                if(n>=options){
++                    for(unsigned k=options;k+2<=n;){
++                        unsigned len=p[data+k+1];if(len>n-k-2)break;
++                        if((p[data+k]&0x7f)==1&&len==2)mtu=little_endian_read_16(p,data+k+2);
++                        k+=2+len;
++                    }
++                    nova_bt_trace_add(17,little_endian_read_16(p,data),little_endian_read_16(p,data+2),mtu);
++                }
++            }
++            if(outgoing&&code==2&&n>=4){int i=side_handle(handle);if(i>=0){status.pad[i].last_psm=value;status.pad[i].stage=value==0x11?4:value==0x13?5:2;}}
++            at=data+n;
++        }
+     }else if(outgoing&&size>=10)nova_bt_trace_add(7,handle,p[9],size);
+ }
+ 
+@@ -137,9 +177,22 @@
+         if(status.pad[i].last_error)status.pad[i].stage=7;
+         else{
+             link[i].handle=hci_event_connection_complete_get_connection_handle(p);status.pad[i].stage=2;
++            link[i].profile=PROFILE_BR|PROFILE_QOS;
+             status.pad[i].role=gap_get_role(link[i].handle);
+             nova_bt_trace_add(13,i,link[i].handle,status.pad[i].role);
+         }
++        break;
++    case HCI_EVENT_CONNECTION_PACKET_TYPE_CHANGED:
++        if(size<7||p[2])break;
++        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
++        status.pad[i].br_only=(little_endian_read_16(p,5)&0x3306)==0x3306;
++        nova_bt_trace_add(15,link[i].handle,0x040f,little_endian_read_16(p,5));break;
++    case HCI_EVENT_MODE_CHANGE:
++        if(size<8||p[2])break;
++        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
++        status.pad[i].radio_mode=p[5];status.pad[i].mode_seen=1;
++        nova_bt_trace_add(16,link[i].handle,p[5],little_endian_read_16(p,6));
++        if(p[5]==2)link[i].profile|=PROFILE_POLICY|PROFILE_ACTIVE;
+         break;
+     case HCI_EVENT_ROLE_CHANGE:
+         if(size<10||hci_event_role_change_get_status(p))break;
+@@ -162,6 +215,7 @@
+         if(size<6||p[2])break;
+         i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+         status.pad[i].disconnect_reason=p[5];status.pad[i].encrypted=0;
++        link[i].profile=0;
+         clear_pad(i);status.pad[i].hid_open=0;break;
+     case BTSTACK_EVENT_STATE:
+         if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){
+@@ -213,6 +267,7 @@
+         }break;
+     default:break;
+     }
++    if(status.state==NOVA_BT_READY)profile_run();
+ }
+ static void input_byte(uint8_t value)
+ {
+@@ -260,6 +315,10 @@
+     btstack_memory_init();btstack_run_loop_init(&run_loop);hci_init(&transport,0);initialized=1;
+     hci_set_chipset(&chipset);hci_set_link_key_db(&keys);hci_set_bd_addr(peers[peers[0].valid?0:1].host);
+     gap_set_security_level(LEVEL_2);gap_ssp_set_auto_accept(0);
++    /* HWTest-RCM GUI host's ROM compatibility profile: no EDR packets;
++     * initially accept the Joy-Con's sniff request and role changes. */
++    hci_enable_acl_packet_types(ACL_PACKET_TYPES_BR);
++    gap_set_default_link_policy_settings(LM_LINK_POLICY_ENABLE_ROLE_SWITCH|LM_LINK_POLICY_ENABLE_SNIFF_MODE);
+     /* HID host policy also used by Bluepad32: request central on reconnect.
+      * This is a role preference, not a claim that the controller accepted it. */
+     hci_set_master_slave_policy(HCI_ROLE_MASTER);
+@@ -271,10 +330,19 @@
+ void nova_bt_poll(void)
+ {
+     if(!initialized)return;
+-    /* Every loop has a byte budget; no waiting for RX, TX or connection. */
+-    for(unsigned n=0;n<256&&!failure;n++){
+-        int value=nova_bt_radio_read();if(value==-2){failure=4;break;}if(value<0)break;input_byte(value);
+-    }
++    /* HWTest measured >300us restart latency after UART flow control.
++     * Finish a burst after 2ms quiet, at most 8ms/2048 bytes per call.
++     * An already empty line returns immediately to keep the GUI responsive. */
++    uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
++    for(unsigned n=0;n<2048&&!failure;){
++        int value=nova_bt_radio_read();uint32_t us=nova_bt_now_us();
++        if(value==-2){failure=4;break;}
++        if(value>=0){input_byte(value);bytes++;n++;last=us;}
++        else if(!bytes||(uint32_t)(us-last)>=2000)break;
++        if((uint32_t)(us-t0)>=8000)break;
++    }
++    status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
++    if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
+     if(!failure&&tx_len){
+         for(unsigned n=0;n<32&&tx_pos<tx_len;n++)if(nova_bt_radio_write(tx[tx_pos]))tx_pos++;else break;
+         if(tx_pos==tx_len){
+@@ -287,6 +355,7 @@
+         btstack_run_loop_base_execute_callbacks();btstack_run_loop_base_poll_data_sources();
+         btstack_run_loop_base_process_timers(nova_bt_now());
+     }
++    if(!failure&&status.state==NOVA_BT_READY)profile_run();
+     uint32_t now=nova_bt_now();
+     if(rx_type&&(uint32_t)(now-rx_started)>2000)failure=5;
+     if(status.state==NOVA_BT_STARTING&&(uint32_t)(now-started)>15000)failure=3;
+--- v26/nyx/nyx_gui/frontend/gui_bluetooth.c
++++ v27/nyx/nyx_gui/frontend/gui_bluetooth.c
+@@ -82,14 +82,16 @@
+     s_printf(buffer+length,"Controller: HCI=%02X revision=%04X manufacturer=%04X subversion=%04X\n",
+         s->controller_hci_version,s->controller_revision,s->controller_manufacturer,s->controller_subversion);
+     length=strlen(buffer);
++    s_printf(buffer+length,"RX bytes=%d polls=%d max_call_us=%d; profile=HWTest-RCM BR/sniff/QoS\n",
++        (int)s->rx_bytes,(int)s->rx_polls,(int)s->rx_max_us);length=strlen(buffer);
+     for(unsigned side=0;side<2;side++){
+         const nova_bt_pad *p=&s->pad[side];
+-        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X\n",
++        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X BR_ONLY=%d MODE=%d SEEN=%d\n",
+             side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error,p->auth_seen,
+-            p->encryption_error,p->encryption_seen,p->encrypted,p->disconnect_reason,p->role);
++            p->encryption_error,p->encryption_seen,p->encrypted,p->disconnect_reason,p->role,p->br_only,p->radio_mode,p->mode_seen);
+         length=strlen(buffer);
+     }
+-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role)\n");
++    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared)\n");
+     length=strlen(buffer);
+     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
+         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;
+--- v26/nyx/nyx_gui/frontend/gui_nova.c
++++ v27/nyx/nyx_gui/frontend/gui_nova.c
+@@ -764,7 +764,7 @@
+         nyx_nova_fixed_page(section);
+         if(i==4){
+             static const char *changes[]={
+-                "v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.",
++                "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.",
+                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
+                 "v19 · Persistent TV output\nTV output stays active across menus.",
+                 "v18 · Customization\nPNG icons and SD partition menus."
+--- v26/nyx/nyx_gui/localization_catalog.inc
++++ v27/nyx/nyx_gui/localization_catalog.inc
+@@ -4140,6 +4140,7 @@
+     {"v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.", {"v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.", "v24 · Authentification Joy-Con\nOrdre des octets de la clé corrigé.\nIdentité vérifiée sans publier les adresses.", "v24 · Autenticación Joy-Con\nOrden de bytes de la clave corregido.\nIdentidad verificada sin registrar direcciones.", "v24 · Autenticazione Joy-Con\nOrdine dei byte della chiave corretto.\nIdentità verificata senza registrare indirizzi.", "v24 · Аутентификация Joy-Con\nИсправлен порядок байтов ключа.\nПроверка без записи адресов.", "v24 · Joy-Con-Authentifizierung\nByte-Reihenfolge des Schlüssels korrigiert.\nIdentität ohne Adressprotokoll geprüft.", "v24 · Autenticação Joy-Con\nOrdem dos bytes da chave corrigida.\nIdentidade verificada sem registar endereços."}},
+     {"v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.", {"v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.", "v25 · Reconnexion Joy-Con\nRôle principal demandé à la reconnexion.\nConnexions successives ; rapports conservés.", "v25 · Reconexión Joy-Con\nRol central solicitado al reconectar.\nConexiones sucesivas; informes conservados.", "v25 · Riconnessione Joy-Con\nRuolo centrale richiesto in ingresso.\nConnessioni successive; rapporti conservati.", "v25 · Переподключение Joy-Con\nЗапрос центральной роли при подключении.\nПодключения по очереди; отчёты сохранены.", "v25 · Joy-Con-Wiederverbindung\nZentralrolle bei eingehenden Verbindungen.\nVerbindungen nacheinander; Berichte erhalten.", "v25 · Reconexão Joy-Con\nPapel central pedido ao reconectar.\nLigações sucessivas; relatórios preservados."}},
+     {"v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.", {"v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.", "v26 · Canaux Joy-Con\nReconnexions entrantes acceptées.\nRéponses tardives isolées.", "v26 · Canales Joy-Con\nReconexiones HID entrantes aceptadas.\nRespuestas tardías aisladas.", "v26 · Canali Joy-Con\nRiconnessioni HID in ingresso accettate.\nRisposte tardive isolate.", "v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.", "v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.", "v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas."}},
++    {"v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.", {"v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.", "v27 · Profil radio HWTest\nDébit de base et retour au mode actif.\nLecture série prolongée ; horloge restaurée.", "v27 · Perfil de radio HWTest\nEnlaces de tasa básica y modo activo.\nLectura serie ampliada; reloj restaurado.", "v27 · Profilo radio HWTest\nVelocità base e ritorno alla modalità attiva.\nLettura seriale estesa; clock ripristinato.", "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.", "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.", "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."}},
+     {"valid", {"valid", "valide", "válido", "valido", "действительно", "gültig", "válido"}},
+     {"variable", {"variable", "variable", "variable", "variabile", "переменно", "variabel", "variável"}},
+     {"verify", {"verify", "vérification", "verificación", "verifica", "проверка", "Prüfung", "verificação"}},
+@@ -4186,5 +4187,5 @@
+     {"État thermique :", {"Temperature status:", "État thermique :", "Estado térmico:", "Stato termico:", "Температурный статус:", "Temperaturstatus:", "Estado térmico:"}},
+     {"Éteindre", {"Power Off", "Éteindre", "Apagar", "Spegni", "Выключить", "Ausschalten", "Desligar"}},
+ };
+-static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2659, 2755, 2786, 2800, 2805, 2810, 2812, 2813, 2818, 2823, 2829, 2830, 2840, 2855, 2856, 2873, 2931, 2938, 2941, 2950, 2952, 2965, 2967, 3017, 3018, 3020, 3021, 3030, 3037, 3081, 3085, 3152, 3173, 3174, 3195, 3237, 3310, 3329, 3330, 3339, 3341, 3378, 3440, 3441, 3442, 3453, 3455, 3457, 3459, 3463, 3493, 3494, 3498, 3499, 3506, 3536, 3545, 3546, 3551, 3552, 3578, 3579, 3587, 3589, 3590, 3638, 3642, 3647, 3653, 3654, 3703, 3721, 3776, 3777, 3778, 3780, 3786, 3800, 3801, 3807, 3808, 3832, 3833, 3862, 3870, 3875, 3876, 3897, 3898, 3900, 3901, 3902, 3903, 3904, 3909, 3917, 3919, 3930, 3936, 3969, 3970, 3979, 4016, 4029, 4030, 4032, 4033, 4039, 4040, 4041, 4042, 4044, 4045, 4062, 4073, 4074, 4083, 4086, 4094, 4095, 4097, 4098, 4104, 4109, 4117, 4118, 4119, 4129, 4145, 4146, 4163, 4167};
++static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2659, 2755, 2786, 2800, 2805, 2810, 2812, 2813, 2818, 2823, 2829, 2830, 2840, 2855, 2856, 2873, 2931, 2938, 2941, 2950, 2952, 2965, 2967, 3017, 3018, 3020, 3021, 3030, 3037, 3081, 3085, 3152, 3173, 3174, 3195, 3237, 3310, 3329, 3330, 3339, 3341, 3378, 3440, 3441, 3442, 3453, 3455, 3457, 3459, 3463, 3493, 3494, 3498, 3499, 3506, 3536, 3545, 3546, 3551, 3552, 3578, 3579, 3587, 3589, 3590, 3638, 3642, 3647, 3653, 3654, 3703, 3721, 3776, 3777, 3778, 3780, 3786, 3800, 3801, 3807, 3808, 3832, 3833, 3862, 3870, 3875, 3876, 3897, 3898, 3900, 3901, 3902, 3903, 3904, 3909, 3917, 3919, 3930, 3936, 3969, 3970, 3979, 4016, 4029, 4030, 4032, 4033, 4039, 4040, 4041, 4042, 4044, 4045, 4062, 4073, 4074, 4083, 4086, 4094, 4095, 4097, 4098, 4104, 4109, 4117, 4118, 4119, 4129, 4146, 4147, 4164, 4168};
+ static const uint16_t locale_pattern_start[257] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 461, 461, 461, 495, 495, 527, 527, 527, 528, 528, 528, 530, 530, 530, 530, 530, 533, 535, 536, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 539, 545, 557, 567, 580, 595, 597, 600, 601, 602, 602, 605, 610, 611, 611, 626, 626, 639, 646, 664, 670, 675, 680, 681, 681, 682, 686, 686, 686, 686, 686, 686, 689, 691, 693, 693, 704, 707, 707, 709, 709, 709, 709, 709, 711, 712, 713, 723, 723, 724, 732, 737, 738, 738, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 741, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742};
+--- v26/nyx/nyx_gui/localization_catalog.json
++++ v27/nyx/nyx_gui/localization_catalog.json
+@@ -37663,5 +37663,14 @@
+     "v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.",
+     "v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.",
+     "v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas."
++  ],
++  "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.": [
++    "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.",
++    "v27 · Profil radio HWTest\nDébit de base et retour au mode actif.\nLecture série prolongée ; horloge restaurée.",
++    "v27 · Perfil de radio HWTest\nEnlaces de tasa básica y modo activo.\nLectura serie ampliada; reloj restaurado.",
++    "v27 · Profilo radio HWTest\nVelocità base e ritorno alla modalità attiva.\nLettura seriale estesa; clock ripristinato.",
++    "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.",
++    "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.",
++    "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."
+   ]
+ }--- v26/nyx/nyx_gui/nova_version.h
++++ v27/nyx/nyx_gui/nova_version.h
+@@ -1,5 +1,5 @@
+ /* Development version for this source tree; shared by UI and packaging. */
+ #ifndef NYX_NOVA_VERSION_H
+ #define NYX_NOVA_VERSION_H
+-#define NYX_NOVA_VERSION "26"
++#define NYX_NOVA_VERSION "27"
+ #endif

@@ -21,7 +21,26 @@ static uint8_t rx_type;
 static void (*receive_packet)(uint8_t,uint8_t *,uint16_t);
 static btstack_packet_callback_registration_t event_registration;
 static uint8_t descriptors[1024];
-static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, output[48];uint32_t next, mode_next;} link[2];
+static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, profile, output[48];uint32_t next, mode_next;} link[2];
+#define PROFILE_BR 1
+#define PROFILE_POLICY 2
+#define PROFILE_ACTIVE 4
+#define PROFILE_QOS 8
+/* Public BTstack commands, queued only when its command buffer is available. */
+static void profile_run(void)
+{
+    for(unsigned i=0;i<2;i++){
+        if(!link[i].profile||link[i].handle==HCI_CON_HANDLE_INVALID||!hci_connection_for_handle(link[i].handle))continue;
+        if(!hci_can_send_command_packet_now())return;
+        uint8_t flag;int result;
+        if(link[i].profile&PROFILE_BR){flag=PROFILE_BR;result=hci_send_cmd(&hci_change_connection_packet_type,link[i].handle,hci_usable_acl_packet_types());}
+        else if(link[i].profile&PROFILE_POLICY){flag=PROFILE_POLICY;result=hci_send_cmd(&hci_write_link_policy_settings,link[i].handle,LM_LINK_POLICY_ENABLE_ROLE_SWITCH);}
+        else if(link[i].profile&PROFILE_ACTIVE){flag=PROFILE_ACTIVE;result=gap_sniff_mode_exit(link[i].handle);}
+        else{flag=PROFILE_QOS;result=gap_qos_set(link[i].handle,HCI_SERVICE_TYPE_GUARANTEED,8000,0,2500,0xffffffffu);}
+        if(!result)link[i].profile&=~flag;
+        return;
+    }
+}
 static int side_for(const uint8_t *addr);
 static int side_handle(uint16_t handle)
 {
@@ -44,6 +63,8 @@ static void trace_frame(int outgoing,uint8_t type,const uint8_t *p,unsigned size
     if(type==HCI_EVENT_PACKET&&!outgoing&&size>=2){
         if(p[0]==HCI_EVENT_COMMAND_COMPLETE&&size>=6)nova_bt_trace_add(2,little_endian_read_16(p,3),p[5],0);
         else if(p[0]==HCI_EVENT_COMMAND_STATUS&&size>=6)nova_bt_trace_add(3,little_endian_read_16(p,4),p[2],0);
+        else if(p[0]==HCI_EVENT_DISCONNECTION_COMPLETE&&(size!=6||(size>=6&&!p[5])))
+            nova_bt_trace_add(19,p[0],size,p[1]);
         else if(p[0]==HCI_EVENT_CONNECTION_COMPLETE||p[0]==HCI_EVENT_DISCONNECTION_COMPLETE||
                 p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE||p[0]==HCI_EVENT_ENCRYPTION_CHANGE||
                 p[0]==HCI_EVENT_ENCRYPTION_CHANGE_V2||p[0]==HCI_EVENT_HARDWARE_ERROR)
@@ -54,10 +75,29 @@ static void trace_frame(int outgoing,uint8_t type,const uint8_t *p,unsigned size
     if((little_endian_read_16(p,0)&0x3000)==0x1000)return; /* continuation has no L2CAP header */
     uint16_t handle=little_endian_read_16(p,0)&0xfff;
     if(little_endian_read_16(p,6)==1&&size>=12){
-        uint8_t code=p[8];uint16_t value=size>=14?little_endian_read_16(p,12):0;
-        if((code==3||code==5)&&size>=18)value=little_endian_read_16(p,16);
-        nova_bt_trace_add(outgoing?5:6,handle,(code<<8)|p[9],value);
-        if(outgoing&&code==2&&size>=16){int i=side_handle(handle);if(i>=0){status.pad[i].last_psm=value;status.pad[i].stage=value==0x11?4:value==0x13?5:2;}}
+        /* A single ACL packet can contain several complete signal commands.
+         * Record decoded configuration fields only, never packet payloads. */
+        unsigned end=8+little_endian_read_16(p,4);if(end>size)end=size;
+        for(unsigned at=8;at+4<=end;){
+            uint8_t code=p[at],id=p[at+1];unsigned n=little_endian_read_16(p,at+2),data=at+4;
+            if(n>end-data)break;
+            uint16_t value=n>=2?little_endian_read_16(p,data):0;
+            if((code==3||code==5)&&n>=6)value=little_endian_read_16(p,data+4);
+            nova_bt_trace_add(outgoing?5:6,handle,(code<<8)|id,value);
+            if(code==4||code==5){
+                unsigned options=code==4?4:6;uint16_t mtu=0;
+                if(n>=options){
+                    for(unsigned k=options;k+2<=n;){
+                        unsigned len=p[data+k+1];if(len>n-k-2)break;
+                        if((p[data+k]&0x7f)==1&&len==2)mtu=little_endian_read_16(p,data+k+2);
+                        k+=2+len;
+                    }
+                    nova_bt_trace_add(17,little_endian_read_16(p,data),little_endian_read_16(p,data+2),mtu);
+                }
+            }
+            if(outgoing&&code==2&&n>=4){int i=side_handle(handle);if(i>=0){status.pad[i].last_psm=value;status.pad[i].stage=value==0x11?4:value==0x13?5:2;}}
+            at=data+n;
+        }
     }else if(outgoing&&size>=10)nova_bt_trace_add(7,handle,p[9],size);
 }
 
@@ -137,9 +177,22 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
         if(status.pad[i].last_error)status.pad[i].stage=7;
         else{
             link[i].handle=hci_event_connection_complete_get_connection_handle(p);status.pad[i].stage=2;
+            link[i].profile=PROFILE_BR|PROFILE_QOS;
             status.pad[i].role=gap_get_role(link[i].handle);
             nova_bt_trace_add(13,i,link[i].handle,status.pad[i].role);
         }
+        break;
+    case HCI_EVENT_CONNECTION_PACKET_TYPE_CHANGED:
+        if(size<7||p[2])break;
+        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+        status.pad[i].br_only=(little_endian_read_16(p,5)&0x3306)==0x3306;
+        nova_bt_trace_add(15,link[i].handle,0x040f,little_endian_read_16(p,5));break;
+    case HCI_EVENT_MODE_CHANGE:
+        if(size<8||p[2])break;
+        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+        status.pad[i].radio_mode=p[5];status.pad[i].mode_seen=1;
+        nova_bt_trace_add(16,link[i].handle,p[5],little_endian_read_16(p,6));
+        if(p[5]==2)link[i].profile|=PROFILE_POLICY|PROFILE_ACTIVE;
         break;
     case HCI_EVENT_ROLE_CHANGE:
         if(size<10||hci_event_role_change_get_status(p))break;
@@ -162,6 +215,7 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
         if(size<6||p[2])break;
         i=side_handle(little_endian_read_16(p,3));if(i<0)break;
         status.pad[i].disconnect_reason=p[5];status.pad[i].encrypted=0;
+        link[i].profile=0;
         clear_pad(i);status.pad[i].hid_open=0;break;
     case BTSTACK_EVENT_STATE:
         if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){
@@ -213,6 +267,7 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
         }break;
     default:break;
     }
+    if(status.state==NOVA_BT_READY)profile_run();
 }
 static void input_byte(uint8_t value)
 {
@@ -260,6 +315,10 @@ int nova_bt_start(const nova_bt_peer p[2])
     btstack_memory_init();btstack_run_loop_init(&run_loop);hci_init(&transport,0);initialized=1;
     hci_set_chipset(&chipset);hci_set_link_key_db(&keys);hci_set_bd_addr(peers[peers[0].valid?0:1].host);
     gap_set_security_level(LEVEL_2);gap_ssp_set_auto_accept(0);
+    /* HWTest-RCM GUI host's ROM compatibility profile: no EDR packets;
+     * initially accept the Joy-Con's sniff request and role changes. */
+    hci_enable_acl_packet_types(ACL_PACKET_TYPES_BR);
+    gap_set_default_link_policy_settings(LM_LINK_POLICY_ENABLE_ROLE_SWITCH|LM_LINK_POLICY_ENABLE_SNIFF_MODE);
     /* HID host policy also used by Bluepad32: request central on reconnect.
      * This is a role preference, not a claim that the controller accepted it. */
     hci_set_master_slave_policy(HCI_ROLE_MASTER);
@@ -271,10 +330,19 @@ int nova_bt_start(const nova_bt_peer p[2])
 void nova_bt_poll(void)
 {
     if(!initialized)return;
-    /* Every loop has a byte budget; no waiting for RX, TX or connection. */
-    for(unsigned n=0;n<256&&!failure;n++){
-        int value=nova_bt_radio_read();if(value==-2){failure=4;break;}if(value<0)break;input_byte(value);
+    /* HWTest measured >300us restart latency after UART flow control.
+     * Finish a burst after 2ms quiet, at most 8ms/2048 bytes per call.
+     * An already empty line returns immediately to keep the GUI responsive. */
+    uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
+    for(unsigned n=0;n<2048&&!failure;){
+        int value=nova_bt_radio_read();uint32_t us=nova_bt_now_us();
+        if(value==-2){failure=4;break;}
+        if(value>=0){input_byte(value);bytes++;n++;last=us;}
+        else if(!bytes||(uint32_t)(us-last)>=2000)break;
+        if((uint32_t)(us-t0)>=8000)break;
     }
+    status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
+    if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
     if(!failure&&tx_len){
         for(unsigned n=0;n<32&&tx_pos<tx_len;n++)if(nova_bt_radio_write(tx[tx_pos]))tx_pos++;else break;
         if(tx_pos==tx_len){
@@ -287,6 +355,7 @@ void nova_bt_poll(void)
         btstack_run_loop_base_execute_callbacks();btstack_run_loop_base_poll_data_sources();
         btstack_run_loop_base_process_timers(nova_bt_now());
     }
+    if(!failure&&status.state==NOVA_BT_READY)profile_run();
     uint32_t now=nova_bt_now();
     if(rx_type&&(uint32_t)(now-rx_started)>2000)failure=5;
     if(status.state==NOVA_BT_STARTING&&(uint32_t)(now-started)>15000)failure=3;

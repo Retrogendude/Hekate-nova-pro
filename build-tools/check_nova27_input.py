@@ -1,7 +1,7 @@
 """Test actual UI input merge: rail priority, source immutability and stale data."""
 from pathlib import Path
 import subprocess,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v26';d=w/'nova26-tests'
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v27';d=w/'nova27-tests'
 f=p/'nyx/nyx_gui/frontend/gui_bluetooth.c';s=f.read_text();s=s[s.index('jc_gamepad_rpt_t *gui_bluetooth_merge('):]
 test=r'''
 #include <assert.h>
@@ -35,4 +35,4 @@ int main(void){
 cmd=[str(w/'toolchains/w64devkit/bin/gcc.exe'),'-std=gnu11','-O1','-Wall','-Wextra','-Werror','-I'+str(p/'bdk'),'-I'+str(p/'nyx/nyx_gui/bluetooth'),str(d/'input.c'),'-o',str(d/'input.exe')]
 r=subprocess.run(cmd,capture_output=True,text=True);assert r.returncode==0,r.stderr
 r=subprocess.run([str(d/'input.exe')],capture_output=True,text=True,timeout=10);print(r.stdout,r.stderr);assert r.returncode==0
-(w/'nova26-input-check.json').write_text(json.dumps({'passed':True,'output':r.stdout,'source_sha256':hashlib.sha256(f.read_bytes()).hexdigest()},indent=2))
+(w/'nova27-input-check.json').write_text(json.dumps({'passed':True,'output':r.stdout,'source_sha256':hashlib.sha256(f.read_bytes()).hexdigest()},indent=2))

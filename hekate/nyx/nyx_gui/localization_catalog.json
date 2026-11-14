@@ -37663,5 +37663,14 @@
     "v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.",
     "v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.",
     "v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas."
+  ],
+  "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.": [
+    "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.",
+    "v27 · Profil radio HWTest\nDébit de base et retour au mode actif.\nLecture série prolongée ; horloge restaurée.",
+    "v27 · Perfil de radio HWTest\nEnlaces de tasa básica y modo activo.\nLectura serie ampliada; reloj restaurado.",
+    "v27 · Profilo radio HWTest\nVelocità base e ritorno alla modalità attiva.\nLettura seriale estesa; clock ripristinato.",
+    "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.",
+    "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.",
+    "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."
   ]
 }

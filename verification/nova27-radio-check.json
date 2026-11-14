@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "output": "PASS real radio lifecycle: exclusive ownership, masked GPIO restoration, FIFO bursts, CTS backpressure and UART faults\n",
+  "source_sha256": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
+  "hardware_io": "registers substituted"
+}
