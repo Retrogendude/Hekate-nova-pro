@@ -25,7 +25,8 @@ static lv_action_t nova_quick_actions[4];
 static lv_obj_t *nova_quick_buttons[4];
 static lv_obj_t *nova_brand_button;
 static u32 nova_navigation_locks;
-static lv_obj_t *nova_grid_pages[3], *nova_home_icons[5];
+static lv_obj_t *nova_grid_pages[3], *nova_home_icons[5], *nova_home_cards[5];
+static u32 nova_home_selected;
 static const char *const nova_navigation_names[] = {"hekate", "Accueil", "Outils", "Infos", "Réglages", "Diagnostic"};
 static const char *const nova_navigation_icons[] = {"info", "layout-grid", "wrench", "info", "settings-2", "activity"};
 
@@ -43,6 +44,7 @@ void nyx_nova_init(lv_theme_t *theme)
     lv_color_t panel = n_cfg.theme_bg == 0x141A19 ? LV_COLOR_HEX(0x19212D) : lv_color_mix(LV_COLOR_WHITE, bg, 14);
     lv_color_t dim = n_cfg.nova_text_color == 0xF2F5FA ? LV_COLOR_HEX(0x9BAABD) : lv_color_mix(text, bg, 166);
     memset(nova_home_icons, 0, sizeof(nova_home_icons));
+    memset(nova_home_cards,0,sizeof(nova_home_cards));nova_home_selected=0;
     lv_style_copy(&nova_panel, theme->panel);
     nova_panel.body.empty = 0;
     nova_panel.body.opa = n_cfg.nova_menu_opacity * 255 / 100;
@@ -176,14 +178,14 @@ lv_obj_t *nyx_nova_icon_box(lv_obj_t *parent, const char *name, int x, int y, in
     lv_cont_set_style(frame, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
     u32 pixels = size >= 70 ? 40 : 24;
     nyx_nova_glyph(frame, name, (size - pixels) / 2, (size - pixels) / 2, pixels);
-    nyx_nova_reflect(lv_obj_get_child(frame,NULL), selected);
+    /* Static icon frame; the selected tile owns the diagonal sheen. */
     return frame;
 }
 
 void nyx_nova_icon_select(lv_obj_t *icon, bool selected)
 {
     lv_cont_set_style(icon, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
-    nyx_nova_reflect(lv_obj_get_child(icon,NULL), selected);
+
 }
 
 static lv_res_t nova_navigate(lv_obj_t *button)
@@ -368,6 +370,7 @@ static void nova_grid_select(lv_obj_t *page, u32 index)
     const nova_item *items = nova_grid_items(ext->kind);
     for (u32 i = 0; i < ext->count; ++i) {
         lv_cont_set_style(ext->cards[i], i == index ? &nova_selected : &nova_panel);
+        nyx_nova_reflect(ext->cards[i],i==index);
 
         nyx_nova_icon_select(ext->icons[i], i == index);
         lv_cont_set_style(ext->dots[i], i == index ? &nova_dot_active : &nova_dot);
@@ -503,7 +506,10 @@ void nyx_nova_refresh_halos(void)
     for (u32 i = 0; i < 3; ++i) if (nova_grid_pages[i]) {
         nova_grid_ext *ext = lv_obj_get_ext_attr(nova_grid_pages[i]); nova_grid_select(nova_grid_pages[i], ext->selected);
     }
-    for (u32 i = 0; i < 5; ++i) if (nova_home_icons[i]) nyx_nova_icon_select(nova_home_icons[i], i == 0);
+    for (u32 i = 0; i < 5; ++i) {
+        if(nova_home_icons[i])nyx_nova_icon_select(nova_home_icons[i],i==nova_home_selected);
+        if(nova_home_cards[i])nyx_nova_reflect(nova_home_cards[i],i==nova_home_selected);
+    }
 }
 
 static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t action, int x, int y, int width, int height, bool hero)
@@ -511,6 +517,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
     const nova_item *item = &nova_reference_home[index];
     lv_obj_t *card = nyx_nova_panel(parent, x, y, width, height);
     lv_cont_set_style(card, hero ? &nova_selected : &nova_panel);
+    nova_home_cards[index]=card;
 
     lv_obj_t *button = lv_btn_create(card, NULL);
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
@@ -542,6 +549,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
         lv_obj_t *dot = lv_cont_create(card, NULL); lv_cont_set_style(dot, &nova_dot); lv_cont_set_fit(dot, false, false);
         lv_obj_set_size(dot, 5, 5); lv_obj_set_pos(dot, width - 22, 18); lv_obj_set_click(dot, false);
     }
+    nyx_nova_reflect(card,hero);
     return button;
 }
 
@@ -563,11 +571,12 @@ static struct {
 
 static void nova_carousel_update(void)
 {
-    u32 selected = home_carousel.selected;
+    u32 selected = home_carousel.selected;nova_home_selected=selected;
     lv_obj_set_x(home_carousel.track, 372 - selected * 344);
     for (u32 i = 0; i < 5; ++i) {
         lv_btn_set_style(home_carousel.cards[i], LV_BTN_STYLE_REL, i == selected ? &nova_selected : &nova_panel);
         nyx_nova_icon_select(home_carousel.icons[i], i == selected);
+        nyx_nova_reflect(home_carousel.cards[i],i==selected);
 
     }
     lv_label_set_text(home_carousel.title, nova_reference_home[selected].title);
@@ -601,7 +610,7 @@ void nyx_nova_carousel(lv_obj_t *page, lv_action_t activate)
     lv_obj_t *viewport = nyx_nova_panel(page, 108, 140, 1064, 244); lv_cont_set_style(viewport, &nova_clear);
     home_carousel.track = nyx_nova_panel(viewport, 0, 0, 5 * 344 - 24, 244); lv_cont_set_style(home_carousel.track, &nova_clear);
     for (u32 i = 0; i < 5; ++i) {
-        lv_obj_t *card = lv_btn_create(home_carousel.track, NULL); home_carousel.cards[i] = card;
+        lv_obj_t *card = lv_btn_create(home_carousel.track, NULL); home_carousel.cards[i] = card;nova_home_cards[i]=card;
         lv_btn_set_fit(card, false, false); lv_btn_set_layout(card, LV_LAYOUT_OFF);
         lv_btn_set_style(card, LV_BTN_STYLE_REL, &nova_panel); lv_btn_set_style(card, LV_BTN_STYLE_PR, &nova_selected);
         lv_obj_set_size(card, 320, 244); lv_obj_set_pos(card, i * 344, 0);

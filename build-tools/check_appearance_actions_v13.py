@@ -166,7 +166,7 @@ int main(void) {
 functions='static u32 bounded(u32 value,u32 low,u32 high,u32 fallback){return value>=low&&value<=high?value:fallback;}\n'+'\n'.join(function(name) for name in (
     'appearance_close',
     'appearance_set_selection','appearance_apply','appearance_save'))
-directory=WORK/'appearance-actions-v12-check'
+directory=WORK/'appearance-actions-v13-check'
 directory.mkdir(exist_ok=True)
 harness=directory/'check.c'
 harness.write_text(preamble+'\n'+functions+'\nstatic lv_res_t appearance_select(lv_obj_t *o) { return appearance_set_selection(o->id, o->selected); }\n'+tests,encoding='utf-8')

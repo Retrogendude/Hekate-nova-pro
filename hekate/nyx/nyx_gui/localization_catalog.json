@@ -32480,6 +32480,24 @@
     "Dezenter weißer Schimmer auf dem gewählten Symbol.",
     "Reflexo branco discreto no ícone selecionado."
   ],
+  "Subtle white sheen over the selected tile.": [
+    "Subtle white sheen over the selected tile.",
+    "Reflet blanc discret sur la tuile sélectionnée.",
+    "Reflejo blanco sutil en la tarjeta seleccionada.",
+    "Riflesso bianco discreto sulla tessera selezionata.",
+    "Лёгкий белый блик на выбранной плитке.",
+    "Dezenter weißer Schimmer auf der gewählten Kachel.",
+    "Reflexo branco discreto no bloco selecionado."
+  ],
+  "Reflet blanc discret sur la tuile sélectionnée.": [
+    "Subtle white sheen over the selected tile.",
+    "Reflet blanc discret sur la tuile sélectionnée.",
+    "Reflejo blanco sutil en la tarjeta seleccionada.",
+    "Riflesso bianco discreto sulla tessera selezionata.",
+    "Лёгкий белый блик на выбранной плитке.",
+    "Dezenter weißer Schimmer auf der gewählten Kachel.",
+    "Reflexo branco discreto no bloco selecionado."
+  ],
   "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n": [
     "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n",
     "\n#FF0000 Écriture du fichier d'empreinte impossible (erreur %d) !#\n#FF0000 Annulation…#\n",

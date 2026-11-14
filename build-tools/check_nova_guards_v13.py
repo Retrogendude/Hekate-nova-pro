@@ -4,7 +4,7 @@ import os
 import subprocess
 
 work=Path(__file__).resolve().parent
-directory=work/'lvgl-preview-v12'
+directory=work/'lvgl-preview-v13'
 environment=os.environ.copy();environment['NYX_PREVIEW_PATCHED']='1';environment['NYX_PREVIEW_NO_DUMP']='1'
 count=0
 for screen in ('tools','info'):

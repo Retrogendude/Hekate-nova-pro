@@ -1,7 +1,7 @@
 {
-  "tag": "v12",
-  "source_archive": "hekate-nova-pro-v12-sources.zip",
-  "source_archive_sha256": "38be03265d569b772318ae5aa1577410bfe7005ed1c1c8d47c00bdd30ab601cb",
+  "tag": "v13",
+  "source_archive": "hekate-nova-pro-v13-sources.zip",
+  "source_archive_sha256": "135dea9f2daccf7f45fb0b654a46d0feec75321e3a62d3ddc83db829e9fe6362",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",

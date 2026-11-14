@@ -341,6 +341,11 @@ void lv_ll_move_before(lv_ll_t * ll_p, void * n_act, void * n_after)
     node_set_prev(ll_p, n_after, n_act);
     node_set_next(ll_p, n_act, n_after);
 
+    /* Moving before the old head must update the list entry point too.
+     * Otherwise forward traversal skips the newly frontmost object while
+     * reverse drawing still sees it (visible but unreachable controls). */
+    if(n_before == NULL) ll_p->head = n_act;
+
     /*If `n_act` was moved before NULL then it become the new tail*/
     if(n_after == NULL) ll_p->tail = n_act;
 }

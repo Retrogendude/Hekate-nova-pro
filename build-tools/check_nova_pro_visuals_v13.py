@@ -1,7 +1,7 @@
 """Exercise static wallpaper and both surface opacity controls in native LVGL."""
 from pathlib import Path
 import os,subprocess
-work=Path(__file__).resolve().parent;directory=work/'lvgl-preview-v12';exe=directory/'preview.exe'
+work=Path(__file__).resolve().parent;directory=work/'lvgl-preview-v13';exe=directory/'preview.exe'
 fonts=work/'hekate-6.5.4/nyx/nyx_gui/fonts/sd'
 count=0
 for screen,tab in [('home',0),('tools',0),('options',0),('backup',0),('colors',0),('colors',1)]:
