@@ -10,7 +10,10 @@ arm = Path('C:/devkitPro/devkitARM/bin')
 out = project / 'output'
 logs = []
 scripts = ['check_nyx_config_writer.py', 'check_language_config.py',
-           'check_language_actions.py', 'check_localization.py', 'check_unicode_fonts.py', 'check_payload_reader.py',
+           'check_language_actions.py', 'check_appearance_config.py', 'check_appearance_actions.py',
+           'check_localization.py', 'check_diag_format.py', 'check_probe_translations.py', 'check_unicode_fonts.py',
+           'check_font_manager.py', 'check_gui_readability.py', 'check_action_grid.py',
+           'check_ram_locale.py', 'check_report_paging.py', 'check_payload_reader.py',
            'test_native_backend_host.py', 'test_native_verdict_host.py',
            'check_ram_handoff.py', 'check_ram_payload.py']
 for script in scripts:
@@ -53,9 +56,18 @@ summary = {
     'ram_service_bytes': ram.stat().st_size,
     'hardware_validation': 'not performed',
     'languages': ['English', 'Français', 'Español', 'Italiano', 'Русский', 'Deutsch', 'Português'],
-    'ui_chrome': 'transparent; opaque dark overlay bases retained for readability',
-    'tests': {'config_writer_cases': 76, 'language_config_cases': 21,
-              'language_action_cases': 49, 'translation_runtime_cases': 95,
+    'ui_chrome': 'transparent cards; dark overlay bases; wave/particle/aurora backgrounds',
+    'font_sizes': list(range(20, 38, 2)),
+    'sd_fonts': [p.name for p in sorted((project/'nyx/nyx_gui/fonts/sd').glob('*.nyxf'))],
+    'catalog_keys': len(json.loads((project/'nyx/nyx_gui/localization_catalog.json').read_text(encoding='utf-8'))),
+    'probe_translation_provenance': json.loads((project/'nyx/nyx_gui/localization_probe_provenance.json').read_text(encoding='utf-8')),
+    'ram_ui_packs': json.loads((work/'ram-ui/manifest.json').read_text(encoding='utf-8')),
+    'test_summaries': [line for log in logs for line in log.splitlines() if line.startswith('PASS:')],
+    'tests': {'config_writer_cases': 96, 'language_config_cases': 21,
+              'language_action_cases': 49, 'translation_runtime_cases': 113,
+              'appearance_configuration_cases': 2331, 'appearance_actions_and_effects_cases': 494,
+              'font_loader_assertions': 562, 'readability_assertions': 28, 'action_grid_assertions': 708,
+              'ram_locale_assertions': 55332,
               'unicode_fonts': '707 glyphs at 20 and 30px; catalog coverage, offsets, shared chains',
               'payload_reader_assertions': 108,
               'report_export_cases': 10, 'verdict_cases': 6, 'ram_contract_checks': 28,

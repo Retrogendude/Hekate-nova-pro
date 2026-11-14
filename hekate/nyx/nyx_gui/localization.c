@@ -2,6 +2,7 @@
 #include "localization.h"
 #include "config.h"
 #include "fonts/unicode_fonts.h"
+#include "frontend/gui_readability.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,8 +13,13 @@ const char *nyx_tr(const char *text)
 {
     if (!text) return NULL;
     u32 lang = n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN;
-    for (u32 i = 0; i < ARRAY_SIZE(locale_catalog); ++i)
-        if (!strcmp(text, locale_catalog[i].source)) return locale_catalog[i].text[lang];
+    u32 low = 0, high = ARRAY_SIZE(locale_catalog);
+    while (low < high) {
+        u32 middle = low + (high - low) / 2;
+        int comparison = strcmp(text, locale_catalog[middle].source);
+        if (!comparison) return locale_catalog[middle].text[lang];
+        if (comparison < 0) high = middle; else low = middle + 1;
+    }
     return text;
 }
 
@@ -38,6 +44,99 @@ static void append(text_builder *out, const char *text, u32 count)
     out->length += count; out->data[out->length] = 0;
 }
 
+/* Match formatted display text without ever writing a larger translation into
+ * the caller's original (often small) printf buffer. Values and paths are
+ * captured verbatim, and the catalog retains exactly the same argument order. */
+static const char *format_end(const char *format, char *type)
+{
+    const char *cursor = format + 1;
+    while (*cursor && ((*cursor >= '0' && *cursor <= '9') || *cursor == ' ' ||
+        *cursor == '.' || *cursor == '-' || *cursor == '+' || *cursor == '#')) ++cursor;
+    if (!strchr("dsuoxXpc", *cursor) || !*cursor) return NULL;
+    *type = *cursor; return cursor + 1;
+}
+static void translate_piece(text_builder *out, const char *text, u32 length, u32 depth);
+static bool translate_pattern(text_builder *out, const char *text, u32 length, u32 depth)
+{
+    u32 lang = n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN;
+    for (u32 row = 0; row < ARRAY_SIZE(locale_catalog); ++row) {
+        const char *source = locale_catalog[row].source;
+        if (source[0] != '%' && source[0] != text[0]) continue;
+        const char *replacement = locale_catalog[row].text[lang];
+        if (!strchr(source, '%') || !strcmp(source, replacement)) continue;
+        u32 letters = 0;
+        for (const char *p = source; *p; ++p)
+            if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z')) ++letters;
+        if (letters < 5) continue;
+        const char *starts[12]; u32 sizes[12], count = 0, at = 0;
+        const char *format = source;
+        bool match = true;
+        while (*format && match) {
+            if (*format != '%') {
+                if (at >= length || text[at++] != *format++) match = false;
+                continue;
+            }
+            if (format[1] == '%') {
+                if (at >= length || text[at++] != '%') match = false;
+                format += 2; continue;
+            }
+            char type;
+            const char *end = format_end(format, &type);
+            if (!end || count == ARRAY_SIZE(starts)) { match = false; break; }
+            u32 group = 1;
+            u32 start = at;
+            if (type == 's') {
+                /* Adjacent text fields retain their original concatenation.
+                 * Their internal boundary is immaterial to the translated
+                 * surrounding phrase, so preserve them as one captured span. */
+                while (*end == '%') {
+                    char next_type; const char *next = format_end(end, &next_type);
+                    if (!next || next_type != 's') break;
+                    ++group; end = next;
+                }
+                if (count + group > ARRAY_SIZE(starts)) { match = false; break; }
+                if (!*end) at = length;
+                else {
+                    if (*end == '%') { match = false; break; }
+                    const char *next = strchr(end, '%');
+                    u32 literal = next ? (u32)(next - end) : strlen(end);
+                    while (at <= length && (literal > length - at || memcmp(text + at, end, literal))) ++at;
+                    if (at > length) { match = false; break; }
+                }
+            } else if (type == 'c') {
+                if (at == length) { match = false; break; }
+                ++at;
+            } else {
+                while (at < length && text[at] == ' ') ++at;
+                if (at < length && (text[at] == '-' || text[at] == '+')) ++at;
+                u32 digits = at;
+                while (at < length && ((text[at] >= '0' && text[at] <= '9') ||
+                    ((type == 'x' || type == 'X' || type == 'p') &&
+                    ((text[at] >= 'A' && text[at] <= 'F') || (text[at] >= 'a' && text[at] <= 'f'))))) ++at;
+                if (at == digits) { match = false; break; }
+            }
+            starts[count] = text + start; sizes[count++] = at - start;
+            while (--group) { starts[count] = text + at; sizes[count++] = 0; }
+            format = end;
+        }
+        if (!match || *format || at != length || !count) continue;
+        u32 arg = 0; format = replacement;
+        while (*format) {
+            if (*format != '%') { append(out, format++, 1); continue; }
+            if (format[1] == '%') { append(out, "%", 1); format += 2; continue; }
+            char type; const char *end = format_end(format, &type);
+            if (!end || arg == count) break; // Generator rejects this case.
+            if (type == 's' && depth < 8 && !memchr(starts[arg], '/', sizes[arg]) &&
+                !memchr(starts[arg], '\\', sizes[arg]) && !memchr(starts[arg], '.', sizes[arg]))
+                translate_piece(out, starts[arg], sizes[arg], depth + 1);
+            else append(out, starts[arg], sizes[arg]);
+            ++arg; format = end;
+        }
+        out->changed = true; return true;
+    }
+    return false;
+}
+
 static void translate_piece(text_builder *out, const char *text, u32 length, u32 depth)
 {
     if (!length || out->failed) return;
@@ -45,12 +144,14 @@ static void translate_piece(text_builder *out, const char *text, u32 length, u32
     if (!key) { out->failed = true; return; }
     memcpy(key, text, length); key[length] = 0;
     const char *translated = nyx_tr(key);
-    if (translated != key && strcmp(key, translated)) {
-        append(out, translated, strlen(translated)); out->changed = true;
+    if (translated != key) {
+        append(out, translated, strlen(translated));
+        if (strcmp(key, translated)) out->changed = true;
         free(key); return;
     }
     free(key);
-    if (depth > 8) { append(out, text, length); return; }
+    if (depth < 8 && translate_pattern(out, text, length, depth)) return;
+    if (depth > 32) { append(out, text, length); return; }
     /* Matrix width/state control byte, independent of UTF-8 text. */
     if (((u8)text[0] & 0xC0) == 0x80) {
         append(out, text, 1); translate_piece(out, text + 1, length - 1, depth + 1); return;
@@ -76,8 +177,26 @@ static void translate_piece(text_builder *out, const char *text, u32 length, u32
     if (line_start) {
         translate_piece(out, text + line_start, length - line_start, depth + 1); return;
     }
+    /* Technical tables often assemble a translated field name and value
+     * separately. Only split at a recognized label, preserving arbitrary
+     * user text and path-like values when the prefix is unknown. */
+    for (u32 i = 0; i + 1 < length; ++i) {
+        if (text[i] != ':') continue;
+        text_builder prefix = {0};
+        translate_piece(&prefix, text, i + 1, depth + 1);
+        if (prefix.changed && !prefix.failed) {
+            append(out, prefix.data, prefix.length); free(prefix.data);
+            out->changed = true;
+            translate_piece(out, text + i + 1, length - i - 1, depth + 1); return;
+        }
+        free(prefix.data);
+    }
     /* Split only at presentation boundaries, never inside words or paths. */
     for (u32 i = 0; i < length; ++i) {
+        if (i + 2 < length && (u8)text[i] == 0xEF && (u8)text[i + 1] == 0xA0) {
+            translate_piece(out, text, i, depth + 1); append(out, text + i, 3);
+            translate_piece(out, text + i + 3, length - i - 3, depth + 1); return;
+        }
         if (text[i] == '#') {
             u32 color_end = i + 1;
             while (color_end < length && color_end < i + 7 &&
@@ -100,7 +219,7 @@ static void translate_piece(text_builder *out, const char *text, u32 length, u32
     append(out, text, length);
 }
 
-static char *translated_copy(const char *text)
+char *nyx_translate_text(const char *text)
 {
     if (!text) return NULL;
     text_builder out = {0};
@@ -108,10 +227,12 @@ static char *translated_copy(const char *text)
     if (!out.changed || out.failed) { free(out.data); return NULL; }
     return out.data;
 }
+#define translated_copy nyx_translate_text
 
 void nyx_label_set_text(lv_obj_t *label, const char *text)
 {
     char *tr = translated_copy(text); lv_label_set_text(label, tr ? tr : text); free(tr);
+    nyx_readability_request();
 }
 void nyx_label_set_static_text(lv_obj_t *label, const char *text)
 {
@@ -119,6 +240,7 @@ void nyx_label_set_static_text(lv_obj_t *label, const char *text)
     if (tr) lv_label_set_text(label, tr);
     else lv_label_set_static_text(label, text);
     free(tr);
+    nyx_readability_request();
 }
 void nyx_mbox_set_text(lv_obj_t *mbox, const char *text)
 {
@@ -135,16 +257,19 @@ void nyx_roller_set_options(lv_obj_t *roller, const char *options)
 void nyx_win_set_title(lv_obj_t *win, const char *title)
 {
     char *tr = translated_copy(title); lv_win_set_title(win, tr ? tr : title); free(tr);
+    nyx_readability_request();
 }
 lv_obj_t *nyx_win_add_btn(lv_obj_t *win, const void *image, const char *label, lv_action_t action)
 {
     char *tr = translated_copy(label);
-    lv_obj_t *button = lv_win_add_btn(win, image, tr ? tr : label, action); free(tr); return button;
+    lv_obj_t *button = lv_win_add_btn(win, image, tr ? tr : label, action); free(tr);
+    nyx_readability_request(); return button;
 }
 lv_obj_t *nyx_tabview_add_tab(lv_obj_t *tabs, const char *title)
 {
     char *tr = translated_copy(title);
-    lv_obj_t *tab = lv_tabview_add_tab(tabs, tr ? tr : title); free(tr); return tab;
+    lv_obj_t *tab = lv_tabview_add_tab(tabs, tr ? tr : title); free(tr);
+    nyx_readability_request(); return tab;
 }
 
 /* Button matrices retain the map pointers, unlike labels. Keep translated

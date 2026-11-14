@@ -57,11 +57,65 @@ void set_nyx_default_configuration()
 	n_cfg.home_screen    = 0;
 	n_cfg.home_layout    = HOME_LAYOUT_TILES;
 	n_cfg.language       = I18N_EN;
+	n_cfg.font_file[0]   = 0;
+	n_cfg.font_size      = 30;
+	n_cfg.background_effect = 0;
+	n_cfg.background_speed = 2;
+	n_cfg.background_opacity = 20;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
 	n_cfg.jc_force_right = 0;
 	n_cfg.bpmp_clock     = 0;
+}
+
+static bool valid_font_basename(const char *value)
+{
+	u32 length = strlen(value);
+	if (length >= sizeof(n_cfg.font_file) || value[0] == '.' || strstr(value, "..")) return false;
+	for (u32 i = 0; i < length; ++i) {
+		char c = value[i];
+		if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') || c == '_' || c == '-' || c == '.' || c == ' ')) return false;
+	}
+	return !length || (length > 5 && value[length - 5] == '.' &&
+		(value[length - 4] | 32) == 'n' && (value[length - 3] | 32) == 'y' &&
+		(value[length - 2] | 32) == 'x' && (value[length - 1] | 32) == 'f');
+}
+
+void nyx_sanitize_appearance(void)
+{
+	/* Ensure corrupted configuration cannot leave an unterminated path. */
+	n_cfg.font_file[sizeof(n_cfg.font_file) - 1] = 0;
+	if (!valid_font_basename(n_cfg.font_file)) n_cfg.font_file[0] = 0;
+	if (n_cfg.font_size < 20 || n_cfg.font_size > 36 || (n_cfg.font_size & 1)) n_cfg.font_size = 30;
+	if (n_cfg.background_effect > 3) n_cfg.background_effect = 0;
+	if (n_cfg.background_speed < 1 || n_cfg.background_speed > 3) n_cfg.background_speed = 2;
+	if (n_cfg.background_opacity < 10 || n_cfg.background_opacity > 50) n_cfg.background_opacity = 20;
+}
+
+static u32 appearance_number(const char *value, u32 fallback)
+{
+	u32 result = 0, length = 0;
+	while (*value) {
+		if (*value < '0' || *value > '9' || ++length > 2) return fallback;
+		result = result * 10 + *value++ - '0';
+	}
+	return length ? result : fallback;
+}
+
+bool nyx_appearance_key(const char *key, const char *value)
+{
+	if (!strcmp(key, "font_file")) {
+		n_cfg.font_file[0] = 0;
+		if (valid_font_basename(value)) strcpy(n_cfg.font_file, value);
+	} else if (!strcmp(key, "font_size")) n_cfg.font_size = appearance_number(value, 30);
+	else if (!strcmp(key, "background_effect")) n_cfg.background_effect = appearance_number(value, 0);
+	else if (!strcmp(key, "background_speed")) n_cfg.background_speed = appearance_number(value, 2);
+	else if (!strcmp(key, "background_opacity")) n_cfg.background_opacity = appearance_number(value, 20);
+	else return false;
+	nyx_sanitize_appearance();
+	return true;
 }
 
 int create_config_entry()
@@ -288,6 +342,21 @@ int create_nyx_config_entry(bool force_unmount)
 	itoa(n_cfg.language, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0)
 		goto out;
+
+	nyx_sanitize_appearance();
+	if (f_puts("\nfont_file=", &fp) < 0 || f_puts(n_cfg.font_file, &fp) < 0) goto out;
+	if (f_puts("\nfont_size=", &fp) < 0) goto out;
+	itoa(n_cfg.font_size, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nbackground_effect=", &fp) < 0) goto out;
+	itoa(n_cfg.background_effect, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nbackground_speed=", &fp) < 0) goto out;
+	itoa(n_cfg.background_speed, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nbackground_opacity=", &fp) < 0) goto out;
+	itoa(n_cfg.background_opacity, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
 
 	if (f_puts("\n", &fp) < 0)
 		goto out;

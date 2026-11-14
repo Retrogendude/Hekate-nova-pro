@@ -12,6 +12,8 @@
 #define I18N_PT 6
 #define I18N_LANGUAGE_COUNT 7
 const char *nyx_tr(const char *text);
+/* Returns an owned translation, or NULL if unchanged/allocation failed. */
+char *nyx_translate_text(const char *text);
 void nyx_localization_init(void);
 void nyx_label_set_text(lv_obj_t *label, const char *text);
 void nyx_label_set_static_text(lv_obj_t *label, const char *text);

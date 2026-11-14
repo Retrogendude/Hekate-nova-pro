@@ -2,6 +2,7 @@
 #include "gui_diagnostics.h"
 #include "../diagnostics/nyx_diagnostics.h"
 #include "../diagnostics/ram_handoff.h"
+#include "../fonts/font_manager.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -81,14 +82,19 @@ static void render_report_page(void)
 {
     const char *report = nyx_diag_report();
     u32 offset = report_page * REPORT_PAGE;
-    u32 count = report_length > offset ? report_length - offset : 0;
-    if (count > REPORT_PAGE) count = REPORT_PAGE;
+    u32 end = offset + REPORT_PAGE;
+    if (end > report_length) end = report_length;
+    /* The report now contains UTF-8. Adjacent pages meet after a complete
+     * codepoint, rather than dropping or splitting a Cyrillic/accent byte. */
+    while (report && offset < report_length && ((u8)report[report_start + offset] & 0xC0) == 0x80) ++offset;
+    while (report && end < report_length && ((u8)report[report_start + end] & 0xC0) == 0x80) ++end;
+    u32 count = end > offset ? end - offset : 0;
     char *page = malloc(count + 1);
     if (!page) { lv_label_set_text(report_label, "Memoire insuffisante."); return; }
     if (count && report) memcpy(page, report + report_start + offset, count);
     page[count] = 0;
     if (count)
-        (lv_label_set_text)(report_label, page);
+        lv_label_set_text(report_label, page);
     else
         lv_label_set_text(report_label, "Aucun rapport pour cette selection.");
     free(page);
@@ -312,16 +318,22 @@ void create_tab_diagnostics(lv_theme_t *th, lv_obj_t *parent)
     lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
     lv_page_set_scrl_fit(parent, false, false);
     lv_page_set_scrl_width(parent, LV_HOR_RES);
-    lv_page_set_scrl_height(parent, 592);
+    bool large_text = nyx_font_size() > 30;
+    u32 columns = large_text ? 2 : 3;
+    lv_coord_t column_step = large_text ? 600 : 400;
+    lv_coord_t row_step = large_text ? 164 : 116;
+    lv_coord_t tile_width = column_step - 16;
+    lv_page_set_scrl_height(parent, large_text ? 1110 : 592);
+    lv_page_set_sb_mode(parent, large_text ? LV_SB_MODE_AUTO : LV_SB_MODE_OFF);
     text(parent, "Diagnostic materiel", 32, 16, 1180, false);
     text(parent, "HWTest-RCM : 42 controles natifs et un service RAM isole. Choisissez une categorie.", 32, 58, 1180, true);
     for (u32 i = 0; i < ARRAY_SIZE(groups); i++) {
-        lv_coord_t x = 32 + (i % 3) * 400, y = 108 + (i / 3) * 116;
-        lv_obj_t *tile = button(parent, "", x, y, 384, show_group, i);
+        lv_coord_t x = 32 + (i % columns) * column_step, y = 108 + (i / columns) * row_step;
+        lv_obj_t *tile = button(parent, "", x, y, tile_width, show_group, i);
         lv_btn_set_layout(tile, LV_LAYOUT_OFF);
-        lv_obj_set_height(tile, 100);
-        text(tile, groups[i].title, 20, 14, 344, false);
-        text(tile, groups[i].detail, 20, 57, 344, true);
+        lv_obj_set_height(tile, row_step - 16);
+        text(tile, groups[i].title, 20, 14, tile_width - 40, false);
+        text(tile, groups[i].detail, 20, large_text ? 65 : 57, tile_width - 40, true);
     }
     nyx_ram_handoff_t *saved = (nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR;
     if (saved->result_magic == NYX_RAM_RESULT_MAGIC && saved->version == NYX_RAM_VERSION &&

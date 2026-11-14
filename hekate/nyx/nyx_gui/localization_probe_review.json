@@ -1,0 +1,1811 @@
+{
+  "on": [
+    "on",
+    "activé",
+    "activado",
+    "attivo",
+    "включено",
+    "an",
+    "ativado"
+  ],
+  "off": [
+    "off",
+    "désactivé",
+    "desactivado",
+    "disattivo",
+    "выключено",
+    "aus",
+    "desativado"
+  ],
+  "PASS": [
+    "PASS",
+    "RÉUSSI",
+    "CORRECTO",
+    "RIUSCITO",
+    "УСПЕХ",
+    "BESTANDEN",
+    "PASSOU"
+  ],
+  "FAIL": [
+    "FAIL",
+    "ÉCHEC",
+    "FALLO",
+    "ERRORE",
+    "СБОЙ",
+    "FEHLER",
+    "FALHA"
+  ],
+  "WARN": [
+    "WARN",
+    "AVERT.",
+    "AVISO",
+    "AVVISO",
+    "ПРЕДУПР.",
+    "WARNUNG",
+    "AVISO"
+  ],
+  "asserted": [
+    "asserted",
+    "activé",
+    "activado",
+    "attivo",
+    "активен",
+    "aktiv",
+    "ativo"
+  ],
+  "released": [
+    "released",
+    "relâché",
+    "liberado",
+    "rilasciato",
+    "снят",
+    "freigegeben",
+    "libertado"
+  ],
+  "set": [
+    "set",
+    "positionné",
+    "establecido",
+    "impostato",
+    "установлен",
+    "gesetzt",
+    "definido"
+  ],
+  "clear": [
+    "clear",
+    "à zéro",
+    "a cero",
+    "azzerato",
+    "сброшен",
+    "gelöscht",
+    "a zero"
+  ],
+  "driven": [
+    "driven",
+    "piloté",
+    "controlado",
+    "pilotato",
+    "управляется",
+    "angesteuert",
+    "acionado"
+  ],
+  "tristate": [
+    "tristate",
+    "haute impédance",
+    "alta impedancia",
+    "alta impedenza",
+    "высокий импеданс",
+    "hochohmig",
+    "alta impedância"
+  ],
+  "no pull": [
+    "no pull",
+    "sans résistance de tirage",
+    "sin resistencia de polarización",
+    "senza resistenza di polarizzazione",
+    "без подтяжки",
+    "ohne Pull-Widerstand",
+    "sem resistência de polarização"
+  ],
+  "no error": [
+    "no error",
+    "aucune erreur",
+    "sin error",
+    "nessun errore",
+    "ошибок нет",
+    "kein Fehler",
+    "sem erro"
+  ],
+  "short": [
+    "short",
+    "court-circuit",
+    "cortocircuito",
+    "cortocircuito",
+    "короткое замыкание",
+    "Kurzschluss",
+    "curto-circuito"
+  ],
+  "powered": [
+    "powered",
+    "alimenté",
+    "alimentado",
+    "alimentato",
+    "питание подано",
+    "versorgt",
+    "alimentado"
+  ],
+  "unpowered": [
+    "unpowered",
+    "non alimenté",
+    "sin alimentación",
+    "non alimentato",
+    "нет питания",
+    "unversorgt",
+    "sem alimentação"
+  ],
+  "out of range": [
+    "out of range",
+    "hors plage",
+    "fuera de rango",
+    "fuori intervallo",
+    "вне диапазона",
+    "außerhalb des Bereichs",
+    "fora do intervalo"
+  ],
+  "codec already answering": [
+    "codec already answering",
+    "le codec répond déjà",
+    "el códec ya responde",
+    "il codec risponde già",
+    "кодек уже отвечает",
+    "Codec antwortet bereits",
+    "o codec já responde"
+  ],
+  "PZ4 drive %s : pad reads %d pinmux %08X": [
+    "PZ4 drive %s : pad reads %d pinmux %08X",
+    "Pilotage PZ4 %s : lecture du pad %d, pinmux %08X",
+    "Control PZ4 %s: lectura del pad %d, pinmux %08X",
+    "Comando PZ4 %s: lettura pad %d, pinmux %08X",
+    "Управление PZ4 %s: значение контакта %d, pinmux %08X",
+    "Ansteuerung PZ4 %s: Pad-Wert %d, pinmux %08X",
+    "Comando PZ4 %s: leitura do pad %d, pinmux %08X"
+  ],
+  "Codec ID : no answer at 0x1C after %d ms": [
+    "Codec ID : no answer at 0x1C after %d ms",
+    "ID codec : aucune réponse à 0x1C après %d ms",
+    "ID de códec: sin respuesta en 0x1C tras %d ms",
+    "ID codec: nessuna risposta a 0x1C dopo %d ms",
+    "ID кодека: нет ответа по 0x1C за %d ms",
+    "Codec-ID: nach %d ms keine Antwort auf 0x1C",
+    "ID do codec: sem resposta em 0x1C após %d ms"
+  ],
+  "driven both ways, no answer": [
+    "driven both ways, no answer",
+    "deux niveaux de pilotage essayés, aucune réponse",
+    "ambos niveles de control probados, sin respuesta",
+    "provati entrambi i livelli di comando, nessuna risposta",
+    "проверены оба уровня управления, ответа нет",
+    "beide Ansteuerpegel getestet, keine Antwort",
+    "testados ambos os níveis de comando, sem resposta"
+  ],
+  "enabled by driving HIGH": [
+    "enabled by driving HIGH",
+    "activé par un pilotage à HIGH",
+    "activado con nivel HIGH",
+    "attivato pilotando HIGH",
+    "включён уровнем HIGH",
+    "durch HIGH-Pegel aktiviert",
+    "ativado pelo nível HIGH"
+  ],
+  "enabled by driving LOW": [
+    "enabled by driving LOW",
+    "activé par un pilotage à LOW",
+    "activado con nivel LOW",
+    "attivato pilotando LOW",
+    "включён уровнем LOW",
+    "durch LOW-Pegel aktiviert",
+    "ativado pelo nível LOW"
+  ],
+  "not driven (UART/dead)": [
+    "not driven (UART/dead)",
+    "non piloté (UART ou inactif)",
+    "sin control (UART o inactivo)",
+    "non pilotato (UART o inattivo)",
+    "нет управления (UART или неактивен)",
+    "nicht angesteuert (UART oder inaktiv)",
+    "sem comando (UART ou inativo)"
+  ],
+  "never low": [
+    "never low",
+    "jamais à LOW",
+    "nunca en LOW",
+    "mai LOW",
+    "уровень LOW не обнаружен",
+    "nie LOW",
+    "nunca em LOW"
+  ],
+  "answered on a swept MCR": [
+    "answered on a swept MCR",
+    "réponse obtenue pendant le balayage MCR",
+    "respuesta durante el barrido MCR",
+    "risposta durante la scansione MCR",
+    "ответ при переборе MCR",
+    "Antwort beim MCR-Durchlauf",
+    "resposta durante a varredura MCR"
+  ],
+  "no reply on any MCR value": [
+    "no reply on any MCR value",
+    "aucune réponse avec les valeurs MCR essayées",
+    "sin respuesta con los valores MCR probados",
+    "nessuna risposta con i valori MCR provati",
+    "нет ответа при проверенных значениях MCR",
+    "keine Antwort bei geprüften MCR-Werten",
+    "sem resposta com os valores MCR testados"
+  ],
+  "slot empty": [
+    "slot empty",
+    "port vide",
+    "ranura vacía",
+    "slot vuoto",
+    "слот пуст",
+    "Steckplatz leer",
+    "ranhura vazia"
+  ],
+  "cartridge seated": [
+    "cartridge seated",
+    "cartouche insérée",
+    "cartucho insertado",
+    "cartuccia inserita",
+    "картридж вставлен",
+    "Modul eingesetzt",
+    "cartucho inserido"
+  ],
+  "N/A : Switch Lite has no ALS (auto-brightness omitted)": [
+    "N/A : Switch Lite has no ALS (auto-brightness omitted)",
+    "Sans objet : la Switch Lite n'a pas d'ALS (luminosité automatique absente)",
+    "No aplicable: Switch Lite no tiene ALS (sin brillo automático)",
+    "Non applicabile: Switch Lite non ha ALS (luminosità automatica assente)",
+    "Неприменимо: у Switch Lite нет ALS (автояркость отсутствует)",
+    "Nicht anwendbar: Switch Lite hat keinen ALS (keine Autohelligkeit)",
+    "Não aplicável: Switch Lite não tem ALS (sem brilho automático)"
+  ],
+  "- RCM bit (next reboot would re-enter BootROM RCM)": [
+    "- RCM bit (next reboot would re-enter BootROM RCM)",
+    "- Bit RCM (le prochain redémarrage retournerait en BootROM RCM)",
+    "- Bit RCM (el próximo reinicio volvería a BootROM RCM)",
+    "- Bit RCM (il prossimo riavvio tornerebbe a BootROM RCM)",
+    "- Бит RCM (следующий перезапуск вернёт в BootROM RCM)",
+    "- RCM-Bit (nächster Neustart würde wieder BootROM RCM starten)",
+    "- Bit RCM (o próximo reinício regressaria ao BootROM RCM)"
+  ],
+  "- BOOTLOADER bit (CFW bootloader chainload requested)": [
+    "- BOOTLOADER bit (CFW bootloader chainload requested)",
+    "- Bit BOOTLOADER (chaînage du chargeur CFW demandé)",
+    "- Bit BOOTLOADER (solicitado el encadenamiento del cargador CFW)",
+    "- Bit BOOTLOADER (richiesto concatenamento del bootloader CFW)",
+    "- Бит BOOTLOADER (запрошен переход к загрузчику CFW)",
+    "- BOOTLOADER-Bit (CFW-Bootloader-Chainload angefordert)",
+    "- Bit BOOTLOADER (pedido encadeamento do carregador CFW)"
+  ],
+  "- bit 18 set: ODM debug-console flag (HOS would enable kgdb)": [
+    "- bit 18 set: ODM debug-console flag (HOS would enable kgdb)",
+    "- Bit 18 positionné : indicateur de console ODM (HOS activerait kgdb)",
+    "- Bit 18 activado: indicador de consola ODM (HOS activaría kgdb)",
+    "- Bit 18 impostato: console di debug ODM (HOS attiverebbe kgdb)",
+    "- Бит 18 установлен: консоль отладки ODM (HOS включит kgdb)",
+    "- Bit 18 gesetzt: ODM-Debugkonsole (HOS würde kgdb aktivieren)",
+    "- Bit 18 definido: consola de depuração ODM (HOS ativaria kgdb)"
+  ],
+  "PMIC IRQSD : 0x%02X (SD-rail thresholds latched - cross-check NVERC)": [
+    "PMIC IRQSD : 0x%02X (SD-rail thresholds latched - cross-check NVERC)",
+    "PMIC IRQSD : 0x%02X (seuils d'alimentation SD mémorisés ; vérifier NVERC)",
+    "PMIC IRQSD: 0x%02X (umbrales de alimentación SD registrados; comprobar NVERC)",
+    "PMIC IRQSD: 0x%02X (soglie alimentazione SD registrate; verificare NVERC)",
+    "PMIC IRQSD: 0x%02X (пороги питания SD сохранены; сверить NVERC)",
+    "PMIC IRQSD: 0x%02X (SD-Versorgungsschwellen gespeichert; NVERC prüfen)",
+    "PMIC IRQSD: 0x%02X (limiares de alimentação SD registados; verificar NVERC)"
+  ],
+  "RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)": [
+    "RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)",
+    "RTC ajustée : indisponible (pas de timeoffset dans /bootloader/nyx.ini)",
+    "RTC ajustado: no disponible (sin timeoffset en /bootloader/nyx.ini)",
+    "RTC corretto: non disponibile (manca timeoffset in /bootloader/nyx.ini)",
+    "RTC с поправкой: недоступно (нет timeoffset в /bootloader/nyx.ini)",
+    "RTC korrigiert: nicht verfügbar (kein timeoffset in /bootloader/nyx.ini)",
+    "RTC ajustado: indisponível (sem timeoffset em /bootloader/nyx.ini)"
+  ],
+  "idle anchor : PULL_DOWN (line idles LOW - UART will see permanent BREAK)": [
+    "idle anchor : PULL_DOWN (line idles LOW - UART will see permanent BREAK)",
+    "Repos : PULL_DOWN (ligne au niveau LOW ; UART voit un BREAK permanent)",
+    "Reposo: PULL_DOWN (línea en LOW; UART ve un BREAK permanente)",
+    "Riposo: PULL_DOWN (linea LOW; UART vede BREAK permanente)",
+    "Покой: PULL_DOWN (линия LOW; UART видит постоянный BREAK)",
+    "Ruhepegel: PULL_DOWN (Leitung bleibt LOW; UART sieht dauerhaften BREAK)",
+    "Repouso: PULL_DOWN (linha em LOW; UART deteta BREAK permanente)"
+  ],
+  "^- framing/parity/break errors latched - check baud": [
+    "^- framing/parity/break errors latched - check baud",
+    "^- Erreurs de trame/parité/BREAK mémorisées ; vérifier le débit",
+    "^- Errores de trama/paridad/BREAK registrados; comprobar velocidad",
+    "^- Errori frame/parità/BREAK registrati; verificare baud rate",
+    "^- Сохранены ошибки кадра/чётности/BREAK; проверьте скорость",
+    "^- Frame-/Paritäts-/BREAK-Fehler gespeichert; Baudrate prüfen",
+    "^- Erros de trama/paridade/BREAK registados; verificar velocidade"
+  ],
+  "Verdict : line ACTIVE (%d transitions) - host IS sending": [
+    "Verdict : line ACTIVE (%d transitions) - host IS sending",
+    "Verdict : ligne ACTIVE (%d transitions) ; l'hôte émet bien",
+    "Veredicto: línea ACTIVE (%d transiciones); el host sí transmite",
+    "Verdetto: linea ACTIVE (%d transizioni); l'host trasmette",
+    "Вердикт: линия ACTIVE (%d переходов); хост передаёт",
+    "Ergebnis: Leitung ACTIVE (%d Wechsel); Host sendet",
+    "Veredito: linha ACTIVE (%d transições); o anfitrião transmite"
+  ],
+  "Verdict : line stuck LOW - shifter unpowered or shorted to GND": [
+    "Verdict : line stuck LOW - shifter unpowered or shorted to GND",
+    "Verdict : ligne bloquée à LOW ; convertisseur de niveau non alimenté ou court-circuit vers GND",
+    "Veredicto: línea bloqueada en LOW; conversor de nivel sin alimentación o en corto a GND",
+    "Verdetto: linea bloccata LOW; convertitore di livello non alimentato o in corto a GND",
+    "Вердикт: линия постоянно LOW; преобразователь уровней без питания или замкнут на GND",
+    "Ergebnis: Leitung dauerhaft LOW; Pegelwandler unversorgt oder Kurzschluss nach GND",
+    "Veredito: linha presa em LOW; conversor de nível sem alimentação ou em curto a GND"
+  ],
+  "(all rails dormant - normal in RCM, HOS brings them up)": [
+    "(all rails dormant - normal in RCM, HOS brings them up)",
+    "(alimentations au repos ; normal en RCM, HOS les active)",
+    "(alimentaciones en reposo; normal en RCM, HOS las activa)",
+    "(alimentazioni a riposo; normale in RCM, HOS le attiva)",
+    "(питание отключено; нормально в RCM, HOS его включает)",
+    "(alle Versorgungen ruhend; in RCM normal, HOS aktiviert sie)",
+    "(alimentações em repouso; normal em RCM, HOS ativa-as)"
+  ],
+  "skipped (encrypted, run Lockpick to populate sd:/switch/prod.keys)": [
+    "skipped (encrypted, run Lockpick to populate sd:/switch/prod.keys)",
+    "ignoré (chiffré ; exécuter Lockpick pour créer sd:/switch/prod.keys)",
+    "omitido (cifrado; ejecutar Lockpick para crear sd:/switch/prod.keys)",
+    "saltato (cifrato; eseguire Lockpick per creare sd:/switch/prod.keys)",
+    "пропущено (зашифровано; запустите Lockpick для создания sd:/switch/prod.keys)",
+    "übersprungen (verschlüsselt; Lockpick für sd:/switch/prod.keys ausführen)",
+    "ignorado (cifrado; executar Lockpick para criar sd:/switch/prod.keys)"
+  ],
+  "pkg1 build : (BOOT0 sector 0x800 read all-zero - pkg1 absent)": [
+    "pkg1 build : (BOOT0 sector 0x800 read all-zero - pkg1 absent)",
+    "Compilation pkg1 : (secteur BOOT0 0x800 entièrement nul ; pkg1 absent)",
+    "Compilación pkg1: (sector BOOT0 0x800 leído a ceros; pkg1 ausente)",
+    "Build pkg1: (settore BOOT0 0x800 letto a zero; pkg1 assente)",
+    "Сборка pkg1: (сектор BOOT0 0x800 прочитан как нули; pkg1 отсутствует)",
+    "pkg1-Build: (BOOT0-Sektor 0x800 nur Nullen; pkg1 fehlt)",
+    "Compilação pkg1: (setor BOOT0 0x800 lido a zeros; pkg1 ausente)"
+  ],
+  "ent CRC32 : skipped (entries span %d bytes, only %d in read window)": [
+    "ent CRC32 : skipped (entries span %d bytes, only %d in read window)",
+    "CRC32 entrées : ignoré (%d octets nécessaires, seulement %d dans la fenêtre lue)",
+    "CRC32 entradas: omitido (%d bytes necesarios, solo %d en la ventana leída)",
+    "CRC32 voci: saltato (%d byte necessari, solo %d nella finestra letta)",
+    "CRC32 записей: пропущено (нужно %d байт, в окне чтения только %d)",
+    "Eintrags-CRC32: übersprungen (%d Bytes nötig, nur %d im Lesefenster)",
+    "CRC32 entradas: ignorado (%d bytes necessários, apenas %d na janela lida)"
+  ],
+  "Burnt fuses : %d | %d (ODM7 | ODM6)": [
+    "Burnt fuses : %d | %d (ODM7 | ODM6)",
+    "Fusibles grillés : %d | %d (ODM7 | ODM6)",
+    "Fusibles quemados: %d | %d (ODM7 | ODM6)",
+    "Fusibili bruciati: %d | %d (ODM7 | ODM6)",
+    "Пережжённые предохранители: %d | %d (ODM7 | ODM6)",
+    "Gebrannte Sicherungen: %d | %d (ODM7 | ODM6)",
+    "Fusíveis queimados: %d | %d (ODM7 | ODM6)"
+  ],
+  "CHRG<->Curr : BQ chrg=%d, gauge=%d mA %s": [
+    "CHRG<->Curr : BQ chrg=%d, gauge=%d mA %s",
+    "Charge/courant : BQ chrg=%d, jauge=%d mA %s",
+    "Carga/corriente: BQ chrg=%d, medidor=%d mA %s",
+    "Carica/corrente: BQ chrg=%d, misuratore=%d mA %s",
+    "Заряд/ток: BQ chrg=%d, датчик=%d mA %s",
+    "Ladung/Strom: BQ chrg=%d, Messwert=%d mA %s",
+    "Carga/corrente: BQ chrg=%d, medidor=%d mA %s"
+  ],
+  "CPU0 : EXCEPTION at stage %d, not a stall": [
+    "CPU0 : EXCEPTION at stage %d, not a stall",
+    "CPU0 : EXCEPTION à l'étape %d, sans blocage",
+    "CPU0: EXCEPTION en la etapa %d, sin bloqueo",
+    "CPU0: EXCEPTION nella fase %d, senza blocco",
+    "CPU0: EXCEPTION на этапе %d, без зависания",
+    "CPU0: EXCEPTION in Phase %d, kein Stillstand",
+    "CPU0: EXCEPTION na fase %d, sem bloqueio"
+  ],
+  "CPU0 : stalled (attempt %d/3, hb=%d) - resetting AFI": [
+    "CPU0 : stalled (attempt %d/3, hb=%d) - resetting AFI",
+    "CPU0 : bloqué (essai %d/3, hb=%d) ; réinitialisation AFI",
+    "CPU0: bloqueado (intento %d/3, hb=%d); reiniciando AFI",
+    "CPU0: bloccato (tentativo %d/3, hb=%d); reset AFI",
+    "CPU0: зависание (попытка %d/3, hb=%d); сброс AFI",
+    "CPU0: Stillstand (Versuch %d/3, hb=%d); AFI zurücksetzen",
+    "CPU0: bloqueado (tentativa %d/3, hb=%d); reiniciar AFI"
+  ],
+  "GPIO PV1 SIG : %s (LCD_BL_EN, low on some Mariko panels)": [
+    "GPIO PV1 SIG : %s (LCD_BL_EN, low on some Mariko panels)",
+    "GPIO PV1 SIG : %s (LCD_BL_EN, niveau bas sur certains écrans Mariko)",
+    "GPIO PV1 SIG: %s (LCD_BL_EN, nivel bajo en algunas pantallas Mariko)",
+    "GPIO PV1 SIG: %s (LCD_BL_EN, livello basso su alcuni schermi Mariko)",
+    "GPIO PV1 SIG: %s (LCD_BL_EN, низкий уровень на части экранов Mariko)",
+    "GPIO PV1 SIG: %s (LCD_BL_EN, bei manchen Mariko-Displays LOW)",
+    "GPIO PV1 SIG: %s (LCD_BL_EN, nível baixo em alguns ecrãs Mariko)"
+  ],
+  "Result : ADMAIF FIFO stayed full for >5 ms": [
+    "Result : ADMAIF FIFO stayed full for >5 ms",
+    "Résultat : ADMAIF FIFO est resté plein pendant >5 ms",
+    "Resultado: ADMAIF FIFO permaneció lleno durante >5 ms",
+    "Risultato: ADMAIF FIFO rimasta piena per >5 ms",
+    "Результат: ADMAIF FIFO оставался заполненным >5 ms",
+    "Ergebnis: ADMAIF FIFO blieb >5 ms voll",
+    "Resultado: ADMAIF FIFO permaneceu cheio por >5 ms"
+  ],
+  "UART_LCR : 0x%02X (DLAB=%d, word=%d)": [
+    "UART_LCR : 0x%02X (DLAB=%d, word=%d)",
+    "UART_LCR : 0x%02X (DLAB=%d, mot=%d)",
+    "UART_LCR: 0x%02X (DLAB=%d, palabra=%d)",
+    "UART_LCR: 0x%02X (DLAB=%d, parola=%d)",
+    "UART_LCR: 0x%02X (DLAB=%d, слово=%d)",
+    "UART_LCR: 0x%02X (DLAB=%d, Wort=%d)",
+    "UART_LCR: 0x%02X (DLAB=%d, palavra=%d)"
+  ],
+  "eMMC HS400 : mode=%d, bus=%d-bit %s": [
+    "eMMC HS400 : mode=%d, bus=%d-bit %s",
+    "eMMC HS400 : mode=%d, bus de %d bits %s",
+    "eMMC HS400: modo=%d, bus de %d bits %s",
+    "eMMC HS400: modo=%d, bus a %d bit %s",
+    "eMMC HS400: режим=%d, шина %d бит %s",
+    "eMMC HS400: Modus=%d, Bus=%d Bit %s",
+    "eMMC HS400: modo=%d, barramento de %d bits %s"
+  ],
+  "transport rdy : chip RTS_N %s (MSR=%02X, junk=%d)": [
+    "transport rdy : chip RTS_N %s (MSR=%02X, junk=%d)",
+    "Transport prêt : RTS_N puce %s (MSR=%02X, octets parasites=%d)",
+    "Transporte listo: RTS_N del chip %s (MSR=%02X, bytes sobrantes=%d)",
+    "Trasporto pronto: RTS_N chip %s (MSR=%02X, byte spuri=%d)",
+    "Готовность: RTS_N чипа %s (MSR=%02X, лишних байт=%d)",
+    "Transport bereit: Chip RTS_N %s (MSR=%02X, Restbytes=%d)",
+    "Transporte pronto: RTS_N do chip %s (MSR=%02X, bytes espúrios=%d)"
+  ],
+  "**Atmosphere**": [
+    "**Atmosphere**",
+    "**Atmosphere**",
+    "**Atmosphere**",
+    "**Atmosphere**",
+    "**Atmosphere**",
+    "**Atmosphere**",
+    "**Atmosphere**"
+  ],
+  "Verdict : line idle HIGH - shifter alive, host quiet": [
+    "Verdict : line idle HIGH - shifter alive, host quiet",
+    "Verdict : ligne au repos HIGH ; convertisseur de niveau actif, hôte silencieux",
+    "Veredicto: línea en reposo HIGH; conversor de nivel activo, host sin transmitir",
+    "Verdetto: linea a riposo HIGH; convertitore di livello attivo, host silenzioso",
+    "Вердикт: линия в покое HIGH; преобразователь уровней работает, хост молчит",
+    "Ergebnis: Leitung in Ruhe HIGH; Pegelwandler aktiv, Host sendet nicht",
+    "Veredito: linha em repouso HIGH; conversor de nível ativo, anfitrião sem transmitir"
+  ],
+  "Verdict : PWM0 driving BL_PWM @ duty %d - backlight lit": [
+    "Verdict : PWM0 driving BL_PWM @ duty %d - backlight lit",
+    "Verdict : PWM0 pilote BL_PWM, rapport cyclique %d ; rétroéclairage allumé",
+    "Veredicto: PWM0 controla BL_PWM, ciclo de trabajo %d; retroiluminación encendida",
+    "Verdetto: PWM0 pilota BL_PWM, ciclo utile %d; retroilluminazione accesa",
+    "Вердикт: PWM0 управляет BL_PWM, заполнение %d; подсветка включена",
+    "Ergebnis: PWM0 steuert BL_PWM, Tastgrad %d; Hintergrundbeleuchtung an",
+    "Veredito: PWM0 controla BL_PWM, ciclo de trabalho %d; retroiluminação ligada"
+  ],
+  "Tach pad : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d": [
+    "Tach pad : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Broche tachymètre : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Pin del tacómetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Pin tachimetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Контакт тахометра: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Tacho-Pin: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d",
+    "Pino do tacómetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d"
+  ],
+  "Tach line : %d transitions, %d low samples in %d ms": [
+    "Tach line : %d transitions, %d low samples in %d ms",
+    "Tachymètre : %d transitions, %d échantillons bas en %d ms",
+    "Tacómetro: %d transiciones, %d muestras bajas en %d ms",
+    "Tachimetro: %d transizioni, %d campioni bassi in %d ms",
+    "Тахометр: %d переходов, %d низких отсчётов за %d ms",
+    "Tachosignal: %d Wechsel, %d LOW-Abtastungen in %d ms",
+    "Tacómetro: %d transições, %d amostras baixas em %d ms"
+  ],
+  "Fan verdict : SPINNING (draws %d mA) but tach unreadable": [
+    "Fan verdict : SPINNING (draws %d mA) but tach unreadable",
+    "Ventilateur : EN ROTATION (%d mA consommés), tachymètre illisible",
+    "Ventilador: GIRANDO (consume %d mA), tacómetro ilegible",
+    "Ventola: IN ROTAZIONE (assorbe %d mA), tachimetro illeggibile",
+    "Вентилятор: ВРАЩАЕТСЯ (ток %d mA), тахометр не читается",
+    "Lüfter: DREHT (Strom %d mA), Tachosignal nicht lesbar",
+    "Ventoinha: A GIRAR (consome %d mA), tacómetro ilegível"
+  ],
+  "idle anchor : internal PULL_UP (line idles HIGH on its own)": [
+    "idle anchor : internal PULL_UP (line idles HIGH on its own)",
+    "Repos : PULL_UP interne (la ligne reste d'elle-même à HIGH)",
+    "Reposo: PULL_UP interno (la línea permanece en HIGH por sí sola)",
+    "Riposo: PULL_UP interno (la linea resta da sola HIGH)",
+    "Покой: внутренний PULL_UP (линия сама остаётся HIGH)",
+    "Ruhepegel: interner PULL_UP (Leitung bleibt von selbst HIGH)",
+    "Repouso: PULL_UP interno (a linha permanece em HIGH por si)"
+  ],
+  "Major.Minor : %d.%02d": [
+    "Major.Minor : %d.%02d",
+    "Version majeure.mineure : %d.%02d",
+    "Versión mayor.menor: %d.%02d",
+    "Versione maggiore.minore: %d.%02d",
+    "Версия основная.дополнительная: %d.%02d",
+    "Haupt-/Unterversion: %d.%02d",
+    "Versão principal.secundária: %d.%02d"
+  ],
+  "No handoff : bring-up incomplete": [
+    "No handoff : bring-up incomplete",
+    "Aucun transfert : initialisation incomplète",
+    "Sin transferencia: inicialización incompleta",
+    "Nessun passaggio: inizializzazione incompleta",
+    "Нет передачи управления: инициализация не завершена",
+    "Keine Übergabe: Initialisierung unvollständig",
+    "Sem transferência: inicialização incompleta"
+  ],
+  "X / Y coord : %d / %d": [
+    "X / Y coord : %d / %d",
+    "Coordonnées X / Y : %d / %d",
+    "Coordenadas X / Y: %d / %d",
+    "Coordinate X / Y: %d / %d",
+    "Координаты X / Y: %d / %d",
+    "X-/Y-Koordinaten: %d / %d",
+    "Coordenadas X / Y: %d / %d"
+  ],
+  "PRODINFO GPT : LBA %08X..%08X is not a usable range": [
+    "PRODINFO GPT : LBA %08X..%08X is not a usable range",
+    "PRODINFO GPT : plage LBA %08X..%08X inutilisable",
+    "PRODINFO GPT: rango LBA %08X..%08X no utilizable",
+    "PRODINFO GPT: intervallo LBA %08X..%08X non utilizzabile",
+    "PRODINFO GPT: диапазон LBA %08X..%08X недоступен",
+    "PRODINFO GPT: LBA-Bereich %08X..%08X nicht nutzbar",
+    "PRODINFO GPT: intervalo LBA %08X..%08X inutilizável"
+  ],
+  "CPU RAM repair never completed": [
+    "CPU RAM repair never completed",
+    "Réparation RAM CPU jamais terminée",
+    "La reparación RAM CPU no terminó",
+    "Riparazione RAM CPU mai completata",
+    "Восстановление RAM CPU не завершено",
+    "CPU-RAM-Reparatur nicht abgeschlossen",
+    "A reparação RAM CPU não terminou"
+  ],
+  "LCD reset (act-low)": [
+    "LCD reset (act-low)",
+    "Réinitialisation LCD (active à LOW)",
+    "Reinicio LCD (activo en LOW)",
+    "Reset LCD (attivo LOW)",
+    "Сброс LCD (активен LOW)",
+    "LCD-Reset (aktiv bei LOW)",
+    "Reinício LCD (ativo em LOW)"
+  ],
+  "long-press = hard reset": [
+    "long-press = hard reset",
+    "Appui long = réinitialisation matérielle",
+    "Pulsación larga = reinicio físico",
+    "Pressione lunga = reset hardware",
+    "Долгое нажатие = аппаратный сброс",
+    "Langes Drücken = Hardware-Reset",
+    "Pressão longa = reinício físico"
+  ],
+  "no documented flags set": [
+    "no documented flags set",
+    "Aucun indicateur documenté activé",
+    "Ningún indicador documentado activo",
+    "Nessun indicatore documentato attivo",
+    "Нет установленных документированных флагов",
+    "Keine dokumentierten Flags gesetzt",
+    "Nenhum indicador documentado ativo"
+  ],
+  "not charging": [
+    "not charging",
+    "Pas de charge en cours",
+    "No se está cargando",
+    "Non in carica",
+    "Не заряжается",
+    "Lädt nicht",
+    "Não está a carregar"
+  ],
+  "nothing latched": [
+    "nothing latched",
+    "Aucun état mémorisé",
+    "Ningún estado registrado",
+    "Nessuno stato memorizzato",
+    "Нет сохранённых состояний",
+    "Keine Zustände gespeichert",
+    "Nenhum estado registado"
+  ],
+  "skipped (gibberish, prod.keys not for this device)": [
+    "skipped (gibberish, prod.keys not for this device)",
+    "Ignoré (données incohérentes ; prod.keys ne correspond pas à cette console)",
+    "Omitido (datos incoherentes; prod.keys no corresponde a esta consola)",
+    "Saltato (dati incoerenti; prod.keys non appartiene a questa console)",
+    "Пропущено (некорректные данные; prod.keys от другой консоли)",
+    "Übersprungen (unlesbare Daten; prod.keys gehört zu anderer Konsole)",
+    "Ignorado (dados incoerentes; prod.keys não corresponde a esta consola)"
+  ],
+  "version file absent, contents/ exists": [
+    "version file absent, contents/ exists",
+    "Fichier de version absent, dossier contents/ présent",
+    "Falta el archivo de versión; existe contents/",
+    "File di versione assente; contents/ presente",
+    "Нет файла версии; папка contents/ существует",
+    "Versionsdatei fehlt; contents/ vorhanden",
+    "Ficheiro de versão ausente; contents/ existe"
+  ],
+  "BUCK_STAT : 0x%02X (live status; informational)": [
+    "BUCK_STAT : 0x%02X (live status; informational)",
+    "BUCK_STAT : 0x%02X (état actuel ; à titre informatif)",
+    "BUCK_STAT: 0x%02X (estado actual; informativo)",
+    "BUCK_STAT: 0x%02X (stato attuale; informativo)",
+    "BUCK_STAT: 0x%02X (текущее состояние; справочно)",
+    "BUCK_STAT: 0x%02X (aktueller Status; zur Information)",
+    "BUCK_STAT: 0x%02X (estado atual; informativo)"
+  ],
+  "TOPSYS_STAT : 0x%02X (live status; informational)": [
+    "TOPSYS_STAT : 0x%02X (live status; informational)",
+    "TOPSYS_STAT : 0x%02X (état actuel ; à titre informatif)",
+    "TOPSYS_STAT: 0x%02X (estado actual; informativo)",
+    "TOPSYS_STAT: 0x%02X (stato attuale; informativo)",
+    "TOPSYS_STAT: 0x%02X (текущее состояние; справочно)",
+    "TOPSYS_STAT: 0x%02X (aktueller Status; zur Information)",
+    "TOPSYS_STAT: 0x%02X (estado atual; informativo)"
+  ],
+  "PCIE partition: %s (was %s, bit %d = %d)": [
+    "PCIE partition: %s (was %s, bit %d = %d)",
+    "Partition PCIE : %s (précédemment %s, bit %d = %d)",
+    "Partición PCIE: %s (antes %s, bit %d = %d)",
+    "Partizione PCIE: %s (prima %s, bit %d = %d)",
+    "Раздел PCIE: %s (ранее %s, бит %d = %d)",
+    "PCIE-Partition: %s (vorher %s, Bit %d = %d)",
+    "Partição PCIE: %s (antes %s, bit %d = %d)"
+  ],
+  "hdr CRC32 : 0x%08X (stored 0x%08X) %s": [
+    "hdr CRC32 : 0x%08X (stored 0x%08X) %s",
+    "CRC32 en-tête : 0x%08X (stocké 0x%08X) %s",
+    "CRC32 cabecera: 0x%08X (guardado 0x%08X) %s",
+    "CRC32 intestazione: 0x%08X (salvato 0x%08X) %s",
+    "CRC32 заголовка: 0x%08X (сохранён 0x%08X) %s",
+    "Header-CRC32: 0x%08X (gespeichert 0x%08X) %s",
+    "CRC32 cabeçalho: 0x%08X (guardado 0x%08X) %s"
+  ],
+  "BIS keys : loaded but invalid (wrong unit's prod.keys?)": [
+    "BIS keys : loaded but invalid (wrong unit's prod.keys?)",
+    "Clés BIS : chargées mais invalides (prod.keys d'une autre console ?)",
+    "Claves BIS: cargadas pero inválidas (¿prod.keys de otra consola?)",
+    "Chiavi BIS: caricate ma non valide (prod.keys di un'altra console?)",
+    "Ключи BIS: загружены, но неверны (prod.keys от другой консоли?)",
+    "BIS-Schlüssel: geladen, aber ungültig (prod.keys einer anderen Konsole?)",
+    "Chaves BIS: carregadas mas inválidas (prod.keys de outra consola?)"
+  ],
+  "hekate : update.bin absent": [
+    "hekate : update.bin absent",
+    "hekate : update.bin absent",
+    "hekate: falta update.bin",
+    "hekate: update.bin assente",
+    "hekate: update.bin отсутствует",
+    "hekate: update.bin fehlt",
+    "hekate: update.bin ausente"
+  ],
+  "hekate : update.bin magic mismatch (0x%08X)": [
+    "hekate : update.bin magic mismatch (0x%08X)",
+    "hekate : signature de update.bin incorrecte (0x%08X)",
+    "hekate: firma incorrecta de update.bin (0x%08X)",
+    "hekate: firma update.bin errata (0x%08X)",
+    "hekate: неверная сигнатура update.bin (0x%08X)",
+    "hekate: ungültige update.bin-Kennung (0x%08X)",
+    "hekate: assinatura de update.bin incorreta (0x%08X)"
+  ],
+  "atmosphere : %s (HATS manifest)": [
+    "atmosphere : %s (HATS manifest)",
+    "atmosphere : %s (manifeste HATS)",
+    "atmosphere: %s (manifiesto HATS)",
+    "atmosphere: %s (manifesto HATS)",
+    "atmosphere: %s (манифест HATS)",
+    "atmosphere: %s (HATS-Manifest)",
+    "atmosphere: %s (manifesto HATS)"
+  ],
+  "atmosphere : %s (HATS pack)": [
+    "atmosphere : %s (HATS pack)",
+    "atmosphere : %s (paquet HATS)",
+    "atmosphere: %s (paquete HATS)",
+    "atmosphere: %s (pacchetto HATS)",
+    "atmosphere: %s (пакет HATS)",
+    "atmosphere: %s (HATS-Paket)",
+    "atmosphere: %s (pacote HATS)"
+  ],
+  "eMMC init failures : %d": [
+    "eMMC init failures : %d",
+    "Échecs d'initialisation eMMC : %d",
+    "Fallos de inicialización eMMC: %d",
+    "Errori di inizializzazione eMMC: %d",
+    "Сбои инициализации eMMC: %d",
+    "eMMC-Initialisierungsfehler: %d",
+    "Falhas de inicialização eMMC: %d"
+  ],
+  "eMMC R/W retries : n/a (BDK counts these against SD)": [
+    "eMMC R/W retries : n/a (BDK counts these against SD)",
+    "Nouveaux essais eMMC L/E : indisponibles (comptabilisés avec SD par BDK)",
+    "Reintentos eMMC L/E: no disponibles (BDK los cuenta con SD)",
+    "Tentativi eMMC L/S: non disponibili (BDK li conta con SD)",
+    "Повторы чтения/записи eMMC: недоступны (BDK учитывает их вместе с SD)",
+    "eMMC-Lese-/Schreibwiederholungen: n/v (BDK zählt diese zu SD)",
+    "Repetições eMMC L/E: indisponíveis (BDK conta-as com SD)"
+  ],
+  "Result : XUSB_PADCTL stuck in reset, refusing to read": [
+    "Result : XUSB_PADCTL stuck in reset, refusing to read",
+    "Résultat : XUSB_PADCTL bloqué en réinitialisation ; lecture refusée",
+    "Resultado: XUSB_PADCTL bloqueado en reinicio; lectura rechazada",
+    "Risultato: XUSB_PADCTL bloccato in reset; lettura rifiutata",
+    "Результат: XUSB_PADCTL остаётся в сбросе; чтение отклонено",
+    "Ergebnis: XUSB_PADCTL bleibt im Reset; Lesen verweigert",
+    "Resultado: XUSB_PADCTL bloqueado em reinício; leitura recusada"
+  ],
+  "Chip %d dens : Unknown (MR8 0x%02X)": [
+    "Chip %d dens : Unknown (MR8 0x%02X)",
+    "Densité puce %d : inconnue (MR8 0x%02X)",
+    "Densidad chip %d: desconocida (MR8 0x%02X)",
+    "Densità chip %d: sconosciuta (MR8 0x%02X)",
+    "Плотность чипа %d: неизвестна (MR8 0x%02X)",
+    "Dichte Chip %d: unbekannt (MR8 0x%02X)",
+    "Densidade chip %d: desconhecida (MR8 0x%02X)"
+  ],
+  "loaded from sd:/switch/prod.keys": [
+    "loaded from sd:/switch/prod.keys",
+    "Chargé depuis sd:/switch/prod.keys",
+    "Cargado desde sd:/switch/prod.keys",
+    "Caricato da sd:/switch/prod.keys",
+    "Загружено из sd:/switch/prod.keys",
+    "Aus sd:/switch/prod.keys geladen",
+    "Carregado de sd:/switch/prod.keys"
+  ],
+  "no sd:/switch/prod.keys (run Lockpick first)": [
+    "no sd:/switch/prod.keys (run Lockpick first)",
+    "sd:/switch/prod.keys absent (exécuter Lockpick d'abord)",
+    "Falta sd:/switch/prod.keys (ejecutar Lockpick primero)",
+    "Manca sd:/switch/prod.keys (eseguire prima Lockpick)",
+    "Нет sd:/switch/prod.keys (сначала запустите Lockpick)",
+    "sd:/switch/prod.keys fehlt (zuerst Lockpick ausführen)",
+    "Falta sd:/switch/prod.keys (executar primeiro o Lockpick)"
+  ],
+  "Hekate intent: %d (%s)": [
+    "Hekate intent: %d (%s)",
+    "Intention de démarrage Hekate : %d (%s)",
+    "Intención de inicio Hekate: %d (%s)",
+    "Intento di avvio Hekate: %d (%s)",
+    "Режим запуска Hekate: %d (%s)",
+    "Hekate-Startabsicht: %d (%s)",
+    "Intenção de arranque Hekate: %d (%s)"
+  ],
+  "Hekate intent: none (normal boot, no override pending)": [
+    "Hekate intent: none (normal boot, no override pending)",
+    "Intention Hekate : aucune (démarrage normal, aucun remplacement demandé)",
+    "Intención Hekate: ninguna (inicio normal, sin cambios pendientes)",
+    "Intento Hekate: nessuno (avvio normale, nessuna modifica richiesta)",
+    "Режим Hekate: обычный запуск, переопределений нет",
+    "Hekate-Startabsicht: keine (normaler Start, keine Vorgabe ausstehend)",
+    "Intenção Hekate: nenhuma (arranque normal, sem substituição pendente)"
+  ],
+  "RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d (nyx.ini offset %s%d s%s)": [
+    "RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d (nyx.ini offset %s%d s%s)",
+    "RTC ajustée : %04d-%02d-%02d %02d:%02d:%02d (décalage nyx.ini %s%d s%s)",
+    "RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desfase nyx.ini %s%d s%s)",
+    "RTC corretto: %04d-%02d-%02d %02d:%02d:%02d (scarto nyx.ini %s%d s%s)",
+    "RTC с поправкой: %04d-%02d-%02d %02d:%02d:%02d (сдвиг nyx.ini %s%d s%s)",
+    "RTC korrigiert: %04d-%02d-%02d %02d:%02d:%02d (nyx.ini-Versatz %s%d s%s)",
+    "RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desvio nyx.ini %s%d s%s)"
+  ],
+  "(STILL PARKED)": [
+    "(STILL PARKED)",
+    "(TOUJOURS EN ATTENTE)",
+    "(SIGUE EN ESPERA)",
+    "(ANCORA IN ATTESA)",
+    "(ВСЁ ЕЩЁ ОЖИДАЕТ)",
+    "(WEITERHIN IN WARTEPOSITION)",
+    "(AINDA EM ESPERA)"
+  ],
+  "BUSY": [
+    "BUSY",
+    "OCCUPÉ",
+    "OCUPADO",
+    "OCCUPATO",
+    "ЗАНЯТ",
+    "BELEGT",
+    "OCUPADO"
+  ],
+  "WRONG": [
+    "WRONG",
+    "INCORRECT",
+    "INCORRECTO",
+    "ERRATO",
+    "НЕВЕРНО",
+    "FALSCH",
+    "INCORRETO"
+  ],
+  "(WRONG)": [
+    "(WRONG)",
+    "(INCORRECT)",
+    "(INCORRECTO)",
+    "(ERRATO)",
+    "(НЕВЕРНО)",
+    "(FALSCH)",
+    "(INCORRETO)"
+  ],
+  "APERTURE LIVE": [
+    "APERTURE LIVE",
+    "FENÊTRE ACTIVE",
+    "VENTANA ACTIVA",
+    "FINESTRA ATTIVA",
+    "ОКНО АКТИВНО",
+    "FENSTER AKTIV",
+    "JANELA ATIVA"
+  ],
+  "ATTACHED": [
+    "ATTACHED",
+    "CONNECTÉ",
+    "CONECTADO",
+    "COLLEGATO",
+    "ПОДКЛЮЧЕНО",
+    "VERBUNDEN",
+    "LIGADO"
+  ],
+  "DISABLED": [
+    "DISABLED",
+    "DÉSACTIVÉ",
+    "DESACTIVADO",
+    "DISATTIVATO",
+    "ОТКЛЮЧЕНО",
+    "DEAKTIVIERT",
+    "DESATIVADO"
+  ],
+  "ENABLED, LOCKED": [
+    "ENABLED, LOCKED",
+    "ACTIVÉ, VERROUILLÉ",
+    "ACTIVADO, BLOQUEADO",
+    "ATTIVO, BLOCCATO",
+    "ВКЛЮЧЕНО, ЗАБЛОКИРОВАНО",
+    "AKTIVIERT, GESPERRT",
+    "ATIVADO, BLOQUEADO"
+  ],
+  "ENABLED, NO-LOCK": [
+    "ENABLED, NO-LOCK",
+    "ACTIVÉ, NON VERROUILLÉ",
+    "ACTIVADO, SIN BLOQUEO",
+    "ATTIVO, NON BLOCCATO",
+    "ВКЛЮЧЕНО, НЕ ЗАБЛОКИРОВАНО",
+    "AKTIVIERT, NICHT GESPERRT",
+    "ATIVADO, SEM BLOQUEIO"
+  ],
+  "FAILED": [
+    "FAILED",
+    "ÉCHEC",
+    "FALLO",
+    "ERRORE",
+    "СБОЙ",
+    "FEHLER",
+    "FALHA"
+  ],
+  "INIT FAILED": [
+    "INIT FAILED",
+    "ÉCHEC INITIALISATION",
+    "FALLO DE INICIO",
+    "ERRORE INIZIALIZZAZIONE",
+    "СБОЙ ИНИЦИАЛИЗАЦИИ",
+    "INITIALISIERUNG FEHLGESCHLAGEN",
+    "FALHA DE INICIALIZAÇÃO"
+  ],
+  "INPUT-DISABLED": [
+    "INPUT-DISABLED",
+    "ENTRÉE DÉSACTIVÉE",
+    "ENTRADA DESACTIVADA",
+    "INGRESSO DISATTIVATO",
+    "ВХОД ОТКЛЮЧЁН",
+    "EINGANG DEAKTIVIERT",
+    "ENTRADA DESATIVADA"
+  ],
+  "INPUTS CLAMPED": [
+    "INPUTS CLAMPED",
+    "ENTRÉES BLOQUÉES",
+    "ENTRADAS BLOQUEADAS",
+    "INGRESSI BLOCCATI",
+    "ВХОДЫ ЗАФИКСИРОВАНЫ",
+    "EINGÄNGE FIXIERT",
+    "ENTRADAS BLOQUEADAS"
+  ],
+  "LOCKED -> 120 MHz OUT0": [
+    "LOCKED -> 120 MHz OUT0",
+    "VERROUILLÉ -> 120 MHz OUT0",
+    "BLOQUEADO -> 120 MHz OUT0",
+    "BLOCCATO -> 120 MHz OUT0",
+    "ЗАФИКСИРОВАН -> 120 MHz OUT0",
+    "EINGERASTET -> 120 MHz OUT0",
+    "BLOQUEADO -> 120 MHz OUT0"
+  ],
+  "MISMATCH": [
+    "MISMATCH",
+    "INCOHÉRENCE",
+    "NO COINCIDE",
+    "NON CORRISPONDE",
+    "НЕСОВПАДЕНИЕ",
+    "ABWEICHUNG",
+    "DIVERGÊNCIA"
+  ],
+  "NO LOCK": [
+    "NO LOCK",
+    "NON VERROUILLÉ",
+    "SIN BLOQUEO",
+    "NON BLOCCATO",
+    "НЕТ СИНХРОНИЗАЦИИ",
+    "NICHT EINGERASTET",
+    "SEM BLOQUEIO"
+  ],
+  "PRESSED": [
+    "PRESSED",
+    "APPUYÉ",
+    "PULSADO",
+    "PREMUTO",
+    "НАЖАТО",
+    "GEDRÜCKT",
+    "PREMIDO"
+  ],
+  "STILL ASSERTED": [
+    "STILL ASSERTED",
+    "TOUJOURS ACTIVÉ",
+    "SIGUE ACTIVO",
+    "ANCORA ATTIVO",
+    "ВСЁ ЕЩЁ АКТИВЕН",
+    "WEITERHIN AKTIV",
+    "AINDA ATIVO"
+  ],
+  "UNEXPECTED DEVICE": [
+    "UNEXPECTED DEVICE",
+    "PÉRIPHÉRIQUE INATTENDU",
+    "DISPOSITIVO INESPERADO",
+    "DISPOSITIVO INATTESO",
+    "НЕОЖИДАННОЕ УСТРОЙСТВО",
+    "UNERWARTETES GERÄT",
+    "DISPOSITIVO INESPERADO"
+  ],
+  "UNGATE FAILED": [
+    "UNGATE FAILED",
+    "ÉCHEC ACTIVATION HORLOGE",
+    "FALLO AL ACTIVAR EL RELOJ",
+    "ERRORE ATTIVAZIONE CLOCK",
+    "СБОЙ ВКЛЮЧЕНИЯ ТАКТИРОВАНИЯ",
+    "TAKTFREIGABE FEHLGESCHLAGEN",
+    "FALHA AO ATIVAR O RELÓGIO"
+  ],
+  "emmc_initialize FAILED": [
+    "emmc_initialize FAILED",
+    "ÉCHEC de emmc_initialize",
+    "FALLO de emmc_initialize",
+    "ERRORE emmc_initialize",
+    "СБОЙ emmc_initialize",
+    "emmc_initialize FEHLGESCHLAGEN",
+    "FALHA emmc_initialize"
+  ],
+  "FAN : %s": [
+    "FAN : %s",
+    "VENTILATEUR : %s",
+    "VENTILADOR: %s",
+    "VENTOLA: %s",
+    "ВЕНТИЛЯТОР: %s",
+    "LÜFTER: %s",
+    "VENTOINHA: %s"
+  ],
+  "FAULT (%s) : 0x%02X (%s)": [
+    "FAULT (%s) : 0x%02X (%s)",
+    "DÉFAUT (%s) : 0x%02X (%s)",
+    "FALLO (%s): 0x%02X (%s)",
+    "GUASTO (%s): 0x%02X (%s)",
+    "НЕИСПРАВНОСТЬ (%s): 0x%02X (%s)",
+    "STÖRUNG (%s): 0x%02X (%s)",
+    "FALHA (%s): 0x%02X (%s)"
+  ],
+  "MCR=%02X : TX gated, MSR=%02X": [
+    "MCR=%02X : TX gated, MSR=%02X",
+    "MCR=%02X : TX bloqué, MSR=%02X",
+    "MCR=%02X: TX bloqueado, MSR=%02X",
+    "MCR=%02X: TX bloccato, MSR=%02X",
+    "MCR=%02X: TX заблокирован, MSR=%02X",
+    "MCR=%02X: TX gesperrt, MSR=%02X",
+    "MCR=%02X: TX bloqueado, MSR=%02X"
+  ],
+  "  PZ4 drive %s : pad reads %d  pinmux %08X\n": [
+    "  PZ4 drive %s : pad reads %d  pinmux %08X\n",
+    "  Pilotage PZ4 %s : lecture du pad %d, pinmux %08X\n",
+    "  Control PZ4 %s: lectura del pad %d, pinmux %08X\n",
+    "  Comando PZ4 %s: lettura pad %d, pinmux %08X\n",
+    "  Управление PZ4 %s: значение контакта %d, pinmux %08X\n",
+    "  Ansteuerung PZ4 %s: Pad-Wert %d, pinmux %08X\n",
+    "  Comando PZ4 %s: leitura do pad %d, pinmux %08X\n"
+  ],
+  "  Codec ID     : no answer at 0x1C after %d ms\n": [
+    "  Codec ID     : no answer at 0x1C after %d ms\n",
+    "  ID codec : aucune réponse à 0x1C après %d ms\n",
+    "  ID de códec: sin respuesta en 0x1C tras %d ms\n",
+    "  ID codec: nessuna risposta a 0x1C dopo %d ms\n",
+    "  ID кодека: нет ответа по 0x1C за %d ms\n",
+    "  Codec-ID: nach %d ms keine Antwort auf 0x1C\n",
+    "  ID do codec: sem resposta em 0x1C após %d ms\n"
+  ],
+  "  Result       : ADMAIF FIFO stayed full for >5 ms\n": [
+    "  Result       : ADMAIF FIFO stayed full for >5 ms\n",
+    "  Résultat : ADMAIF FIFO est resté plein pendant >5 ms\n",
+    "  Resultado: ADMAIF FIFO permaneció lleno durante >5 ms\n",
+    "  Risultato: ADMAIF FIFO rimasta piena per >5 ms\n",
+    "  Результат: ADMAIF FIFO оставался заполненным >5 ms\n",
+    "  Ergebnis: ADMAIF FIFO blieb >5 ms voll\n",
+    "  Resultado: ADMAIF FIFO permaneceu cheio por >5 ms\n"
+  ],
+  "  transport rdy : chip RTS_N %s (MSR=%02X, junk=%d)\n": [
+    "  transport rdy : chip RTS_N %s (MSR=%02X, junk=%d)\n",
+    "  Transport prêt : RTS_N puce %s (MSR=%02X, octets parasites=%d)\n",
+    "  Transporte listo: RTS_N del chip %s (MSR=%02X, bytes sobrantes=%d)\n",
+    "  Trasporto pronto: RTS_N chip %s (MSR=%02X, byte spuri=%d)\n",
+    "  Готовность: RTS_N чипа %s (MSR=%02X, лишних байт=%d)\n",
+    "  Transport bereit: Chip RTS_N %s (MSR=%02X, Restbytes=%d)\n",
+    "  Transporte pronto: RTS_N do chip %s (MSR=%02X, bytes espúrios=%d)\n"
+  ],
+  "  MCR=%02X        : TX gated, MSR=%02X\n": [
+    "  MCR=%02X        : TX gated, MSR=%02X\n",
+    "  MCR=%02X : TX bloqué, MSR=%02X\n",
+    "  MCR=%02X: TX bloqueado, MSR=%02X\n",
+    "  MCR=%02X: TX bloccato, MSR=%02X\n",
+    "  MCR=%02X: TX заблокирован, MSR=%02X\n",
+    "  MCR=%02X: TX gesperrt, MSR=%02X\n",
+    "  MCR=%02X: TX bloqueado, MSR=%02X\n"
+  ],
+  "  GPIO PV1 SIG : %s (LCD_BL_EN, low on some Mariko panels)\n": [
+    "  GPIO PV1 SIG : %s (LCD_BL_EN, low on some Mariko panels)\n",
+    "  GPIO PV1 SIG : %s (LCD_BL_EN, niveau bas sur certains écrans Mariko)\n",
+    "  GPIO PV1 SIG: %s (LCD_BL_EN, nivel bajo en algunas pantallas Mariko)\n",
+    "  GPIO PV1 SIG: %s (LCD_BL_EN, livello basso su alcuni schermi Mariko)\n",
+    "  GPIO PV1 SIG: %s (LCD_BL_EN, низкий уровень на части экранов Mariko)\n",
+    "  GPIO PV1 SIG: %s (LCD_BL_EN, bei manchen Mariko-Displays LOW)\n",
+    "  GPIO PV1 SIG: %s (LCD_BL_EN, nível baixo em alguns ecrãs Mariko)\n"
+  ],
+  "  Verdict      : PWM0 driving BL_PWM @ duty %d - backlight lit\n": [
+    "  Verdict      : PWM0 driving BL_PWM @ duty %d - backlight lit\n",
+    "  Verdict : PWM0 pilote BL_PWM, rapport cyclique %d ; rétroéclairage allumé\n",
+    "  Veredicto: PWM0 controla BL_PWM, ciclo de trabajo %d; retroiluminación encendida\n",
+    "  Verdetto: PWM0 pilota BL_PWM, ciclo utile %d; retroilluminazione accesa\n",
+    "  Вердикт: PWM0 управляет BL_PWM, заполнение %d; подсветка включена\n",
+    "  Ergebnis: PWM0 steuert BL_PWM, Tastgrad %d; Hintergrundbeleuchtung an\n",
+    "  Veredito: PWM0 controla BL_PWM, ciclo de trabalho %d; retroiluminação ligada\n"
+  ],
+  "PRESSED ": [
+    "PRESSED ",
+    "APPUYÉ ",
+    "PULSADO ",
+    "PREMUTO ",
+    "НАЖАТО ",
+    "GEDRÜCKT ",
+    "PREMIDO "
+  ],
+  "  N/A          : Switch Lite has no ALS (auto-brightness omitted)\n": [
+    "  N/A          : Switch Lite has no ALS (auto-brightness omitted)\n",
+    "  Sans objet : la Switch Lite n'a pas d'ALS (luminosité automatique absente)\n",
+    "  No aplicable: Switch Lite no tiene ALS (sin brillo automático)\n",
+    "  Non applicabile: Switch Lite non ha ALS (luminosità automatica assente)\n",
+    "  Неприменимо: у Switch Lite нет ALS (автояркость отсутствует)\n",
+    "  Nicht anwendbar: Switch Lite hat keinen ALS (keine Autohelligkeit)\n",
+    "  Não aplicável: Switch Lite não tem ALS (sem brilho automático)\n"
+  ],
+  "                 - RCM bit (next reboot would re-enter BootROM RCM)\n": [
+    "                 - RCM bit (next reboot would re-enter BootROM RCM)\n",
+    "                 - Bit RCM (le prochain redémarrage retournerait en BootROM RCM)\n",
+    "                 - Bit RCM (el próximo reinicio volvería a BootROM RCM)\n",
+    "                 - Bit RCM (il prossimo riavvio tornerebbe a BootROM RCM)\n",
+    "                 - Бит RCM (следующий перезапуск вернёт в BootROM RCM)\n",
+    "                 - RCM-Bit (nächster Neustart würde wieder BootROM RCM starten)\n",
+    "                 - Bit RCM (o próximo reinício regressaria ao BootROM RCM)\n"
+  ],
+  "                 - BOOTLOADER bit (CFW bootloader chainload requested)\n": [
+    "                 - BOOTLOADER bit (CFW bootloader chainload requested)\n",
+    "                 - Bit BOOTLOADER (chaînage du chargeur CFW demandé)\n",
+    "                 - Bit BOOTLOADER (solicitado el encadenamiento del cargador CFW)\n",
+    "                 - Bit BOOTLOADER (richiesto concatenamento del bootloader CFW)\n",
+    "                 - Бит BOOTLOADER (запрошен переход к загрузчику CFW)\n",
+    "                 - BOOTLOADER-Bit (CFW-Bootloader-Chainload angefordert)\n",
+    "                 - Bit BOOTLOADER (pedido encadeamento do carregador CFW)\n"
+  ],
+  "                 - bit 18 set: ODM debug-console flag (HOS would enable kgdb)\n": [
+    "                 - bit 18 set: ODM debug-console flag (HOS would enable kgdb)\n",
+    "                 - Bit 18 positionné : indicateur de console ODM (HOS activerait kgdb)\n",
+    "                 - Bit 18 activado: indicador de consola ODM (HOS activaría kgdb)\n",
+    "                 - Bit 18 impostato: console di debug ODM (HOS attiverebbe kgdb)\n",
+    "                 - Бит 18 установлен: консоль отладки ODM (HOS включит kgdb)\n",
+    "                 - Bit 18 gesetzt: ODM-Debugkonsole (HOS würde kgdb aktivieren)\n",
+    "                 - Bit 18 definido: consola de depuração ODM (HOS ativaria kgdb)\n"
+  ],
+  "  Hekate intent: none (normal boot, no override pending)\n": [
+    "  Hekate intent: none (normal boot, no override pending)\n",
+    "  Intention Hekate : aucune (démarrage normal, aucun remplacement demandé)\n",
+    "  Intención Hekate: ninguna (inicio normal, sin cambios pendientes)\n",
+    "  Intento Hekate: nessuno (avvio normale, nessuna modifica richiesta)\n",
+    "  Режим Hekate: обычный запуск, переопределений нет\n",
+    "  Hekate-Startabsicht: keine (normaler Start, keine Vorgabe ausstehend)\n",
+    "  Intenção Hekate: nenhuma (arranque normal, sem substituição pendente)\n"
+  ],
+  "  Hekate intent: %d (%s)\n": [
+    "  Hekate intent: %d (%s)\n",
+    "  Intention de démarrage Hekate : %d (%s)\n",
+    "  Intención de inicio Hekate: %d (%s)\n",
+    "  Intento di avvio Hekate: %d (%s)\n",
+    "  Режим запуска Hekate: %d (%s)\n",
+    "  Hekate-Startabsicht: %d (%s)\n",
+    "  Intenção de arranque Hekate: %d (%s)\n"
+  ],
+  "  PMIC IRQSD   : 0x%02X (SD-rail thresholds latched - cross-check NVERC)\n": [
+    "  PMIC IRQSD   : 0x%02X (SD-rail thresholds latched - cross-check NVERC)\n",
+    "  PMIC IRQSD : 0x%02X (seuils d'alimentation SD mémorisés ; vérifier NVERC)\n",
+    "  PMIC IRQSD: 0x%02X (umbrales de alimentación SD registrados; comprobar NVERC)\n",
+    "  PMIC IRQSD: 0x%02X (soglie alimentazione SD registrate; verificare NVERC)\n",
+    "  PMIC IRQSD: 0x%02X (пороги питания SD сохранены; сверить NVERC)\n",
+    "  PMIC IRQSD: 0x%02X (SD-Versorgungsschwellen gespeichert; NVERC prüfen)\n",
+    "  PMIC IRQSD: 0x%02X (limiares de alimentação SD registados; verificar NVERC)\n"
+  ],
+  "  RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d  (nyx.ini offset %s%d s%s)\n": [
+    "  RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d  (nyx.ini offset %s%d s%s)\n",
+    "  RTC ajustée : %04d-%02d-%02d %02d:%02d:%02d (décalage nyx.ini %s%d s%s)\n",
+    "  RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desfase nyx.ini %s%d s%s)\n",
+    "  RTC corretto: %04d-%02d-%02d %02d:%02d:%02d (scarto nyx.ini %s%d s%s)\n",
+    "  RTC с поправкой: %04d-%02d-%02d %02d:%02d:%02d (сдвиг nyx.ini %s%d s%s)\n",
+    "  RTC korrigiert: %04d-%02d-%02d %02d:%02d:%02d (nyx.ini-Versatz %s%d s%s)\n",
+    "  RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desvio nyx.ini %s%d s%s)\n"
+  ],
+  "  RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)\n": [
+    "  RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)\n",
+    "  RTC ajustée : indisponible (pas de timeoffset dans /bootloader/nyx.ini)\n",
+    "  RTC ajustado: no disponible (sin timeoffset en /bootloader/nyx.ini)\n",
+    "  RTC corretto: non disponibile (manca timeoffset in /bootloader/nyx.ini)\n",
+    "  RTC с поправкой: недоступно (нет timeoffset в /bootloader/nyx.ini)\n",
+    "  RTC korrigiert: nicht verfügbar (kein timeoffset in /bootloader/nyx.ini)\n",
+    "  RTC ajustado: indisponível (sem timeoffset em /bootloader/nyx.ini)\n"
+  ],
+  "  idle anchor  : internal PULL_UP (line idles HIGH on its own)\n": [
+    "  idle anchor  : internal PULL_UP (line idles HIGH on its own)\n",
+    "  Repos : PULL_UP interne (la ligne reste d'elle-même à HIGH)\n",
+    "  Reposo: PULL_UP interno (la línea permanece en HIGH por sí sola)\n",
+    "  Riposo: PULL_UP interno (la linea resta da sola HIGH)\n",
+    "  Покой: внутренний PULL_UP (линия сама остаётся HIGH)\n",
+    "  Ruhepegel: interner PULL_UP (Leitung bleibt von selbst HIGH)\n",
+    "  Repouso: PULL_UP interno (a linha permanece em HIGH por si)\n"
+  ],
+  "  idle anchor  : PULL_DOWN (line idles LOW - UART will see permanent BREAK)\n": [
+    "  idle anchor  : PULL_DOWN (line idles LOW - UART will see permanent BREAK)\n",
+    "  Repos : PULL_DOWN (ligne au niveau LOW ; UART voit un BREAK permanent)\n",
+    "  Reposo: PULL_DOWN (línea en LOW; UART ve un BREAK permanente)\n",
+    "  Riposo: PULL_DOWN (linea LOW; UART vede BREAK permanente)\n",
+    "  Покой: PULL_DOWN (линия LOW; UART видит постоянный BREAK)\n",
+    "  Ruhepegel: PULL_DOWN (Leitung bleibt LOW; UART sieht dauerhaften BREAK)\n",
+    "  Repouso: PULL_DOWN (linha em LOW; UART deteta BREAK permanente)\n"
+  ],
+  "  UART_LCR     : 0x%02X (DLAB=%d, word=%d)\n": [
+    "  UART_LCR     : 0x%02X (DLAB=%d, word=%d)\n",
+    "  UART_LCR : 0x%02X (DLAB=%d, mot=%d)\n",
+    "  UART_LCR: 0x%02X (DLAB=%d, palabra=%d)\n",
+    "  UART_LCR: 0x%02X (DLAB=%d, parola=%d)\n",
+    "  UART_LCR: 0x%02X (DLAB=%d, слово=%d)\n",
+    "  UART_LCR: 0x%02X (DLAB=%d, Wort=%d)\n",
+    "  UART_LCR: 0x%02X (DLAB=%d, palavra=%d)\n"
+  ],
+  "                 ^- framing/parity/break errors latched - check baud\n": [
+    "                 ^- framing/parity/break errors latched - check baud\n",
+    "                 ^- Erreurs de trame/parité/BREAK mémorisées ; vérifier le débit\n",
+    "                 ^- Errores de trama/paridad/BREAK registrados; comprobar velocidad\n",
+    "                 ^- Errori frame/parità/BREAK registrati; verificare baud rate\n",
+    "                 ^- Сохранены ошибки кадра/чётности/BREAK; проверьте скорость\n",
+    "                 ^- Frame-/Paritäts-/BREAK-Fehler gespeichert; Baudrate prüfen\n",
+    "                 ^- Erros de trama/paridade/BREAK registados; verificar velocidade\n"
+  ],
+  "    Verdict      : line ACTIVE (%d transitions) - host IS sending\n": [
+    "    Verdict      : line ACTIVE (%d transitions) - host IS sending\n",
+    "    Verdict : ligne ACTIVE (%d transitions) ; l'hôte émet bien\n",
+    "    Veredicto: línea ACTIVE (%d transiciones); el host sí transmite\n",
+    "    Verdetto: linea ACTIVE (%d transizioni); l'host trasmette\n",
+    "    Вердикт: линия ACTIVE (%d переходов); хост передаёт\n",
+    "    Ergebnis: Leitung ACTIVE (%d Wechsel); Host sendet\n",
+    "    Veredito: linha ACTIVE (%d transições); o anfitrião transmite\n"
+  ],
+  "    Verdict      : line idle HIGH - shifter alive, host quiet\n": [
+    "    Verdict      : line idle HIGH - shifter alive, host quiet\n",
+    "    Verdict : ligne au repos HIGH ; convertisseur de niveau actif, hôte silencieux\n",
+    "    Veredicto: línea en reposo HIGH; conversor de nivel activo, host sin transmitir\n",
+    "    Verdetto: linea a riposo HIGH; convertitore di livello attivo, host silenzioso\n",
+    "    Вердикт: линия в покое HIGH; преобразователь уровней работает, хост молчит\n",
+    "    Ergebnis: Leitung in Ruhe HIGH; Pegelwandler aktiv, Host sendet nicht\n",
+    "    Veredito: linha em repouso HIGH; conversor de nível ativo, anfitrião sem transmitir\n"
+  ],
+  "    Verdict      : line stuck LOW - shifter unpowered or shorted to GND\n": [
+    "    Verdict      : line stuck LOW - shifter unpowered or shorted to GND\n",
+    "    Verdict : ligne bloquée à LOW ; convertisseur de niveau non alimenté ou court-circuit vers GND\n",
+    "    Veredicto: línea bloqueada en LOW; conversor de nivel sin alimentación o en corto a GND\n",
+    "    Verdetto: linea bloccata LOW; convertitore di livello non alimentato o in corto a GND\n",
+    "    Вердикт: линия постоянно LOW; преобразователь уровней без питания или замкнут на GND\n",
+    "    Ergebnis: Leitung dauerhaft LOW; Pegelwandler unversorgt oder Kurzschluss nach GND\n",
+    "    Veredito: linha presa em LOW; conversor de nível sem alimentação ou em curto a GND\n"
+  ],
+  "  Chip %d dens  : Unknown (MR8 0x%02X)\n": [
+    "  Chip %d dens  : Unknown (MR8 0x%02X)\n",
+    "  Densité puce %d : inconnue (MR8 0x%02X)\n",
+    "  Densidad chip %d: desconocida (MR8 0x%02X)\n",
+    "  Densità chip %d: sconosciuta (MR8 0x%02X)\n",
+    "  Плотность чипа %d: неизвестна (MR8 0x%02X)\n",
+    "  Dichte Chip %d: unbekannt (MR8 0x%02X)\n",
+    "  Densidade chip %d: desconhecida (MR8 0x%02X)\n"
+  ],
+  " WRONG": [
+    " WRONG",
+    " INCORRECT",
+    " INCORRECTO",
+    " ERRATO",
+    " НЕВЕРНО",
+    " FALSCH",
+    " INCORRETO"
+  ],
+  "                 (all rails dormant - normal in RCM, HOS brings them up)\n": [
+    "                 (all rails dormant - normal in RCM, HOS brings them up)\n",
+    "                 (alimentations au repos ; normal en RCM, HOS les active)\n",
+    "                 (alimentaciones en reposo; normal en RCM, HOS las activa)\n",
+    "                 (alimentazioni a riposo; normale in RCM, HOS le attiva)\n",
+    "                 (питание отключено; нормально в RCM, HOS его включает)\n",
+    "                 (alle Versorgungen ruhend; in RCM normal, HOS aktiviert sie)\n",
+    "                 (alimentações em repouso; normal em RCM, HOS ativa-as)\n"
+  ],
+  "  BUCK_STAT    : 0x%02X (live status; informational)\n": [
+    "  BUCK_STAT    : 0x%02X (live status; informational)\n",
+    "  BUCK_STAT : 0x%02X (état actuel ; à titre informatif)\n",
+    "  BUCK_STAT: 0x%02X (estado actual; informativo)\n",
+    "  BUCK_STAT: 0x%02X (stato attuale; informativo)\n",
+    "  BUCK_STAT: 0x%02X (текущее состояние; справочно)\n",
+    "  BUCK_STAT: 0x%02X (aktueller Status; zur Information)\n",
+    "  BUCK_STAT: 0x%02X (estado atual; informativo)\n"
+  ],
+  "  TOPSYS_STAT  : 0x%02X (live status; informational)\n": [
+    "  TOPSYS_STAT  : 0x%02X (live status; informational)\n",
+    "  TOPSYS_STAT : 0x%02X (état actuel ; à titre informatif)\n",
+    "  TOPSYS_STAT: 0x%02X (estado actual; informativo)\n",
+    "  TOPSYS_STAT: 0x%02X (stato attuale; informativo)\n",
+    "  TOPSYS_STAT: 0x%02X (текущее состояние; справочно)\n",
+    "  TOPSYS_STAT: 0x%02X (aktueller Status; zur Information)\n",
+    "  TOPSYS_STAT: 0x%02X (estado atual; informativo)\n"
+  ],
+  "  FAULT (%s) : 0x%02X (%s)\n": [
+    "  FAULT (%s) : 0x%02X (%s)\n",
+    "  DÉFAUT (%s) : 0x%02X (%s)\n",
+    "  FALLO (%s): 0x%02X (%s)\n",
+    "  GUASTO (%s): 0x%02X (%s)\n",
+    "  НЕИСПРАВНОСТЬ (%s): 0x%02X (%s)\n",
+    "  STÖRUNG (%s): 0x%02X (%s)\n",
+    "  FALHA (%s): 0x%02X (%s)\n"
+  ],
+  "  FAN          : %s\n": [
+    "  FAN          : %s\n",
+    "  VENTILATEUR : %s\n",
+    "  VENTILADOR: %s\n",
+    "  VENTOLA: %s\n",
+    "  ВЕНТИЛЯТОР: %s\n",
+    "  LÜFTER: %s\n",
+    "  VENTOINHA: %s\n"
+  ],
+  "  Tach pad     : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n": [
+    "  Tach pad     : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Broche tachymètre : CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Pin del tacómetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Pin tachimetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Контакт тахометра: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Tacho-Pin: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n",
+    "  Pino do tacómetro: CAM1_PWDN=%04X E_INPUT=%d TRI=%d pull=%d lvl=%d\n"
+  ],
+  "  Tach line    : %d transitions, %d low samples in %d ms\n": [
+    "  Tach line    : %d transitions, %d low samples in %d ms\n",
+    "  Tachymètre : %d transitions, %d échantillons bas en %d ms\n",
+    "  Tacómetro: %d transiciones, %d muestras bajas en %d ms\n",
+    "  Tachimetro: %d transizioni, %d campioni bassi in %d ms\n",
+    "  Тахометр: %d переходов, %d низких отсчётов за %d ms\n",
+    "  Tachosignal: %d Wechsel, %d LOW-Abtastungen in %d ms\n",
+    "  Tacómetro: %d transições, %d amostras baixas em %d ms\n"
+  ],
+  "  Fan verdict  : SPINNING (draws %d mA) but tach unreadable\n": [
+    "  Fan verdict  : SPINNING (draws %d mA) but tach unreadable\n",
+    "  Ventilateur : EN ROTATION (%d mA consommés), tachymètre illisible\n",
+    "  Ventilador: GIRANDO (consume %d mA), tacómetro ilegible\n",
+    "  Ventola: IN ROTAZIONE (assorbe %d mA), tachimetro illeggibile\n",
+    "  Вентилятор: ВРАЩАЕТСЯ (ток %d mA), тахометр не читается\n",
+    "  Lüfter: DREHT (Strom %d mA), Tachosignal nicht lesbar\n",
+    "  Ventoinha: A GIRAR (consome %d mA), tacómetro ilegível\n"
+  ],
+  " BUSY": [
+    " BUSY",
+    " OCCUPÉ",
+    " OCUPADO",
+    " OCCUPATO",
+    " ЗАНЯТ",
+    " BELEGT",
+    " OCUPADO"
+  ],
+  "  Major.Minor  : %d.%02d\n": [
+    "  Major.Minor  : %d.%02d\n",
+    "  Version majeure.mineure : %d.%02d\n",
+    "  Versión mayor.menor: %d.%02d\n",
+    "  Versione maggiore.minore: %d.%02d\n",
+    "  Версия основная.дополнительная: %d.%02d\n",
+    "  Haupt-/Unterversion: %d.%02d\n",
+    "  Versão principal.secundária: %d.%02d\n"
+  ],
+  "  Burnt fuses  : %d | %d (ODM7 | ODM6)\n": [
+    "  Burnt fuses  : %d | %d (ODM7 | ODM6)\n",
+    "  Fusibles grillés : %d | %d (ODM7 | ODM6)\n",
+    "  Fusibles quemados: %d | %d (ODM7 | ODM6)\n",
+    "  Fusibili bruciati: %d | %d (ODM7 | ODM6)\n",
+    "  Пережжённые предохранители: %d | %d (ODM7 | ODM6)\n",
+    "  Gebrannte Sicherungen: %d | %d (ODM7 | ODM6)\n",
+    "  Fusíveis queimados: %d | %d (ODM7 | ODM6)\n"
+  ],
+  "  X / Y coord  : %d / %d\n": [
+    "  X / Y coord  : %d / %d\n",
+    "  Coordonnées X / Y : %d / %d\n",
+    "  Coordenadas X / Y: %d / %d\n",
+    "  Coordinate X / Y: %d / %d\n",
+    "  Координаты X / Y: %d / %d\n",
+    "  X-/Y-Koordinaten: %d / %d\n",
+    "  Coordenadas X / Y: %d / %d\n"
+  ],
+  "  emmc_initialize FAILED\n": [
+    "  emmc_initialize FAILED\n",
+    "  ÉCHEC de emmc_initialize\n",
+    "  FALLO de emmc_initialize\n",
+    "  ERRORE emmc_initialize\n",
+    "  СБОЙ emmc_initialize\n",
+    "  emmc_initialize FEHLGESCHLAGEN\n",
+    "  FALHA emmc_initialize\n"
+  ],
+  "  PRODINFO GPT : LBA %08X..%08X is not a usable range\n": [
+    "  PRODINFO GPT : LBA %08X..%08X is not a usable range\n",
+    "  PRODINFO GPT : plage LBA %08X..%08X inutilisable\n",
+    "  PRODINFO GPT: rango LBA %08X..%08X no utilizable\n",
+    "  PRODINFO GPT: intervallo LBA %08X..%08X non utilizzabile\n",
+    "  PRODINFO GPT: диапазон LBA %08X..%08X недоступен\n",
+    "  PRODINFO GPT: LBA-Bereich %08X..%08X nicht nutzbar\n",
+    "  PRODINFO GPT: intervalo LBA %08X..%08X inutilizável\n"
+  ],
+  "  BIS keys     : loaded but invalid (wrong unit's prod.keys?)\n": [
+    "  BIS keys     : loaded but invalid (wrong unit's prod.keys?)\n",
+    "  Clés BIS : chargées mais invalides (prod.keys d'une autre console ?)\n",
+    "  Claves BIS: cargadas pero inválidas (¿prod.keys de otra consola?)\n",
+    "  Chiavi BIS: caricate ma non valide (prod.keys di un'altra console?)\n",
+    "  Ключи BIS: загружены, но неверны (prod.keys от другой консоли?)\n",
+    "  BIS-Schlüssel: geladen, aber ungültig (prod.keys einer anderen Konsole?)\n",
+    "  Chaves BIS: carregadas mas inválidas (prod.keys de outra consola?)\n"
+  ],
+  "  pkg1 build   : (BOOT0 sector 0x800 read all-zero - pkg1 absent)\n": [
+    "  pkg1 build   : (BOOT0 sector 0x800 read all-zero - pkg1 absent)\n",
+    "  Compilation pkg1 : (secteur BOOT0 0x800 entièrement nul ; pkg1 absent)\n",
+    "  Compilación pkg1: (sector BOOT0 0x800 leído a ceros; pkg1 ausente)\n",
+    "  Build pkg1: (settore BOOT0 0x800 letto a zero; pkg1 assente)\n",
+    "  Сборка pkg1: (сектор BOOT0 0x800 прочитан как нули; pkg1 отсутствует)\n",
+    "  pkg1-Build: (BOOT0-Sektor 0x800 nur Nullen; pkg1 fehlt)\n",
+    "  Compilação pkg1: (setor BOOT0 0x800 lido a zeros; pkg1 ausente)\n"
+  ],
+  "  hdr CRC32    : 0x%08X (stored 0x%08X) %s\n": [
+    "  hdr CRC32    : 0x%08X (stored 0x%08X) %s\n",
+    "  CRC32 en-tête : 0x%08X (stocké 0x%08X) %s\n",
+    "  CRC32 cabecera: 0x%08X (guardado 0x%08X) %s\n",
+    "  CRC32 intestazione: 0x%08X (salvato 0x%08X) %s\n",
+    "  CRC32 заголовка: 0x%08X (сохранён 0x%08X) %s\n",
+    "  Header-CRC32: 0x%08X (gespeichert 0x%08X) %s\n",
+    "  CRC32 cabeçalho: 0x%08X (guardado 0x%08X) %s\n"
+  ],
+  "  ent CRC32    : skipped (entries span %d bytes, only %d in read window)\n": [
+    "  ent CRC32    : skipped (entries span %d bytes, only %d in read window)\n",
+    "  CRC32 entrées : ignoré (%d octets nécessaires, seulement %d dans la fenêtre lue)\n",
+    "  CRC32 entradas: omitido (%d bytes necesarios, solo %d en la ventana leída)\n",
+    "  CRC32 voci: saltato (%d byte necessari, solo %d nella finestra letta)\n",
+    "  CRC32 записей: пропущено (нужно %d байт, в окне чтения только %d)\n",
+    "  Eintrags-CRC32: übersprungen (%d Bytes nötig, nur %d im Lesefenster)\n",
+    "  CRC32 entradas: ignorado (%d bytes necessários, apenas %d na janela lida)\n"
+  ],
+  "  atmosphere   : %s (HATS manifest)\n": [
+    "  atmosphere   : %s (HATS manifest)\n",
+    "  atmosphere : %s (manifeste HATS)\n",
+    "  atmosphere: %s (manifiesto HATS)\n",
+    "  atmosphere: %s (manifesto HATS)\n",
+    "  atmosphere: %s (манифест HATS)\n",
+    "  atmosphere: %s (HATS-Manifest)\n",
+    "  atmosphere: %s (manifesto HATS)\n"
+  ],
+  "  atmosphere   : %s (HATS pack)\n": [
+    "  atmosphere   : %s (HATS pack)\n",
+    "  atmosphere : %s (paquet HATS)\n",
+    "  atmosphere: %s (paquete HATS)\n",
+    "  atmosphere: %s (pacchetto HATS)\n",
+    "  atmosphere: %s (пакет HATS)\n",
+    "  atmosphere: %s (HATS-Paket)\n",
+    "  atmosphere: %s (pacote HATS)\n"
+  ],
+  "  hekate       : update.bin magic mismatch (0x%08X)\n": [
+    "  hekate       : update.bin magic mismatch (0x%08X)\n",
+    "  hekate : signature de update.bin incorrecte (0x%08X)\n",
+    "  hekate: firma incorrecta de update.bin (0x%08X)\n",
+    "  hekate: firma update.bin errata (0x%08X)\n",
+    "  hekate: неверная сигнатура update.bin (0x%08X)\n",
+    "  hekate: ungültige update.bin-Kennung (0x%08X)\n",
+    "  hekate: assinatura de update.bin incorreta (0x%08X)\n"
+  ],
+  "  hekate       : update.bin absent\n": [
+    "  hekate       : update.bin absent\n",
+    "  hekate : update.bin absent\n",
+    "  hekate: falta update.bin\n",
+    "  hekate: update.bin assente\n",
+    "  hekate: update.bin отсутствует\n",
+    "  hekate: update.bin fehlt\n",
+    "  hekate: update.bin ausente\n"
+  ],
+  "  eMMC init failures : %d\n": [
+    "  eMMC init failures : %d\n",
+    "  Échecs d'initialisation eMMC : %d\n",
+    "  Fallos de inicialización eMMC: %d\n",
+    "  Errori di inizializzazione eMMC: %d\n",
+    "  Сбои инициализации eMMC: %d\n",
+    "  eMMC-Initialisierungsfehler: %d\n",
+    "  Falhas de inicialização eMMC: %d\n"
+  ],
+  "  eMMC R/W retries   : n/a (BDK counts these against SD)\n": [
+    "  eMMC R/W retries   : n/a (BDK counts these against SD)\n",
+    "  Nouveaux essais eMMC L/E : indisponibles (comptabilisés avec SD par BDK)\n",
+    "  Reintentos eMMC L/E: no disponibles (BDK los cuenta con SD)\n",
+    "  Tentativi eMMC L/S: non disponibili (BDK li conta con SD)\n",
+    "  Повторы чтения/записи eMMC: недоступны (BDK учитывает их вместе с SD)\n",
+    "  eMMC-Lese-/Schreibwiederholungen: n/v (BDK zählt diese zu SD)\n",
+    "  Repetições eMMC L/E: indisponíveis (BDK conta-as com SD)\n"
+  ],
+  "  CPU0          : stalled (attempt %d/3, hb=%d) - resetting AFI\n": [
+    "  CPU0          : stalled (attempt %d/3, hb=%d) - resetting AFI\n",
+    "  CPU0 : bloqué (essai %d/3, hb=%d) ; réinitialisation AFI\n",
+    "  CPU0: bloqueado (intento %d/3, hb=%d); reiniciando AFI\n",
+    "  CPU0: bloccato (tentativo %d/3, hb=%d); reset AFI\n",
+    "  CPU0: зависание (попытка %d/3, hb=%d); сброс AFI\n",
+    "  CPU0: Stillstand (Versuch %d/3, hb=%d); AFI zurücksetzen\n",
+    "  CPU0: bloqueado (tentativa %d/3, hb=%d); reiniciar AFI\n"
+  ],
+  "  CPU0          : EXCEPTION at stage %d, not a stall\n": [
+    "  CPU0          : EXCEPTION at stage %d, not a stall\n",
+    "  CPU0 : EXCEPTION à l'étape %d, sans blocage\n",
+    "  CPU0: EXCEPTION en la etapa %d, sin bloqueo\n",
+    "  CPU0: EXCEPTION nella fase %d, senza blocco\n",
+    "  CPU0: EXCEPTION на этапе %d, без зависания\n",
+    "  CPU0: EXCEPTION in Phase %d, kein Stillstand\n",
+    "  CPU0: EXCEPTION na fase %d, sem bloqueio\n"
+  ],
+  "  (STILL PARKED)": [
+    "  (STILL PARKED)",
+    "  (TOUJOURS EN ATTENTE)",
+    "  (SIGUE EN ESPERA)",
+    "  (ANCORA IN ATTESA)",
+    "  (ВСЁ ЕЩЁ ОЖИДАЕТ)",
+    "  (WEITERHIN IN WARTEPOSITION)",
+    "  (AINDA EM ESPERA)"
+  ],
+  "  PCIE partition: %s (was %s, bit %d = %d)\n": [
+    "  PCIE partition: %s (was %s, bit %d = %d)\n",
+    "  Partition PCIE : %s (précédemment %s, bit %d = %d)\n",
+    "  Partición PCIE: %s (antes %s, bit %d = %d)\n",
+    "  Partizione PCIE: %s (prima %s, bit %d = %d)\n",
+    "  Раздел PCIE: %s (ранее %s, бит %d = %d)\n",
+    "  PCIE-Partition: %s (vorher %s, Bit %d = %d)\n",
+    "  Partição PCIE: %s (antes %s, bit %d = %d)\n"
+  ],
+  "  Result        : XUSB_PADCTL stuck in reset, refusing to read\n": [
+    "  Result        : XUSB_PADCTL stuck in reset, refusing to read\n",
+    "  Résultat : XUSB_PADCTL bloqué en réinitialisation ; lecture refusée\n",
+    "  Resultado: XUSB_PADCTL bloqueado en reinicio; lectura rechazada\n",
+    "  Risultato: XUSB_PADCTL bloccato in reset; lettura rifiutata\n",
+    "  Результат: XUSB_PADCTL остаётся в сбросе; чтение отклонено\n",
+    "  Ergebnis: XUSB_PADCTL bleibt im Reset; Lesen verweigert\n",
+    "  Resultado: XUSB_PADCTL bloqueado em reinício; leitura recusada\n"
+  ],
+  "  No handoff    : bring-up incomplete\n": [
+    "  No handoff    : bring-up incomplete\n",
+    "  Aucun transfert : initialisation incomplète\n",
+    "  Sin transferencia: inicialización incompleta\n",
+    "  Nessun passaggio: inizializzazione incompleta\n",
+    "  Нет передачи управления: инициализация не завершена\n",
+    "  Keine Übergabe: Initialisierung unvollständig\n",
+    "  Sem transferência: inicialização incompleta\n"
+  ],
+  "  CHRG<->Curr   : BQ chrg=%d, gauge=%d mA  %s\n": [
+    "  CHRG<->Curr   : BQ chrg=%d, gauge=%d mA  %s\n",
+    "  Charge/courant : BQ chrg=%d, jauge=%d mA %s\n",
+    "  Carga/corriente: BQ chrg=%d, medidor=%d mA %s\n",
+    "  Carica/corrente: BQ chrg=%d, misuratore=%d mA %s\n",
+    "  Заряд/ток: BQ chrg=%d, датчик=%d mA %s\n",
+    "  Ladung/Strom: BQ chrg=%d, Messwert=%d mA %s\n",
+    "  Carga/corrente: BQ chrg=%d, medidor=%d mA %s\n"
+  ],
+  "  eMMC HS400    : mode=%d, bus=%d-bit  %s\n": [
+    "  eMMC HS400    : mode=%d, bus=%d-bit  %s\n",
+    "  eMMC HS400 : mode=%d, bus de %d bits %s\n",
+    "  eMMC HS400: modo=%d, bus de %d bits %s\n",
+    "  eMMC HS400: modo=%d, bus a %d bit %s\n",
+    "  eMMC HS400: режим=%d, шина %d бит %s\n",
+    "  eMMC HS400: Modus=%d, Bus=%d Bit %s\n",
+    "  eMMC HS400: modo=%d, barramento de %d bits %s\n"
+  ],
+  "force open": [
+    "force open",
+    "circuit FORCE ouvert",
+    "circuito FORCE abierto",
+    "circuito FORCE aperto",
+    "обрыв FORCE",
+    "FORCE unterbrochen",
+    "circuito FORCE aberto"
+  ],
+  "sense open": [
+    "sense open",
+    "circuit SENSE ouvert",
+    "circuito SENSE abierto",
+    "circuito SENSE aperto",
+    "обрыв SENSE",
+    "SENSE unterbrochen",
+    "circuito SENSE aberto"
+  ],
+  "FPC force open": [
+    "FPC force open",
+    "circuit FPC FORCE ouvert",
+    "circuito FPC FORCE abierto",
+    "circuito FPC FORCE aperto",
+    "обрыв FPC FORCE",
+    "FPC FORCE unterbrochen",
+    "circuito FPC FORCE aberto"
+  ],
+  "FPC sense open": [
+    "FPC sense open",
+    "circuit FPC SENSE ouvert",
+    "circuito FPC SENSE abierto",
+    "circuito FPC SENSE aperto",
+    "обрыв FPC SENSE",
+    "FPC SENSE unterbrochen",
+    "circuito FPC SENSE aberto"
+  ],
+  "key force open": [
+    "key force open",
+    "circuit FORCE des touches ouvert",
+    "circuito FORCE de teclas abierto",
+    "circuito FORCE dei tasti aperto",
+    "обрыв FORCE кнопок",
+    "FORCE der Tasten unterbrochen",
+    "circuito FORCE das teclas aberto"
+  ],
+  "key sense open": [
+    "key sense open",
+    "circuit SENSE des touches ouvert",
+    "circuito SENSE de teclas abierto",
+    "circuito SENSE dei tasti aperto",
+    "обрыв SENSE кнопок",
+    "SENSE der Tasten unterbrochen",
+    "circuito SENSE das teclas aberto"
+  ],
+  "force-GND short": [
+    "force-GND short",
+    "court-circuit FORCE-GND",
+    "cortocircuito FORCE-GND",
+    "cortocircuito FORCE-GND",
+    "замыкание FORCE-GND",
+    "Kurzschluss FORCE-GND",
+    "curto-circuito FORCE-GND"
+  ],
+  "sense-GND short": [
+    "sense-GND short",
+    "court-circuit SENSE-GND",
+    "cortocircuito SENSE-GND",
+    "cortocircuito SENSE-GND",
+    "замыкание SENSE-GND",
+    "Kurzschluss SENSE-GND",
+    "curto-circuito SENSE-GND"
+  ],
+  "force-VCM short": [
+    "force-VCM short",
+    "court-circuit FORCE-VCM",
+    "cortocircuito FORCE-VCM",
+    "cortocircuito FORCE-VCM",
+    "замыкание FORCE-VCM",
+    "Kurzschluss FORCE-VCM",
+    "curto-circuito FORCE-VCM"
+  ],
+  "sense-VCM short": [
+    "sense-VCM short",
+    "court-circuit SENSE-VCM",
+    "cortocircuito SENSE-VCM",
+    "cortocircuito SENSE-VCM",
+    "замыкание SENSE-VCM",
+    "Kurzschluss SENSE-VCM",
+    "curto-circuito SENSE-VCM"
+  ],
+  "force-force short": [
+    "force-force short",
+    "court-circuit FORCE-FORCE",
+    "cortocircuito FORCE-FORCE",
+    "cortocircuito FORCE-FORCE",
+    "замыкание FORCE-FORCE",
+    "Kurzschluss FORCE-FORCE",
+    "curto-circuito FORCE-FORCE"
+  ],
+  "sense-sense short": [
+    "sense-sense short",
+    "court-circuit SENSE-SENSE",
+    "cortocircuito SENSE-SENSE",
+    "cortocircuito SENSE-SENSE",
+    "замыкание SENSE-SENSE",
+    "Kurzschluss SENSE-SENSE",
+    "curto-circuito SENSE-SENSE"
+  ],
+  "force-sense short": [
+    "force-sense short",
+    "court-circuit FORCE-SENSE",
+    "cortocircuito FORCE-SENSE",
+    "cortocircuito FORCE-SENSE",
+    "замыкание FORCE-SENSE",
+    "Kurzschluss FORCE-SENSE",
+    "curto-circuito FORCE-SENSE"
+  ],
+  "Sharp LQ055T1SW10": [
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10",
+    "Sharp LQ055T1SW10"
+  ],
+  "ins": [
+    "ins",
+    "ins",
+    "ins",
+    "ins",
+    "ins",
+    "ins",
+    "ins"
+  ],
+  "pre": [
+    "pre",
+    "pre",
+    "pre",
+    "pre",
+    "pre",
+    "pre",
+    "pre"
+  ],
+  "prv": [
+    "prv",
+    "prv",
+    "prv",
+    "prv",
+    "prv",
+    "prv",
+    "prv"
+  ],
+  "oemid": [
+    "oemid",
+    "oemid",
+    "oemid",
+    "oemid",
+    "oemid",
+    "oemid",
+    "oemid"
+  ],
+  "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)": [
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)",
+    "  PCC3 : fn=X pull-up tri ie=X SPIO OE=X OUT=X IN=X  (XXXXXXXXXXXXXXXXXX)"
+  ],
+  "  oemid        : 0x%04X\n": [
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n",
+    "  oemid        : 0x%04X\n"
+  ],
+  "  oemid        : 0x%02X\n": [
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n",
+    "  oemid        : 0x%02X\n"
+  ],
+  "  prv          : 0x%02X\n": [
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n",
+    "  prv          : 0x%02X\n"
+  ],
+  "[eMMC GPT]": [
+    "[eMMC GPT]",
+    "[eMMC GPT]",
+    "[eMMC GPT]",
+    "[eMMC GPT]",
+    "[eMMC GPT]",
+    "[eMMC GPT]",
+    "[eMMC GPT]"
+  ],
+  "  atmosphere   : %s (%s)\n": [
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n",
+    "  atmosphere   : %s (%s)\n"
+  ],
+  "\"atmosphere\"": [
+    "\"atmosphere\"",
+    "\"atmosphere\"",
+    "\"atmosphere\"",
+    "\"atmosphere\"",
+    "\"atmosphere\"",
+    "\"atmosphere\"",
+    "\"atmosphere\""
+  ],
+  "  atmosphere   : %s\n": [
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n",
+    "  atmosphere   : %s\n"
+  ],
+  "  hekate       : v%d.%d.%d (update.bin)\n": [
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n",
+    "  hekate       : v%d.%d.%d (update.bin)\n"
+  ],
+  "  emummc.ini   : %s\n": [
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n",
+    "  emummc.ini   : %s\n"
+  ],
+  "   plle 60006068: %08X %08X %08X %08X\n": [
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n",
+    "   plle 60006068: %08X %08X %08X %08X\n"
+  ],
+  "  PHY (CPU0)    : plle=%s uphy=%s\n": [
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n",
+    "  PHY (CPU0)    : plle=%s uphy=%s\n"
+  ]
+}

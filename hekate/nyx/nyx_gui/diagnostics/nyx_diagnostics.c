@@ -2,6 +2,7 @@
  * retained under vendor/. Only this adapter owns UI/report lifetime. */
 #include "nyx_diagnostics.h"
 #include "vendor/hwtest.h"
+#include "../localization.h"
 #include <stdlib.h>
 
 extern const struct page_entry g_pages[N_PAGES];
@@ -93,14 +94,17 @@ void _log_emit(u32 color)
         else if (color == COL_WARN && metadata[active_index].state < NYX_DIAG_WARN)
             metadata[active_index].state = NYX_DIAG_WARN;
     }
-    append(_log_buf, strlen(_log_buf));
+    char *translated = nyx_translate_text(_log_buf);
+    const char *line = translated ? translated : _log_buf;
+    append(line, strlen(line));
+    free(translated);
 }
 
 void _log_color_impl(u32 color, const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    s_vprintf(_log_buf, fmt, ap);
+    nyx_diag_vsnprintf(_log_buf, sizeof(_log_buf), fmt, ap);
     va_end(ap);
     _log_emit(color);
 }

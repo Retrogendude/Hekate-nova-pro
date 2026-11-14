@@ -180,7 +180,7 @@ uint8_t lv_font_get_bpp(const lv_font_t * font, uint32_t letter)
 {
     const lv_font_t * font_i = font;
     while(font_i != NULL) {
-        if(letter >= font_i->unicode_first && letter <= font_i->unicode_last) {
+        if(font_i->get_width && font_i->get_width(font_i, letter) >= 0) {
             return font_i->bpp;
         }
         font_i = font_i->next_page;

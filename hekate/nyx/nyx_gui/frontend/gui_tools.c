@@ -20,6 +20,7 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include "gui_layout.h"
 #include "gui_tools.h"
 #include "gui_tools_partition_manager.h"
 #include "gui_emmc_tools.h"
@@ -34,24 +35,6 @@
 lv_obj_t *ums_mbox;
 
 extern char *emmcsn_path_impl(char *path, char *sub_dir, char *filename, sdmmc_storage_t *storage);
-
-static lv_obj_t *_create_container(lv_obj_t *parent)
-{
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_theme_get_current()->panel);
-	h_style.body.padding.inner = 0;
-	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
-	h_style.body.padding.ver = LV_DPI / 6;
-
-	lv_obj_t *h1 = lv_cont_create(parent, NULL);
-	lv_cont_set_style(h1, &h_style);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	return h1;
-}
 
 bool get_set_autorcm_status(bool toggle)
 {
@@ -190,7 +173,7 @@ static lv_res_t _create_mbox_hid(usb_ctxt_t *usbs)
 	else
 		strcat(txt_buf, "Touchpad");
 
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_obj_t *lbl_status = lv_label_create(mbox, NULL);
@@ -264,7 +247,7 @@ static lv_res_t _create_mbox_ums(usb_ctxt_t *usbs)
 		}
 	}
 
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_obj_t *lbl_status = lv_label_create(mbox, NULL);
@@ -984,7 +967,7 @@ static lv_res_t _create_window_unset_abit_tool(lv_obj_t *btn)
 					          total[2], total[3]);
 		}
 
-		(lv_label_set_text)(lb_desc2, txt_buf);
+		lv_label_set_text(lb_desc2, txt_buf);
 		lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
 		lv_obj_align(desc2, val, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 0);
 
@@ -1011,7 +994,7 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 	char *txt_buf = malloc(SZ_16K);
 	strcpy(txt_buf, "#FF8000 Don't touch the screen!#\n\nThe tuning process will start in ");
 	u32 text_idx = strlen(txt_buf);
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 6);
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -1026,13 +1009,13 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 		goto out;
 
 	manual_system_maintenance(true);
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 
 	u32 seconds = 5;
 	while (seconds)
 	{
 		s_printf(txt_buf + text_idx, "%d seconds...", seconds);
-		(lv_mbox_set_text)(mbox, txt_buf);
+		lv_mbox_set_text(mbox, txt_buf);
 		manual_system_maintenance(true);
 		msleep(1000);
 		seconds--;
@@ -1095,7 +1078,7 @@ static lv_res_t _create_mbox_fix_touchscreen(lv_obj_t *btn)
 		}
 		s_printf(txt_buf + strlen(txt_buf), " (%d), Chn: %d#\n\n", err[0], err[1]);
 		strcat(txt_buf, "#FFFF00 The touchscreen calibration failed!");
-		(lv_mbox_set_text)(mbox, txt_buf);
+		lv_mbox_set_text(mbox, txt_buf);
 		goto out2;
 	}
 
@@ -1217,7 +1200,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		const pkg1_id_t *pkg1_id = pkg1_identify(pkg1 + pk1_offset, build_date);
 
 		s_printf(txt_buf, "#00DDFF Found %s pkg1 ('%s')#\n\n", !idx ? "Main" : "Safe", build_date);
-		(lv_label_set_text)(lb_log, txt_buf);
+		lv_label_set_text(lb_log, txt_buf);
 		manual_system_maintenance(true);
 		free(build_date);
 
@@ -1229,13 +1212,13 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (!pkg1_id)
 		{
 			strcat(txt_buf, "#FFDD00 Unknown pkg1 version!#");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			if (!res)
 			{
 				strcat(txt_buf, "\nEncrypted pkg1 extracted to pkg1_enc.bin");
-				(lv_label_set_text)(lb_log, txt_buf);
+				lv_label_set_text(lb_log, txt_buf);
 				manual_system_maintenance(true);
 			}
 
@@ -1268,7 +1251,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				strcat(txt_buf, "#FFDD00 Pkg1 decryption failed!#\n");
 				if (h_cfg.t210b01)
 					strcat(txt_buf, "#FFDD00 Is BEK missing?#\n");
-				(lv_label_set_text)(lb_log, txt_buf);
+				lv_label_set_text(lb_log, txt_buf);
 				goto out;
 			}
 		}
@@ -1303,7 +1286,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				"#C7EA46 Warmboot size:       #0x%05X\n\n",
 				hdr_pk11->ldr_size, hdr_pk11->sm_size, hdr_pk11->wb_size);
 
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump package1.1.
@@ -1311,7 +1294,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(pkg1, SZ_256K, path))
 				goto out;
 			strcat(txt_buf, "Package1 extracted to pkg1_decr.bin\n");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump nxbootloader.
@@ -1319,7 +1302,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(loader, hdr_pk11->ldr_size, path))
 				goto out;
 			strcat(txt_buf, "NX Bootloader extracted to nxloader.bin\n");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump secmon.
@@ -1327,7 +1310,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			if (sd_save_to_file(secmon, hdr_pk11->sm_size, path))
 				goto out;
 			strcat(txt_buf, "Secure Monitor extracted to secmon.bin\n");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			// Dump warmboot.
@@ -1345,7 +1328,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 					goto out;
 			}
 			strcat(txt_buf, "Warmboot extracted to warmboot.bin\n\n");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 		}
 
@@ -1376,13 +1359,13 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (!pkg2_hdr)
 		{
 			strcat(txt_buf, "#FFDD00 Pkg2 decryption failed!#");
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			if (!res)
 			{
 				strcat(txt_buf, "\npkg2 encrypted extracted to pkg2_encr.bin\n");
-				(lv_label_set_text)(lb_log, txt_buf);
+				lv_label_set_text(lb_log, txt_buf);
 				manual_system_maintenance(true);
 			}
 
@@ -1398,7 +1381,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			"#C7EA46 INI1 size:     #0x%06X\n\n",
 			pkg2_hdr->sec_size[PKG2_SEC_KERNEL], pkg2_hdr->sec_size[PKG2_SEC_INI1]);
 
-		(lv_label_set_text)(lb_log, txt_buf);
+		lv_label_set_text(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump pkg2.1.
@@ -1406,7 +1389,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (sd_save_to_file(pkg2, pkg2_hdr->sec_size[PKG2_SEC_KERNEL] + pkg2_hdr->sec_size[PKG2_SEC_INI1], path))
 			goto out;
 		strcat(txt_buf, "Package2 extracted to pkg2_decr.bin\n");
-		(lv_label_set_text)(lb_log, txt_buf);
+		lv_label_set_text(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump kernel.
@@ -1414,7 +1397,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 		if (sd_save_to_file(pkg2_hdr->data, pkg2_hdr->sec_size[PKG2_SEC_KERNEL], path))
 			goto out;
 		strcat(txt_buf, "Kernel extracted to kernel.bin\n");
-		(lv_label_set_text)(lb_log, txt_buf);
+		lv_label_set_text(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		// Dump INI1.
@@ -1439,7 +1422,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 			goto out;
 
 		strcat(txt_buf, "INI1 extracted to ini1.bin\n");
-		(lv_label_set_text)(lb_log, txt_buf);
+		lv_label_set_text(lb_log, txt_buf);
 		manual_system_maintenance(true);
 
 		char filename[32];
@@ -1485,7 +1468,7 @@ static lv_res_t _create_window_dump_pk12_tool(lv_obj_t *btn)
 				goto out;
 
 			s_printf(txt_buf + strlen(txt_buf), "- Extracted %s.kip1\n", kip_name);
-			(lv_label_set_text)(lb_log, txt_buf);
+			lv_label_set_text(lb_log, txt_buf);
 			manual_system_maintenance(true);
 
 			ptr += kip1_size;
@@ -1513,298 +1496,42 @@ out_end:
 	return LV_RES_OK;
 }
 
-static void _create_tab_tools_emmc_sd_usb(lv_theme_t *th, lv_obj_t *parent)
-{
-	lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
-
-	// Create Backup & Restore container.
-	lv_obj_t *h1 = _create_container(parent);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "Backup & Restore");
-	lv_obj_set_style(label_txt, th->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 3 / 10);
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, th->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create Backup eMMC button.
-	lv_obj_t *btn = lv_btn_create(h1, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn, LV_BTN_STYLE_PR, &btn_transp_pr);
-	}
-	lv_obj_t *label_btn = lv_label_create(btn, NULL);
-	lv_btn_set_fit(btn, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_UPLOAD"  Backup eMMC");
-	lv_obj_set_free_num(btn, 0);
-	lv_obj_align(btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, create_window_backup_restore_tool);
-
-	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Allows you to backup eMMC/emuMMC partitions individually\n"
-		"or as a whole raw image to the SD card.\n"
-		"#C7EA46 Supports SD cards from# #FF8000 4GB# #C7EA46 and up. #"
-		"#FF8000 FAT32# #C7EA46 and ##FF8000 exFAT##C7EA46 .#");
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Restore eMMC button.
-	lv_obj_t *btn2 = lv_btn_create(h1, btn);
-	label_btn = lv_label_create(btn2, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  Restore eMMC");
-	lv_obj_set_free_num(btn2, 1);
-	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, create_window_backup_restore_tool);
-
-	label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Allows you to restore eMMC/emuMMC partitions individually\n"
-		"or as a whole raw image from the SD card.\n"
-		"#C7EA46 Supports SD cards from# #FF8000 4GB# #C7EA46 and up. #"
-		"#FF8000 FAT32# #C7EA46 and ##FF8000 exFAT##C7EA46 .#");
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Misc container.
-	lv_obj_t *h2 = _create_container(parent);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "SD Partitions & USB");
-	lv_obj_set_style(label_txt3, th->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 3 / 10);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create Partition SD Card button.
-	lv_obj_t *btn3 = lv_btn_create(h2, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn3, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn3, LV_BTN_STYLE_PR, &btn_transp_pr);
-	}
-	label_btn = lv_label_create(btn3, NULL);
-	lv_btn_set_fit(btn3, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_SD"  Partition SD Card");
-	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, create_window_sd_partition_manager);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_LONG_PR, create_window_emmc_partition_manager);
-
-	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_static_text(label_txt4,
-		"Allows you to partition the SD Card for using it with #C7EA46 emuMMC#,\n"
-		"#C7EA46 Android# and #C7EA46 Linux#. You can also flash Linux and Android.\n");
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create USB Tools button.
-	lv_obj_t *btn4 = lv_btn_create(h2, btn3);
-	label_btn = lv_label_create(btn4, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_USB"  USB Tools");
-	lv_obj_align(btn4, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _create_window_usb_tools);
-
-	label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_static_text(label_txt4,
-		"#C7EA46 USB mass storage#, #C7EA46 gamepad# and other USB tools.\n"
-		"Mass storage can mount SD, eMMC and emuMMC. The\n"
-		"gamepad transforms the Switch into an input device.#");
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-}
-
-static void _create_tab_tools_arc_rcm_pkg12(lv_theme_t *th, lv_obj_t *parent)
-{
-	lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
-
-	// Create Misc container.
-	lv_obj_t *h1 = _create_container(parent);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "Misc");
-	lv_obj_set_style(label_txt, th->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 3 / 10);
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, th->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create fix archive bit button.
-	lv_obj_t *btn = lv_btn_create(h1, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn, LV_BTN_STYLE_PR, &btn_transp_pr);
-	}
-	lv_obj_t *label_btn = lv_label_create(btn, NULL);
-	lv_btn_set_fit(btn, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_DIRECTORY"  Fix Archive Bit");
-	lv_obj_align(btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _create_window_unset_abit_tool);
-
-	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Allows you to fix the archive bit for all folders including the\n"
-		"root and emuMMC \'Nintendo\' folders.\n"
-		"#C7EA46 It sets the archive bit to folders named with ##FF8000 .[ext]#\n"
-		"#FF8000 Use that option when you have corruption messages.#");
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Fix touch calibration button.
-	lv_obj_t *btn2 = lv_btn_create(h1, btn);
-	label_btn = lv_label_create(btn2, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_KEYBOARD"  Calibrate Touchscreen");
-	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, _create_mbox_fix_touchscreen);
-
-	label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Allows you to calibrate the touchscreen module.\n"
-		"#FF8000 This can fix any issues with touchscreen in Nyx and HOS.#");
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Others container.
-	lv_obj_t *h2 = _create_container(parent);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "Others");
-	lv_obj_set_style(label_txt3, th->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI * 3 / 10);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create AutoRCM On/Off button.
-	lv_obj_t *btn3 = lv_btn_create(h2, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn3, LV_BTN_STYLE_REL,     &btn_transp_rel);
-		lv_btn_set_style(btn3, LV_BTN_STYLE_PR,      &btn_transp_pr);
-		lv_btn_set_style(btn3, LV_BTN_STYLE_TGL_REL, &btn_transp_tgl_rel);
-		lv_btn_set_style(btn3, LV_BTN_STYLE_TGL_PR,  &btn_transp_tgl_pr);
-		lv_btn_set_style(btn3, LV_BTN_STYLE_INA,     &btn_transp_ina);
-	}
-	label_btn = lv_label_create(btn3, NULL);
-	lv_btn_set_fit(btn3, true, true);
-	lv_label_set_recolor(label_btn, true);
-	lv_label_set_text(label_btn, SYMBOL_REFRESH"  AutoRCM #00FFC9   ON #");
-	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, _create_mbox_autorcm_status);
-
-	// Set default state for AutoRCM and lock it out if patched unit.
-	if (get_set_autorcm_status(false))
-		lv_btn_set_state(btn3, LV_BTN_STATE_TGL_REL);
-	else
-		lv_btn_set_state(btn3, LV_BTN_STATE_REL);
-	nyx_generic_onoff_toggle(btn3);
-
-	if (h_cfg.rcm_patched)
-	{
-		lv_obj_set_click(btn3, false);
-		lv_btn_set_state(btn3, LV_BTN_STATE_INA);
-	}
-	autorcm_btn = btn3;
-
-	char *txt_buf = (char *)malloc(SZ_4K);
-
-	s_printf(txt_buf,
-		"Allows you to enter RCM without using #C7EA46 VOL+# & #C7EA46 HOME# (jig).\n"
-		"#FF8000 It can restore all versions of AutoRCM whenever requested.#\n"
-		"#FF3C28 This corrupts the BCT and you can't boot without a custom#\n"
-		"#FF3C28 bootloader.#");
-
-	if (h_cfg.rcm_patched)
-		strcat(txt_buf, " #FF8000 This is disabled because this unit is patched!#");
-
-	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	(lv_label_set_text)(label_txt4, txt_buf);
-	free(txt_buf);
-
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-	lv_obj_align(label_sep, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 11 / 7);
-
-	// Create Dump Package1/2 button.
-	lv_obj_t *btn4 = lv_btn_create(h2, btn);
-	label_btn = lv_label_create(btn4, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_MODULES"  Dump Package1/2");
-	lv_obj_align(btn4, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _create_window_dump_pk12_tool);
-
-	label_txt2 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Allows you to dump and decrypt pkg1 and pkg2 and further\n"
-		"split it up into their individual parts. It also dumps the kip1.");
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-}
-
 void create_tab_tools(lv_theme_t *th, lv_obj_t *parent)
 {
-	lv_obj_t *tv = lv_tabview_create(parent, NULL);
-
-	lv_obj_set_size(tv, LV_HOR_RES, 572);
-
-	static lv_style_t tabview_style;
-	lv_style_copy(&tabview_style, th->tabview.btn.rel);
-	tabview_style.body.padding.ver = LV_DPI / 8;
-
-	lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_REL, &tabview_style);
-	if (hekate_bg)
-	{
-		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_PR, &tabview_btn_pr);
-		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR, &tabview_btn_tgl_pr);
-	}
-
-	lv_tabview_set_sliding(tv, false);
-	lv_tabview_set_btns_pos(tv, LV_TABVIEW_BTNS_POS_BOTTOM);
-
-	lv_obj_t *tab1= lv_tabview_add_tab(tv, "eMMC "SYMBOL_DOT" SD Partitions "SYMBOL_DOT" USB");
-	lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Arch bit "SYMBOL_DOT" RCM "SYMBOL_DOT" Touch "SYMBOL_DOT" Pkg1/2");
-
-	lv_obj_t *line_sep = lv_line_create(tv, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { 0, LV_DPI / 4} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
-	lv_obj_align(line_sep, tv, LV_ALIGN_IN_BOTTOM_MID, -1, -LV_DPI * 2 / 12);
-
-	_create_tab_tools_emmc_sd_usb(th, tab1);
-	_create_tab_tools_arc_rcm_pkg12(th, tab2);
-
-	lv_tabview_set_tab_act(tv, 0, false);
+    nyx_action_grid grid;
+    nyx_action_grid_init(&grid, th, parent);
+    nyx_action_grid_add(&grid, SYMBOL_UPLOAD"  Backup eMMC",
+        "Back up eMMC or emuMMC partitions to the SD card, individually or as a raw image.",
+        create_window_backup_restore_tool, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_DOWNLOAD"  Restore eMMC",
+        "Restore eMMC or emuMMC from an SD backup. Existing data may be overwritten.",
+        create_window_backup_restore_tool, NULL, 1);
+    nyx_action_grid_add(&grid, SYMBOL_SD"  Partition SD Card",
+        "Partition the SD card for emuMMC, Android or Linux. Hold to open eMMC partition tools.",
+        create_window_sd_partition_manager, create_window_emmc_partition_manager, 0);
+    nyx_action_grid_add(&grid, SYMBOL_USB"  USB Tools",
+        "Expose SD, eMMC or emuMMC as USB storage, or use the console as a USB gamepad.",
+        _create_window_usb_tools, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_DIRECTORY"  Fix Archive Bit",
+        "Repair archive attributes, including Nintendo and emuMMC folders.",
+        _create_window_unset_abit_tool, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_KEYBOARD"  Calibrate Touchscreen",
+        "Calibrate the touch panel to correct input problems in Nyx or HOS.",
+        _create_mbox_fix_touchscreen, NULL, 0);
+    autorcm_btn = nyx_action_grid_add(&grid, SYMBOL_REFRESH"  AutoRCM #00FFC9   ON #",
+        h_cfg.rcm_patched ?
+            "AutoRCM is disabled because this console is patched." :
+            "Enter RCM without a jig. Modifies the BCT: a custom bootloader is required to boot.",
+        _create_mbox_autorcm_status, NULL, 0);
+    // Keep the original state guard and one-label contract for the toggle.
+    lv_btn_set_state(autorcm_btn, get_set_autorcm_status(false) ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
+    nyx_generic_onoff_toggle(autorcm_btn);
+    if (h_cfg.rcm_patched) {
+        lv_obj_set_click(autorcm_btn, false);
+        lv_btn_set_state(autorcm_btn, LV_BTN_STATE_INA);
+    }
+    nyx_action_grid_add(&grid, SYMBOL_MODULES"  Dump Package1/2",
+        "Decrypt and extract Package1, Package2 and their components, including KIP1.",
+        _create_window_dump_pk12_tool, NULL, 0);
+    nyx_action_grid_finish(&grid);
 }

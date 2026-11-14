@@ -18,6 +18,9 @@
 #include <stdarg.h>
 #include <string.h>
 #include "gfx.h"
+#ifdef NYX_RAM_LOCALE
+#include "ram_locale.h"
+#endif
 
 // Global gfx console and context.
 gfx_ctxt_t gfx_ctxt;
@@ -206,8 +209,17 @@ void gfx_con_setpos(u32 x, u32 y)
 	gfx_con.y = y;
 }
 
-void gfx_putc(char c)
+static void _gfx_putcode(u32 c)
 {
+#ifdef NYX_RAM_LOCALE
+	const u8 *cbuf = ram_ui_glyph(c);
+#else
+	const u8 *cbuf = NULL;
+#endif
+	if (!cbuf && c >= 32 && c <= 126) cbuf = &_gfx_font[8 * (c - 32)];
+#ifdef NYX_RAM_LOCALE
+	if (!cbuf && c >= 32) cbuf = &_gfx_font[8 * ('?' - 32)];
+#endif
 	/* Landscape variant: glyphs render via _gfx_set_lpixel which applies
 	 * the 90 deg CW rotation. We keep the 16 / 8 size split for parity
 	 * with the upstream gfx but use a generic pixel writer rather than
@@ -216,9 +228,8 @@ void gfx_putc(char c)
 	switch (gfx_con.fntsz)
 	{
 	case 16:
-		if (c >= 32 && c <= 126)
+		if (cbuf)
 		{
-			const u8 *cbuf = &_gfx_font[8 * (c - 32)];
 			for (u32 row = 0; row < 16; row++)
 			{
 				u8 v = cbuf[row >> 1];           /* same byte for two consecutive rows */
@@ -243,9 +254,8 @@ void gfx_putc(char c)
 		break;
 	case 8:
 	default:
-		if (c >= 32 && c <= 126)
+		if (cbuf)
 		{
-			const u8 *cbuf = &_gfx_font[8 * (c - 32)];
 			for (u32 row = 0; row < 8; row++)
 			{
 				u8 v = cbuf[row];
@@ -271,13 +281,33 @@ void gfx_putc(char c)
 	}
 }
 
+void gfx_putc(char c) { _gfx_putcode((u8)c); }
+
 void gfx_puts(const char *s)
 {
 	if (!s || !gfx_con_init_done || gfx_con.mute)
 		return;
 
-	for (; *s; s++)
-		gfx_putc(*s);
+	for (; *s; )
+	{
+		u32 cp = (u8)*s++, count = 0, minimum = 0;
+#ifdef NYX_RAM_LOCALE
+		if (cp >= 0xC2 && cp <= 0xDF) { cp &= 31; count = 1; minimum = 0x80; }
+		else if (cp >= 0xE0 && cp <= 0xEF) { cp &= 15; count = 2; minimum = 0x800; }
+		else if (cp >= 0xF0 && cp <= 0xF4) { cp &= 7; count = 3; minimum = 0x10000; }
+		else if (cp >= 0x80) cp = '?';
+		for (u32 i = 0; i < count; ++i) {
+			if (((u8)*s & 0xC0) != 0x80) { cp = '?'; break; }
+			cp = (cp << 6) | ((u8)*s++ & 63);
+		}
+		if (cp < minimum || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) cp = '?';
+		if (cp == ' ' && gfx_con.x + gfx_con.fntsz > gfx_ctxt.width) continue;
+		if (cp >= 32 && gfx_con.x + gfx_con.fntsz > gfx_ctxt.width) _gfx_putcode('\n');
+#else
+		(void)count; (void)minimum;
+#endif
+		_gfx_putcode(cp);
+	}
 }
 
 static void _gfx_putn(u32 v, int base, char fill, int fcnt)

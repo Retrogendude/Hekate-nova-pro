@@ -49,6 +49,7 @@ CFLAGS := $(COMMON_FLAGS) -std=gnu11 \
     -DDEBUG_UART_PORT=1 -DDEBUG_UART_BAUDRATE=115200 -DDEBUG_UART_INVERT=0 \
     -DBL_MAGIC=$(IPL_MAGIC) -DGFX_INC=$(GFX_INC) -DFFCFG_INC=$(FFCFG_INC) \
     -DBDK_MALLOC_NO_DEFRAG
+CFLAGS += -DNYX_RAM_LOCALE
 
 CXXFLAGS := $(COMMON_FLAGS) -ffreestanding -fno-exceptions -fno-rtti \
     -fno-threadsafe-statics -std=gnu++23 \
@@ -62,7 +63,7 @@ VPATH := $(ROOT) source $(GFXDIR) $(BDKDIR) \
     $(BDKDIR)/storage $(BDKDIR)/utils $(HEKATE)/bootloader
 
 C_OBJS := \
-    start.o exception_handlers.o stubs.o ramtest_main.o chain_reloc.o \
+    start.o exception_handlers.o stubs.o ramtest_main.o ram_locale.o chain_reloc.o \
     gfx.o sprintf.o util.o btn.o \
     bpmp.o ccplex.o clock.o di.o i2c.o irq.o timer.o \
     mc.o sdram.o smmu.o gpio.o pinmux.o pmc.o se.o uart.o fuse.o \

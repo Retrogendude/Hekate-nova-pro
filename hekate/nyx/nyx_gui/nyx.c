@@ -202,6 +202,9 @@ int nyx_launch_ram_service(void)
 		return 5;
 	/* A failed preparation must not leave an older automatic-run request. */
 	((volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR)->magic = 0;
+	/* The optional localized service UI occupies the same protected first
+	 * 4 MiB as the return image. A missing/corrupt pack falls back to English. */
+	*(volatile u32 *)NYX_RAM_UI_ADDR = 0;
 	if (sd_mount())
 		return 1;
 	u32 ram_size = 0, return_size = 0;
@@ -229,6 +232,17 @@ int nyx_launch_ram_service(void)
 		return 4;
 	}
 	/* Force Hekate's menu on return, even when normal autoboot is configured. */
+	static const char *ram_languages[] = {"en", "fr", "es", "it", "ru", "de", "pt"};
+	_Static_assert(ARRAY_SIZE(ram_languages) == I18N_LANGUAGE_COUNT, "RAM language codes must match Nyx locales");
+	_Static_assert(NYX_RAM_UI_ADDR + NYX_RAM_UI_MAX <= NYX_RAM_HANDOFF_ADDR, "RAM UI must stay below the return handoff");
+	char ui_path[64];
+	s_printf(ui_path, "bootloader/sys/ram-ui-%s.bin", ram_languages[n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN]);
+	u32 ui_size = 0;
+	u8 *ui = _read_service_payload(ui_path, NYX_RAM_UI_MAX, &ui_size);
+	if (ui && *(u32 *)ui == NYX_RAM_UI_MAGIC && ((u32 *)ui)[1] == ui_size &&
+		((u32 *)ui)[2] == nyx_ram_hash(ui + 32, ui_size - 32))
+		memcpy((void *)NYX_RAM_UI_ADDR, ui, ui_size);
+	free(ui);
 	return_image[0x94] = BOOT_CFG_AUTOBOOT_EN;
 	return_image[0x95] = 0;
 	return_image[0x96] = 0;
@@ -353,6 +367,7 @@ skip_main_cfg_parse:
 					n_cfg.jc_force_right = atoi(kv->val) == 1;
 				else if (!strcmp("bpmpclock",    kv->key))
 					n_cfg.bpmp_clock     = atoi(kv->val);
+				else nyx_appearance_key(kv->key, kv->val);
 			}
 
 			// Check if user canceled time setting before.

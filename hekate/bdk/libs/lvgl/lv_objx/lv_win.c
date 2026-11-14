@@ -579,7 +579,16 @@ static void lv_win_realign(lv_obj_t * win)
     }
 
 
-    lv_obj_align(ext->title, NULL, LV_ALIGN_IN_LEFT_MID, ext->style_header->body.padding.hor, 0);
+    /* Keep the title inside the space left by translated header actions.
+     * Larger text scrolls horizontally instead of drawing over buttons. */
+    lv_coord_t title_left = ext->style_header->body.padding.hor;
+    lv_coord_t title_right = lv_obj_get_width(ext->header) - title_left;
+    if (btn_prev) title_right = lv_obj_get_x(btn_prev) - header_style->body.padding.inner;
+    lv_coord_t title_width = title_right - title_left;
+    if (title_width < 24) title_width = 24;
+    lv_label_set_long_mode(ext->title, LV_LABEL_LONG_ROLL);
+    lv_obj_set_width(ext->title, title_width);
+    lv_obj_align(ext->title, NULL, LV_ALIGN_IN_LEFT_MID, title_left, 0);
 
     lv_obj_set_pos(ext->header, 31, 0);
 

@@ -25,6 +25,7 @@ test=r'''
 #include <string.h>
 typedef uint32_t u32;
 #define CAPACITY (256u*1024u)
+static char *nyx_translate_text(const char *text) { (void)text; return NULL; }
 #define NYX_DIAG_PROBE_COUNT 42
 #define COL_ERR 3
 #define COL_WARN 2

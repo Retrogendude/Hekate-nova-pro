@@ -30,6 +30,9 @@
 #include "../gfx/logos-gui.h"
 
 #include "../config.h"
+#include "../fonts/font_manager.h"
+#include "gui_appearance.h"
+#include "gui_readability.h"
 #include <libs/fatfs/ff.h>
 
 extern volatile boot_cfg_t *b_cfg;
@@ -630,7 +633,7 @@ console:
 			data->state = LV_INDEV_STATE_REL; // Ensure that no clicks are allowed.
 	}
 
-	if (jc_pad->b && close_btn)
+	if (jc_pad->b && close_btn && lv_obj_get_click(close_btn))
 	{
 		lv_obj_t *button = close_btn;
 		lv_action_t close_btn_action = lv_btn_get_action(button, LV_BTN_ACTION_CLICK);
@@ -664,6 +667,7 @@ extern int touch_power_on_safe(void);
 
 void gui_diagnostics_suspend(u32 groups)
 {
+	nyx_background_pause(true);
 	(void)groups;
 	if (diagnostics_suspended)
 		return;
@@ -687,6 +691,7 @@ void gui_diagnostics_suspend(u32 groups)
 
 void gui_diagnostics_resume(u32 groups)
 {
+	nyx_background_pause(false);
 	if (!diagnostics_suspended)
 		return;
 	if (groups & NYX_DIAG_G_INPUTS)
@@ -977,6 +982,7 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 	lv_style_copy(&win_bg_style, &lv_style_plain);
 	win_bg_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
 	win_bg_style.body.grad_color = win_bg_style.body.main_color;
+	win_bg_style.body.opa = n_cfg.background_effect ? LV_OPA_80 : LV_OPA_COVER;
 
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
@@ -2127,7 +2133,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_bg.body.main_color = th->bg->body.main_color;
 	home_bg.body.grad_color = home_bg.body.main_color;
 	home_bg.body.radius = 0;
-	home_bg.body.empty = hekate_bg != NULL;
+	home_bg.body.empty = hekate_bg != NULL || n_cfg.background_effect;
 	home_bg.body.border.width = 0;
 	home_bg.body.padding.hor = 0;
 	home_bg.body.padding.ver = 0;
@@ -2173,7 +2179,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_primary_pr.body.grad_color = home_primary_pr.body.main_color;
 	home_primary_pr.body.border.width = 3;
 	lv_style_copy(&home_title, th->label.prim);
-	home_title.text.font = &interui_30;
+	home_title.text.font = nyx_font_regular();
 	home_title.text.color = th->label.prim->text.color;
 	home_title.text.letter_space = 1;
 	lv_style_copy(&home_detail, &hint_small_style_white);
@@ -2280,7 +2286,8 @@ static void _home_create_tiles(lv_obj_t *parent)
 		lv_obj_t *btn = _home_modern_button(parent, "", x, y, 288, 172,
 			_home_modern_activate, i, false);
 		_home_modern_label(btn, home_action_icons[i], &home_small_icon, 24, 18, 80);
-		_home_modern_label(btn, home_action_titles[i], &home_title, 24, 62, 240);
+		lv_obj_t *title = _home_modern_label(btn, home_action_titles[i], &home_title, 24, 62, 240);
+		lv_label_set_long_mode(title, LV_LABEL_LONG_ROLL);
 		_home_modern_label(btn, tile_details[cell], &home_detail, 24, 108, 240);
 	}
 }
@@ -2369,6 +2376,7 @@ static void _home_create_carousel(lv_obj_t *parent)
 		lv_label_set_text(icon, home_action_icons[i]);
 		lv_obj_align(icon, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_t *title = _home_modern_label(card, home_action_titles[i], &home_title, 24, 158, 272);
+		lv_label_set_long_mode(title, LV_LABEL_LONG_ROLL);
 		lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
 	}
 	lv_obj_t *info = lv_cont_create(parent, NULL);
@@ -2559,11 +2567,11 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 
 	lv_style_copy(&hint_small_style, th->label.hint);
 	hint_small_style.text.letter_space = 1;
-	hint_small_style.text.font = &interui_20;
+	hint_small_style.text.font = nyx_font_small();
 
 	lv_style_copy(&hint_small_style_white, th->label.prim);
 	hint_small_style_white.text.letter_space = 1;
-	hint_small_style_white.text.font = &interui_20;
+	hint_small_style_white.text.font = nyx_font_small();
 
 	lv_style_copy(&monospace_text, &lv_style_plain);
 	monospace_text.body.main_color = COLOR_HOS_BG_DARKER;
@@ -2572,7 +2580,7 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	monospace_text.body.border.width = 0;
 	monospace_text.body.opa = LV_OPA_TRANSP;
 	monospace_text.text.color = LV_COLOR_HEX(0xD8D8D8);
-	monospace_text.text.font = &ubuntu_mono;
+	monospace_text.text.font = nyx_font_mono();
 	monospace_text.text.letter_space = 0;
 	monospace_text.text.line_space = 0;
 
@@ -2680,9 +2688,22 @@ static void _nyx_main_menu(lv_theme_t * th)
 		lv_obj_t *img = lv_img_create(cnr, NULL);
 		lv_img_set_src(img, hekate_bg);
 	}
+	nyx_background_create(scr);
 
 	// Add tabview page to screen.
 	lv_obj_t *tv = lv_tabview_create(scr, NULL);
+	if (nyx_font_size() > 30) {
+		static lv_style_t readable_tab_styles[4];
+		const lv_style_t *styles[4] = {th->tabview.btn.rel, th->tabview.btn.pr,
+			th->tabview.btn.tgl_rel, th->tabview.btn.tgl_pr};
+		const lv_tabview_style_t types[4] = {LV_TABVIEW_STYLE_BTN_REL, LV_TABVIEW_STYLE_BTN_PR,
+			LV_TABVIEW_STYLE_BTN_TGL_REL, LV_TABVIEW_STYLE_BTN_TGL_PR};
+		for (u32 i = 0; i < 4; ++i) {
+			lv_style_copy(&readable_tab_styles[i], styles[i]);
+			readable_tab_styles[i].text.font = nyx_font_small();
+			lv_tabview_set_style(tv, types[i], &readable_tab_styles[i]);
+		}
+	}
 	home_tabview = tv;
 	if (hekate_bg)
 	{
@@ -2788,6 +2809,7 @@ void nyx_load_and_run()
 
 	lv_init();
 	nyx_localization_init();
+	nyx_font_manager_init();
 	gfx_con.fillbg = 1;
 
 	// Initialize framebuffer drawing functions.
@@ -2823,11 +2845,12 @@ void nyx_load_and_run()
 	tmp451_init();
 
 	// Set hekate theme based on chosen hue.
-	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, NULL);
+	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, (lv_font_t *)nyx_font_regular());
 	lv_theme_set_current(th);
 
 	// Create main menu
 	_nyx_main_menu(th);
+	nyx_readability_request();
 
 	jc_drv_ctx.cursor = lv_img_create(lv_scr_act(), NULL);
 	lv_img_set_src(jc_drv_ctx.cursor, &touch_cursor);

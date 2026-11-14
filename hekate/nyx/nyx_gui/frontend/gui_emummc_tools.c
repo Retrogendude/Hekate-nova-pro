@@ -280,7 +280,7 @@ static void _create_mbox_emummc_raw()
 		strcat(txt_buf, "\n#FF8000 Do you want to partition the SD card?#\n"
 						  "#FF8000 (You will be asked on how to proceed)#");
 
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 	free(mbr);
 
@@ -599,7 +599,7 @@ static lv_res_t _create_emummc_migrate_action(lv_obj_t * btns, const char * txt)
 		lv_mbox_add_btns(mbox, mbox_btn_map1, nyx_mbox_action);
 	}
 
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -966,7 +966,7 @@ out0:;
 		if (emummc_img->part_type[raw_btn_idx] != 0x83)
 		{
 			s_printf(txt_buf, "SD RAW %d", raw_btn_idx + 1);
-			(lv_label_set_text)(btn_label, txt_buf);
+			lv_label_set_text(btn_label, txt_buf);
 		}
 
 		if (!emummc_img->part_sector[raw_btn_idx] || emummc_img->part_type[raw_btn_idx] == 0x83 || !emummc_img->part_path[raw_btn_idx * 128])
@@ -994,7 +994,7 @@ out0:;
 		lv_obj_set_style(lv_desc, &hint_small_style);
 
 		s_printf(txt_buf, "Sector start: 0x%08X\nFolder: %s", emummc_img->part_sector[raw_btn_idx], &emummc_img->part_path[raw_btn_idx * 128]);
-		(lv_label_set_text)(lv_desc, txt_buf);
+		lv_label_set_text(lv_desc, txt_buf);
 		lv_obj_align(lv_desc, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 5);
 	}
 	free(txt_buf);
@@ -1110,7 +1110,7 @@ lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 			s_printf(txt_buf, "#00DDFF Type:# SD File\n#00DDFF Base folder:# %s\n#00DDFF Nintendo folder:# %s\n",
 				emu_info.path ? emu_info.path : "", emu_info.nintendo_path ? emu_info.nintendo_path : "");
 
-		(lv_label_set_text)(label_txt2, txt_buf);
+		lv_label_set_text(label_txt2, txt_buf);
 	}
 	else
 	{

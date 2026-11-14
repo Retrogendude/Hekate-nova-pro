@@ -1,6 +1,8 @@
 # Construction Windows — prototype personnalisé
 
-Compilation complète réussie le 4 novembre 2026 à partir des Makefiles du projet.
+Prototype 7 construit le 5 novembre 2026 à partir des Makefiles du projet.
+Les notes des prototypes 5 et 6 ci-dessous décrivent leur état historique.
+Les tailles courantes et résultats détaillés sont dans BUILD-INFO.json.
 
 - Cible ARM : devkitARM GCC 16.1.0 installé par devkitPro.
 - Outils Windows : GCC 16.2.0, GNU Make 4.4.1 et shell BusyBox de w64devkit 2.11.0.
@@ -13,9 +15,9 @@ Compilation complète réussie le 4 novembre 2026 à partir des Makefiles du pro
 - Aucun logiciel supplémentaire n'a été installé dans devkitPro par le build.
 
 Résultats : Hekate non compressé 134 529 octets (limite 140 288), payload final
-110 204 octets (limite 126 296), Nyx environ 1 Mo avec les polices Unicode et
-le catalogue de langues (taille exacte dans BUILD-INFO.json). Le service RAM séparé fait 75 548 octets (limite 130 392) et son image
-décompressée 174 092 octets. Les limites sont vérifiées
+110 204 octets (limite 126 296). Nyx comprend désormais le moteur de polices SD,
+les effets et le catalogue étendu. Les tailles courantes de Nyx et du service
+RAM sont consignées dans BUILD-INFO.json (service : limite 130 392). Les limites sont vérifiées
 sur les fichiers finaux, y compris le suffixe de six octets du payload.
 
 Les sorties ARM sont des ELF32 ARM EABI5, avec points d'entrée 0x40007000
@@ -27,10 +29,26 @@ inutilisées de LVGL, une ancienne fonction de boutons devenue inutilisée et
 les segments de liaison RWX des programmes embarqués. GNU Make signale aussi
 la réinitialisation du parallélisme dans les sous-constructions.
 
-La sauvegarde des réglages a passé 76 cas C sur les fonctions réelles extraites
+La sauvegarde des réglages a passé 96 cas C sur les fonctions réelles extraites
 des sources, avec des doublures de la carte SD : modes 0/1, valeurs invalides,
 conservation des anciens réglages et échecs de montage, ouverture, écriture et
 fermeture. Cela ne remplace pas les essais matériels.
+
+Le prototype 7 ajoute des contrôles sur les polices SD, les actions du menu
+Apparence, les effets et les dispositions. Des rendus ont été produits avec
+le vrai LVGL sur ordinateur pour les cartes et l'écran Apparence, à 36 pixels
+en français et en russe. Les sélecteurs ont été corrigés après inspection.
+Les ressources du test RAM sont validées avec son vrai moteur et son dessin
+de framebuffer ; elles restent dans les premiers 4 Mio déjà exclus du test.
+Voir PERSONNALISATION.md et TRADUCTIONS.md pour le périmètre actuel.
+
+Le catalogue final comporte 3 688 clés. Les compléments des rapports des
+sondes ont été traduits hors ligne avec des modèles Argos/CTranslate2 ;
+les menus rédigés et 201 entrées revues gardent la priorité. Les contrôles
+automatiques vérifient les 1 268 chaînes source des sondes, l'ordre des
+paramètres, les notations numériques et les chemins. La qualité linguistique
+de tous les commentaires automatiques n'a pas été validée par des locuteurs
+natifs. Les modèles de traduction ne font pas partie du paquet SD.
 
 Le paquet contient les ressources précompilées inchangées de la publication
 officielle Hekate 6.5.4 / Nyx 1.9.4, ainsi que les binaires personnalisés

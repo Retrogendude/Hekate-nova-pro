@@ -1,4 +1,4 @@
-# Hekate 6.5.4 — interface et langues, prototype 6
+# Hekate 6.5.4 — interface et langues, prototype 7
 
 Cette version intègre deux dispositions de l'accueil Nyx, sélectionnables
 dans les réglages. Les fonctions Hekate et le nouvel onglet Diagnostic restent
@@ -7,7 +7,7 @@ accessibles dans les deux modes.
 ## Choisir la disposition
 
 1. Ouvrir les réglages Nyx depuis l'accueil.
-2. Utiliser le bouton « Disposition » en haut des réglages Nyx.
+2. Ouvrir « Apparence », puis la section « Disposition de l'accueil ».
 3. Choisir « Tuiles » ou « Carrousel ».
 4. Utiliser « Enregistrer et recharger » pour appliquer le choix.
 
@@ -39,7 +39,7 @@ Diagnostic dans la barre d'onglets et sur sa carte d'accueil.
 
 ## Langues
 
-Ouvrir « Nyx Settings → Language », choisir une langue puis « Save & reload ».
+Ouvrir « Nyx Settings → Appearance », choisir une langue puis « Save & reload ».
 Le menu propose English, Français, Español, Italiano, Русский, Deutsch et
 Português. Fermer annule la sélection. Les modifications déjà présentes dans
 les réglages Nyx sont également enregistrées par cette commande.
@@ -51,7 +51,8 @@ est indépendant de `home_layout`.
 Les menus, commandes principales, catégories de diagnostic, messages et
 avertissements répertoriés utilisent un catalogue de sept langues. Les noms
 de démarrage, chemins et rapports techniques restent tels quels. Certaines
-informations techniques et le programme RAM séparé restent en anglais.
+informations techniques restent en anglais. Le programme RAM séparé reçoit
+des ressources dans la langue choisie, avec un affichage de secours anglais.
 Les accents et le cyrillique sont pris en charge par les polices Unicode
 embarquées Noto Sans, sous licence SIL OFL fournie avec les sources.
 
@@ -78,11 +79,11 @@ et le service RAM avec retour à Hekate. Voir DIAGNOSTIC-INTEGRATION.md.
 
 ## Validation et limites
 
-La compilation complète a réussi le 4 novembre 2026 avec devkitARM GCC 16.1.0.
+La compilation complète a réussi avec devkitARM GCC 16.1.0.
 Hekate, Nyx et les modules ont été générés. Les tailles du payload et de
 Hekate non compressé respectent les limites du Makefile. Les fichiers binaires
 ont été comparés à leur ELF lié. Le programme Wi-Fi AArch64 et le service
-RAM séparé ont également été construits. La sauvegarde des réglages a passé 76 cas C
+RAM séparé ont également été construits. La sauvegarde des réglages a passé 96 cas C
 exécutés avec une carte SD simulée, y compris les erreurs d'écriture.
 
 Aucun essai sur console n'a encore été effectué. Les traductions, polices et
@@ -93,3 +94,6 @@ les raccourcis, les réglages, la conservation du choix après rechargement,
 l'annulation, les erreurs d'écriture et la navigation tactile/Joy-Con.
 
 Voir `DIAGNOSTIC-INTEGRATION.md` pour la provenance et le périmètre des sondes.
+
+Voir `PERSONNALISATION.md` pour les polices SD, les tailles et les effets ;
+`TRADUCTIONS.md` décrit les limites actuelles de la traduction des rapports.

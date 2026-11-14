@@ -27,6 +27,8 @@
 #include "ramtest_mtc.h"
 #include "ram_service_theme.h"
 #include "nyx_ram_handoff.h"
+#include "ram_locale.h"
+#define gfx_printf ram_ui_printf
 
 extern void pivot_stack(u32 stack_top);
 
@@ -198,7 +200,7 @@ static void out(const char *fmt, ...)
     char buf[384];
     va_list ap;
     va_start(ap, fmt);
-    s_vprintf(buf, fmt, ap);
+    ram_ui_vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     emit_out(buf, false);
 }
@@ -211,7 +213,7 @@ static void out_aligned(const char *fmt, ...)
     char buf[384];
     va_list ap;
     va_start(ap, fmt);
-    s_vprintf(buf, fmt, ap);
+    ram_ui_vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     emit_out(buf, true);
 }
@@ -731,7 +733,7 @@ static void draw_custom_menu(int selected, u32 mask)
 
     for (int i = 0; i < PAT_COUNT; ++i) {
         char line[64];
-        s_printf(line, "[%c] %s", (mask & PAT_BIT(i)) ? 'x' : ' ',
+        ram_ui_snprintf(line, sizeof(line), "[%c] %s", (mask & PAT_BIT(i)) ? 'x' : ' ',
                  pattern_menu_name((pattern_t)i));
         menu_row(UI_CUSTOM_ROW_X, UI_CUSTOM_ROW_Y + i * UI_CUSTOM_ROW_STEP,
                  UI_CUSTOM_ROW_W, UI_CUSTOM_ROW_H, selected == i, line);
@@ -1048,6 +1050,7 @@ void ipl_main(void)
     /* Nyx stages the return image in the already-protected first 4 MiB.
      * This request is checked again after training and before returning. */
     g_from_nyx = nyx_return_valid();
+    ram_locale_init(g_from_nyx);
 
     if (g_platform == RAM_MTC_PLATFORM_UNKNOWN) {
         screen_title("Unsupported platform");
@@ -1108,6 +1111,7 @@ void ipl_main(void)
             set_color(COL_OK);
             out("Training      : PASS\n");
         }
+        ram_locale_init(g_from_nyx); // Revalidate UI resources after DRAM training.
         set_color(COL_TEXT);
         out("DRAM ID       : %02X\n", ram_mtc_dram_id());
 

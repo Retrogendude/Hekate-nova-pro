@@ -28,6 +28,7 @@ runtime = (ROOT / "localization.c").read_text(encoding="utf-8")
 runtime = runtime.replace('#include "localization.h"', '#include "localization_stubs.h"\n#include "localization_host_api.h"')
 runtime = runtime.replace('#include "config.h"', '')
 runtime = runtime.replace('#include "fonts/unicode_fonts.h"', '')
+runtime = runtime.replace('#include "frontend/gui_readability.h"', '')
 (HOST / "localization_under_test.c").write_text(runtime, encoding="utf-8")
 
 stubs = r'''
@@ -60,6 +61,7 @@ static struct { u32 language; } n_cfg;
 static unsigned font_inits, signal_calls;
 static lv_res_t next_signal_result = LV_RES_OK;
 static void nyx_unicode_fonts_init(void) { ++font_inits; }
+static void nyx_readability_request(void) {}
 static lv_res_t original_signal(lv_obj_t *object, lv_signal_t signal, void *param) {
     (void)object; (void)signal; (void)param; ++signal_calls;
     return next_signal_result;
@@ -155,6 +157,11 @@ static void verify_map(lv_obj_t *value, unsigned count) {
 }
 
 int main(void) {
+    for (u32 language = 0; language < I18N_LANGUAGE_COUNT; ++language) {
+        n_cfg.language = language;
+        for (u32 entry = 0; entry < ARRAY_SIZE(locale_catalog); ++entry)
+            require(!strcmp(nyx_tr(locale_catalog[entry].source), locale_catalog[entry].text[language]), "every compiled catalog entry is reachable by binary search");
+    }
     nyx_localization_init(); require(font_inits == 1, "font initialization connected"); ++cases;
     const char *expected[] = {"Launch", "Démarrer", "Iniciar", "Avvia", "Запуск", "Starten", "Iniciar"};
     for (unsigned language = 0; language < I18N_LANGUAGE_COUNT; ++language) {
@@ -180,6 +187,23 @@ int main(void) {
     require(!strcmp(nyx_tr("Save Options"), "Enregistrer") && !strcmp(nyx_tr("Save options"), "Enregistrer") &&
             !strcmp(nyx_tr("Enregistrer les options"), "Enregistrer"), "short French save caption and aliases"); ++cases;
     lv_obj_t label = object();
+    const char *page_expected[] = {"Page 12 / 345", "Page 12 / 345", "Página 12 / 345", "Pagina 12 / 345", "Страница 12 / 345", "Seite 12 / 345", "Página 12 / 345"};
+    for (unsigned language = 0; language < I18N_LANGUAGE_COUNT; ++language) {
+        n_cfg.language = language;
+        nyx_label_set_text(&label, "Page 12 / 345"); text_is(&label, page_expected[language]);
+        nyx_label_set_text(&label, "Page twelve / 345"); text_is(&label, "Page twelve / 345");
+    }
+    n_cfg.language = I18N_FR;
+    nyx_label_set_text(&label, "Rapport enregistre :\nbootloader/Home.bin");
+    text_is(&label, "Rapport enregistré :\nbootloader/Home.bin");
+    nyx_label_set_text(&label, "Echec de l'export du rapport (code -27).\nVerifiez la carte SD.");
+    text_is(&label, "Échec de l'export du rapport (code -27).\nVérifiez la carte SD.");
+    const char *summary_format = "%d OK  /  %d avert.  /  %d defaut(s)  /  %d erreur(s)  /  %d observation(s)\n%s%s";
+    char source_summary[2048], expected_summary[2048];
+    snprintf(source_summary, sizeof source_summary, summary_format, 1, 2, 3, 4, 5, "Alpha ", "Beta");
+    snprintf(expected_summary, sizeof expected_summary, nyx_tr(summary_format), 1, 2, 3, 4, 5, "Alpha ", "Beta");
+    nyx_label_set_text(&label, source_summary); text_is(&label, expected_summary);
+    nyx_label_set_text(&label, "C:/Custom boot profile/Home.bin"); text_is(&label, "C:/Custom boot profile/Home.bin");
     nyx_label_set_text(&label, "Home"); text_is(&label, "Accueil");
     nyx_label_set_text(&label, "  Home\t"); text_is(&label, "  Accueil\t");
     nyx_label_set_text(&label, "Home\nTools\nOptions\nLaunch"); text_is(&label, "Accueil\nOutils\nOptions\nDémarrer");

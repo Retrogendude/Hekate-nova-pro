@@ -1,7 +1,7 @@
 {
-  "tag": "v6",
-  "source_archive": "hekate-6.5.4-interface-langues-sources.zip",
-  "source_archive_sha256": "b9403738c537a6d910ef5f3a112b7271b49ab90bb49b0a6b1558bb024612b60b",
+  "tag": "v7",
+  "source_archive": "hekate-6.5.4-personnalisation-v7-sources.zip",
+  "source_archive_sha256": "819fc1dd3b82d8e7d6c7d4f5e066289aca166361933acd81f104fe719a7aaee2",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",

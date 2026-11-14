@@ -1,0 +1,128 @@
+{
+  "Thanks to:": [
+    "Thanks to:",
+    "Merci à :",
+    "Gracias a:",
+    "Grazie a:",
+    "Благодарности:",
+    "Dank an:",
+    "Agradecimentos:"
+  ],
+  "Greetings to:": [
+    "Greetings to:",
+    "Salutations à :",
+    "Saludos a:",
+    "Saluti a:",
+    "Приветствия:",
+    "Grüße an:",
+    "Saudações a:"
+  ],
+  "Part %d: Type: %02x, Start: %08x, Size: %08x": [
+    "Part %d: Type: %02x, Start: %08x, Size: %08x",
+    "Partie %d : type : %02x, début : %08x, taille : %08x",
+    "Parte %d: tipo: %02x, inicio: %08x, tamaño: %08x",
+    "Parte %d: tipo: %02x, inizio: %08x, dimensione: %08x",
+    "Раздел %d: тип: %02x, начало: %08x, размер: %08x",
+    "Teil %d: Typ: %02x, Start: %08x, Größe: %08x",
+    "Parte %d: tipo: %02x, início: %08x, tamanho: %08x"
+  ],
+  "Carte SD indisponible. Aucun changement enregistre.": [
+    "SD card unavailable. No changes saved.",
+    "Carte SD indisponible. Aucun changement enregistré.",
+    "Tarjeta SD no disponible. No se guardaron cambios.",
+    "Scheda SD non disponibile. Nessuna modifica salvata.",
+    "SD-карта недоступна. Изменения не сохранены.",
+    "SD-Karte nicht verfügbar. Keine Änderungen gespeichert.",
+    "Cartão SD indisponível. Nenhuma alteração guardada."
+  ],
+  "SD card unavailable. No changes saved.": [
+    "SD card unavailable. No changes saved.",
+    "Carte SD indisponible. Aucun changement enregistré.",
+    "Tarjeta SD no disponible. No se guardaron cambios.",
+    "Scheda SD non disponibile. Nessuna modifica salvata.",
+    "SD-карта недоступна. Изменения не сохранены.",
+    "SD-Karte nicht verfügbar. Keine Änderungen gespeichert.",
+    "Cartão SD indisponível. Nenhuma alteração guardada."
+  ],
+  "Impossible de recharger Nyx : bootloader/sys/nyx.bin est introuvable.\n\nAucun changement enregistre.": [
+    "Unable to reload Nyx: bootloader/sys/nyx.bin is missing.\n\nNo changes saved.",
+    "Impossible de recharger Nyx : bootloader/sys/nyx.bin est introuvable.\n\nAucun changement enregistré.",
+    "No se puede recargar Nyx: falta bootloader/sys/nyx.bin.\n\nNo se guardaron cambios.",
+    "Impossibile ricaricare Nyx: manca bootloader/sys/nyx.bin.\n\nNessuna modifica salvata.",
+    "Не удалось перезагрузить Nyx: отсутствует bootloader/sys/nyx.bin.\n\nИзменения не сохранены.",
+    "Nyx kann nicht neu laden: bootloader/sys/nyx.bin fehlt.\n\nKeine Änderungen gespeichert.",
+    "Não foi possível recarregar o Nyx: falta bootloader/sys/nyx.bin.\n\nNenhuma alteração guardada."
+  ],
+  "Unable to reload Nyx: bootloader/sys/nyx.bin is missing.\n\nNo changes saved.": [
+    "Unable to reload Nyx: bootloader/sys/nyx.bin is missing.\n\nNo changes saved.",
+    "Impossible de recharger Nyx : bootloader/sys/nyx.bin est introuvable.\n\nAucun changement enregistré.",
+    "No se puede recargar Nyx: falta bootloader/sys/nyx.bin.\n\nNo se guardaron cambios.",
+    "Impossibile ricaricare Nyx: manca bootloader/sys/nyx.bin.\n\nNessuna modifica salvata.",
+    "Не удалось перезагрузить Nyx: отсутствует bootloader/sys/nyx.bin.\n\nИзменения не сохранены.",
+    "Nyx kann nicht neu laden: bootloader/sys/nyx.bin fehlt.\n\nKeine Änderungen gespeichert.",
+    "Não foi possível recarregar o Nyx: falta bootloader/sys/nyx.bin.\n\nNenhuma alteração guardada."
+  ],
+  "Echec de l'enregistrement. Verifiez la carte SD puis reessayez.": [
+    "Save failed. Check the SD card and try again.",
+    "Échec de l'enregistrement. Vérifiez la carte SD puis réessayez.",
+    "Error al guardar. Comprueba la tarjeta SD e inténtalo de nuevo.",
+    "Salvataggio fallito. Controlla la scheda SD e riprova.",
+    "Не удалось сохранить. Проверьте SD-карту и повторите попытку.",
+    "Speichern fehlgeschlagen. SD-Karte prüfen und erneut versuchen.",
+    "Falha ao guardar. Verifique o cartão SD e tente novamente."
+  ],
+  "Save failed. Check the SD card and try again.": [
+    "Save failed. Check the SD card and try again.",
+    "Échec de l'enregistrement. Vérifiez la carte SD puis réessayez.",
+    "Error al guardar. Comprueba la tarjeta SD e inténtalo de nuevo.",
+    "Salvataggio fallito. Controlla la scheda SD e riprova.",
+    "Не удалось сохранить. Проверьте SD-карту и повторите попытку.",
+    "Speichern fehlgeschlagen. SD-Karte prüfen und erneut versuchen.",
+    "Falha ao guardar. Verifique o cartão SD e tente novamente."
+  ],
+  "Disposition enregistree. Nyx n'a pas pu etre recharge.\n\nLe choix sera applique au prochain demarrage de Nyx.": [
+    "Layout saved. Nyx could not reload.\n\nThe choice will apply at the next Nyx start.",
+    "Disposition enregistrée. Nyx n'a pas pu être rechargé.\n\nLe choix sera appliqué au prochain démarrage de Nyx.",
+    "Diseño guardado. Nyx no pudo recargarse.\n\nSe aplicará la próxima vez que se inicie Nyx.",
+    "Disposizione salvata. Impossibile ricaricare Nyx.\n\nLa scelta sarà applicata al prossimo avvio di Nyx.",
+    "Макет сохранён. Не удалось перезагрузить Nyx.\n\nВыбор применится при следующем запуске Nyx.",
+    "Anordnung gespeichert. Nyx konnte nicht neu laden.\n\nDie Auswahl gilt beim nächsten Nyx-Start.",
+    "Disposição guardada. Não foi possível recarregar o Nyx.\n\nA escolha será aplicada no próximo arranque do Nyx."
+  ],
+  "Layout saved. Nyx could not reload.\n\nThe choice will apply at the next Nyx start.": [
+    "Layout saved. Nyx could not reload.\n\nThe choice will apply at the next Nyx start.",
+    "Disposition enregistrée. Nyx n'a pas pu être rechargé.\n\nLe choix sera appliqué au prochain démarrage de Nyx.",
+    "Diseño guardado. Nyx no pudo recargarse.\n\nSe aplicará la próxima vez que se inicie Nyx.",
+    "Disposizione salvata. Impossibile ricaricare Nyx.\n\nLa scelta sarà applicata al prossimo avvio di Nyx.",
+    "Макет сохранён. Не удалось перезагрузить Nyx.\n\nВыбор применится при следующем запуске Nyx.",
+    "Anordnung gespeichert. Nyx konnte nicht neu laden.\n\nDie Auswahl gilt beim nächsten Nyx-Start.",
+    "Disposição guardada. Não foi possível recarregar o Nyx.\n\nA escolha será aplicada no próximo arranque do Nyx."
+  ],
+  "Tuiles : les fonctions sont affichees dans une grille.\nCarrousel : les fonctions sont presentees une par une.\n\nEnregistrer & recharger conserve les reglages Nyx sur la carte SD,\npuis recharge l'interface pour appliquer la disposition.\nFermer cette fenetre annule le choix sans modifier les reglages.": [
+    "Tiles: functions appear in a grid.\nCarousel: functions appear one at a time.\n\nSave & reload keeps Nyx settings on the SD card,\nthen reloads the interface to apply the layout.\nClosing this window cancels the choice without changing settings.",
+    "Tuiles : les fonctions sont affichées dans une grille.\nCarrousel : les fonctions sont présentées une par une.\n\nEnregistrer & recharger conserve les réglages Nyx sur la carte SD,\npuis recharge l'interface pour appliquer la disposition.\nFermer cette fenêtre annule le choix sans modifier les réglages.",
+    "Mosaicos: funciones en una cuadrícula.\nCarrusel: funciones de una en una.\n\nGuardar y recargar guarda los ajustes de Nyx en la tarjeta SD\ny recarga la interfaz para aplicar el diseño.\nCerrar esta ventana cancela la elección sin cambiar los ajustes.",
+    "Riquadri: funzioni in una griglia.\nCarosello: funzioni una alla volta.\n\nSalva e ricarica conserva le impostazioni Nyx sulla scheda SD\ne ricarica l'interfaccia per applicare la disposizione.\nChiudere questa finestra annulla la scelta senza modificare le impostazioni.",
+    "Плитки: функции расположены в сетке.\nКарусель: функции показаны по одной.\n\nСохранение и перезагрузка сохраняет настройки Nyx на SD-карте\nи перезапускает интерфейс для применения макета.\nЗакрытие окна отменяет выбор без изменения настроек.",
+    "Kacheln: Funktionen in einem Raster.\nKarussell: Funktionen einzeln anzeigen.\n\nSpeichern und neu laden sichert die Nyx-Einstellungen auf der SD-Karte\nund lädt die Oberfläche zum Anwenden der Anordnung neu.\nSchließen dieses Fensters verwirft die Auswahl ohne Änderungen.",
+    "Mosaicos: funções numa grelha.\nCarrossel: funções apresentadas uma a uma.\n\nGuardar e recarregar conserva as definições do Nyx no cartão SD\ne recarrega a interface para aplicar a disposição.\nFechar esta janela cancela a escolha sem alterar as definições."
+  ],
+  "Tiles: functions appear in a grid.\nCarousel: functions appear one at a time.\n\nSave & reload keeps Nyx settings on the SD card,\nthen reloads the interface to apply the layout.\nClosing this window cancels the choice without changing settings.": [
+    "Tiles: functions appear in a grid.\nCarousel: functions appear one at a time.\n\nSave & reload keeps Nyx settings on the SD card,\nthen reloads the interface to apply the layout.\nClosing this window cancels the choice without changing settings.",
+    "Tuiles : les fonctions sont affichées dans une grille.\nCarrousel : les fonctions sont présentées une par une.\n\nEnregistrer & recharger conserve les réglages Nyx sur la carte SD,\npuis recharge l'interface pour appliquer la disposition.\nFermer cette fenêtre annule le choix sans modifier les réglages.",
+    "Mosaicos: funciones en una cuadrícula.\nCarrusel: funciones de una en una.\n\nGuardar y recargar guarda los ajustes de Nyx en la tarjeta SD\ny recarga la interfaz para aplicar el diseño.\nCerrar esta ventana cancela la elección sin cambiar los ajustes.",
+    "Riquadri: funzioni in una griglia.\nCarosello: funzioni una alla volta.\n\nSalva e ricarica conserva le impostazioni Nyx sulla scheda SD\ne ricarica l'interfaccia per applicare la disposizione.\nChiudere questa finestra annulla la scelta senza modificare le impostazioni.",
+    "Плитки: функции расположены в сетке.\nКарусель: функции показаны по одной.\n\nСохранение и перезагрузка сохраняет настройки Nyx на SD-карте\nи перезапускает интерфейс для применения макета.\nЗакрытие окна отменяет выбор без изменения настроек.",
+    "Kacheln: Funktionen in einem Raster.\nKarussell: Funktionen einzeln anzeigen.\n\nSpeichern und neu laden sichert die Nyx-Einstellungen auf der SD-Karte\nund lädt die Oberfläche zum Anwenden der Anordnung neu.\nSchließen dieses Fensters verwirft die Auswahl ohne Änderungen.",
+    "Mosaicos: funções numa grelha.\nCarrossel: funções apresentadas uma a uma.\n\nGuardar e recarregar conserva as definições do Nyx no cartão SD\ne recarrega a interface para aplicar a disposição.\nFechar esta janela cancela a escolha sem alterar as definições."
+  ],
+  "  eMMC ALL": [
+    "  eMMC ALL",
+    "  eMMC TOUT",
+    "  eMMC TODO",
+    "  eMMC TUTTO",
+    "  eMMC ВСЁ",
+    "  eMMC ALLES",
+    "  eMMC TUDO"
+  ]
+}

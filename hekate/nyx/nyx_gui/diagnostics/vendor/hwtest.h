@@ -17,6 +17,7 @@
 
 #include "cpu_mbox.h"
 #include "ui_theme.h"
+#include "../diag_format.h"
 
 extern void pivot_stack(u32 stack);
 extern char *emmcsn_path_impl(char *path, char *sub_dir, char *filename,
@@ -93,7 +94,7 @@ void log_mute(bool on);
 #define LOG(fmt, ...) do {                                \
     _Static_assert(sizeof(fmt) <= LCD_COLS + 2,           \
         "LOG format string wider than 80-col LCD");       \
-    s_printf(_log_buf, fmt, ##__VA_ARGS__);               \
+    nyx_diag_snprintf(_log_buf, sizeof(_log_buf), fmt, ##__VA_ARGS__); \
     _log_emit(COL_DEFAULT);                               \
 } while (0)
 
@@ -112,7 +113,7 @@ typedef enum { DX_PASS, DX_WARN, DX_FAIL } dx_sev_t;
 typedef struct {
     const char *key;        /* string literal, immortal */
     dx_sev_t   sev;
-    char       detail[48];  /* short reason, "" on a clean pass */
+    char       detail[256]; /* Translated reasons may need more UTF-8 bytes. */
 } dx_finding_t;
 
 void nyx_diag_record_severity(u32 severity);

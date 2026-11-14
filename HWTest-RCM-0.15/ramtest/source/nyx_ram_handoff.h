@@ -3,6 +3,9 @@
 #ifndef NYX_RAM_HANDOFF_H
 #define NYX_RAM_HANDOFF_H
 #include <utils/types.h>
+#define NYX_RAM_UI_ADDR      0x80000000u
+#define NYX_RAM_UI_MAX       0x00300000u
+#define NYX_RAM_UI_MAGIC     0x4955524Eu
 #define NYX_RAM_HANDOFF_ADDR 0x803DF000u
 #define NYX_RAM_RETURN_ADDR  0x803E0000u
 #define NYX_RAM_RETURN_MAX   0x00020000u

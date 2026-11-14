@@ -61,6 +61,11 @@ typedef struct _nyx_config
 	u32 bpmp_clock;
 	u32 home_layout; // Appended: keep all previous field offsets unchanged.
 	u32 language; // Appended: UI locale, persisted independently of home layout.
+	char font_file[64]; // Empty selects the embedded font; basename under /fonts.
+	u32 font_size; // 20..36 px, even values.
+	u32 background_effect; // 0 none, 1 waves, 2 particles, 3 aurora.
+	u32 background_speed; // 1 slow, 2 normal, 3 fast.
+	u32 background_opacity; // 10..50 percent.
 } nyx_config;
 
 extern hekate_config h_cfg;
@@ -70,5 +75,7 @@ void set_default_configuration();
 void set_nyx_default_configuration();
 int create_config_entry();
 int create_nyx_config_entry(bool force_unmount);
+bool nyx_appearance_key(const char *key, const char *value);
+void nyx_sanitize_appearance(void);
 
 #endif /* _CONFIG_H_ */

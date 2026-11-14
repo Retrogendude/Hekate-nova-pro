@@ -323,7 +323,7 @@ static int _dump_emummc_file_part(emmc_tool_gui_t *gui, char *sd_path, sdmmc_sto
 		{
 			lv_bar_set_value(gui->bar, pct);
 			s_printf(gui->txt_buf, " "SYMBOL_DOT" %d%%", pct);
-			(lv_label_set_text)(gui->label_pct, gui->txt_buf);
+			lv_label_set_text(gui->label_pct, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			prevPct = pct;
@@ -364,7 +364,7 @@ void dump_emummc_file(emmc_tool_gui_t *gui)
 	gui->txt_buf = txt_buf;
 
 	txt_buf[0] = 0;
-	(lv_label_set_text)(gui->label_log, txt_buf);
+	lv_label_set_text(gui->label_log, txt_buf);
 
 	manual_system_maintenance(true);
 
@@ -422,7 +422,7 @@ void dump_emummc_file(emmc_tool_gui_t *gui)
 
 		s_printf(txt_buf, "#00DDFF %02d: %s#\n#00DDFF Range: 0x%08X - 0x%08X#\n\n",
 			i, bootPart.name, bootPart.lba_start, bootPart.lba_end);
-		(lv_label_set_text)(gui->label_info, txt_buf);
+		lv_label_set_text(gui->label_info, txt_buf);
 		s_printf(txt_buf, "%02d: %s... ", i, bootPart.name);
 		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 		manual_system_maintenance(true);
@@ -460,7 +460,7 @@ void dump_emummc_file(emmc_tool_gui_t *gui)
 
 	s_printf(txt_buf, "#00DDFF %02d: %s#\n#00DDFF Range: 0x%08X - 0x%08X#\n\n",
 		i, rawPart.name, rawPart.lba_start, rawPart.lba_end);
-	(lv_label_set_text)(gui->label_info, txt_buf);
+	lv_label_set_text(gui->label_info, txt_buf);
 	s_printf(txt_buf, "%02d: %s... ", i, rawPart.name);
 	lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 	manual_system_maintenance(true);
@@ -495,7 +495,7 @@ out_failed:
 	else
 		s_printf(txt_buf, "Time taken: %dm %ds.", timer / 60, timer % 60);
 
-	(lv_label_set_text)(gui->label_finish, txt_buf);
+	lv_label_set_text(gui->label_finish, txt_buf);
 
 out:
 	free(txt_buf);
@@ -633,7 +633,7 @@ static int _dump_emummc_raw_part(emmc_tool_gui_t *gui, int active_part, int part
 		{
 			lv_bar_set_value(gui->bar, pct);
 			s_printf(gui->txt_buf, " "SYMBOL_DOT" %d%%", pct);
-			(lv_label_set_text)(gui->label_pct, gui->txt_buf);
+			lv_label_set_text(gui->label_pct, gui->txt_buf);
 			manual_system_maintenance(true);
 
 			prevPct = pct;
@@ -833,7 +833,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 	gui->txt_buf = txt_buf;
 
 	txt_buf[0] = 0;
-	(lv_label_set_text)(gui->label_log, txt_buf);
+	lv_label_set_text(gui->label_log, txt_buf);
 
 	manual_system_maintenance(true);
 
@@ -886,7 +886,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 
 		s_printf(txt_buf, "#00DDFF %02d: %s#\n#00DDFF Range: 0x%08X - 0x%08X#\n\n",
 			i, bootPart.name, bootPart.lba_start, bootPart.lba_end);
-		(lv_label_set_text)(gui->label_info, txt_buf);
+		lv_label_set_text(gui->label_info, txt_buf);
 		s_printf(txt_buf, "%02d: %s... ", i, bootPart.name);
 		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 		manual_system_maintenance(true);
@@ -923,7 +923,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 	{
 		s_printf(txt_buf, "#00DDFF %02d: %s#\n#00DDFF Range: 0x%08X - 0x%08X#\n\n",
 			i, rawPart.name, rawPart.lba_start, rawPart.lba_end);
-		(lv_label_set_text)(gui->label_info, txt_buf);
+		lv_label_set_text(gui->label_info, txt_buf);
 		s_printf(txt_buf, "%02d: %s... ", i, rawPart.name);
 		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 		manual_system_maintenance(true);
@@ -959,7 +959,7 @@ out_failed:
 	else
 		s_printf(txt_buf, "Time taken: %dm %ds.", timer / 60, timer % 60);
 
-	(lv_label_set_text)(gui->label_finish, txt_buf);
+	lv_label_set_text(gui->label_finish, txt_buf);
 
 out:
 	free(txt_buf);

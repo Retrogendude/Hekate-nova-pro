@@ -31,6 +31,8 @@ static const uint8_t *empty_bitmap(const lv_font_t *font, uint32_t codepoint)
 { (void)font; (void)codepoint; return NULL; }
 static int16_t empty_width(const lv_font_t *font, uint32_t codepoint)
 { (void)font; (void)codepoint; return -1; }
+static int16_t icon_width(const lv_font_t *font, uint32_t codepoint)
+{ (void)font; return codepoint == 0xF800 ? 8 : -1; }
 static const uint32_t catalog_codepoints[] = { @CATALOG@ };
 
 static int check_chain(lv_font_t *font)
@@ -67,6 +69,9 @@ static int check_chain(lv_font_t *font)
 
 int main(void)
 {
+    lv_font_t icon = {.unicode_first=0xF800,.unicode_last=0xF800,.bpp=8,.get_width=icon_width};
+    lv_font_t sparse = {.unicode_first=0,.unicode_last=0xFFFF,.bpp=4,.get_width=empty_width,.next_page=&icon};
+    assert(lv_font_get_bpp(&sparse,0xF800)==8); /* Range overlap must not hide an 8bpp fallback. */
     lv_font_t *stubs[] = { &interui_20, &interui_30, &ubuntu_mono,
                           &hekate_symbol_20, &hekate_symbol_30 };
     for (unsigned i = 0; i < sizeof(stubs) / sizeof(stubs[0]); ++i) {

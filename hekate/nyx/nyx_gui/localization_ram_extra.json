@@ -1,0 +1,1190 @@
+{
+  "[hekate] Diagnostic RAM": [
+    "[hekate] Diagnostic RAM",
+    "[hekate] Diagnostic RAM",
+    "[hekate] Diagnóstico RAM",
+    "[hekate] Diagnostica RAM",
+    "[hekate] Проверка RAM",
+    "[hekate] RAM-Diagnose",
+    "[hekate] Diagnóstico RAM"
+  ],
+  "address pattern": [
+    "address pattern",
+    "Motif d'adresse",
+    "Patrón de dirección",
+    "Schema indirizzo",
+    "Адресный шаблон",
+    "Adressmuster",
+    "Padrão de endereço"
+  ],
+  "inverse address": [
+    "inverse address",
+    "Adresse inversée",
+    "Dirección inversa",
+    "Indirizzo inverso",
+    "Инверсный адрес",
+    "Invertierte Adresse",
+    "Endereço inverso"
+  ],
+  "all-zero": [
+    "all-zero",
+    "Tout à 0",
+    "Todo a 0",
+    "Tutto a 0",
+    "Все нули",
+    "Nur Nullen",
+    "Tudo em 0"
+  ],
+  "all-one": [
+    "all-one",
+    "Tout à 1",
+    "Todo a 1",
+    "Tutto a 1",
+    "Все единицы",
+    "Nur Einsen",
+    "Tudo em 1"
+  ],
+  "AA pattern": [
+    "AA pattern",
+    "Motif AA",
+    "Patrón AA",
+    "Schema AA",
+    "Шаблон AA",
+    "AA-Muster",
+    "Padrão AA"
+  ],
+  "55 pattern": [
+    "55 pattern",
+    "Motif 55",
+    "Patrón 55",
+    "Schema 55",
+    "Шаблон 55",
+    "55-Muster",
+    "Padrão 55"
+  ],
+  "PRBS + retention": [
+    "PRBS + retention",
+    "PRBS + rétention",
+    "PRBS + retención",
+    "PRBS + ritenzione",
+    "PRBS + удержание",
+    "PRBS + Datenerhalt",
+    "PRBS + retenção"
+  ],
+  "Address pattern": [
+    "Address pattern",
+    "Motif d'adresse",
+    "Patrón de dirección",
+    "Schema indirizzo",
+    "Адресный шаблон",
+    "Adressmuster",
+    "Padrão de endereço"
+  ],
+  "Inverse address": [
+    "Inverse address",
+    "Adresse inversée",
+    "Dirección inversa",
+    "Indirizzo inverso",
+    "Инверсный адрес",
+    "Invertierte Adresse",
+    "Endereço inverso"
+  ],
+  "All-zero": [
+    "All-zero",
+    "Tout à 0",
+    "Todo a 0",
+    "Tutto a 0",
+    "Все нули",
+    "Nur Nullen",
+    "Tudo em 0"
+  ],
+  "All-one": [
+    "All-one",
+    "Tout à 1",
+    "Todo a 1",
+    "Tutto a 1",
+    "Все единицы",
+    "Nur Einsen",
+    "Tudo em 1"
+  ],
+  "Pass %d/%d   %s %s   errors %d                              ": [
+    "Pass %d/%d   %s %s   errors %d                              ",
+    "Passe %d/%d %s %s erreurs %d                              ",
+    "Pasada %d/%d %s %s errores %d                              ",
+    "Passaggio %d/%d %s %s errori %d                              ",
+    "Проход %d/%d %s %s ошибок %d                              ",
+    "Durchlauf %d/%d %s %s Fehler %d                              ",
+    "Passagem %d/%d %s %s erros %d                              "
+  ],
+  "[ram] %s %s %d%% errors=%d\n": [
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n",
+    "[ram] %s %s %d%% errors=%d\n"
+  ],
+  "write": [
+    "write",
+    "écriture",
+    "escritura",
+    "scrittura",
+    "запись",
+    "Schreiben",
+    "escrita"
+  ],
+  "verify": [
+    "verify",
+    "vérification",
+    "verificación",
+    "verifica",
+    "проверка",
+    "Prüfung",
+    "verificação"
+  ],
+  "pass %s: %s, +%d errors, %ds                              ": [
+    "pass %s: %s, +%d errors, %ds                              ",
+    "passe %s : %s, +%d erreurs, %ds                              ",
+    "pasada %s: %s, +%d errores, %ds                              ",
+    "passaggio %s: %s, +%d errori, %ds                              ",
+    "проход %s: %s, +%d ошибок, %ds                              ",
+    "Durchlauf %s: %s, +%d Fehler, %ds                              ",
+    "passagem %s: %s, +%d erros, %ds                              "
+  ],
+  "[ram] pass=%s result=%s new_errors=%d seconds=%d\n": [
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n",
+    "[ram] pass=%s result=%s new_errors=%d seconds=%d\n"
+  ],
+  "VOL-: Up   VOL+: Down   PWR: %s": [
+    "VOL-: Up   VOL+: Down   PWR: %s",
+    "VOL- : haut  VOL+ : bas  PWR : %s",
+    "VOL-: arriba  VOL+: abajo  PWR: %s",
+    "VOL-: su  VOL+: giù  PWR: %s",
+    "VOL-: вверх  VOL+: вниз  PWR: %s",
+    "VOL-: hoch  VOL+: runter  PWR: %s",
+    "VOL-: cima  VOL+: baixo  PWR: %s"
+  ],
+  "Quick test": [
+    "Quick test",
+    "Test rapide",
+    "Prueba rápida",
+    "Test rapido",
+    "Быстрый тест",
+    "Schnelltest",
+    "Teste rápido"
+  ],
+  "Advanced test": [
+    "Advanced test",
+    "Test avancé",
+    "Prueba avanzada",
+    "Test avanzato",
+    "Расширенный тест",
+    "Erweiterter Test",
+    "Teste avançado"
+  ],
+  "Custom test": [
+    "Custom test",
+    "Test personnalisé",
+    "Prueba personalizada",
+    "Test personalizzato",
+    "Выборочный тест",
+    "Benutzerdefinierter Test",
+    "Teste personalizado"
+  ],
+  "Restart console": [
+    "Restart console",
+    "Redémarrer la console",
+    "Reiniciar consola",
+    "Riavvia console",
+    "Перезапустить консоль",
+    "Konsole neu starten",
+    "Reiniciar consola"
+  ],
+  "Power off": [
+    "Power off",
+    "Éteindre",
+    "Apagar",
+    "Spegni",
+    "Выключить",
+    "Ausschalten",
+    "Desligar"
+  ],
+  "One full Address pattern write/verify pass.": [
+    "One full Address pattern write/verify pass.",
+    "Une passe complète d'écriture/vérification du motif d'adresse.",
+    "Una pasada completa de escritura y verificación del patrón de dirección.",
+    "Un passaggio completo di scrittura/verifica dello schema indirizzo.",
+    "Полный проход записи и проверки адресного шаблона.",
+    "Ein vollständiger Schreib-/Prüfdurchlauf mit Adressmuster.",
+    "Uma passagem completa de escrita/verificação do padrão de endereço."
+  ],
+  "Run all seven RAM patterns.": [
+    "Run all seven RAM patterns.",
+    "Exécuter les sept motifs RAM.",
+    "Ejecutar los siete patrones de RAM.",
+    "Eseguire tutti i sette schemi RAM.",
+    "Выполнить все семь шаблонов RAM.",
+    "Alle sieben RAM-Muster ausführen.",
+    "Executar os sete padrões de RAM."
+  ],
+  "Choose individual RAM patterns to run.": [
+    "Choose individual RAM patterns to run.",
+    "Choisir les motifs RAM à exécuter.",
+    "Elige los patrones de RAM que se ejecutarán.",
+    "Scegliere gli schemi RAM da eseguire.",
+    "Выберите отдельные шаблоны проверки RAM.",
+    "Einzelne RAM-Testmuster auswählen.",
+    "Escolha os padrões de RAM a executar."
+  ],
+  "Restart through the console's normal boot path.": [
+    "Restart through the console's normal boot path.",
+    "Redémarrer avec le démarrage normal de la console.",
+    "Reinicia mediante el arranque normal de la consola.",
+    "Riavviare con il normale avvio della console.",
+    "Перезапуск обычным способом загрузки консоли.",
+    "Neustart über den normalen Startpfad der Konsole.",
+    "Reinicie pelo arranque normal da consola."
+  ],
+  "Shut down the console cleanly.": [
+    "Shut down the console cleanly.",
+    "Éteindre proprement la console.",
+    "Apagar la consola de forma segura.",
+    "Spegnere correttamente la console.",
+    "Корректно выключить консоль.",
+    "Konsole ordnungsgemäß ausschalten.",
+    "Desligar corretamente a consola."
+  ],
+  "RAM test menu": [
+    "RAM test menu",
+    "Menu du test RAM",
+    "Menú de prueba RAM",
+    "Menu test RAM",
+    "Меню проверки RAM",
+    "RAM-Testmenü",
+    "Menu de teste RAM"
+  ],
+  "Select option": [
+    "Select option",
+    "Choisir une option",
+    "Elegir opción",
+    "Scegli opzione",
+    "Выбрать пункт",
+    "Option auswählen",
+    "Escolher opção"
+  ],
+  "Custom RAM test": [
+    "Custom RAM test",
+    "Test RAM personnalisé",
+    "Prueba RAM personalizada",
+    "Test RAM personalizzato",
+    "Выборочная проверка RAM",
+    "Benutzerdefinierter RAM-Test",
+    "Teste RAM personalizado"
+  ],
+  "Run selected checks": [
+    "Run selected checks",
+    "Exécuter la sélection",
+    "Ejecutar selección",
+    "Esegui selezione",
+    "Запустить выбранные проверки",
+    "Ausgewählte Tests starten",
+    "Executar seleção"
+  ],
+  "Back": [
+    "Back",
+    "Retour",
+    "Volver",
+    "Indietro",
+    "Назад",
+    "Zurück",
+    "Voltar"
+  ],
+  "POWER toggles": [
+    "POWER toggles",
+    "POWER active ou désactive",
+    "POWER activa o desactiva",
+    "POWER attiva o disattiva",
+    "POWER переключает",
+    "POWER schaltet um",
+    "POWER ativa ou desativa"
+  ],
+  "pattern checks": [
+    "pattern checks",
+    "contrôles des motifs",
+    "comprobaciones de patrones",
+    "controlli degli schemi",
+    "проверки шаблонов",
+    "Musterprüfungen",
+    "verificações dos padrões"
+  ],
+  "Training + data bus": [
+    "Training + data bus",
+    "Calibration + bus de données",
+    "Entrenamiento + bus de datos",
+    "Calibrazione + bus dati",
+    "Настройка + шина данных",
+    "Training + Datenbus",
+    "Treino + barramento de dados"
+  ],
+  "always run first": [
+    "always run first",
+    "toujours exécutés en premier",
+    "siempre se ejecutan primero",
+    "eseguiti sempre per primi",
+    "всегда выполняются первыми",
+    "werden immer zuerst ausgeführt",
+    "são sempre executados primeiro"
+  ],
+  "Toggle / select": [
+    "Toggle / select",
+    "Activer / sélectionner",
+    "Activar / seleccionar",
+    "Attiva / seleziona",
+    "Переключить / выбрать",
+    "Umschalten / auswählen",
+    "Ativar / selecionar"
+  ],
+  "Restarting console...\n": [
+    "Restarting console...\n",
+    "Redémarrage de la console...\n",
+    "Reiniciando consola...\n",
+    "Riavvio console...\n",
+    "Перезапуск консоли...\n",
+    "Konsole wird neu gestartet...\n",
+    "A reiniciar a consola...\n"
+  ],
+  "Powering off...\n": [
+    "Powering off...\n",
+    "Extinction...\n",
+    "Apagando...\n",
+    "Spegnimento...\n",
+    "Выключение...\n",
+    "Ausschalten...\n",
+    "A desligar...\n"
+  ],
+  "[ram] mode=%s patterns=%d mask=%02X\n": [
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n",
+    "[ram] mode=%s patterns=%d mask=%02X\n"
+  ],
+  "quick": [
+    "quick",
+    "rapide",
+    "rápido",
+    "rapido",
+    "быстрый",
+    "schnell",
+    "rápido"
+  ],
+  "advanced": [
+    "advanced",
+    "avancé",
+    "avanzado",
+    "avanzato",
+    "расширенный",
+    "erweitert",
+    "avançado"
+  ],
+  "custom": [
+    "custom",
+    "personnalisé",
+    "personalizado",
+    "personalizzato",
+    "выборочный",
+    "benutzerdefiniert",
+    "personalizado"
+  ],
+  "DRAM training failed": [
+    "DRAM training failed",
+    "Échec de calibration DRAM",
+    "Falló el entrenamiento DRAM",
+    "Calibrazione DRAM fallita",
+    "Ошибка настройки DRAM",
+    "DRAM-Training fehlgeschlagen",
+    "Falha no treino DRAM"
+  ],
+  "1600 MHz training: FAIL\n": [
+    "1600 MHz training: FAIL\n",
+    "Calibration à 1600 MHz : ÉCHEC\n",
+    "Entrenamiento a 1600 MHz: FALLO\n",
+    "Calibrazione a 1600 MHz: ERRORE\n",
+    "Настройка 1600 MHz: СБОЙ\n",
+    "1600-MHz-Training: FEHLER\n",
+    "Treino a 1600 MHz: FALHA\n"
+  ],
+  "error flags   : %08X\n": [
+    "error flags   : %08X\n",
+    "indicateurs d'erreur : %08X\n",
+    "indicadores de error: %08X\n",
+    "indicatori errore: %08X\n",
+    "флаги ошибок: %08X\n",
+    "Fehlerflags: %08X\n",
+    "indicadores de erro: %08X\n"
+  ],
+  "training mask : %08X\n": [
+    "training mask : %08X\n",
+    "masque de calibration : %08X\n",
+    "máscara de entrenamiento: %08X\n",
+    "maschera calibrazione: %08X\n",
+    "маска настройки: %08X\n",
+    "Trainingsmaske: %08X\n",
+    "máscara de treino: %08X\n"
+  ],
+  " - unsupported DRAM ID/table\n": [
+    " - unsupported DRAM ID/table\n",
+    " - Identifiant ou table DRAM non pris en charge\n",
+    " - ID o tabla DRAM no compatible\n",
+    " - ID o tabella DRAM non supportati\n",
+    " - ID или таблица DRAM не поддерживается\n",
+    " - DRAM-ID/Tabelle nicht unterstützt\n",
+    " - ID ou tabela DRAM não suportado\n"
+  ],
+  " - invalid/corrupt timing table\n": [
+    " - invalid/corrupt timing table\n",
+    " - Table de temporisation invalide ou corrompue\n",
+    " - Tabla de tiempos no válida o dañada\n",
+    " - Tabella dei tempi non valida o danneggiata\n",
+    " - Таблица таймингов недействительна или повреждена\n",
+    " - Ungültige/beschädigte Timing-Tabelle\n",
+    " - Tabela de temporização inválida ou danificada\n"
+  ],
+  " - unexpected EMC entry clock; no training attempted\n": [
+    " - unexpected EMC entry clock; no training attempted\n",
+    " - Horloge EMC initiale inattendue ; aucune calibration tentée\n",
+    " - Reloj EMC inicial inesperado; no se intentó el entrenamiento\n",
+    " - Clock EMC iniziale inatteso; calibrazione non tentata\n",
+    " - Неожиданная начальная частота EMC; настройка не выполнялась\n",
+    " - Unerwarteter EMC-Ausgangstakt; kein Training versucht\n",
+    " - Relógio EMC inicial inesperado; treino não iniciado\n"
+  ],
+  " - memory PLL did not lock\n": [
+    " - memory PLL did not lock\n",
+    " - La PLL mémoire ne s'est pas verrouillée\n",
+    " - La PLL de memoria no se sincronizó\n",
+    " - Il PLL della memoria non si è agganciato\n",
+    " - PLL памяти не синхронизировалась\n",
+    " - Speicher-PLL hat nicht eingerastet\n",
+    " - A PLL da memória não sincronizou\n"
+  ],
+  " - EMC/DLL status transition timed out\n": [
+    " - EMC/DLL status transition timed out\n",
+    " - Délai dépassé pour la transition EMC/DLL\n",
+    " - Tiempo agotado en la transición EMC/DLL\n",
+    " - Timeout della transizione EMC/DLL\n",
+    " - Тайм-аут перехода EMC/DLL\n",
+    " - Zeitüberschreitung beim EMC/DLL-Wechsel\n",
+    " - Tempo limite na transição EMC/DLL\n"
+  ],
+  "\nPower-cycle before trusting memory state after a HW timeout.\n": [
+    "\nPower-cycle before trusting memory state after a HW timeout.\n",
+    "\nAprès un délai matériel dépassé, éteindre puis rallumer avant de se fier à la mémoire.\n",
+    "\nTras un tiempo de espera de hardware agotado, apaga y enciende antes de confiar en la memoria.\n",
+    "\nDopo un timeout hardware, spegnere e riaccendere prima di fidarsi della memoria.\n",
+    "\nПосле аппаратного тайм-аута выключите и включите консоль перед проверкой памяти.\n",
+    "\nNach Hardware-Zeitüberschreitung vor weiteren Speichertests aus- und einschalten.\n",
+    "\nApós um tempo limite de hardware, desligue e ligue antes de confiar na memória.\n"
+  ],
+  "retention": [
+    "retention",
+    "rétention",
+    "retención",
+    "ritenzione",
+    "удержание",
+    "Datenerhalt",
+    "retenção"
+  ],
+  "Final result": [
+    "Final result",
+    "Résultat final",
+    "Resultado final",
+    "Risultato finale",
+    "Итоговый результат",
+    "Endergebnis",
+    "Resultado final"
+  ],
+  "DRAM result : %s\n": [
+    "DRAM result : %s\n",
+    "Résultat DRAM : %s\n",
+    "Resultado DRAM: %s\n",
+    "Risultato DRAM: %s\n",
+    "Результат DRAM: %s\n",
+    "DRAM-Ergebnis: %s\n",
+    "Resultado DRAM: %s\n"
+  ],
+  "platform    : %s\n": [
+    "platform    : %s\n",
+    "plateforme : %s\n",
+    "plataforma: %s\n",
+    "piattaforma: %s\n",
+    "платформа: %s\n",
+    "Plattform: %s\n",
+    "plataforma: %s\n"
+  ],
+  "mode        : %s\n": [
+    "mode        : %s\n",
+    "mode : %s\n",
+    "modo: %s\n",
+    "modalità: %s\n",
+    "режим: %s\n",
+    "Modus: %s\n",
+    "modo: %s\n"
+  ],
+  "DRAM size   : %d MiB\n": [
+    "DRAM size   : %d MiB\n",
+    "Taille DRAM : %d MiB\n",
+    "Tamaño DRAM: %d MiB\n",
+    "Dimensione DRAM: %d MiB\n",
+    "Объём DRAM: %d MiB\n",
+    "DRAM-Größe: %d MiB\n",
+    "Tamanho DRAM: %d MiB\n"
+  ],
+  "scope/pass  : %d / %d regions (%d MiB)\n": [
+    "scope/pass  : %d / %d regions (%d MiB)\n",
+    "zones/passe : %d / %d zones (%d MiB)\n",
+    "ámbito/pasada: %d / %d zonas (%d MiB)\n",
+    "ambito/passaggio: %d / %d aree (%d MiB)\n",
+    "область/проход: %d / %d областей (%d MiB)\n",
+    "Bereich/Durchlauf: %d / %d Bereiche (%d MiB)\n",
+    "âmbito/passagem: %d / %d áreas (%d MiB)\n"
+  ],
+  "passes done : %d / %d\n": [
+    "passes done : %d / %d\n",
+    "passes terminées : %d / %d\n",
+    "pasadas terminadas: %d / %d\n",
+    "passaggi completati: %d / %d\n",
+    "завершено проходов: %d / %d\n",
+    "Durchläufe fertig: %d / %d\n",
+    "passagens concluídas: %d / %d\n"
+  ],
+  "stopped on  : pass %d/%d, %s, %s\n": [
+    "stopped on  : pass %d/%d, %s, %s\n",
+    "arrêt sur : passe %d/%d, %s, %s\n",
+    "detenido en: pasada %d/%d, %s, %s\n",
+    "arresto su: passaggio %d/%d, %s, %s\n",
+    "остановка: проход %d/%d, %s, %s\n",
+    "angehalten bei: Durchlauf %d/%d, %s, %s\n",
+    "parou em: passagem %d/%d, %s, %s\n"
+  ],
+  "phase prog  : %d / %d ms\n": [
+    "phase prog  : %d / %d ms\n",
+    "progression : %d / %d ms\n",
+    "progreso: %d / %d ms\n",
+    "avanzamento: %d / %d ms\n",
+    "ход этапа: %d / %d ms\n",
+    "Fortschritt: %d / %d ms\n",
+    "progresso: %d / %d ms\n"
+  ],
+  "phase prog  : %d / %d regions (%d MiB)\n": [
+    "phase prog  : %d / %d regions (%d MiB)\n",
+    "progression : %d / %d zones (%d MiB)\n",
+    "progreso: %d / %d zonas (%d MiB)\n",
+    "avanzamento: %d / %d aree (%d MiB)\n",
+    "ход этапа: %d / %d областей (%d MiB)\n",
+    "Fortschritt: %d / %d Bereiche (%d MiB)\n",
+    "progresso: %d / %d áreas (%d MiB)\n"
+  ],
+  "errors seen : %d\n": [
+    "errors seen : %d\n",
+    "erreurs observées : %d\n",
+    "errores detectados: %d\n",
+    "errori rilevati: %d\n",
+    "обнаружено ошибок: %d\n",
+    "erkannte Fehler: %d\n",
+    "erros detetados: %d\n"
+  ],
+  "elapsed     : %d s\n": [
+    "elapsed     : %d s\n",
+    "durée : %d s\n",
+    "duración: %d s\n",
+    "durata: %d s\n",
+    "время: %d s\n",
+    "Dauer: %d s\n",
+    "duração: %d s\n"
+  ],
+  "MTC flags   : %08X\n": [
+    "MTC flags   : %08X\n",
+    "Indicateurs MTC : %08X\n",
+    "Indicadores MTC: %08X\n",
+    "Indicatori MTC: %08X\n",
+    "Флаги MTC: %08X\n",
+    "MTC-Flags: %08X\n",
+    "Indicadores MTC: %08X\n"
+  ],
+  "bad @ %08X%08X exp %08X got %08X (%s)\n": [
+    "bad @ %08X%08X exp %08X got %08X (%s)\n",
+    "erreur @ %08X%08X attendu %08X lu %08X (%s)\n",
+    "error @ %08X%08X esperado %08X leído %08X (%s)\n",
+    "errore @ %08X%08X atteso %08X letto %08X (%s)\n",
+    "ошибка @ %08X%08X ожидалось %08X получено %08X (%s)\n",
+    "Fehler @ %08X%08X erwartet %08X gelesen %08X (%s)\n",
+    "erro @ %08X%08X esperado %08X lido %08X (%s)\n"
+  ],
+  "+ %d additional failing words\n": [
+    "+ %d additional failing words\n",
+    "+ %d mots supplémentaires en erreur\n",
+    "+ %d palabras adicionales con errores\n",
+    "+ %d parole aggiuntive errate\n",
+    "+ %d дополнительных ошибочных слов\n",
+    "+ %d weitere fehlerhafte Wörter\n",
+    "+ %d palavras adicionais com erro\n"
+  ],
+  "POWER: menu    VOL+: restart console    VOL-: power off": [
+    "POWER: menu    VOL+: restart console    VOL-: power off",
+    "POWER : menu  VOL+ : redémarrer  VOL- : éteindre",
+    "POWER: menú  VOL+: reiniciar  VOL-: apagar",
+    "POWER: menu  VOL+: riavvia  VOL-: spegni",
+    "POWER: меню  VOL+: перезапуск  VOL-: выключение",
+    "POWER: Menü  VOL+: Neustart  VOL-: Ausschalten",
+    "POWER: menu  VOL+: reiniciar  VOL-: desligar"
+  ],
+  "Test termine. Retour automatique a Hekate...": [
+    "Test finished. Returning automatically to Hekate...",
+    "Test terminé. Retour automatique à Hekate...",
+    "Prueba terminada. Volviendo a Hekate...",
+    "Test terminato. Ritorno automatico a Hekate...",
+    "Тест завершён. Автоматический возврат в Hekate...",
+    "Test beendet. Automatische Rückkehr zu Hekate...",
+    "Teste terminado. Regresso automático ao Hekate..."
+  ],
+  "Return image invalid; refusing to execute corrupted code.\n": [
+    "Return image invalid; refusing to execute corrupted code.\n",
+    "Image de retour invalide : le code corrompu ne sera pas exécuté.\n",
+    "Imagen de retorno no válida; no se ejecutará código dañado.\n",
+    "Immagine di ritorno non valida; codice danneggiato non eseguito.\n",
+    "Образ возврата недействителен; повреждённый код не будет запущен.\n",
+    "Ungültiges Rückkehrabbild; beschädigter Code wird nicht ausgeführt.\n",
+    "Imagem de regresso inválida; o código danificado não será executado.\n"
+  ],
+  "VOL+: restart console    VOL-: power off\n": [
+    "VOL+: restart console    VOL-: power off\n",
+    "VOL+ : redémarrer  VOL- : éteindre\n",
+    "VOL+: reiniciar  VOL-: apagar\n",
+    "VOL+: riavvia  VOL-: spegni\n",
+    "VOL+: перезапуск  VOL-: выключение\n",
+    "VOL+: Neustart  VOL-: Ausschalten\n",
+    "VOL+: reiniciar  VOL-: desligar\n"
+  ],
+  "Powering off...                          ": [
+    "Powering off...                          ",
+    "Extinction...                          ",
+    "Apagando...                          ",
+    "Spegnimento...                          ",
+    "Выключение...                          ",
+    "Ausschalten...                          ",
+    "A desligar...                          "
+  ],
+  "Unsupported platform": [
+    "Unsupported platform",
+    "Plateforme non prise en charge",
+    "Plataforma no compatible",
+    "Piattaforma non supportata",
+    "Платформа не поддерживается",
+    "Plattform nicht unterstützt",
+    "Plataforma não suportada"
+  ],
+  "Unsupported Tegra HIDREV %08X (major %X); no RAM training will run.\n": [
+    "Unsupported Tegra HIDREV %08X (major %X); no RAM training will run.\n",
+    "Tegra HIDREV %08X (major %X) non pris en charge ; aucune calibration RAM.\n",
+    "Tegra HIDREV %08X (major %X) no compatible; no se entrenará la RAM.\n",
+    "Tegra HIDREV %08X (major %X) non supportato; RAM non calibrata.\n",
+    "Tegra HIDREV %08X (major %X) не поддерживается; RAM не настраивается.\n",
+    "Tegra HIDREV %08X (major %X) nicht unterstützt; kein RAM-Training.\n",
+    "Tegra HIDREV %08X (major %X) não suportado; RAM não será treinada.\n"
+  ],
+  "Training DRAM": [
+    "Training DRAM",
+    "Calibration de la DRAM",
+    "Entrenando DRAM",
+    "Calibrazione DRAM",
+    "Настройка DRAM",
+    "DRAM-Training",
+    "Treino da DRAM"
+  ],
+  "Platform      : %s\n": [
+    "Platform      : %s\n",
+    "plateforme : %s\n",
+    "plataforma: %s\n",
+    "piattaforma: %s\n",
+    "платформа: %s\n",
+    "Plattform: %s\n",
+    "plataforma: %s\n"
+  ],
+  "DRAM size     : %d MiB\n": [
+    "DRAM size     : %d MiB\n",
+    "Taille DRAM : %d MiB\n",
+    "Tamaño DRAM: %d MiB\n",
+    "Dimensione DRAM: %d MiB\n",
+    "Объём DRAM: %d MiB\n",
+    "DRAM-Größe: %d MiB\n",
+    "Tamanho DRAM: %d MiB\n"
+  ],
+  "Target        : 1600 MHz\n": [
+    "Target        : 1600 MHz\n",
+    "Cible : 1600 MHz\n",
+    "Objetivo: 1600 MHz\n",
+    "Obiettivo: 1600 MHz\n",
+    "Цель: 1600 MHz\n",
+    "Ziel: 1600 MHz\n",
+    "Objetivo: 1600 MHz\n"
+  ],
+  "Training      : kept from the previous run\n": [
+    "Training      : kept from the previous run\n",
+    "Calibration : conservée de l'exécution précédente\n",
+    "Entrenamiento: conservado de la ejecución anterior\n",
+    "Calibrazione: mantenuta dalla prova precedente\n",
+    "Настройка: сохранена с прошлого запуска\n",
+    "Training: vom vorherigen Durchlauf beibehalten\n",
+    "Treino: mantido da execução anterior\n"
+  ],
+  "Training...\n": [
+    "Training...\n",
+    "Calibration...\n",
+    "Entrenando...\n",
+    "Calibrazione...\n",
+    "Настройка...\n",
+    "Training...\n",
+    "A treinar...\n"
+  ],
+  "Training      : PASS\n": [
+    "Training      : PASS\n",
+    "Calibration : OK\n",
+    "Entrenamiento: OK\n",
+    "Calibrazione: OK\n",
+    "Настройка: ОК\n",
+    "Training: OK\n",
+    "Treino: OK\n"
+  ],
+  "Protected Hekate return image was modified during training.\n": [
+    "Protected Hekate return image was modified during training.\n",
+    "L'image protégée de retour Hekate a été modifiée pendant la calibration.\n",
+    "La imagen protegida de retorno a Hekate cambió durante el entrenamiento.\n",
+    "L'immagine protetta di ritorno a Hekate è cambiata durante la calibrazione.\n",
+    "Защищённый образ возврата Hekate изменился во время настройки.\n",
+    "Geschütztes Hekate-Rückkehrabbild wurde beim Training verändert.\n",
+    "A imagem protegida de regresso ao Hekate mudou durante o treino.\n"
+  ],
+  "Test stopped; restart the console manually.\n": [
+    "Test stopped; restart the console manually.\n",
+    "Test arrêté : redémarrer la console manuellement.\n",
+    "Prueba detenida; reinicia la consola manualmente.\n",
+    "Test arrestato; riavviare manualmente la console.\n",
+    "Тест остановлен; перезапустите консоль вручную.\n",
+    "Test angehalten; Konsole manuell neu starten.\n",
+    "Teste parado; reinicie a consola manualmente.\n"
+  ],
+  "SMMU setup   : FAIL\n": [
+    "SMMU setup   : FAIL\n",
+    "Configuration SMMU : ÉCHEC\n",
+    "Configuración SMMU: FALLO\n",
+    "Configurazione SMMU: ERRORE\n",
+    "Настройка SMMU: СБОЙ\n",
+    "SMMU-Einrichtung: FEHLER\n",
+    "Configuração SMMU: FALHA\n"
+  ],
+  "SMMU window   : PASS\n": [
+    "SMMU window   : PASS\n",
+    "Fenêtre SMMU : OK\n",
+    "Ventana SMMU: OK\n",
+    "Finestra SMMU: OK\n",
+    "Окно SMMU: ОК\n",
+    "SMMU-Fenster: OK\n",
+    "Janela SMMU: OK\n"
+  ],
+  "Data-bus preflight": [
+    "Data-bus preflight",
+    "Vérification du bus de données",
+    "Comprobación previa del bus de datos",
+    "Verifica preliminare del bus dati",
+    "Предварительная проверка шины данных",
+    "Vorprüfung des Datenbusses",
+    "Verificação prévia do barramento de dados"
+  ],
+  "walking data bits: %s\n": [
+    "walking data bits: %s\n",
+    "test des bits de données : %s\n",
+    "prueba de bits de datos: %s\n",
+    "test dei bit dati: %s\n",
+    "проверка битов данных: %s\n",
+    "Datenbit-Test: %s\n",
+    "teste de bits de dados: %s\n"
+  ],
+  "Power-cycle before trusting memory state after a HW timeout.": [
+    "Power-cycle before trusting memory state after a HW timeout.",
+    "Après un délai matériel dépassé, éteindre puis rallumer avant de se fier à la mémoire.",
+    "Tras un tiempo de espera de hardware agotado, apaga y enciende antes de confiar en la memoria.",
+    "Dopo un timeout hardware, spegnere e riaccendere prima di fidarsi della memoria.",
+    "После аппаратного тайм-аута выключите и включите консоль перед проверкой памяти.",
+    "Nach Hardware-Zeitüberschreitung vor weiteren Speichertests aus- und einschalten.",
+    "Após um tempo limite de hardware, desligue e ligue antes de confiar na memória."
+  ],
+  "- EMC/DLL status transition timed out": [
+    "- EMC/DLL status transition timed out",
+    "- Délai dépassé pour la transition EMC/DLL",
+    "- Tiempo agotado en la transición EMC/DLL",
+    "- Timeout della transizione EMC/DLL",
+    "- Тайм-аут перехода EMC/DLL",
+    "- Zeitüberschreitung beim EMC/DLL-Wechsel",
+    "- Tempo limite na transição EMC/DLL"
+  ],
+  "- invalid/corrupt timing table": [
+    "- invalid/corrupt timing table",
+    "- Table de temporisation invalide ou corrompue",
+    "- Tabla de tiempos no válida o dañada",
+    "- Tabella dei tempi non valida o danneggiata",
+    "- Таблица таймингов недействительна или повреждена",
+    "- Ungültige/beschädigte Timing-Tabelle",
+    "- Tabela de temporização inválida ou danificada"
+  ],
+  "- memory PLL did not lock": [
+    "- memory PLL did not lock",
+    "- La PLL mémoire ne s'est pas verrouillée",
+    "- La PLL de memoria no se sincronizó",
+    "- Il PLL della memoria non si è agganciato",
+    "- PLL памяти не синхронизировалась",
+    "- Speicher-PLL hat nicht eingerastet",
+    "- A PLL da memória não sincronizou"
+  ],
+  "- unexpected EMC entry clock; no training attempted": [
+    "- unexpected EMC entry clock; no training attempted",
+    "- Horloge EMC initiale inattendue ; aucune calibration tentée",
+    "- Reloj EMC inicial inesperado; no se intentó el entrenamiento",
+    "- Clock EMC iniziale inatteso; calibrazione non tentata",
+    "- Неожиданная начальная частота EMC; настройка не выполнялась",
+    "- Unerwarteter EMC-Ausgangstakt; kein Training versucht",
+    "- Relógio EMC inicial inesperado; treino não iniciado"
+  ],
+  "- unsupported DRAM ID/table": [
+    "- unsupported DRAM ID/table",
+    "- Identifiant ou table DRAM non pris en charge",
+    "- ID o tabla DRAM no compatible",
+    "- ID o tabella DRAM non supportati",
+    "- ID или таблица DRAM не поддерживается",
+    "- DRAM-ID/Tabelle nicht unterstützt",
+    "- ID ou tabela DRAM não suportado"
+  ],
+  "+ %d additional failing words": [
+    "+ %d additional failing words",
+    "+ %d mots supplémentaires en erreur",
+    "+ %d palabras adicionales con errores",
+    "+ %d parole aggiuntive errate",
+    "+ %d дополнительных ошибочных слов",
+    "+ %d weitere fehlerhafte Wörter",
+    "+ %d palavras adicionais com erro"
+  ],
+  "1600 MHz training: FAIL": [
+    "1600 MHz training: FAIL",
+    "Calibration à 1600 MHz : ÉCHEC",
+    "Entrenamiento a 1600 MHz: FALLO",
+    "Calibrazione a 1600 MHz: ERRORE",
+    "Настройка 1600 MHz: СБОЙ",
+    "1600-MHz-Training: FEHLER",
+    "Treino a 1600 MHz: FALHA"
+  ],
+  "DRAM result : %s": [
+    "DRAM result : %s",
+    "Résultat DRAM : %s",
+    "Resultado DRAM: %s",
+    "Risultato DRAM: %s",
+    "Результат DRAM: %s",
+    "DRAM-Ergebnis: %s",
+    "Resultado DRAM: %s"
+  ],
+  "DRAM size : %d MiB": [
+    "DRAM size : %d MiB",
+    "Taille DRAM : %d MiB",
+    "Tamaño DRAM: %d MiB",
+    "Dimensione DRAM: %d MiB",
+    "Объём DRAM: %d MiB",
+    "DRAM-Größe: %d MiB",
+    "Tamanho DRAM: %d MiB"
+  ],
+  "MTC flags : %08X": [
+    "MTC flags : %08X",
+    "Indicateurs MTC : %08X",
+    "Indicadores MTC: %08X",
+    "Indicatori MTC: %08X",
+    "Флаги MTC: %08X",
+    "MTC-Flags: %08X",
+    "Indicadores MTC: %08X"
+  ],
+  "POWER: menu VOL+: restart console VOL-: power off": [
+    "POWER: menu VOL+: restart console VOL-: power off",
+    "POWER : menu  VOL+ : redémarrer  VOL- : éteindre",
+    "POWER: menú  VOL+: reiniciar  VOL-: apagar",
+    "POWER: menu  VOL+: riavvia  VOL-: spegni",
+    "POWER: меню  VOL+: перезапуск  VOL-: выключение",
+    "POWER: Menü  VOL+: Neustart  VOL-: Ausschalten",
+    "POWER: menu  VOL+: reiniciar  VOL-: desligar"
+  ],
+  "Pass %d/%d %s %s errors %d": [
+    "Pass %d/%d %s %s errors %d",
+    "Passe %d/%d %s %s erreurs %d",
+    "Pasada %d/%d %s %s errores %d",
+    "Passaggio %d/%d %s %s errori %d",
+    "Проход %d/%d %s %s ошибок %d",
+    "Durchlauf %d/%d %s %s Fehler %d",
+    "Passagem %d/%d %s %s erros %d"
+  ],
+  "platform : %s": [
+    "platform : %s",
+    "plateforme : %s",
+    "plataforma: %s",
+    "piattaforma: %s",
+    "платформа: %s",
+    "Plattform: %s",
+    "plataforma: %s"
+  ],
+  "Powering off...": [
+    "Powering off...",
+    "Extinction...",
+    "Apagando...",
+    "Spegnimento...",
+    "Выключение...",
+    "Ausschalten...",
+    "A desligar..."
+  ],
+  "Protected Hekate return image was modified during training.": [
+    "Protected Hekate return image was modified during training.",
+    "L'image protégée de retour Hekate a été modifiée pendant la calibration.",
+    "La imagen protegida de retorno a Hekate cambió durante el entrenamiento.",
+    "L'immagine protetta di ritorno a Hekate è cambiata durante la calibrazione.",
+    "Защищённый образ возврата Hekate изменился во время настройки.",
+    "Geschütztes Hekate-Rückkehrabbild wurde beim Training verändert.",
+    "A imagem protegida de regresso ao Hekate mudou durante o treino."
+  ],
+  "Restarting console...": [
+    "Restarting console...",
+    "Redémarrage de la console...",
+    "Reiniciando consola...",
+    "Riavvio console...",
+    "Перезапуск консоли...",
+    "Konsole wird neu gestartet...",
+    "A reiniciar a consola..."
+  ],
+  "Return image invalid; refusing to execute corrupted code.": [
+    "Return image invalid; refusing to execute corrupted code.",
+    "Image de retour invalide : le code corrompu ne sera pas exécuté.",
+    "Imagen de retorno no válida; no se ejecutará código dañado.",
+    "Immagine di ritorno non valida; codice danneggiato non eseguito.",
+    "Образ возврата недействителен; повреждённый код не будет запущен.",
+    "Ungültiges Rückkehrabbild; beschädigter Code wird nicht ausgeführt.",
+    "Imagem de regresso inválida; o código danificado não será executado."
+  ],
+  "SMMU setup : FAIL": [
+    "SMMU setup : FAIL",
+    "Configuration SMMU : ÉCHEC",
+    "Configuración SMMU: FALLO",
+    "Configurazione SMMU: ERRORE",
+    "Настройка SMMU: СБОЙ",
+    "SMMU-Einrichtung: FEHLER",
+    "Configuração SMMU: FALHA"
+  ],
+  "SMMU window : PASS": [
+    "SMMU window : PASS",
+    "Fenêtre SMMU : OK",
+    "Ventana SMMU: OK",
+    "Finestra SMMU: OK",
+    "Окно SMMU: ОК",
+    "SMMU-Fenster: OK",
+    "Janela SMMU: OK"
+  ],
+  "Target : 1600 MHz": [
+    "Target : 1600 MHz",
+    "Cible : 1600 MHz",
+    "Objetivo: 1600 MHz",
+    "Obiettivo: 1600 MHz",
+    "Цель: 1600 MHz",
+    "Ziel: 1600 MHz",
+    "Objetivo: 1600 MHz"
+  ],
+  "Test stopped; restart the console manually.": [
+    "Test stopped; restart the console manually.",
+    "Test arrêté : redémarrer la console manuellement.",
+    "Prueba detenida; reinicia la consola manualmente.",
+    "Test arrestato; riavviare manualmente la console.",
+    "Тест остановлен; перезапустите консоль вручную.",
+    "Test angehalten; Konsole manuell neu starten.",
+    "Teste parado; reinicie a consola manualmente."
+  ],
+  "Training : PASS": [
+    "Training : PASS",
+    "Calibration : OK",
+    "Entrenamiento: OK",
+    "Calibrazione: OK",
+    "Настройка: ОК",
+    "Training: OK",
+    "Treino: OK"
+  ],
+  "Training : kept from the previous run": [
+    "Training : kept from the previous run",
+    "Calibration : conservée de l'exécution précédente",
+    "Entrenamiento: conservado de la ejecución anterior",
+    "Calibrazione: mantenuta dalla prova precedente",
+    "Настройка: сохранена с прошлого запуска",
+    "Training: vom vorherigen Durchlauf beibehalten",
+    "Treino: mantido da execução anterior"
+  ],
+  "Training...": [
+    "Training...",
+    "Calibration...",
+    "Entrenando...",
+    "Calibrazione...",
+    "Настройка...",
+    "Training...",
+    "A treinar..."
+  ],
+  "Unsupported Tegra HIDREV %08X (major %X); no RAM training will run.": [
+    "Unsupported Tegra HIDREV %08X (major %X); no RAM training will run.",
+    "Tegra HIDREV %08X (major %X) non pris en charge ; aucune calibration RAM.",
+    "Tegra HIDREV %08X (major %X) no compatible; no se entrenará la RAM.",
+    "Tegra HIDREV %08X (major %X) non supportato; RAM non calibrata.",
+    "Tegra HIDREV %08X (major %X) не поддерживается; RAM не настраивается.",
+    "Tegra HIDREV %08X (major %X) nicht unterstützt; kein RAM-Training.",
+    "Tegra HIDREV %08X (major %X) não suportado; RAM não será treinada."
+  ],
+  "VOL+: restart console VOL-: power off": [
+    "VOL+: restart console VOL-: power off",
+    "VOL+ : redémarrer  VOL- : éteindre",
+    "VOL+: reiniciar  VOL-: apagar",
+    "VOL+: riavvia  VOL-: spegni",
+    "VOL+: перезапуск  VOL-: выключение",
+    "VOL+: Neustart  VOL-: Ausschalten",
+    "VOL+: reiniciar  VOL-: desligar"
+  ],
+  "VOL-: Up VOL+: Down PWR: %s": [
+    "VOL-: Up VOL+: Down PWR: %s",
+    "VOL- : haut  VOL+ : bas  PWR : %s",
+    "VOL-: arriba  VOL+: abajo  PWR: %s",
+    "VOL-: su  VOL+: giù  PWR: %s",
+    "VOL-: вверх  VOL+: вниз  PWR: %s",
+    "VOL-: hoch  VOL+: runter  PWR: %s",
+    "VOL-: cima  VOL+: baixo  PWR: %s"
+  ],
+  "bad @ %08X%08X exp %08X got %08X (%s)": [
+    "bad @ %08X%08X exp %08X got %08X (%s)",
+    "erreur @ %08X%08X attendu %08X lu %08X (%s)",
+    "error @ %08X%08X esperado %08X leído %08X (%s)",
+    "errore @ %08X%08X atteso %08X letto %08X (%s)",
+    "ошибка @ %08X%08X ожидалось %08X получено %08X (%s)",
+    "Fehler @ %08X%08X erwartet %08X gelesen %08X (%s)",
+    "erro @ %08X%08X esperado %08X lido %08X (%s)"
+  ],
+  "elapsed : %d s": [
+    "elapsed : %d s",
+    "durée : %d s",
+    "duración: %d s",
+    "durata: %d s",
+    "время: %d s",
+    "Dauer: %d s",
+    "duração: %d s"
+  ],
+  "error flags : %08X": [
+    "error flags : %08X",
+    "indicateurs d'erreur : %08X",
+    "indicadores de error: %08X",
+    "indicatori errore: %08X",
+    "флаги ошибок: %08X",
+    "Fehlerflags: %08X",
+    "indicadores de erro: %08X"
+  ],
+  "errors seen : %d": [
+    "errors seen : %d",
+    "erreurs observées : %d",
+    "errores detectados: %d",
+    "errori rilevati: %d",
+    "обнаружено ошибок: %d",
+    "erkannte Fehler: %d",
+    "erros detetados: %d"
+  ],
+  "mode : %s": [
+    "mode : %s",
+    "mode : %s",
+    "modo: %s",
+    "modalità: %s",
+    "режим: %s",
+    "Modus: %s",
+    "modo: %s"
+  ],
+  "pass %s: %s, +%d errors, %ds": [
+    "pass %s: %s, +%d errors, %ds",
+    "passe %s : %s, +%d erreurs, %ds",
+    "pasada %s: %s, +%d errores, %ds",
+    "passaggio %s: %s, +%d errori, %ds",
+    "проход %s: %s, +%d ошибок, %ds",
+    "Durchlauf %s: %s, +%d Fehler, %ds",
+    "passagem %s: %s, +%d erros, %ds"
+  ],
+  "passes done : %d / %d": [
+    "passes done : %d / %d",
+    "passes terminées : %d / %d",
+    "pasadas terminadas: %d / %d",
+    "passaggi completati: %d / %d",
+    "завершено проходов: %d / %d",
+    "Durchläufe fertig: %d / %d",
+    "passagens concluídas: %d / %d"
+  ],
+  "phase prog : %d / %d ms": [
+    "phase prog : %d / %d ms",
+    "progression : %d / %d ms",
+    "progreso: %d / %d ms",
+    "avanzamento: %d / %d ms",
+    "ход этапа: %d / %d ms",
+    "Fortschritt: %d / %d ms",
+    "progresso: %d / %d ms"
+  ],
+  "phase prog : %d / %d regions (%d MiB)": [
+    "phase prog : %d / %d regions (%d MiB)",
+    "progression : %d / %d zones (%d MiB)",
+    "progreso: %d / %d zonas (%d MiB)",
+    "avanzamento: %d / %d aree (%d MiB)",
+    "ход этапа: %d / %d областей (%d MiB)",
+    "Fortschritt: %d / %d Bereiche (%d MiB)",
+    "progresso: %d / %d áreas (%d MiB)"
+  ],
+  "scope/pass : %d / %d regions (%d MiB)": [
+    "scope/pass : %d / %d regions (%d MiB)",
+    "zones/passe : %d / %d zones (%d MiB)",
+    "ámbito/pasada: %d / %d zonas (%d MiB)",
+    "ambito/passaggio: %d / %d aree (%d MiB)",
+    "область/проход: %d / %d областей (%d MiB)",
+    "Bereich/Durchlauf: %d / %d Bereiche (%d MiB)",
+    "âmbito/passagem: %d / %d áreas (%d MiB)"
+  ],
+  "stopped on : pass %d/%d, %s, %s": [
+    "stopped on : pass %d/%d, %s, %s",
+    "arrêt sur : passe %d/%d, %s, %s",
+    "detenido en: pasada %d/%d, %s, %s",
+    "arresto su: passaggio %d/%d, %s, %s",
+    "остановка: проход %d/%d, %s, %s",
+    "angehalten bei: Durchlauf %d/%d, %s, %s",
+    "parou em: passagem %d/%d, %s, %s"
+  ],
+  "training mask : %08X": [
+    "training mask : %08X",
+    "masque de calibration : %08X",
+    "máscara de entrenamiento: %08X",
+    "maschera calibrazione: %08X",
+    "маска настройки: %08X",
+    "Trainingsmaske: %08X",
+    "máscara de treino: %08X"
+  ],
+  "walking data bits: %s": [
+    "walking data bits: %s",
+    "test des bits de données : %s",
+    "prueba de bits de datos: %s",
+    "test dei bit dati: %s",
+    "проверка битов данных: %s",
+    "Datenbit-Test: %s",
+    "teste de bits de dados: %s"
+  ]
+}

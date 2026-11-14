@@ -19,6 +19,7 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include "gui_layout.h"
 #include "../config.h"
 #include "../hos/hos.h"
 #include "../hos/pkg1.h"
@@ -55,7 +56,7 @@ static lv_res_t _create_window_dump_done(int error, char *dump_filenames)
 		char *sn = emmcsn_path_impl(NULL, NULL, NULL, NULL);
 		s_printf(txt_buf, "Dumping to SD card finished!\nFiles: #C7EA46 backup/%s/dumps/#\n%s", sn, dump_filenames);
 	}
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action); // Important. After set_text.
@@ -364,7 +365,7 @@ static lv_res_t _create_mbox_cal0(lv_obj_t *btn)
 	bool valid_cal0 = !memcmp(hash, cal0->body_sha256, 0x20);
 	s_printf(txt_buf + strlen(txt_buf), "#FF8000 SHA256 Hash Match:# %s", valid_cal0 ? "Pass" : "Failed");
 
-	(lv_label_set_text)(lb_desc, txt_buf);
+	lv_label_set_text(lb_desc, txt_buf);
 
 out:
 	free(txt_buf);
@@ -871,7 +872,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 		FUSE(FUSE_OPT_WAFER_ID), die_x, die_y,
 		uptime_s / 3600, (uptime_s / 60) % 60, uptime_s % 60);
 
-	(lv_label_set_text)(lb_val, txt_buf);
+	lv_label_set_text(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -1284,7 +1285,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 	else
 		strcat(txt_buf, "\n\n#FF8000 This unit is patched#\n#FF8000 to the RCM bug!#");
 
-	(lv_label_set_text)(lb_desc2, txt_buf);
+	lv_label_set_text(lb_desc2, txt_buf);
 
 	free(txt_buf);
 
@@ -1335,7 +1336,7 @@ static lv_res_t _create_window_bootrom_info_status(lv_obj_t *btn)
 	if (res != 0)
 		s_printf(txt_buf + strlen(txt_buf), "#FFDD00 Failed to read ipatches. Error: %d#", res);
 
-	(lv_label_set_text)(lb_desc, txt_buf);
+	lv_label_set_text(lb_desc, txt_buf);
 
 	free(txt_buf);
 
@@ -1562,7 +1563,7 @@ static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 	else
 		strcpy(txt_buf2, "#00DDFF Advanced Health Status#\n#FFDD00 Empty!#");
 
-	(lv_label_set_text)(lb_desc, txt_buf);
+	lv_label_set_text(lb_desc, txt_buf);
 	(lv_label_set_text)(lb_desc2, txt_buf2);
 
 out:
@@ -1723,7 +1724,7 @@ static lv_res_t _create_mbox_sd_vendor_info(lv_obj_t * btn)
 
 	lv_mbox_set_text(mbox, "#C7EA46 SD Vendor/Reserved Data#");
 
-	(lv_label_set_text)(lb_desc, txt_buf);
+	lv_label_set_text(lb_desc, txt_buf);
 	(lv_label_set_text)(lb_desc2, txt_buf2);
 
 	sd_unmount();
@@ -1759,7 +1760,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 
 	s_printf(txt_buf, "#FF8000 %s Benchmark#\n[Raw Reads] Abort: VOL- & VOL+", sd_bench ? "SD Card" : "eMMC");
 
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 	txt_buf[0] = 0;
 
 	lv_obj_t *h1 = lv_cont_create(mbox, NULL);
@@ -1889,7 +1890,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		u32 rate_1k = (u64)size_bytes_seq * 1000 * 1000 * 1000 / mb_div / timer;
 		s_printf(txt_buf + strlen(txt_buf), " SEQ 16MB - Rate: #C7EA46 %3d.%02d %s#",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text);
-		(lv_label_set_text)(lbl_status, txt_buf);
+		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -1952,7 +1953,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		s_printf(txt_buf + strlen(txt_buf), "        AVG #C7EA46 95th#  #FF3C28 5th#\n");
 		s_printf(txt_buf + strlen(txt_buf), " SEQ  4KB - Rate: #C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
-		(lv_label_set_text)(lbl_status, txt_buf);
+		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -2028,7 +2029,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
 		if (iter_curr == iters - 1)
 			txt_buf[strlen(txt_buf) - 1] = 0; // Cut off last new line.
-		(lv_label_set_text)(lbl_status, txt_buf);
+		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 		manual_system_maintenance(true);
@@ -2045,7 +2046,7 @@ error:
 		else
 			s_printf(txt_buf + strlen(txt_buf), "\n#FFDD00                 IO Error occurred!                #");
 
-		(lv_label_set_text)(lbl_status, txt_buf);
+		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
 	}
 
@@ -2065,7 +2066,7 @@ error:
 
 out:
 	s_printf(txt_buf, "#FF8000 %s Benchmark#\n[Raw Reads]", sd_bench ? "SD Card" : "eMMC");
-	(lv_mbox_set_text)(mbox, txt_buf);
+	lv_mbox_set_text(mbox, txt_buf);
 
 	// Update SDMMC error info in case it changed.
 	if (sd_bench && bench_sd_err_label)
@@ -2075,7 +2076,7 @@ out:
 			sd_errors[SD_ERROR_INIT_FAIL], nyx_str->info.sd_errors[SD_ERROR_INIT_FAIL],
 			sd_errors[SD_ERROR_RW_FAIL],   nyx_str->info.sd_errors[SD_ERROR_RW_FAIL],
 			sd_errors[SD_ERROR_RW_RETRY],  nyx_str->info.sd_errors[SD_ERROR_RW_RETRY]);
-		(lv_label_set_text)(bench_sd_err_label, txt_buf);
+		lv_label_set_text(bench_sd_err_label, txt_buf);
 	}
 
 	free(txt_buf);
@@ -2282,7 +2283,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	lv_obj_t * lb_val = lv_label_create(info, lb_desc);
 
-	(lv_label_set_text)(lb_val, txt_buf);
+	lv_label_set_text(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(info));
 	lv_obj_align(info, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2339,7 +2340,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	emmc_gpt_free(&gpt);
 
-	(lv_label_set_text)(lb_desc2, txt_buf);
+	lv_label_set_text(lb_desc2, txt_buf);
 	lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
 	lv_obj_align(desc2, info, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 6, 0);
 
@@ -2373,7 +2374,7 @@ out_error:
 			emmc_errors[EMMC_ERROR_RW_FAIL],
 			emmc_errors[EMMC_ERROR_RW_RETRY]);
 
-		(lv_mbox_set_text)(mbox, txt_buf);
+		lv_mbox_set_text(mbox, txt_buf);
 		lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action);
 		lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
 		lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -2590,7 +2591,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		break;
 	}
 
-	(lv_label_set_text)(lb_val, txt_buf);
+	lv_label_set_text(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2722,7 +2723,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		wp_info,
 		sd_storage.cid.rsvd, sd_storage.scr.vendor);
 
-	(lv_label_set_text)(lb_val2, txt_buf);
+	lv_label_set_text(lb_val2, txt_buf);
 
 	lv_obj_set_width(lb_val2, lv_obj_get_width(val2));
 	lv_obj_align(val2, desc2, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2784,7 +2785,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		sd_errors[SD_ERROR_RW_FAIL],   nyx_str->info.sd_errors[SD_ERROR_RW_FAIL],
 		sd_errors[SD_ERROR_RW_RETRY],  nyx_str->info.sd_errors[SD_ERROR_RW_RETRY]);
 
-	(lv_label_set_text)(lb_val4, txt_buf);
+	lv_label_set_text(lb_val4, txt_buf);
 
 	lv_obj_set_width(lb_val4, lv_obj_get_width(val4));
 	lv_obj_align(val4, desc4, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -2809,7 +2810,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		(u32)(sd_fs.free_clst * sd_fs.csize >> SECTORS_TO_MIB_COEFF),
 		(u32)(sd_fs.n_fatent  * sd_fs.csize >> SECTORS_TO_MIB_COEFF));
 
-	(lv_label_set_text)(lb_val3, txt_buf);
+	lv_label_set_text(lb_val3, txt_buf);
 
 	lv_obj_set_width(lb_val3, lv_obj_get_width(val3));
 
@@ -2940,7 +2941,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 		break;
 	}
 
-	(lv_label_set_text)(lb_val, txt_buf);
+	lv_label_set_text(lb_val, txt_buf);
 
 	lv_obj_set_width(lb_val, lv_obj_get_width(val));
 	lv_obj_align(val, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -3068,7 +3069,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	else
 		strcat(txt_buf, "#FF8000 "SYMBOL_WARNING" Error!#");
 
-	(lv_label_set_text)(lb_val2, txt_buf);
+	lv_label_set_text(lb_val2, txt_buf);
 
 	lv_obj_set_width(lb_val2, lv_obj_get_width(val2));
 	lv_obj_align(val2, desc2, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -3119,183 +3120,34 @@ out:
 
 void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
 {
-	lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_theme_get_current()->panel);
-	h_style.body.padding.inner = 0;
-	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
-	h_style.body.padding.ver = LV_DPI / 6;
-
-	// Create SoC Info container.
-	lv_obj_t *h1 = lv_cont_create(parent, NULL);
-	lv_cont_set_style(h1, &h_style);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "SoC & HW Info");
-	lv_obj_set_style(label_txt, th->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, 0);
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, th->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create Bootrom button.
-	lv_obj_t *btn = lv_btn_create(h1, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn, LV_BTN_STYLE_PR,  &btn_transp_pr);
-		lv_btn_set_style(btn, LV_BTN_STYLE_INA, &btn_transp_ina);
-	}
-	lv_obj_t *label_btn = lv_label_create(btn, NULL);
-	lv_btn_set_fit(btn, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_CHIP"  Bootrom");
-	lv_obj_align(btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _create_window_bootrom_info_status);
-
-	// Create TSEC Keys button.
-	lv_obj_t *btn2 = lv_btn_create(h1, btn);
-	label_btn = lv_label_create(btn2, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_KEY"  Lockpick");
-	lv_obj_align(btn2, btn, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 11 / 15, 0);
-	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, _create_mbox_lockpick);
-
-	bool lockpick_found = _lockpick_exists_check();
-	if (!lockpick_found)
-		lv_btn_set_state(btn2, LV_BTN_STATE_INA);
-
-	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-
-	if (lockpick_found)
-	{
-		lv_label_set_static_text(label_txt2,
-			"View Ipatches and dump the unpatched and patched versions\nof BootROM.\n"
-			"Or dump every single key via #C7EA46 Lockpick RCM#.\n");
-	}
-	else
-	{
-		lv_label_set_static_text(label_txt2,
-			"View Ipatches and dump the unpatched and patched versions\nof BootROM. Or dump every single key via #C7EA46 Lockpick RCM#.\n"
-			"#FFDD00 bootloader/payloads/Lockpick_RCM.bin is missing or old!#\n");
-	}
-
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	static lv_style_t line_style;
-	lv_style_copy(&line_style, th->line.decor);
-	line_style.line.color = th->line.decor->line.color;
-
-	line_sep = lv_line_create(h1, line_sep);
-	lv_obj_align(line_sep, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 16);
-	lv_line_set_style(line_sep, &line_style);
-
-	// Create HW info button.
-	lv_obj_t *btn3 = lv_btn_create(h1, btn);
-	label_btn = lv_label_create(btn3, NULL);
-	lv_btn_set_fit(btn3, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_CIRCUIT"  HW & Fuses");
-	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 2);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, _create_window_hw_info_status);
-
-	// Create KFuses button.
-	lv_obj_t *btn4 = lv_btn_create(h1, btn);
-	label_btn = lv_label_create(btn4, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_SHUFFLE"  KFuses");
-	lv_obj_align(btn4, btn3, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 46 / 100, 0);
-	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _kfuse_dump_window_action);
-
-	lv_obj_t *label_txt4 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_static_text(label_txt4,
-		"View and dump the cached #C7EA46 Fuses# and #C7EA46 KFuses#.\n"
-		"Fuses contain info about the SoC/SKU and KFuses HDCP keys.\n"
-		"You can also see info about #C7EA46 DRAM#, #C7EA46 Screen# and #C7EA46 Touch panel#.");
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Storage & Battery Info container.
-	lv_obj_t *h2 = lv_cont_create(parent, NULL);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, true);
-	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h2, false);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "Storage & Battery Info");
-	lv_obj_set_style(label_txt3, th->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, 0);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 2), LV_DPI / 8);
-	lv_line_set_style(line_sep, th->line.decor);
-
-	// Create eMMC button.
-	lv_obj_t *btn5 = lv_btn_create(h2, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn5, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn5, LV_BTN_STYLE_PR, &btn_transp_pr);
-	}
-	label_btn = lv_label_create(btn5, NULL);
-	lv_btn_set_fit(btn5, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_CHIP"  eMMC  ");
-	lv_obj_align(btn5, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 2, LV_DPI / 4);
-	lv_btn_set_action(btn5, LV_BTN_ACTION_CLICK, _create_window_emmc_info_status);
-
-	// Create microSD button.
-	lv_obj_t *btn6 = lv_btn_create(h2, btn);
-	label_btn = lv_label_create(btn6, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_SD"  microSD ");
-	lv_obj_align(btn6, btn5, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 3 / 4, 0);
-	lv_btn_set_action(btn6, LV_BTN_ACTION_CLICK, _create_window_sdcard_info_status);
-
-	lv_obj_t *label_txt5 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt5, true);
-	lv_label_set_static_text(label_txt5,
-		"View info about the eMMC or microSD and their partition list.\n"
-		"Additionally you can benchmark read speeds.");
-	lv_obj_set_style(label_txt5, &hint_small_style);
-	lv_obj_align(label_txt5, btn5, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt5, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 2);
-	lv_line_set_style(line_sep, &line_style);
-
-	// Create Battery button.
-	lv_obj_t *btn7 = lv_btn_create(h2, NULL);
-	if (hekate_bg)
-	{
-		lv_btn_set_style(btn7, LV_BTN_STYLE_REL, &btn_transp_rel);
-		lv_btn_set_style(btn7, LV_BTN_STYLE_PR, &btn_transp_pr);
-	}
-	label_btn = lv_label_create(btn7, NULL);
-	lv_btn_set_fit(btn7, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_BATTERY_FULL"  Battery");
-	lv_obj_align(btn7, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 2);
-	lv_btn_set_action(btn7, LV_BTN_ACTION_CLICK, _create_window_battery_status);
-
-	lv_obj_t *label_txt6 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt6, true);
-	lv_label_set_static_text(label_txt6,
-		"View battery and battery charger related info.\n"
-		"Additionally you can dump battery charger's registers.\n");
-	lv_obj_set_style(label_txt6, &hint_small_style);
-	lv_obj_align(label_txt6, btn7, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
+    nyx_action_grid grid;
+    nyx_action_grid_init(&grid, th, parent);
+    nyx_action_grid_add(&grid, SYMBOL_CHIP"  Bootrom",
+        "Inspect Ipatches and dump patched or unpatched BootROM.",
+        _create_window_bootrom_info_status, NULL, 0);
+    bool lockpick_found = _lockpick_exists_check();
+    lv_obj_t *lockpick = nyx_action_grid_add(&grid, SYMBOL_KEY"  Lockpick",
+        lockpick_found ? "Launch Lockpick_RCM from the payloads folder." :
+            "bootloader/payloads/Lockpick_RCM.bin is missing or outdated.",
+        _create_mbox_lockpick, NULL, 0);
+    if (!lockpick_found) {
+        lv_btn_set_state(lockpick, LV_BTN_STATE_INA);
+        lv_obj_set_click(lockpick, false);
+    }
+    nyx_action_grid_add(&grid, SYMBOL_CIRCUIT"  HW & Fuses",
+        "View hardware identity, cached fuses, DRAM, display and touch-panel information.",
+        _create_window_hw_info_status, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_SHUFFLE"  KFuses",
+        "Dump cached KFuses containing HDCP key data.",
+        _kfuse_dump_window_action, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_CHIP"  eMMC",
+        "View eMMC identification, partitions and read-speed benchmarks.",
+        _create_window_emmc_info_status, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_SD"  microSD",
+        "View microSD identification, partitions and read-speed benchmarks.",
+        _create_window_sdcard_info_status, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_BATTERY_FULL"  Battery",
+        "View battery, charger and USB-PD information, or dump charger registers.",
+        _create_window_battery_status, NULL, 0);
+    nyx_action_grid_finish(&grid);
 }
