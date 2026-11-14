@@ -1,6 +1,6 @@
 {
   "product": "Hekate Nova Pro",
-  "version": "28",
+  "version": "29",
   "base": "Hekate 6.5.5 / Nyx 1.9.5",
   "build_exit_code": 0,
   "source_sha256": {
@@ -37,6 +37,7 @@
     "LIRE-MOI-V26.md": "4ec6637988cf647e0037f7e81f411150163e8ac10ec8aff21b6d378b680ae863",
     "LIRE-MOI-V27.md": "7be3e12d0d7e028578307cfbca41c0dd31f7728e3728c2f0fd8ab81498dbc8bb",
     "LIRE-MOI-V28.md": "007f0c003411e58e1b43dd69aae8d9688222761294386f3fa96c28913292cb64",
+    "LIRE-MOI-V29.md": "18d850f6016fab3dd3a925661af99d70bc27729ffce5018f0f88d174fd5da38e",
     "LIRE-MOI-V7.txt": "1ca52e816f731174aebe968d9381d5a59db10463bc53f1927cc43ce9147a6c23",
     "LIRE-MOI-V8.txt": "cc53b24972c2d86777e63927096b18f6d5c6b8bee8ff73350d155bd28901ea58",
     "LIRE-MOI-V9.txt": "663887866bda19f0fcae1556e403c87ed43c4a1f33304c8c1658f57055edf39e",
@@ -102,8 +103,8 @@
     "nyx/nyx_gui/localization.c": "35f3d44cfa3f0f9845d90baa0548487634c7048f68a302331252f16d07242b0e",
     "nyx/nyx_gui/localization.h": "2e36f86a3b2b8539fda5faefde99b76ac7d64e1414d0c3a6ee98bd96640017e7",
     "nyx/nyx_gui/localization_bt_v21.json": "bfa0249ac56b95668b45c72b18b03e88c81804058ff1aac84ad670ee96d63e0a",
-    "nyx/nyx_gui/localization_catalog.inc": "274b949a27e383fda042e4954904b956c03ee1ab5b56ef935f836b4211f80464",
-    "nyx/nyx_gui/localization_catalog.json": "fc3c7fcf62bc51fe03ed0dca809c8d3edfcdd4f0d5ce238f759623f77b81943b",
+    "nyx/nyx_gui/localization_catalog.inc": "89331e02ec8067c42db0f6017b8fe2ee6db5638e8c90c1123c3b8d6c15c2f47c",
+    "nyx/nyx_gui/localization_catalog.json": "c2d17391f5c2d860c35b057db12bf1967bb8f5d835ed8b1fa6c32e204a7cae21",
     "nyx/nyx_gui/localization_dock_v20.json": "1b8c54b1d7496ecdcec251f0e82dfcf4eb02fc044be58f66f08b115df2f2dd81",
     "nyx/nyx_gui/localization_extra.json": "c4c54f467df96331da236095a1a8a818091d0cb2324ea8ad784b68668d0c38b5",
     "nyx/nyx_gui/localization_final_extra.json": "e8faa9d13cad3fd1c67a8b19dfe429da49f2369cc45b45b8b348c414b982aea1",
@@ -116,6 +117,7 @@
     "nyx/nyx_gui/localization_nova26.json": "e73fdd6254859c83aba353a8db09d80ae9537df67247e5891a74873e01017b61",
     "nyx/nyx_gui/localization_nova27.json": "8bd6231e107d6e859f01f2dceee0b52d9295c3c1e897d05029b72fb82feb0cee",
     "nyx/nyx_gui/localization_nova28.json": "21178013ada76039f9b4830cada131f366b59890c0e6e16a9c8fe094ba30b9d7",
+    "nyx/nyx_gui/localization_nova29.json": "944e519a45ada7c05c76d8f1eef5529f5cf0eeae82dbfa5b0d6e46d529e2a41a",
     "nyx/nyx_gui/localization_nova_pro.json": "4cc0519c723d9d5462e6930773f0cdc8e0a31cab9812d92d57c75de068bb46e3",
     "nyx/nyx_gui/localization_nova_v12.json": "5db4df3ff48e801071ce323460f2989fbc17cada1f6ec16b2babee26d7560be3",
     "nyx/nyx_gui/localization_nova_v13.json": "3e5465969325e9366e3f88f80884a8454de8e5d67ecf6a54794b9545fd8946f1",
@@ -128,7 +130,7 @@
     "nyx/nyx_gui/localization_probe_review.json": "5cda6e50aec0a35456ba9164b2617aaa80297e07e09187890ee79e242839e78e",
     "nyx/nyx_gui/localization_ram_extra.json": "0e7bd0c36cd376d7434e637d479a8d97f65fff6b8bd2e33ede1fdda70c0db7d7",
     "nyx/nyx_gui/localization_tv_v19.json": "9fa8e2826699b26aab7729d79b5c79449cf1334fc47b378ca8f2a5b3655c369b",
-    "nyx/nyx_gui/nova_version.h": "b5c11e5dc405034af595854dee922aee479f1502716bd0fc3f36e8f5e734dcc1",
+    "nyx/nyx_gui/nova_version.h": "fa5cfac9955823a0d43e335b0e337f73b5dc3dcbc76168249a0bc9c3df80ff04",
     "nyx/nyx_gui/nyx.c": "2cd7959328bfcc7d21966e18d89760e755ba01c39391dd5633f1e25149586b6e",
     "nyx/nyx_gui/start.S": "7f7102bd8399cefd219d780cf2aa2f40d9c42f6969dbb53e948bb3cab9c87956",
     "nyx/resources/icon_lakka.bmp": "5b00a2f6b58569ddaa5c9475a94794a59dbdefd979ba0cbef2fbb43dc3ed1f39",
@@ -136,10 +138,10 @@
     "nyx/resources/icon_payload.bmp": "69ab9e410962878ee419777d29415b967e7a67ca3e984e384d0ef212baee9c0d",
     "nyx/resources/icon_switch.bmp": "0c0f95889f874e6de0e04d55adfcbca127b251e31d358f27244869b5e80fa073",
     "nyx/nyx_gui/bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-    "nyx/nyx_gui/bluetooth/nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de",
-    "nyx/nyx_gui/bluetooth/nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
+    "nyx/nyx_gui/bluetooth/nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331",
+    "nyx/nyx_gui/bluetooth/nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
     "nyx/nyx_gui/bluetooth/nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-    "nyx/nyx_gui/bluetooth/nova_bt_stack.c": "144553f826c9971bcaf5ba8ee2d03b4a080c06a4f3003b53723bfadde4c83939",
+    "nyx/nyx_gui/bluetooth/nova_bt_stack.c": "2305418cd5dcff5a24b66d9237f0d8afbfff98e25e180d4a55d845a3fc6c872e",
     "nyx/nyx_gui/bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274",
     "nyx/nyx_gui/diagnostics/component_summary.c": "7d7f5dceb8cf254053fb2495154bef47f0ec9da3bb5b271a5fd4e32eadec7463",
     "nyx/nyx_gui/diagnostics/component_summary.h": "d9e3d71ae3ca737cccce5105827ee495ef99e0223d57283f0d7fcf5ade0052ef",
@@ -164,7 +166,7 @@
     "nyx/nyx_gui/frontend/gui.h": "0567a3d285f75cd75201282494b50aff62d55fc43d0142829128d7f6003cba6e",
     "nyx/nyx_gui/frontend/gui_appearance.c": "733cbaa578942ca971e3df6169c993c252c9f11f3d06c1d89c457bd2dd5b8877",
     "nyx/nyx_gui/frontend/gui_appearance.h": "e2567f9938d27d765f50c54c14fe161e2fe2d5f1c61e12dc2f49708527251436",
-    "nyx/nyx_gui/frontend/gui_bluetooth.c": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783",
+    "nyx/nyx_gui/frontend/gui_bluetooth.c": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a",
     "nyx/nyx_gui/frontend/gui_bluetooth.h": "70bcb07a225fa8c9c3a2e9cd81da374ec5387289c1022b97977cbc0d0ca97e32",
     "nyx/nyx_gui/frontend/gui_choices.c": "23bda28689797cf383ed5703a6b2d2243efa4c92f08574501d63349a7bec6050",
     "nyx/nyx_gui/frontend/gui_choices.h": "74a2c33be1600b67f4b94d2c947357c90a2bc00c29838ff98591ee92bde2de06",
@@ -183,7 +185,7 @@
     "nyx/nyx_gui/frontend/gui_interactive.h": "0af528ba551ddebe6cf57b5497867a3c6f1eb9994105358538d6ad6fc4afaeba",
     "nyx/nyx_gui/frontend/gui_layout.c": "3dba60d8eb328fadc6c46c268ba47bf713d3700b1c8df3389d6da0fafb3e80bd",
     "nyx/nyx_gui/frontend/gui_layout.h": "a61b93eb1f306d30ca43cef2e6015a5eb5a9b0efb2e0106e37eb48a789264957",
-    "nyx/nyx_gui/frontend/gui_nova.c": "b4e5ba20c3624458389c6aafc14418422462e8412b826c88867244716304d88d",
+    "nyx/nyx_gui/frontend/gui_nova.c": "8ad1e9b56ae0b05ab0e10ec53376258bfe3f634bd6031e82ff463e10231365ef",
     "nyx/nyx_gui/frontend/gui_nova.h": "e23761991aba0c32105b8090fd52e768637515779f84f674944bd7ff43d80b74",
     "nyx/nyx_gui/frontend/gui_nova_reflection.c": "fc712c79f2216e29017ee997ee2a8686ca90583080658cdfd581164ae297a901",
     "nyx/nyx_gui/frontend/gui_nova_report.c": "2166e483b9b6c15f703306b7d0bd11380772d7c5b80f6bdfe0a4cd290c792871",
@@ -582,8 +584,8 @@
     "bdk/ianos/ianos.h": "a85da9c06dbe3c21061c96c7d4dc3184891a7798cda373e4d0f026d4ca1752d5",
     "bdk/input/als.c": "a04893ba3c6349fdd1e95bb66481b57189bf1ee2ab019e386f8b39d905108e2d",
     "bdk/input/als.h": "35a986104cdc3b8b3b78ebbb150232e56e1902270553a5d16c1bfa160fd7385a",
-    "bdk/input/joycon.c": "945afaab47dc3d700bb2b9c4a40e886e75cdd51581877a76eeb6a33947420e91",
-    "bdk/input/joycon.h": "aae5cc7caa91206c50438db94357e6cd5a9b5926ae2f8901b1f717259f3aff49",
+    "bdk/input/joycon.c": "451ee7ccafcb1efe0a8e4583bb49bd4fb6bd364b0ab4c5f37600ebd1e3a802aa",
+    "bdk/input/joycon.h": "6f9d9ccda97aee37b3da7222cc7e96b11093146740ec54c055a4021984b4b18a",
     "bdk/input/touch.c": "d077ea3d7f2afbd99b248744024d9a80d482f490394ae6b0b65b3a0879cef397",
     "bdk/input/touch.h": "80690d9f249cf80b235a5423446a9b5b27eb4a54f69fdc8d87b5b1b20d9a2385",
     "bdk/libs/lv_conf.h": "3ca2fabb66d973137eea4d66682fa768b6fc15c9b5d278f0526512d9db8f226c",
@@ -881,12 +883,12 @@
     "bdk/display/tv/usbpd.h": "2496da5f0fe944bfd115138163757c75e96eb66c4f476cb14d582d891184cd9d"
   },
   "changed_existing_sources": [
+    "bdk/input/joycon.c",
+    "bdk/input/joycon.h",
     "nyx/nyx_gui/bluetooth/nova_bt.h",
     "nyx/nyx_gui/bluetooth/nova_bt_protocol.c",
     "nyx/nyx_gui/bluetooth/nova_bt_stack.c",
-    "nyx/nyx_gui/frontend/gui.c",
     "nyx/nyx_gui/frontend/gui_bluetooth.c",
-    "nyx/nyx_gui/frontend/gui_bluetooth.h",
     "nyx/nyx_gui/frontend/gui_nova.c",
     "nyx/nyx_gui/localization_catalog.inc",
     "nyx/nyx_gui/localization_catalog.json",
@@ -914,12 +916,12 @@
       "sha256": "ed851685e6248e0e1219a6b60ac04808234cf6e3a0a75c7a8a4d1e94946c6484"
     },
     "nyx.bin": {
-      "size": 2231673,
-      "sha256": "c34f4c09b98e36d4fd14ce3ba0005eb9522b6045d53f0e7621197d1006945d82"
+      "size": 2238521,
+      "sha256": "15cb340cf14eb7c39ad9c9c7420e34af1a1621079bc6caa1850e5b22e7592f7c"
     }
   },
   "tests": {
-    "nova28-pairing-check.json": {
+    "nova29-pairing-check.json": {
       "passed": true,
       "old_double_reversal_rejected": true,
       "synthetic_keys_only": true,
@@ -928,12 +930,43 @@
         "PASS: real SPI parser -> real GUI import matches independent HCI key bytes; one/two/no pairing and rail guards"
       ],
       "source_sha256": {
-        "bdk/input/joycon.c": "945afaab47dc3d700bb2b9c4a40e886e75cdd51581877a76eeb6a33947420e91",
-        "bdk/input/joycon.h": "aae5cc7caa91206c50438db94357e6cd5a9b5926ae2f8901b1f717259f3aff49",
-        "nyx/nyx_gui/frontend/gui_bluetooth.c": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783"
+        "bdk/input/joycon.c": "451ee7ccafcb1efe0a8e4583bb49bd4fb6bd364b0ab4c5f37600ebd1e3a802aa",
+        "bdk/input/joycon.h": "6f9d9ccda97aee37b3da7222cc7e96b11093146740ec54c055a4021984b4b18a",
+        "nyx/nyx_gui/frontend/gui_bluetooth.c": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a"
       }
     },
-    "nova28-bt-check.json": {
+    "nova29-reader-check.json": {
+      "passed": true,
+      "old_v28_standard_profile_rejected": true,
+      "physical_rails": false,
+      "logs": [
+        "PASS: actual BDK scanner/SPI/GUI: Nintendo, standard, mixed, repeat import, inactive slots, corrupt/truncated/missing records, disconnected rail, mismatched host and legacy API\n"
+      ],
+      "source_sha256": {
+        "bdk/input/joycon.c": "451ee7ccafcb1efe0a8e4583bb49bd4fb6bd364b0ab4c5f37600ebd1e3a802aa",
+        "bdk/input/joycon.h": "6f9d9ccda97aee37b3da7222cc7e96b11093146740ec54c055a4021984b4b18a",
+        "nyx/nyx_gui/frontend/gui_bluetooth.c": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a"
+      }
+    },
+    "nova29-pairing-file-check.json": {
+      "passed": true,
+      "corruption_cases": 576,
+      "independent_zlib_crc": true,
+      "synthetic_keys_only": true,
+      "source_sha256": {
+        "nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
+        "nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331"
+      },
+      "logs": "PASS: 72-byte private pairing format, independent zlib CRC fixture, exact key order, 576 bit corruptions, short/long files, bad formats/keys/hosts and one-controller records\n"
+    },
+    "nova29-pairing-sd-check.json": {
+      "passed": true,
+      "physical_card_io": false,
+      "rollback_and_backup": true,
+      "logs": "PASS: real SD pairing save/load, backup fallback, rename rollback, six write faults, five read faults, exact sizes, mount restoration, RAM preservation and active-radio guard\n",
+      "source_sha256": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a"
+    },
+    "nova29-bt-check.json": {
       "passed": true,
       "timed_uart_restart": true,
       "old_v26_burst_failure": true,
@@ -944,14 +977,14 @@
       "output": "PASS real BTstack initialization (57 HCI commands), framing, keys, input, restart and deadlines\n",
       "source_sha256": {
         "btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-        "nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de",
-        "nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
+        "nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331",
+        "nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
         "nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-        "nova_bt_stack.c": "144553f826c9971bcaf5ba8ee2d03b4a080c06a4f3003b53723bfadde4c83939",
+        "nova_bt_stack.c": "2305418cd5dcff5a24b66d9237f0d8afbfff98e25e180d4a55d845a3fc6c872e",
         "nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
       }
     },
-    "nova28-negotiation-check.json": {
+    "nova29-negotiation-check.json": {
       "passed": true,
       "logs": [
         {
@@ -1011,6 +1044,10 @@
           "output": "PASS: HWTest ROM profile forces BR on both links, enables sniff/role policy, sets QoS and returns sniff links to active; full reports survive the EDR-drop model\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
         },
         {
+          "mode": "retry-wake",
+          "output": "PASS: both peers wake after four failed pages each, beyond the old three-attempt limit; right input recovers after supervision timeout08\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+        },
+        {
           "mode": "outgoing",
           "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
         },
@@ -1036,30 +1073,37 @@
         "physical_radio": false
       },
       "hwtest_rom_regression": true,
+      "late_wake_v28_regression": true,
       "physical_radio": false,
       "source_sha256": {
         "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-        "bluetooth/nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de",
-        "bluetooth/nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
+        "bluetooth/nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331",
+        "bluetooth/nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
         "bluetooth/nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-        "bluetooth/nova_bt_stack.c": "144553f826c9971bcaf5ba8ee2d03b4a080c06a4f3003b53723bfadde4c83939",
+        "bluetooth/nova_bt_stack.c": "2305418cd5dcff5a24b66d9237f0d8afbfff98e25e180d4a55d845a3fc6c872e",
         "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
       },
       "hid_host_sha256": "46667bf5db4ef5139e3ff230759a7634d2a0c53f3d94377d31f8b2b66cc3887e"
     },
-    "nova28-report-check.json": {
+    "nova29-report-check.json": {
       "passed": true,
       "cases": 11,
       "output": "PASS: 11 real report writer paths: mount success=0, restore mount state, existing directory, short writes, errors, bounded trace\n",
-      "source_sha256": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783",
+      "source_sha256": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a",
       "card_io": "substituted"
     },
-    "nova28-input-check.json": {
+    "nova29-input-check.json": {
       "passed": true,
       "output": "PASS actual input merge: two wireless Joy-Con, wired priority, unchanged source, stale release and neutral sticks\n",
-      "source_sha256": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783"
+      "source_sha256": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a"
     },
-    "nova28-header-check.json": {
+    "nova29-radio-check.json": {
+      "passed": true,
+      "output": "PASS real radio lifecycle: exclusive ownership, masked GPIO restoration, FIFO bursts, CTS backpressure and UART faults\n",
+      "source_sha256": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
+      "hardware_io": "registers substituted"
+    },
+    "nova29-header-check.json": {
       "passed": true,
       "nyx_metadata_offset": "0x98",
       "nyx_version": "1.9.5",
@@ -1073,8 +1117,22 @@
         "nyx/nyx_gui/link.ld": "d4335c4c193ead0dc40e67e0a3a232b186290147d623493c9e9e5f012a2ba9da"
       }
     },
-    "native-ui-nova28.json": {
-      "native_scenes": 630,
+    "nova29-navigation-check.json": {
+      "passed_scenes": 28,
+      "regressions_fail_on_v21": [
+        "Assertion failed: jc_drv_ctx.calibration_step==JC_CAL_MAX_STEPS, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova29-tests\\old_navigation.c, line 8424",
+        "Assertion failed: !jc_drv_ctx.cursor_hidden, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova29-tests\\old_navigation.c, line 8428"
+      ],
+      "real_code": "decoder, merge, pointer callback and LVGL widgets; radio substituted",
+      "source_sha256": {
+        "frontend/gui.c": "e001681b7321b8f4729379e067f8170b3c61eb8540eac6c6e4c3351c5f6ac77e",
+        "frontend/gui_bluetooth.c": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a",
+        "bluetooth/nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
+        "bluetooth/nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331"
+      }
+    },
+    "native-ui-nova29.json": {
+      "native_scenes": 840,
       "fonts": [
         "Lecture.nyxf",
         "Lecture-fixe.nyxf",
@@ -1085,49 +1143,26 @@
         20,
         36
       ],
-      "changed_ui_views": 15,
+      "changed_ui_views": 20,
       "failures": [],
-      "elapsed_seconds": 7.9,
+      "elapsed_seconds": 9.8,
       "hardware_io": "substituted; no console or SD operations performed",
       "source_sha256": {
-        "nyx/nyx_gui/frontend/gui_nova.c": "b4e5ba20c3624458389c6aafc14418422462e8412b826c88867244716304d88d",
+        "nyx/nyx_gui/frontend/gui_nova.c": "8ad1e9b56ae0b05ab0e10ec53376258bfe3f634bd6031e82ff463e10231365ef",
         "nyx/nyx_gui/frontend/gui_tools.c": "ca2aeab5fa5337ade13d49cae7d66b43df542a01bbf9c37009ae6875f18a187b",
         "nyx/nyx_gui/frontend/gui_options.c": "3d124d74c12d2f495e07be8ae83c3efea4a73396458ee2f8ba9cd602132bf4c6",
-        "nyx/nyx_gui/frontend/gui_bluetooth.c": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783",
+        "nyx/nyx_gui/frontend/gui_bluetooth.c": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a",
         "nyx/nyx_gui/frontend/nova_assets/nova_icons.inc": "f088a75c9483d9a31f05232a847f2751c515e7a3da220b32031a399b44bf3443",
-        "nyx/nyx_gui/localization_catalog.inc": "274b949a27e383fda042e4954904b956c03ee1ab5b56ef935f836b4211f80464"
+        "nyx/nyx_gui/localization_catalog.inc": "89331e02ec8067c42db0f6017b8fe2ee6db5638e8c90c1123c3b8d6c15c2f47c"
       }
-    },
-    "nova28-navigation-check.json": {
-      "passed_scenes": 28,
-      "regressions_fail_on_v21": [
-        "Assertion failed: jc_drv_ctx.calibration_step==JC_CAL_MAX_STEPS, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova28-tests\\old_navigation.c, line 8388",
-        "Assertion failed: !jc_drv_ctx.cursor_hidden, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova28-tests\\old_navigation.c, line 8392"
-      ],
-      "real_code": "decoder, merge, pointer callback and LVGL widgets; radio substituted",
-      "source_sha256": {
-        "frontend/gui.c": "e001681b7321b8f4729379e067f8170b3c61eb8540eac6c6e4c3351c5f6ac77e",
-        "frontend/gui_bluetooth.c": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783",
-        "bluetooth/nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
-        "bluetooth/nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de"
-      }
-    },
-    "nova28-radio-check.json": {
-      "passed": true,
-      "output": "PASS real radio lifecycle: exclusive ownership, masked GPIO restoration, FIFO bursts, CTS backpressure and UART faults\n",
-      "source_sha256": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-      "hardware_io": "registers substituted"
     }
   },
   "native_probes": 42,
   "physical_validation": false,
-  "reference_snapshot_sha256": {
-    "bluez-adapter.c": "249fd959a8abc22b9325367fc2fc940534bd0ab1db944d8ac1a0ba7bcebcf1f7",
-    "linux-hci_core.c": "4539fa46c09ffbf5a5278766586ce8a968aa16c1ba344efdca7a1ba65f436cdd",
-    "linux-hci_event.c": "2ff8817dd26322d597a545be18bc784f35567d80cb30836bb6bb441fa163ba8d",
-    "linux-mgmt.c": "0bf971390400ee9544ee4b7b2ed55862484a1cebda7dbaf97aa8c3f8a92bd73a",
-    "switchroot-init": "15ce2539ca755208062f778ee660139347832918a053965012eeb325dc9c0aa7"
-  },
+  "change": "Validated standard and Nintendo record imports, SPI length guards, explicit CRC32-protected private SD save/load with backup, shorter serialized pages and persistent reconnect attempts",
+  "limits": "V29 physical results pending. V28 two-peer input confirmed on a second OLED; the first OLED right peer dropped with supervision timeout08. Return to 0/2 observed on both OLEDs after a successful test; Nintendo synchronization restores 2/2. Standard-profile classification is a tested software cause, not yet confirmed from physical recognized flags. No claim that underlying RF timeout is fixed",
+  "unchanged": "Input mapping, foreground/display RX budgets, radio profile, TV and vendor BTstack unchanged versus v28. Legacy Nintendo export filter preserved. Loader and libsys binaries identical",
+  "private_files": "Only explicit Save pairing writes joycon-pairing.bin/.bak. These files contain plain keys and are excluded from logs and distribution. Test keys are synthetic",
   "hwtest_reference": {
     "commit": "74b66aab2352ae35912744fcd5441b07a0146307",
     "repository": "https://github.com/Creased/HWTest-RCM",
@@ -1146,9 +1181,5 @@
       "probe_bt.c": true,
       "probe_wifi.c": true
     }
-  },
-  "change": "Short Bluetooth RX while drawing and on the GUI timer; foreground burst drainage retained. Import failure categories and buttons-seen/report-rate metadata",
-  "limits": "PC models validate receive budgets and metadata, not console FPS. Physical v27 L input was reported with severe latency and no R A action; current import remains 0/2. V28 does not yet identify or repair the physical import failure",
-  "unchanged": "BDK, TV, radio profile, validation policy and vendor BTstack unchanged versus v27; input mapping unchanged, loader and libsys identical",
-  "license_note": "Existing notices retained; HWTest GUI host referenced with commit/hashes, protocol settings adapted through BTstack APIs"
+  }
 }

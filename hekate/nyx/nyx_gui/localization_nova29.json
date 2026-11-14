@@ -1,0 +1,83 @@
+{
+  "v29 · Pairing and reconnection\nValidated standard host profiles accepted.\nSD pairing backup and persistent reconnect attempts.": [
+    "v29 · Pairing and reconnection\nValidated standard host profiles accepted.\nSD pairing backup and persistent reconnect attempts.",
+    "v29 · Appairages et reconnexion\nProfils standard validés acceptés.\nSauvegarde SD et tentatives de reconnexion prolongées.",
+    "v29 · Enlace y reconexión\nSe aceptan perfiles estándar válidos.\nCopia en SD y reintentos de conexión prolongados.",
+    "v29 · Associazione e riconnessione\nProfili standard validati accettati.\nBackup su SD e tentativi di riconnessione prolungati.",
+    "v29 · Сопряжение и переподключение\nПриём проверенных стандартных профилей.\nКопия на SD и продолжение попыток подключения.",
+    "v29 · Kopplung und Wiederverbindung\nGeprüfte Standardprofile werden akzeptiert.\nSD-Sicherung und weitere Verbindungsversuche.",
+    "v29 · Emparelhamento e reconexão\nPerfis padrão validados aceites.\nCópia no SD e novas tentativas de ligação."
+  ],
+  "Pairing checksum or host profile not recognized.": [
+    "Pairing checksum or host profile not recognized.",
+    "Somme de contrôle ou profil d’appairage non reconnu.",
+    "Suma de comprobación o perfil de enlace no reconocido.",
+    "Checksum o profilo di associazione non riconosciuto.",
+    "Контрольная сумма или профиль сопряжения не распознаны.",
+    "Prüfsumme oder Kopplungsprofil nicht erkannt.",
+    "Soma de verificação ou perfil de emparelhamento não reconhecido."
+  ],
+  "Save pairing": [
+    "Save pairing",
+    "Sauvegarder les appairages",
+    "Guardar enlaces",
+    "Salva associazioni",
+    "Сохранить сопряжения",
+    "Kopplungen speichern",
+    "Guardar emparelhamentos"
+  ],
+  "Load pairing": [
+    "Load pairing",
+    "Charger les appairages",
+    "Cargar enlaces",
+    "Carica associazioni",
+    "Загрузить сопряжения",
+    "Kopplungen laden",
+    "Carregar emparelhamentos"
+  ],
+  "Stop Bluetooth before saving or loading pairing.": [
+    "Stop Bluetooth before saving or loading pairing.",
+    "Arrêtez le Bluetooth avant de sauvegarder ou charger les appairages.",
+    "Detén Bluetooth antes de guardar o cargar enlaces.",
+    "Arresta Bluetooth prima di salvare o caricare le associazioni.",
+    "Остановите Bluetooth перед сохранением или загрузкой сопряжений.",
+    "Bluetooth vor dem Speichern oder Laden von Kopplungen stoppen.",
+    "Pare o Bluetooth antes de guardar ou carregar emparelhamentos."
+  ],
+  "Pairing saved to SD. Keep this file private.": [
+    "Pairing saved to SD. Keep this file private.",
+    "Appairages sauvegardés sur SD. Gardez ce fichier privé.",
+    "Enlaces guardados en SD. Mantén este archivo privado.",
+    "Associazioni salvate su SD. Mantieni privato questo file.",
+    "Сопряжения сохранены на SD. Не передавайте этот файл.",
+    "Kopplungen auf SD gespeichert. Diese Datei privat halten.",
+    "Emparelhamentos guardados no SD. Mantenha este ficheiro privado."
+  ],
+  "Pairing could not be saved. Read valid pairing first.": [
+    "Pairing could not be saved. Read valid pairing first.",
+    "Sauvegarde impossible. Lisez d’abord des appairages valides.",
+    "No se pudo guardar. Lee primero enlaces válidos.",
+    "Salvataggio impossibile. Leggi prima associazioni valide.",
+    "Сохранение не удалось. Сначала считайте действительные сопряжения.",
+    "Speichern fehlgeschlagen. Zuerst gültige Kopplungen lesen.",
+    "Não foi possível guardar. Leia primeiro emparelhamentos válidos."
+  ],
+  "Pairing loaded from SD.": [
+    "Pairing loaded from SD.",
+    "Appairages chargés depuis la SD.",
+    "Enlaces cargados desde la SD.",
+    "Associazioni caricate dalla SD.",
+    "Сопряжения загружены с SD.",
+    "Kopplungen von SD geladen.",
+    "Emparelhamentos carregados do SD."
+  ],
+  "No valid pairing file found. Current session keys kept.": [
+    "No valid pairing file found. Current session keys kept.",
+    "Aucun fichier d’appairage valide. Les clés de la session sont conservées.",
+    "No hay archivo de enlace válido. Se conservan las claves de la sesión.",
+    "Nessun file di associazione valido. Chiavi della sessione conservate.",
+    "Действительный файл сопряжения не найден. Ключи сеанса сохранены.",
+    "Keine gültige Kopplungsdatei gefunden. Sitzungsschlüssel beibehalten.",
+    "Nenhum ficheiro de emparelhamento válido. Chaves da sessão mantidas."
+  ]
+}

@@ -54,6 +54,8 @@ static void trace_frame(int outgoing,uint8_t type,const uint8_t *p,unsigned size
     if(type==HCI_COMMAND_DATA_PACKET&&outgoing&&size>=3){
         uint16_t op=little_endian_read_16(p,0);
         nova_bt_trace_add(1,op,p[2],0);
+        if(op==HCI_OPCODE_HCI_WRITE_PAGE_TIMEOUT&&size>=5)
+            nova_bt_trace_add(20,op,little_endian_read_16(p,3),0);
         if(op==HCI_OPCODE_HCI_ACCEPT_CONNECTION_REQUEST&&size>=10){
             bd_addr_t addr;reverse_bd_addr(p+3,addr);int i=side_for(addr);
             if(i>=0)nova_bt_trace_add(14,i,op,p[9]);
@@ -245,11 +247,12 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
             if(hid_subevent_connection_opened_get_status(p)){
                 status.pad[i].last_error=hid_subevent_connection_opened_get_status(p);status.pad[i].hid_open=0;
                 status.pad[i].stage=7;nova_bt_trace_add(10,i,status.pad[i].last_error,status.pad[i].last_psm);
-                link[i].cid=0;link[i].next=nova_bt_now()+5000;clear_pad(i);
+                link[i].cid=0;link[i].next=nova_bt_now()+(link[i].retries>=3?10000:1500);clear_pad(i);
             }else{
                 status.pad[i].hid_open=1;status.pad[i].last_error=0;status.pad[i].mode_ack=0;
                 status.pad[i].stage=5;nova_bt_trace_add(10,i,0,status.pad[i].last_psm);
                 link[i].cid=hid_subevent_connection_opened_get_hid_cid(p);
+                link[i].retries=0;
                 link[i].mode_tries=0;link[i].mode_next=nova_bt_now()+150;
             }break;
         case HID_SUBEVENT_REPORT:
@@ -315,6 +318,9 @@ int nova_bt_start(const nova_bt_peer p[2])
     btstack_memory_init();btstack_run_loop_init(&run_loop);hci_init(&transport,0);initialized=1;
     hci_set_chipset(&chipset);hci_set_link_key_db(&keys);hci_set_bd_addr(peers[peers[0].valid?0:1].host);
     gap_set_security_level(LEVEL_2);gap_ssp_set_auto_accept(0);
+    /* Default Classic page timeout: 5.12s, rather than BTstack's 15.36s.
+     * Never let a sleeping first peer monopolize the outgoing attempts. */
+    gap_set_page_timeout(0x2000);
     /* HWTest-RCM GUI host's ROM compatibility profile: no EDR packets;
      * initially accept the Joy-Con's sniff request and role changes. */
     hci_enable_acl_packet_types(ACL_PACKET_TYPES_BR);
@@ -363,8 +369,9 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
     for(unsigned i=0;i<2;i++)if(link[i].cid&&!status.pad[i].hid_open)pending=1;
     for(unsigned i=0;i<2&&!failure&&status.state==NOVA_BT_READY;i++){
         if(status.pad[i].connected&&(uint32_t)(now-status.pad[i].updated)>500)clear_pad(i);
-        if(!pending&&peers[i].valid&&!link[i].cid&&link[i].retries<3&&(int32_t)(now-link[i].next)>=0){
-            link[i].retries++;link[i].next=now+5000;
+        if(!pending&&peers[i].valid&&!link[i].cid&&(int32_t)(now-link[i].next)>=0){
+            if(link[i].retries<3)link[i].retries++;
+            link[i].next=now+(link[i].retries>=3?10000:5000);
             status.pad[i].stage=1;
             uint8_t result=hid_host_connect(peers[i].mac,HID_PROTOCOL_MODE_REPORT,&link[i].cid);
             if(result){link[i].cid=0;status.pad[i].last_error=result;status.pad[i].stage=7;nova_bt_trace_add(10,i,result,0);}

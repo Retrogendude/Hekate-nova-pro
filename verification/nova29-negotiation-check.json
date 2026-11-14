@@ -58,6 +58,10 @@
       "output": "PASS: HWTest ROM profile forces BR on both links, enables sniff/role policy, sets QoS and returns sniff links to active; full reports survive the EDR-drop model\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
     },
     {
+      "mode": "retry-wake",
+      "output": "PASS: both peers wake after four failed pages each, beyond the old three-attempt limit; right input recovers after supervision timeout08\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
       "mode": "outgoing",
       "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
     },
@@ -83,13 +87,14 @@
     "physical_radio": false
   },
   "hwtest_rom_regression": true,
+  "late_wake_v28_regression": true,
   "physical_radio": false,
   "source_sha256": {
     "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-    "bluetooth/nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de",
-    "bluetooth/nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
+    "bluetooth/nova_bt.h": "ec591e63ed8ddc6ccae4fc98fb6b12db0820a3c3ee39f3542dfd37499b616331",
+    "bluetooth/nova_bt_protocol.c": "3a131e6d2d43a9d132954c6fa8fce4513c12c01c537e97670a5524753b2545b3",
     "bluetooth/nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-    "bluetooth/nova_bt_stack.c": "144553f826c9971bcaf5ba8ee2d03b4a080c06a4f3003b53723bfadde4c83939",
+    "bluetooth/nova_bt_stack.c": "2305418cd5dcff5a24b66d9237f0d8afbfff98e25e180d4a55d845a3fc6c872e",
     "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
   },
   "hid_host_sha256": "46667bf5db4ef5139e3ff230759a7634d2a0c53f3d94377d31f8b2b66cc3887e"

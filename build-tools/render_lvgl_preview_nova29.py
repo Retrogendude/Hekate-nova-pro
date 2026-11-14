@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v28'
-directory=work/'lvgl-preview-nova28';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v29'
+directory=work/'lvgl-preview-nova29';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -147,6 +147,7 @@ static lv_res_t import_pairing(lv_obj_t *b){(void)b;return LV_RES_OK;}
 static lv_res_t start(lv_obj_t *b){(void)b;return LV_RES_OK;}
 static lv_res_t stop(lv_obj_t *b){(void)b;return LV_RES_OK;}
 static lv_res_t forget(lv_obj_t *b){(void)b;return LV_RES_OK;}
+static lv_res_t store_pairing(lv_obj_t *b){(void)b;return LV_RES_OK;}
 '''
 bluetooth=(nyx/'frontend/gui_bluetooth.c').read_text(encoding='utf-8')
 body+=function(bluetooth,'refresh')+function(bluetooth,'signal')+function(bluetooth,'gui_bluetooth_open')
@@ -668,9 +669,13 @@ else if(!strcmp(argv[3],"bluetooth")){
  unsigned bt_case=atoi(argv[6]);bt_fixture.state=bt_case<4?bt_case:0;bt_fixture.error=3;bt_fixture.rx_packets=12345678;bt_fixture.tx_packets=9876543;
  for(unsigned j=0;j<2;j++){bt_fixture.pad[j].reports=1234567;bt_fixture.pad[j].report_id=0x30;bt_fixture.pad[j].hid_open=bt_fixture.pad[j].mode_ack=1;bt_fixture.pad[j].buttons=0x800008;bt_fixture.pad[j].x=3072;bt_fixture.pad[j].y=2048;}
  s_printf(ui.note,"%s : 2 / 2",nyx_tr("Pairing records imported"));
- if(bt_case>=4){
-  const char *reasons[]={"Rail connection not ready. Attach both Joy-Con and retry.","Pairing data could not be read from the rails.","Nintendo pairing data not recognized by the reader.","Pairing records did not pass compatibility checks."};
+ if(bt_case>=4&&bt_case<8){
+  const char *reasons[]={"Rail connection not ready. Attach both Joy-Con and retry.","Pairing data could not be read from the rails.","Pairing checksum or host profile not recognized.","Pairing records did not pass compatibility checks."};
   assert(bt_case<8);s_printf(ui.note,"%s : 0 / 2\n%s",nyx_tr("Pairing records imported"),nyx_tr(reasons[bt_case-4]));
+ }
+ if(bt_case>=8){
+  const char *messages[]={"Pairing saved to SD. Keep this file private.","Pairing loaded from SD.","Pairing could not be saved. Read valid pairing first.","No valid pairing file found. Current session keys kept.","Stop Bluetooth before saving or loading pairing."};
+  assert(bt_case<13);s_printf(ui.note,"%s\n%s : 2 / 2",nyx_tr(messages[bt_case-8]),nyx_tr("Pairing records imported"));
  }
  if(bt_fixture.state==2){bt_fixture.pad[0].connected=bt_fixture.pad[1].connected=1;}
  gui_bluetooth_open(NULL);root=lv_win_get_content(ui.win);
@@ -735,8 +740,8 @@ if(!strcmp(argv[3],"usb")){
  preview_click(readonly);assert(usb_msc_emmc_read_only==1);
 }
 if(!strcmp(argv[3],"bluetooth")){
- const char *names[]={"download","bluetooth","square","trash-2"};
- for(unsigned k=0;k<4;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
+ const char *names[]={"download","bluetooth","square","hard-drive","key-round","trash-2"};
+ for(unsigned k=0;k<6;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
 }
 nyx_nova_reflection_pause(true);lv_refr_now();lv_area_t screen_bounds={0,0,1279,719};if(strcmp(argv[3],"touch-grid")&&strcmp(argv[3],"screen-patterns")){verify_glyph_pixels(lv_scr_act(),screen_bounds);verify_glyph_pixels(lv_layer_top(),screen_bounds);}
 nyx_nova_reflection_pause(false);
@@ -848,8 +853,8 @@ if(!strcmp(argv[3],"usb")){
  preview_click(readonly);assert(usb_msc_emmc_read_only==1);
 }
 if(!strcmp(argv[3],"bluetooth")){
- const char *names[]={"download","bluetooth","square","trash-2"};
- for(unsigned k=0;k<4;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
+ const char *names[]={"download","bluetooth","square","hard-drive","key-round","trash-2"};
+ for(unsigned k=0;k<6;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
 }
   if(end==strlen(report->text))break;report_step(report->following);
  }while(pages<128);
@@ -867,8 +872,8 @@ if(!strcmp(argv[3],"usb")){
  preview_click(readonly);assert(usb_msc_emmc_read_only==1);
 }
 if(!strcmp(argv[3],"bluetooth")){
- const char *names[]={"download","bluetooth","square","trash-2"};
- for(unsigned k=0;k<4;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
+ const char *names[]={"download","bluetooth","square","hard-drive","key-round","trash-2"};
+ for(unsigned k=0;k<6;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
 }
   for(lv_obj_t *button=lv_obj_get_child(emummc_img->file_items,NULL);button;button=lv_obj_get_child(emummc_img->file_items,button))if(type_is(button,"lv_btn")){
    u32 index=lv_obj_get_free_num(button);assert(index<count&&index/4==page);lv_btn_get_action(button,LV_BTN_ACTION_CLICK)(button);char path[512];sprintf(path,"emuMMC/%s",emummc_img->dirlist->name[index]);assert(!strcmp(preview_saved_emu_path,path)&&!preview_saved_emu_index&&!preview_saved_emu_sector);++visited;
@@ -887,8 +892,8 @@ if(!strcmp(argv[3],"usb")){
  preview_click(readonly);assert(usb_msc_emmc_read_only==1);
 }
 if(!strcmp(argv[3],"bluetooth")){
- const char *names[]={"download","bluetooth","square","trash-2"};
- for(unsigned k=0;k<4;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
+ const char *names[]={"download","bluetooth","square","hard-drive","key-round","trash-2"};
+ for(unsigned k=0;k<6;k++){bool found=false;for(unsigned i=0;i<ARRAY_SIZE(nova_icon_assets);i++)if(!strcmp(nova_icon_assets[i].name,names[k]))found=true;assert(found);}
 }for(lv_obj_t*c=lv_obj_get_child(ext->tiles,NULL);c;c=lv_obj_get_child(ext->tiles,c))for(lv_obj_t*b=lv_obj_get_child(c,NULL);b;b=lv_obj_get_child(c,b))if(type_is(b,"lv_btn")){u32 id=lv_obj_get_free_num(b);assert((id&~ONE_PROBE)<42);lv_action_t action=lv_btn_get_action(b,LV_BTN_ACTION_CLICK);assert(action==(ext->results?show_report:run_selection));++visits;}}
  assert(visits==total);ext->page=0;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();
 }
@@ -1009,7 +1014,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova28-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova29-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

@@ -4,8 +4,8 @@ The radio is substituted. This verifies software, not a physical RF link.
 from pathlib import Path
 import subprocess, json, hashlib
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v28/nyx/nyx_gui'
-d=w/'nova28-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v29/nyx/nyx_gui'
+d=w/'nova29-tests';d.mkdir(exist_ok=True)
 test=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -128,6 +128,7 @@ int main(void)
                 case 0x1005:n=7;data[0]=0x00;data[1]=4;data[3]=8;break;
                 case 0x1009:n=6;for(unsigned j=0;j<6;j++)data[j]=pair[0].host[5-j];break;
                 case 0x0c14:n=248;break;
+                case 0x0c18:assert(out[4]==0&&out[5]==0x20);break;
                 default:break;
                 }
                 /* Local name is not queried by this port; avoid an accidental
@@ -195,7 +196,7 @@ old_exe=d/'old-display.exe';old_args=[str(old_exe)if x==str(d/'test.exe')else st
 r0=subprocess.run(old_args,capture_output=True,text=True);assert r0.returncode==0,r0.stderr
 r0=subprocess.run([str(old_exe)],capture_output=True,text=True,timeout=10)
 assert r0.returncode==1 and 'fake_us<=270' in r0.stderr,(r0.returncode,r0.stderr)
-print('PASS: actual v27 display polling exceeds the new short RX budget; v28 passes')
+print('PASS: actual v27 display polling exceeds the new short RX budget; v29 passes')
 files=list((p/'bluetooth').glob('*.[ch]'))
-(w/'nova28-bt-check.json').write_text(json.dumps({'passed':True,'timed_uart_restart':True,'old_v26_burst_failure':True,'metadata_multi_command':True,'fast_display_budget':True,'old_v27_display_wait_rejected':True,'physical_radio':False,'output':r.stdout,
+(w/'nova29-bt-check.json').write_text(json.dumps({'passed':True,'timed_uart_restart':True,'old_v26_burst_failure':True,'metadata_multi_command':True,'fast_display_budget':True,'old_v27_display_wait_rejected':True,'physical_radio':False,'output':r.stdout,
     'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2))

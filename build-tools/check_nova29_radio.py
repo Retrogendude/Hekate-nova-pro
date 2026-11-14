@@ -1,8 +1,8 @@
 """Exercise actual UART/GPIO lifecycle with registers substituted in RAM."""
 from pathlib import Path
 import re, subprocess, json, hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v28'
-source=p/'nyx/nyx_gui/bluetooth/nova_bt_radio.c';d=w/'nova28-tests'
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v29'
+source=p/'nyx/nyx_gui/bluetooth/nova_bt_radio.c';d=w/'nova29-tests'
 s=source.read_text();s=re.sub(r'^#include[^\n]*\n','',s,flags=re.M)
 s=re.sub(r'^#define U .*\n','',s,flags=re.M)
 s=s.replace('GPIO(alias)=(mask<<8)|(value&mask);','GPIO(alias)=(mask<<8)|(value&mask);test_alias(alias,mask,value);')
@@ -89,4 +89,4 @@ int main(void){
 cmd=[str(w/'toolchains/w64devkit/bin/gcc.exe'),'-std=gnu11','-O1','-Wall','-Wextra','-Werror','-Wno-pointer-to-int-cast','-I'+str(p/'bdk'),str(d/'radio.c'),'-o',str(d/'radio.exe')]
 r=subprocess.run(cmd,capture_output=True,text=True);assert r.returncode==0,r.stderr
 r=subprocess.run([str(d/'radio.exe')],capture_output=True,text=True,timeout=10);print(r.stdout,r.stderr);assert r.returncode==0
-(w/'nova28-radio-check.json').write_text(json.dumps({'passed':True,'output':r.stdout,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'hardware_io':'registers substituted'},indent=2))
+(w/'nova29-radio-check.json').write_text(json.dumps({'passed':True,'output':r.stdout,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'hardware_io':'registers substituted'},indent=2))

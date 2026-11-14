@@ -106,5 +106,8 @@ void jc_init_hw();
 void jc_deinit();
 jc_gamepad_rpt_t *joycon_poll();
 jc_gamepad_rpt_t *jc_get_bt_pairing_info(bool *is_l_hos, bool *is_r_hos);
+/* Valid active records include both known host-capability profiles.
+ * Nintendo classification alone is not a validity/authentication check. */
+jc_gamepad_rpt_t *jc_get_bt_pairing_info_ex(bool *is_l_hos, bool *is_r_hos, bool *is_l_valid, bool *is_r_valid);
 
 #endif

@@ -2,6 +2,6 @@
   "passed": true,
   "cases": 11,
   "output": "PASS: 11 real report writer paths: mount success=0, restore mount state, existing directory, short writes, errors, bounded trace\n",
-  "source_sha256": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783",
+  "source_sha256": "d04761c8c23a91a3232a25163e5934fe553acdad453ade3ede7fb6a36c25737a",
   "card_io": "substituted"
 }

@@ -6,7 +6,7 @@
 #include "../config.h"
 #include "../nova_version.h"
 static nova_bt_peer paired[2];
-static struct {u8 attempted,rail[2],record[2],hos[2],compatible;} import_info;
+static struct {u8 attempted,rail[2],record[2],hos[2],compatible,recognized[2],source;} import_info;
 static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[512];} ui;
 static void refresh(void)
 {
@@ -24,7 +24,7 @@ static void refresh(void)
         nyx_tr("Attach Joy-Con, read pairing, detach them, then start Bluetooth. Press a button to wake them."),
         nyx_tr("Stop Bluetooth saves a session report to SD. The radio service remains experimental."));
     if(s->state==NOVA_BT_ERROR){char error[64];s_printf(error,"\n%s : %d",nyx_tr("Error code"),s->error);strcat(text,error);}
-    lv_label_set_text(ui.label,text);nyx_nova_fit_text(ui.label,270);
+    lv_label_set_text(ui.label,text);nyx_nova_fit_text(ui.label,250);
 }
 static void tick(void *unused)
 {
@@ -44,17 +44,21 @@ void gui_bluetooth_poll_fast(void){nova_bt_poll_fast();}
 static lv_res_t import_pairing(lv_obj_t *button)
 {
     (void)button;gui_bluetooth_shutdown();memset(paired,0,sizeof(paired));
-    memset(&import_info,0,sizeof(import_info));import_info.attempted=1;
+    memset(&import_info,0,sizeof(import_info));import_info.attempted=1;import_info.source=1;
     if(n_cfg.jc_disable||fuse_read_hw_type()==FUSE_NX_HW_TYPE_HOAG){
         strcpy(ui.note,nyx_tr("Attachable Joy-Con and the wired Joy-Con driver are required for pairing import."));refresh();return LV_RES_OK;
     }
-    bool hos[2]={false,false};jc_gamepad_rpt_t *p=jc_get_bt_pairing_info(&hos[0],&hos[1]);
+    bool hos[2]={false,false},recognized[2]={false,false};
+    jc_gamepad_rpt_t *p=jc_get_bt_pairing_info_ex(&hos[0],&hos[1],&recognized[0],&recognized[1]);
     if(p)for(unsigned i=0;i<2;i++){
         jc_bt_conn_t *b=i?&p->bt_conn_r:&p->bt_conn_l;
         import_info.rail[i]=i?p->conn_r:p->conn_l;import_info.hos[i]=hos[i];
+        import_info.recognized[i]=recognized[i];
         unsigned present=0;for(unsigned j=0;j<16;j++)present|=b->ltk[j];
         import_info.record[i]=present!=0;
-        if(!hos[i]||!(b->type&(i?2:1)))continue;
+        /* The standard 0x08 host profile is a valid stored pairing too.
+         * Keep BDK's active-record checksum and both peer/host checks. */
+        if(!recognized[i]||!import_info.rail[i]||!(b->type&(i?2:1)))continue;
         paired[i].valid=1;memcpy(paired[i].mac,b->mac,6);memcpy(paired[i].host,b->host_mac,6);
         /* BDK already prepares the exported/HCI key order. Switchroot loads
          * this same byte sequence into BlueZ without another reversal.
@@ -68,7 +72,7 @@ static lv_res_t import_pairing(lv_obj_t *button)
     if(!count){
         const char *reason=!import_info.rail[0]||!import_info.rail[1]?"Rail connection not ready. Attach both Joy-Con and retry.":
             !import_info.record[0]||!import_info.record[1]?"Pairing data could not be read from the rails.":
-            !import_info.hos[0]||!import_info.hos[1]?"Nintendo pairing data not recognized by the reader.":
+            !import_info.recognized[0]||!import_info.recognized[1]?"Pairing checksum or host profile not recognized.":
             "Pairing records did not pass compatibility checks.";
         strcat(ui.note,"\n");strncat(ui.note,nyx_tr(reason),sizeof(ui.note)-strlen(ui.note)-1);
     }
@@ -94,9 +98,9 @@ static bool save_report(void)
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 length=strlen(buffer);
-    s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d\n",
+    s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d recognized=%d/%d source=%d (1=rails 2=SD)\n",
         import_info.attempted,import_info.rail[0],import_info.rail[1],import_info.record[0],import_info.record[1],
-        import_info.hos[0],import_info.hos[1],import_info.compatible);length=strlen(buffer);
+        import_info.hos[0],import_info.hos[1],import_info.compatible,import_info.recognized[0],import_info.recognized[1],import_info.source);length=strlen(buffer);
     s_printf(buffer+length,"Controller: HCI=%02X revision=%04X manufacturer=%04X subversion=%04X\n",
         s->controller_hci_version,s->controller_revision,s->controller_manufacturer,s->controller_subversion);
     length=strlen(buffer);
@@ -114,7 +118,7 @@ static bool save_report(void)
             (unsigned)p->buttons_seen,(int)p->first_report_ms,(int)p->updated,(int)rate);
         length=strlen(buffer);
     }
-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared)\n");
+    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared) 20=pageTimeout(opcode,slots,reserved)\n");
     length=strlen(buffer);
     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;
@@ -146,6 +150,63 @@ static lv_res_t stop(lv_obj_t *button)
 }
 static lv_res_t forget(lv_obj_t *button)
 {stop(button);memset(paired,0,sizeof(paired));strcpy(ui.note,nyx_tr("Session keys cleared."));refresh();return LV_RES_OK;}
+/* The only persistent pairing copy is an explicit user action. The live
+ * radio is stopped before SD access; failed loads keep current RAM keys. */
+static int pairing_file(bool write)
+{
+    static const char *path="bootloader/bluetooth/joycon-pairing.bin";
+    static const char *backup="bootloader/bluetooth/joycon-pairing.bak";
+    static const char *temp="bootloader/bluetooth/joycon-pairing.tmp";
+    u8 bytes[NOVA_BT_PAIRING_SIZE];nova_bt_peer candidate[2];int count=0;
+    memset(bytes,0,sizeof(bytes));memset(candidate,0,sizeof(candidate));
+    bool mounted=sd_get_card_mounted();
+    if(write&&!nova_bt_pairing_encode(bytes,paired))goto done;
+    if(sd_mount()!=0)goto done;
+    FIL fp;u32 transferred=0;int result;
+    if(write){
+        result=f_mkdir("bootloader/bluetooth");if(result&&result!=FR_EXIST)goto unmount;
+        result=f_open(&fp,temp,FA_WRITE|FA_CREATE_ALWAYS);if(result)goto unmount;
+        result=f_write(&fp,bytes,sizeof(bytes),&transferred);int closed=f_close(&fp);
+        if(result||closed||transferred!=sizeof(bytes)){f_unlink(temp);goto unmount;}
+        result=f_stat(path,NULL);bool had_old=result==FR_OK;
+        if(result!=FR_OK&&result!=FR_NO_FILE){f_unlink(temp);goto unmount;}
+        if(had_old){
+            result=f_unlink(backup);if(result!=FR_OK&&result!=FR_NO_FILE){f_unlink(temp);goto unmount;}
+            if(f_rename(path,backup)!=FR_OK){f_unlink(temp);goto unmount;}
+        }
+        if(f_rename(temp,path)!=FR_OK){if(had_old)f_rename(backup,path);f_unlink(temp);goto unmount;}
+        count=nova_bt_validate_peers(paired);
+    }else{
+        const char *paths[]={path,backup};
+        for(unsigned i=0;i<2&&!count;i++){
+            result=f_open(&fp,paths[i],FA_READ);if(result)continue;
+            bool size_ok=f_size(&fp)==sizeof(bytes);
+            result=size_ok?f_read(&fp,bytes,sizeof(bytes),&transferred):1;int closed=f_close(&fp);
+            if(!result&&!closed&&transferred==sizeof(bytes))count=nova_bt_pairing_decode(candidate,bytes,sizeof(bytes));
+        }
+        if(count){
+            memcpy(paired,candidate,sizeof(paired));memset(&import_info,0,sizeof(import_info));
+            import_info.attempted=1;import_info.compatible=1;import_info.source=2;
+            for(unsigned i=0;i<2;i++)import_info.record[i]=import_info.recognized[i]=paired[i].valid;
+        }
+    }
+unmount:
+    if(!mounted)sd_unmount();
+done:
+    memset(bytes,0,sizeof(bytes));memset(candidate,0,sizeof(candidate));return count;
+}
+static lv_res_t store_pairing(lv_obj_t *button)
+{
+    bool write=lv_obj_get_free_num(button)!=0;
+    if(nova_bt_get_status()->state==NOVA_BT_STARTING||gui_bluetooth_active()){
+        strcpy(ui.note,nyx_tr("Stop Bluetooth before saving or loading pairing."));refresh();return LV_RES_OK;
+    }
+    int count=pairing_file(write);
+    const char *message=write?(count?"Pairing saved to SD. Keep this file private.":"Pairing could not be saved. Read valid pairing first."):
+        (count?"Pairing loaded from SD.":"No valid pairing file found. Current session keys kept.");
+    s_printf(ui.note,"%s\n%s : %d / 2",nyx_tr(message),nyx_tr("Pairing records imported"),nova_bt_validate_peers(paired));
+    refresh();return LV_RES_OK;
+}
 static lv_res_t signal(lv_obj_t *obj,lv_signal_t sign,void *param)
 {
     lv_signal_func_t previous=ui.signal;
@@ -159,13 +220,13 @@ lv_res_t gui_bluetooth_open(lv_obj_t *button)
     ui.signal=lv_obj_get_signal_func(ui.win);lv_obj_set_signal_func(ui.win,signal);
     lv_obj_t *page=lv_win_get_content(ui.win);nyx_nova_fixed_page(page);
     lv_obj_t *scrl=lv_page_get_scrl(page);
-    lv_obj_t *panel=nyx_nova_panel(scrl,24,16,lv_obj_get_width(page)-48,306);
+    lv_obj_t *panel=nyx_nova_panel(scrl,24,16,lv_obj_get_width(page)-48,286);
     ui.label=nyx_nova_text(panel,"",20,18,lv_obj_get_width(panel)-40,NOVA_BODY);
-    const char *titles[]={"Read pairing","Start Bluetooth","Stop Bluetooth","Clear session keys"};
-    const char *icons[]={"download","bluetooth","square","trash-2"};
-    lv_action_t actions[]={import_pairing,start,stop,forget};
-    int width=(lv_obj_get_width(page)-84)/4;
-    for(unsigned i=0;i<4;i++)nyx_nova_action(scrl,titles[i],NULL,icons[i],actions[i],0,24+i*(width+12),338,width,120);
+    const char *titles[]={"Read pairing","Start Bluetooth","Stop Bluetooth","Save pairing","Load pairing","Clear session keys"};
+    const char *icons[]={"download","bluetooth","square","hard-drive","key-round","trash-2"};
+    lv_action_t actions[]={import_pairing,start,stop,store_pairing,store_pairing,forget};
+    int width=(lv_obj_get_width(page)-72)/3;
+    for(unsigned i=0;i<6;i++)nyx_nova_action(scrl,titles[i],NULL,icons[i],actions[i],i==3,24+(i%3)*(width+12),318+(i/3)*88,width,76);
     refresh();return LV_RES_OK;
 }
 jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired)

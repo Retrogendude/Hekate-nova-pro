@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.",
+                "v29 · Pairing and reconnection\nValidated standard host profiles accepted.\nSD pairing backup and persistent reconnect attempts.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."

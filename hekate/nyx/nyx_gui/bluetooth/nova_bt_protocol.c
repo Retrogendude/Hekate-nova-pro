@@ -15,6 +15,36 @@ int nova_bt_validate_peers(const nova_bt_peer p[2])
     if(count==2 && (memcmp(p[0].host,p[1].host,6)||!memcmp(p[0].mac,p[1].mac,6))) return 0;
     return count;
 }
+static uint32_t pairing_crc(const uint8_t *p,unsigned n)
+{
+    uint32_t crc=0xffffffffu;
+    while(n--){crc^=*p++;for(unsigned b=0;b<8;b++)crc=(crc>>1)^(0xedb88320u & (0u-(crc&1)));}
+    return ~crc;
+}
+int nova_bt_pairing_encode(uint8_t out[NOVA_BT_PAIRING_SIZE],const nova_bt_peer p[2])
+{
+    memset(out,0,NOVA_BT_PAIRING_SIZE);int count=nova_bt_validate_peers(p);if(!count)return 0;
+    memcpy(out,"NJOYPAIR",8);out[8]=1;
+    for(unsigned i=0;i<2;i++)if(p[i].valid){
+        out[9]|=1u<<i;uint8_t *at=out+12+i*28;
+        memcpy(at,p[i].mac,6);memcpy(at+6,p[i].host,6);memcpy(at+12,p[i].key,16);
+    }
+    uint32_t crc=pairing_crc(out,68);for(unsigned i=0;i<4;i++)out[68+i]=crc>>(i*8);
+    return count;
+}
+int nova_bt_pairing_decode(nova_bt_peer p[2],const uint8_t *in,unsigned size)
+{
+    memset(p,0,2*sizeof(*p));
+    if(size!=NOVA_BT_PAIRING_SIZE||memcmp(in,"NJOYPAIR",8)||in[8]!=1||!in[9]||(in[9]&~3)||in[10]||in[11])return 0;
+    uint32_t crc=0;for(unsigned i=0;i<4;i++)crc|=(uint32_t)in[68+i]<<(i*8);
+    if(crc!=pairing_crc(in,68))return 0;
+    for(unsigned i=0;i<2;i++){
+        const uint8_t *at=in+12+i*28;
+        if(in[9]&(1u<<i)){p[i].valid=1;memcpy(p[i].mac,at,6);memcpy(p[i].host,at+6,6);memcpy(p[i].key,at+12,16);}
+        else if(nonzero(at,28)){memset(p,0,2*sizeof(*p));return 0;}
+    }
+    int count=nova_bt_validate_peers(p);if(!count)memset(p,0,2*sizeof(*p));return count;
+}
 int nova_bt_decode(nova_bt_pad *p, unsigned side, const uint8_t *r, unsigned n, uint32_t now)
 {
     /* BTstack delivers HID DATA header 0xa1 followed by the report ID. */

@@ -43,6 +43,11 @@ const nova_bt_status *nova_bt_get_status(void);
 /* Pure protocol helpers are exercised on the host as well as on ARM. */
 int nova_bt_decode(nova_bt_pad *pad, unsigned side, const uint8_t *report, unsigned len, uint32_t now);
 int nova_bt_validate_peers(const nova_bt_peer peers[2]);
+#define NOVA_BT_PAIRING_SIZE 72
+/* Private SD format, independent of C structure padding. CRC detects damage;
+ * this file contains plain pairing keys and is never included in reports. */
+int nova_bt_pairing_encode(uint8_t bytes[NOVA_BT_PAIRING_SIZE], const nova_bt_peer peers[2]);
+int nova_bt_pairing_decode(nova_bt_peer peers[2], const uint8_t *bytes, unsigned size);
 /* Radio operations never wait for a byte. Startup alone has a bounded POR. */
 uint32_t nova_bt_now(void);
 uint32_t nova_bt_now_us(void);
