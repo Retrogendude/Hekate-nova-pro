@@ -318,22 +318,24 @@ void create_tab_diagnostics(lv_theme_t *th, lv_obj_t *parent)
     lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
     lv_page_set_scrl_fit(parent, false, false);
     lv_page_set_scrl_width(parent, LV_HOR_RES);
-    bool large_text = nyx_font_size() > 30;
-    u32 columns = large_text ? 2 : 3;
-    lv_coord_t column_step = large_text ? 600 : 400;
-    lv_coord_t row_step = large_text ? 164 : 116;
+    u32 columns = 3;
+    lv_coord_t column_step = 400;
+    lv_coord_t row_step = (lv_obj_get_height(parent) - 124) / 4;
     lv_coord_t tile_width = column_step - 16;
-    lv_page_set_scrl_height(parent, large_text ? 1110 : 592);
-    lv_page_set_sb_mode(parent, large_text ? LV_SB_MODE_AUTO : LV_SB_MODE_OFF);
-    text(parent, "Diagnostic materiel", 32, 16, 1180, false);
+    lv_page_set_scrl_height(parent, lv_obj_get_height(parent));
+    lv_page_set_sb_mode(parent, LV_SB_MODE_OFF);
+    lv_obj_set_pos(lv_page_get_scrl(parent), 0, 0);
+    lv_obj_set_drag(lv_page_get_scrl(parent), false);
+    text(parent, "Diagnostic materiel", 32, 12, 1180, false);
     text(parent, "HWTest-RCM : 42 controles natifs et un service RAM isole. Choisissez une categorie.", 32, 58, 1180, true);
     for (u32 i = 0; i < ARRAY_SIZE(groups); i++) {
         lv_coord_t x = 32 + (i % columns) * column_step, y = 108 + (i / columns) * row_step;
         lv_obj_t *tile = button(parent, "", x, y, tile_width, show_group, i);
-        lv_btn_set_layout(tile, LV_LAYOUT_OFF);
-        lv_obj_set_height(tile, row_step - 16);
-        text(tile, groups[i].title, 20, 14, tile_width - 40, false);
-        text(tile, groups[i].detail, 20, large_text ? 65 : 57, tile_width - 40, true);
+        lv_btn_set_layout(tile, LV_LAYOUT_OFF); lv_obj_set_height(tile, row_step - 10);
+        lv_obj_t *title = text(tile, groups[i].title, 16, 12, tile_width - 32, false);
+        int detail_y = 20 + lv_obj_get_height(title);
+        lv_obj_t *detail = text(tile, groups[i].detail, 16, detail_y, tile_width - 32, true);
+        if (detail_y + lv_obj_get_height(detail) > row_step - 20) lv_obj_set_hidden(detail, true);
     }
     nyx_ram_handoff_t *saved = (nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR;
     if (saved->result_magic == NYX_RAM_RESULT_MAGIC && saved->version == NYX_RAM_VERSION &&

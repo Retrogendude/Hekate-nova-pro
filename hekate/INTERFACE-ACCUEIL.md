@@ -1,3 +1,12 @@
+# Présentation compacte — version 8
+
+La version actuelle conserve Tuiles et Carrousel dans un thème noir/gris
+uniforme, avec cartes transparentes et contours gris/blancs peu arrondis.
+Les onglets principaux n'utilisent plus de défilement vertical. Réglages Nyx
+et Apparence sont répartis en onglets internes ; les aides sont derrière « ? ».
+Voir PERSONNALISATION.md pour l'utilisation et BUILD-INFO.json pour les tests.
+Les notes ci-dessous décrivent les étapes précédentes de l'interface.
+
 # Hekate 6.5.4 — interface et langues, prototype 7
 
 Cette version intègre deux dispositions de l'accueil Nyx, sélectionnables

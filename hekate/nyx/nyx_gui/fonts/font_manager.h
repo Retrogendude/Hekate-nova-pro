@@ -11,6 +11,7 @@ const lv_font_t *nyx_font_small(void);
 const lv_font_t *nyx_font_mono(void);
 const char *nyx_font_options(void);
 const char *nyx_font_filename(u32 index);
+u32 nyx_font_count(void);
 u32 nyx_font_selected_index(const char *filename);
 bool nyx_font_available(const char *filename);
 bool nyx_font_available_at_size(const char *filename, u32 size);

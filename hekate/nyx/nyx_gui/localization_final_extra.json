@@ -124,5 +124,50 @@
     "  eMMC ВСЁ",
     "  eMMC ALLES",
     "  eMMC TUDO"
+  ],
+  "Interface": [
+    "Interface",
+    "Interface",
+    "Interfaz",
+    "Interfaccia",
+    "Интерфейс",
+    "Oberfläche",
+    "Interface"
+  ],
+  "System": [
+    "System",
+    "Système",
+    "Sistema",
+    "Sistema",
+    "Система",
+    "System",
+    "Sistema"
+  ],
+  "Sparse": [
+    "Sparse",
+    "Partielle",
+    "Parcial",
+    "Parziale",
+    "Выборочно",
+    "Stichprobe",
+    "Parcial"
+  ],
+  "Hashes": [
+    "Hashes",
+    "Empreintes",
+    "Hashes",
+    "Hash",
+    "Хеши",
+    "Hashes",
+    "Hashes"
+  ],
+  "Effects pause while navigating and during diagnostics.": [
+    "Effects pause while navigating and during diagnostics.",
+    "Les effets se mettent en pause pendant la navigation et les diagnostics.",
+    "Los efectos se pausan durante la navegación y los diagnósticos.",
+    "Gli effetti si sospendono durante la navigazione e la diagnostica.",
+    "Эффекты приостанавливаются при навигации и диагностике.",
+    "Effekte pausieren während Navigation und Diagnose.",
+    "Os efeitos param durante a navegação e os diagnósticos."
   ]
 }

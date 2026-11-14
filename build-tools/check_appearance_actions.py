@@ -25,6 +25,7 @@ preamble=r'''
 typedef uint32_t u32;
 typedef struct { int selected,id; } lv_obj_t;
 typedef struct { int16_t x,y; } lv_point_t;
+typedef struct { int16_t x1,y1,x2,y2; } lv_area_t;
 typedef int lv_res_t;
 typedef struct { int prio; } lv_task_t;
 #define LV_RES_OK 0
@@ -34,8 +35,10 @@ typedef struct { int prio; } lv_task_t;
 #define LV_HOR_RES 1280
 #define LV_VER_RES 720
 #define LV_TRIGO_SIN_MAX 32767
-#define FX_LINES 20
-#define FX_POINTS 49
+#define FX_LINES 8
+#define FX_POINTS 17
+#define FX_BAND_HEIGHT 64
+#define FX_IDLE_MS 900
 #define I18N_EN 0
 #define I18N_LANGUAGE_COUNT 7
 #define HOME_LAYOUT_TILES 0
@@ -48,21 +51,25 @@ static lv_obj_t *appearance_parent_close,*close_btn;
 static bool appearance_open;
 enum { AP_LANGUAGE, AP_FONT, AP_SIZE, AP_LAYOUT, AP_EFFECT, AP_SPEED, AP_OPACITY };
 static struct {
-    lv_obj_t *holder,*lines[FX_LINES];
+    lv_obj_t *holder;
     lv_point_t points[FX_LINES][FX_POINTS];
     lv_task_t *task;
-    u32 phase,effect,speed,opacity,pause_depth;
+    u32 phase,effect,speed,opacity,pause_depth,interaction_tick;
+    bool frame_ready,interaction_pending;
 } background;
 static bool mounted,invalid_font;
 static int mount_error,stat_error,write_error;
 static int mount_calls,unmount_calls,write_calls,reload_calls,notice_calls,options_calls;
 static bool options_active,options_saved;
 static char notice[256];
-static int line_calls,point_counts[FX_LINES];
-static int line_x[FX_LINES],line_y[FX_LINES],line_w[FX_LINES],line_h[FX_LINES];
+static int invalidations;
+static u32 fake_tick;
+static u32 lv_tick_get(void) { return fake_tick; }
+static u32 lv_tick_elaps(u32 previous) { return fake_tick-previous; }
 static lv_obj_t objects[FX_LINES];
-static int lv_ddlist_get_selected(lv_obj_t *o) { return o->selected; }
-static int lv_obj_get_free_num(lv_obj_t *o) { return o->id; }
+
+
+static u32 nyx_font_count(void) { return 3; }
 static const char *nyx_font_filename(u32 i) {
     static const char *names[]={"","NotoSans.nyxf","Readable.nyxf"};
     return i<3?names[i]:NULL;
@@ -84,19 +91,16 @@ static void nyx_options_appearance_active(bool active,bool saved) {
 static void reload_nyx(lv_obj_t *o,bool force) { assert(!o&&!force);++reload_calls; }
 static lv_res_t nyx_win_close_action(lv_obj_t *o) { (void)o;close_btn=NULL;return LV_RES_INV; }
 static void lv_task_set_prio(lv_task_t *task,int priority) { task->prio=priority; }
-static void lv_obj_set_pos(lv_obj_t *o,int x,int y) { line_x[o->id]=x;line_y[o->id]=y; }
-static void lv_obj_set_size(lv_obj_t *o,int w,int h) { assert(w>0&&h>0);line_w[o->id]=w;line_h[o->id]=h; }
-static void lv_line_set_points(lv_obj_t *line,const lv_point_t *p,int count) {
-    int id=line->id; assert(id>=0&&id<FX_LINES);assert(p==background.points[id]);
-    ++line_calls;point_counts[id]=count;
-    for(int i=0;i<count;i++) {
-        assert(p[i].x>=0&&p[i].x<line_w[id]);
-        assert(p[i].y>=0&&p[i].y<line_h[id]);
-        assert(p[i].x+line_x[id]>=0&&p[i].x+line_x[id]<=LV_HOR_RES);
-        assert(p[i].y+line_y[id]>=0&&p[i].y+line_y[id]<=LV_VER_RES);
-    }
-    if(background.effect==2)assert(line_w[id]*line_h[id]<300);
+static void lv_obj_get_coords(lv_obj_t *o,lv_area_t *area) {
+    assert(o==background.holder);*area=(lv_area_t){0,LV_VER_RES-FX_BAND_HEIGHT,LV_HOR_RES-1,LV_VER_RES-1};
 }
+static void lv_inv_area(const lv_area_t *area) {
+    assert(area->x1>=-3&&area->x2<LV_HOR_RES+3);
+    assert(area->y1>=LV_VER_RES-FX_BAND_HEIGHT&&area->y2<LV_VER_RES);
+    assert(area->x2-area->x1<14&&area->y2-area->y1<9);
+    ++invalidations;
+}
+static void lv_obj_invalidate(lv_obj_t *o) { assert(o==background.holder);++invalidations; }
 static void reset(void) {
     memset(&n_cfg,0,sizeof(n_cfg));n_cfg.language=1;n_cfg.theme_bg=0x123456;
     n_cfg.font_size=30;n_cfg.background_speed=2;n_cfg.background_opacity=20;
@@ -161,30 +165,41 @@ int main(void) {
     CHECK(bounded(9,10,50,20)==20&&bounded(51,10,50,20)==20&&bounded(50,10,50,20)==50);
     memset(&background,0,sizeof(background));lv_task_t task={1};
     background.holder=&objects[0];background.task=&task;
-    for(int i=0;i<FX_LINES;i++){objects[i].id=i;background.lines[i]=&objects[i];}
     for(int effect=1;effect<=3;effect++)for(int speed=1;speed<=3;speed++)for(int phase=0;phase<360;phase+=15) {
-        background.effect=effect;background.speed=speed;background.phase=phase;line_calls=0;
-        background_frame(NULL);CHECK(line_calls==(effect==2?20:effect==3?7:4));
-        CHECK(point_counts[0]==(effect==2?2:FX_POINTS));
+        background.effect=effect;background.speed=speed;background.phase=phase;
+        background.frame_ready=false;invalidations=0;
+        background_frame(NULL);CHECK(invalidations==(effect==2?8:1));
+        for(u32 line=0;line<background_line_count();line++)for(int point=0;point<(effect==2?2:FX_POINTS);point++) {
+            assert(background.points[line][point].x>=0&&background.points[line][point].x<LV_HOR_RES);
+            assert(background.points[line][point].y>=0&&background.points[line][point].y<FX_BAND_HEIGHT);
+        }
+        invalidations=0;background_frame(NULL);CHECK(invalidations==(effect==2?16:1));
     }
     u32 phase=background.phase;nyx_background_pause(true);nyx_background_pause(true);
     CHECK(background.pause_depth==2&&task.prio==LV_TASK_PRIO_OFF);
-    line_calls=0;background_frame(NULL);CHECK(background.phase==phase&&line_calls==0);
+    invalidations=0;background_frame(NULL);CHECK(background.phase==phase&&invalidations==0);
     nyx_background_pause(false);CHECK(task.prio==LV_TASK_PRIO_OFF&&background.pause_depth==1);
     nyx_background_pause(false);nyx_background_pause(false);CHECK(task.prio==LV_TASK_PRIO_LOWEST&&!background.pause_depth);
-    background.effect=0;line_calls=0;background_frame(NULL);CHECK(line_calls==0);
-    printf("PASS: %d actual-C appearance cases; pending/cancel, font/SD preflight, rollback/save, and three bounded background geometries with nested pause.\n",cases);
+    fake_tick=1000;nyx_background_interaction();CHECK(background.interaction_pending&&background.interaction_tick==1000);
+    fake_tick=1899;phase=background.phase;invalidations=0;background_frame(NULL);
+    CHECK(background.phase==phase&&invalidations==0);
+    fake_tick=1900;background_frame(NULL);CHECK(background.phase!=phase&&!background.interaction_pending&&invalidations==1);
+    fake_tick=UINT32_MAX-99;nyx_background_interaction();fake_tick=799;phase=background.phase;invalidations=0;background_frame(NULL);
+    CHECK(background.phase==phase&&invalidations==0);
+    fake_tick=800;background_frame(NULL);CHECK(background.phase!=phase&&!background.interaction_pending&&invalidations==1);
+    background.effect=0;invalidations=0;background_frame(NULL);CHECK(invalidations==0);
+    printf("PASS: %d actual-C appearance cases; pending/cancel, font/SD preflight, rollback/save, and three bounded background geometries, nested pause and wrap-safe idle scheduling.\n",cases);
     return 0;
 }
 '''
 
 functions='\n'.join(function(name) for name in (
-    'bounded','background_frame','nyx_background_pause','appearance_close',
-    'appearance_select','appearance_apply','appearance_save'))
+    'bounded','background_line_count','background_particle_invalidate','background_frame','nyx_background_pause','nyx_background_interaction','appearance_close',
+    'appearance_set_selection','appearance_apply','appearance_save'))
 directory=WORK/'appearance-actions-check'
 directory.mkdir(exist_ok=True)
 harness=directory/'check.c'
-harness.write_text(preamble+'\n'+functions+'\n'+tests,encoding='utf-8')
+harness.write_text(preamble+'\n'+functions+'\nstatic lv_res_t appearance_select(lv_obj_t *o) { return appearance_set_selection(o->id, o->selected); }\n'+tests,encoding='utf-8')
 compiler=WORK/'toolchains/w64devkit/bin/gcc.exe'
 executable=directory/'check.exe'
 subprocess.run([str(compiler),'-std=c11','-Wall','-Wextra','-Werror','-O2',

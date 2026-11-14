@@ -21,6 +21,7 @@
 #include "gui.h"
 #include "gui_info.h"
 #include "gui_appearance.h"
+#include "gui_choices.h"
 #include "../config.h"
 #include "../localization.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
@@ -308,7 +309,7 @@ static lv_res_t _autoboot_hide_delay_action(lv_obj_t *btn)
 
 static lv_res_t _autoboot_delay_action(lv_obj_t *ddlist)
 {
-	u32 new_selection = lv_ddlist_get_selected(ddlist);
+	u32 new_selection = lv_obj_get_free_num(ddlist);
 	if (h_cfg.bootwait != new_selection)
 	{
 		h_cfg.bootwait = new_selection;
@@ -329,7 +330,7 @@ static lv_res_t _slider_brightness_action(lv_obj_t * slider)
 
 static lv_res_t _data_verification_action(lv_obj_t *ddlist)
 {
-	u32 new_selection = lv_ddlist_get_selected(ddlist);
+	u32 new_selection = lv_obj_get_free_num(ddlist);
 	if (n_cfg.verification != new_selection)
 	{
 		n_cfg.verification = new_selection;
@@ -375,12 +376,27 @@ static lv_res_t _save_nyx_options_action(lv_obj_t *btn)
 	return LV_RES_OK;
 }
 
+static const u16 theme_colors[18] = {
+	0, 4, 13, 23, 33, 43, 54, 66, 89, 124, 167, 187, 200, 208, 231, 261, 291, 341
+};
+
 void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 {
-	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0x93E1AE);
-	lv_style_t *btn_onoff_rel_hos_style = malloc(sizeof(lv_style_t));
-	lv_style_t *btn_onoff_pr_hos_style  = malloc(sizeof(lv_style_t));
+	/* Palette swatches represent a color, so they must keep their fill even
+	 * when ordinary menu buttons use a transparent body. Reuse the fixed
+	 * palette's styles instead of leaking two allocations on every opening. */
+	static lv_style_t palette_rel[ARRAY_SIZE(theme_colors)];
+	static lv_style_t palette_pr[ARRAY_SIZE(theme_colors)];
+	u32 index = 0;
+	for (u32 i = 0; i < ARRAY_SIZE(theme_colors); ++i)
+		if (theme_colors[i] == color_idx) { index = i; break; }
+	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
+	lv_style_t *btn_onoff_rel_hos_style = &palette_rel[index];
+	lv_style_t *btn_onoff_pr_hos_style  = &palette_pr[index];
 	lv_style_copy(btn_onoff_rel_hos_style, lv_theme_get_current()->btn.rel);
+	btn_onoff_rel_hos_style->body.empty       = 0;
+	btn_onoff_rel_hos_style->body.opa         = LV_OPA_COVER;
+	btn_onoff_rel_hos_style->body.shadow.width = 0;
 	btn_onoff_rel_hos_style->body.main_color  = color;
 	btn_onoff_rel_hos_style->body.grad_color  = btn_onoff_rel_hos_style->body.main_color;
 	btn_onoff_rel_hos_style->body.padding.hor = 0;
@@ -394,6 +410,9 @@ void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 	}
 
 	lv_style_copy(btn_onoff_pr_hos_style, lv_theme_get_current()->btn.pr);
+	btn_onoff_pr_hos_style->body.empty        = 0;
+	btn_onoff_pr_hos_style->body.opa          = LV_OPA_COVER;
+	btn_onoff_pr_hos_style->body.shadow.width = 0;
 	btn_onoff_pr_hos_style->body.main_color   = color;
 	btn_onoff_pr_hos_style->body.grad_color   = btn_onoff_pr_hos_style->body.main_color;
 	btn_onoff_pr_hos_style->body.padding.hor  = 0;
@@ -472,7 +491,7 @@ static void _show_new_nyx_color(bool update_bg)
 	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x202B27); // COLOR_HOS_BG_LIGHT.
 	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x2D4536); // 0x505050.
 	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x35483C); // COLOR_HOS_BG_LIGHTER.
-	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0x93E1AE);
+	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
 
 	static lv_style_t btn_tgl_pr_test;
 	lv_style_copy(&btn_tgl_pr_test, lv_btn_get_style(color_test.button, LV_BTN_STATE_TGL_PR));
@@ -548,7 +567,7 @@ static void _show_new_nyx_color(bool update_bg)
 
 		static lv_style_t slider_ind;
 		lv_style_copy(&slider_ind, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_INDIC));
-		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x7BC796);
+		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x8E959F);
 		slider_ind.body.grad_color = slider_ind.body.main_color;
 		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_INDIC, &slider_ind);
 		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_INDIC, &slider_ind);
@@ -692,10 +711,6 @@ static lv_res_t _preset_hue_action(lv_obj_t *btn)
 	return LV_RES_OK;
 }
 
-static const u16 theme_colors[18] = {
-	0, 4, 13, 23, 33, 43, 54, 66, 89, 124, 167, 187, 200, 208, 231, 261, 291, 341
-};
-
 lv_res_t _action_win_nyx_colors_close(lv_obj_t * btn)
 {
 	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
@@ -727,7 +742,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 
 	// Create container to keep content inside.
 	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_obj_set_size(h1, LV_DPI * 299 / 25, LV_DPI * 27 / 26);
+	lv_obj_set_size(h1, LV_DPI * 299 / 25, lv_font_get_height(lv_theme_get_current()->label.prim->text.font) + 72);
 	color_test.header1 = h1;
 
 	lv_obj_t *acc_label = lv_label_create(h1, NULL);
@@ -738,7 +753,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	lv_btn_ext_t *ext = lv_obj_get_ext_attr(color_btn);
 	ext->idx = theme_colors[0];
 	create_flat_button(color_btn, ext->idx, _preset_hue_action);
-	lv_obj_align(color_btn, acc_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 10);
+	lv_obj_align(color_btn, acc_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
 	lv_obj_t *color_btn2;
 
 	for (u32 i = 1; i < ARRAY_SIZE(theme_colors); i++)
@@ -751,16 +766,16 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 		color_btn = color_btn2;
 	}
 
-	lv_obj_align(h1, NULL, LV_ALIGN_IN_TOP_MID, 0, LV_DPI / 5);
+	lv_obj_align(h1, NULL, LV_ALIGN_IN_TOP_MID, 0, 12);
 
 	// Create hue slider.
 	lv_obj_t *h_slider = lv_slider_create(win, NULL);
 	lv_obj_set_width(h_slider, LV_DPI * 213 / 20);
-	lv_obj_set_height(h_slider, LV_DPI * 4 / 10);
+	lv_obj_set_height(h_slider, 32);
 	lv_bar_set_range(h_slider, 0, 359);
 	lv_bar_set_value(h_slider, color_test.hue);
 	lv_slider_set_action(h_slider, _slider_hue_action);
-	lv_obj_align(h_slider, h1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 5);
+	lv_obj_align(h_slider, h1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
 	color_test.hue_slider = h_slider;
 
 	// Create hue label.
@@ -773,16 +788,16 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 
 	lv_obj_t *bg_label = lv_label_create(win, NULL);
 	lv_label_set_static_text(bg_label, "Theme color:");
-	lv_obj_align(bg_label, h_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 25);
+	lv_obj_align(bg_label, h_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 16);
 
 	// Create red slider.
 	lv_obj_t *r_slider = lv_slider_create(win, NULL);
 	lv_obj_set_width(r_slider, LV_DPI * 85 / 16);
-	lv_obj_set_height(r_slider, LV_DPI * 4 / 10);
+	lv_obj_set_height(r_slider, 32);
 	lv_bar_set_range(r_slider, 11, 100);
 	lv_bar_set_value(r_slider, color_test.r);
 	lv_slider_set_action(r_slider, _slider_r_action);
-	lv_obj_align(r_slider, bg_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 21);
+	lv_obj_align(r_slider, bg_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 6);
 	color_test.r_slider = r_slider;
 
 	// Create red label.
@@ -796,7 +811,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	lv_obj_t *g_slider = lv_slider_create(win, r_slider);
 	lv_bar_set_value(g_slider, color_test.g);
 	lv_slider_set_action(g_slider, _slider_g_action);
-	lv_obj_align(g_slider, r_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 7);
+	lv_obj_align(g_slider, r_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
 	color_test.g_slider = g_slider;
 
 	// Create green label.
@@ -810,7 +825,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	lv_obj_t *b_slider = lv_slider_create(win, r_slider);
 	lv_bar_set_value(b_slider, color_test.b);
 	lv_slider_set_action(b_slider, _slider_b_action);
-	lv_obj_align(b_slider, g_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 7);
+	lv_obj_align(b_slider, g_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
 	color_test.b_slider = b_slider;
 
 	// Create blue label.
@@ -849,13 +864,15 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	lv_label_set_static_text(label_btn, SYMBOL_LIST" Custom Color");
 	lv_obj_set_width(btn_apply, LV_DPI * 10 / 3 + LV_DPI / 5);
 	lv_btn_set_action(btn_apply, LV_BTN_ACTION_CLICK, _preset_bg_apply);
-	lv_obj_align(btn_apply, btn_reset, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 7);
+	lv_obj_align(btn_apply, btn_reset, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
 	color_test.btn_apply = btn_apply;
 
 	// Create sample text.
 	lv_obj_t *h2 = lv_cont_create(win, NULL);
 	lv_obj_set_size(h2, LV_DPI * 12, LV_DPI * 18 / 10);
-	lv_obj_align(h2, b_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 25);
+	lv_obj_align(h2, b_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 16);
+	lv_win_ext_t *window_content = lv_obj_get_ext_attr(win);
+	lv_obj_set_height(h2, lv_obj_get_height(window_content->page) - lv_obj_get_y(h2) - 12);
 	color_test.header2 = h2;
 
 	lv_obj_t *lbl_sample = lv_label_create(h2, NULL);
@@ -875,12 +892,12 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	lv_label_set_static_text(lbl_icons,
 		SYMBOL_BRIGHTNESS SYMBOL_CHARGE SYMBOL_FILE SYMBOL_DRIVE SYMBOL_FILE_CODE
 		SYMBOL_EDIT SYMBOL_HINT SYMBOL_DRIVE SYMBOL_KEYBOARD SYMBOL_POWER);
-	lv_obj_align(lbl_icons, lbl_test, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 5);
+	lv_obj_align(lbl_icons, lbl_test, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
 	color_test.icons = lbl_icons;
 
 	// Create sample slider.
 	lv_obj_t *slider_test = lv_slider_create(h2, NULL);
-	lv_obj_align(slider_test, lbl_test, LV_ALIGN_OUT_BOTTOM_MID, 0, LV_DPI / 5);
+	lv_obj_align(slider_test, lbl_test, LV_ALIGN_OUT_BOTTOM_MID, 0, 12);
 	lv_obj_set_click(slider_test, false);
 	lv_bar_set_value(slider_test, 60);
 	color_test.slider = slider_test;
@@ -1601,7 +1618,7 @@ static lv_res_t _create_window_language(lv_obj_t *btn)
 
 static lv_res_t _home_screen_action(lv_obj_t *ddlist)
 {
-	u32 new_selection = lv_ddlist_get_selected(ddlist);
+	u32 new_selection = lv_obj_get_free_num(ddlist);
 	if (n_cfg.home_screen != new_selection)
 	{
 		n_cfg.home_screen = new_selection;
@@ -1677,157 +1694,169 @@ void nyx_options_appearance_active(bool active, bool saved)
 }
 
 
-/* Each card is measured after its translated help text is laid out. This
- * keeps long languages and 36px fonts within the viewport, with vertical
- * scrolling instead of the former fixed pair of columns. */
-static lv_obj_t *_settings_card(lv_obj_t *parent, int y)
+/* Compact pages keep controls above the persistent status bar. */
+static void settings_page(lv_obj_t *page)
 {
-	lv_obj_t *card = lv_cont_create(parent, NULL);
-	lv_cont_set_style(card, lv_theme_get_current()->panel);
-	lv_cont_set_fit(card, false, false);
-	lv_cont_set_layout(card, LV_LAYOUT_OFF);
-	lv_obj_set_size(card, 1180, 180);
-	lv_obj_set_pos(card, 28, y);
-	return card;
+    lv_page_set_style(page, LV_PAGE_STYLE_BG, &lv_style_transp_tight);
+    lv_page_set_style(page, LV_PAGE_STYLE_SCRL, &lv_style_transp_tight);
+    lv_page_set_scrl_layout(page, LV_LAYOUT_OFF);
+    lv_page_set_scrl_fit(page, false, false);
+    lv_page_set_scrl_width(page, lv_obj_get_width(page));
+    lv_page_set_scrl_height(page, lv_obj_get_height(page));
+    lv_page_set_sb_mode(page, LV_SB_MODE_OFF);
+    lv_obj_set_pos(lv_page_get_scrl(page), 0, 0);
+    lv_obj_set_drag(lv_page_get_scrl(page), false);
 }
 
-static int _settings_help(lv_obj_t *card, const char *help)
+static lv_obj_t *_settings_card(lv_obj_t *parent, u32 index, u32 rows)
 {
-	lv_obj_t *label = lv_label_create(card, NULL);
-	lv_label_set_style(label, &hint_small_style);
-	lv_label_set_recolor(label, true);
-	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-	lv_obj_set_width(label, 1132);
-	lv_label_set_text(label, help);
-	lv_obj_set_pos(label, 24, 110);
-	int height = 134 + lv_obj_get_height(label);
-	lv_obj_set_height(card, height);
-	return height + 20;
+    lv_coord_t width = (lv_obj_get_width(parent) - 80) / 2;
+    lv_coord_t height = (lv_obj_get_height(parent) - 32 - (rows - 1) * 12) / rows;
+    lv_obj_t *card = lv_cont_create(parent, NULL);
+    lv_cont_set_style(card, lv_theme_get_current()->panel);
+    lv_cont_set_fit(card, false, false); lv_cont_set_layout(card, LV_LAYOUT_OFF);
+    lv_obj_set_size(card, width, height);
+    lv_obj_set_pos(card, 32 + index % 2 * (width + 16), 16 + index / 2 * (height + 12));
+    return card;
 }
 
-static void _settings_heading(lv_obj_t *card, const char *title)
+static lv_res_t settings_help_pressed(lv_obj_t *button)
 {
-	lv_obj_t *label = lv_label_create(card, NULL);
-	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-	lv_obj_set_width(label, 500);
-	lv_label_set_text(label, title);
-	lv_obj_set_pos(label, 24, 24);
+    nyx_show_help(lv_obj_get_free_ptr(button));
+    return LV_RES_OK;
 }
 
-static lv_obj_t *_settings_dropdown(lv_obj_t *card, const char *title,
-	const char *options, u32 selected, lv_action_t action)
+static void _settings_help(lv_obj_t *card, const char *help)
 {
-	_settings_heading(card, title);
-	lv_obj_t *list = lv_ddlist_create(card, NULL);
-	lv_ddlist_set_hor_fit(list, false);
-	lv_obj_set_width(list, 590);
-	lv_ddlist_set_fix_height(list, 250);
-	lv_ddlist_set_draw_arrow(list, true);
-	lv_ddlist_set_options(list, options);
-	lv_ddlist_set_selected(list, selected);
-	lv_ddlist_set_action(list, action);
-	lv_obj_set_pos(list, 560, 18);
-	lv_obj_set_parent(list, lv_obj_get_parent(card));
-	lv_obj_set_top(list, true);
-	return list;
+    lv_obj_t *button = lv_btn_create(card, NULL);
+    lv_btn_set_fit(button, false, false);
+    lv_obj_set_size(button, 36, 36);
+    lv_obj_set_pos(button, lv_obj_get_width(card) - 46, 10);
+    lv_obj_set_free_ptr(button, (void *)help);
+    lv_btn_set_action(button, LV_BTN_ACTION_CLICK, settings_help_pressed);
+    lv_obj_t *mark = lv_label_create(button, NULL); lv_label_set_style(mark, &hint_small_style);
+    lv_label_set_text(mark, "?");
+}
+
+static lv_obj_t *_settings_heading(lv_obj_t *card, const char *title)
+{
+    lv_obj_t *label = lv_label_create(card, NULL);
+    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
+    lv_obj_set_width(label, lv_obj_get_width(card) - 80);
+    lv_label_set_text(label, title); lv_obj_set_pos(label, 16, 12);
+    return label;
+}
+
+static lv_obj_t *_settings_choices(lv_obj_t *card, const char *title,
+    const char *options, u32 selected, u32 columns, lv_action_t action, bool raw)
+{
+    lv_obj_t *heading = _settings_heading(card, title);
+    int y = 20 + lv_obj_get_height(heading);
+    int rows = 1; for (const char *p = options; *p; ++p) if (*p == '\n') ++rows;
+    rows = (rows + columns - 1) / columns;
+    int height = (lv_obj_get_height(card) - y - 14 - (rows - 1) * 8) / rows;
+    lv_obj_t *choices = nyx_choices_create(card, options, selected, columns,
+        lv_obj_get_width(card) - 32, height, action, 0, raw);
+    if (choices) lv_obj_set_pos(choices, 16, y);
+    return choices;
 }
 
 static lv_obj_t *_settings_button(lv_obj_t *card, const char *title, lv_action_t action)
 {
-	lv_obj_t *button = lv_btn_create(card, NULL);
-	lv_btn_set_fit(button, false, false);
-	lv_obj_set_size(button, 1132, 76);
-	lv_obj_set_pos(button, 24, 18);
-	lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
-	lv_obj_t *label = lv_label_create(button, NULL);
-	lv_label_set_text(label, title);
-	return button;
+    lv_obj_t *button = lv_btn_create(card, NULL);
+    lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_CENTER);
+    lv_obj_set_size(button, lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
+    lv_obj_set_pos(button, 14, 14); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
+    lv_obj_t *label = lv_label_create(button, NULL);
+    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK); lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
+    lv_obj_set_width(label, lv_obj_get_width(button) - 24); lv_label_set_text(label, title);
+    return button;
 }
 
 static lv_obj_t *_settings_toggle(lv_obj_t *card, const char *title, lv_action_t action, bool enabled)
 {
-	lv_obj_t *button = lv_btn_create(card, NULL);
-	nyx_create_onoff_button(lv_theme_get_current(), card, button, title, action, true);
-	lv_obj_set_width(button, 1132);
-	lv_obj_set_pos(button, 24, 18);
-	if (enabled) lv_btn_set_state(button, LV_BTN_STATE_TGL_REL);
-	nyx_generic_onoff_toggle(button);
-	return button;
+    lv_obj_t *button = lv_btn_create(card, NULL);
+    lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    lv_obj_set_size(button, lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
+    lv_obj_set_pos(button, 14, 14); lv_btn_set_toggle(button, true);
+    lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
+    lv_obj_t *label = lv_label_create(button, NULL);
+    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
+    lv_obj_set_width(label, lv_obj_get_width(button) - 24); lv_label_set_text(label, title);
+    lv_obj_set_pos(label, 12, 10);
+    lv_obj_t *state = lv_label_create(button, NULL);
+    lv_label_set_style(state, &hint_small_style); lv_label_set_recolor(state, true);
+    lv_label_set_long_mode(state, LV_LABEL_LONG_BREAK); lv_label_set_align(state, LV_LABEL_ALIGN_RIGHT);
+    lv_obj_set_width(state, lv_obj_get_width(button) - 24);
+    lv_obj_set_pos(state, 12, lv_obj_get_height(button) - lv_font_get_height(hint_small_style.text.font) - 12);
+    if (enabled) lv_btn_set_state(button, LV_BTN_STATE_TGL_REL);
+    nyx_generic_onoff_toggle(button);
+    return button;
 }
 
 lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
 {
-	(void)parent_button;
-	lv_obj_t *win = nyx_create_standard_window(SYMBOL_HOME" Nyx Settings", _action_win_nyx_options_close);
-	lv_win_add_btn(win, NULL, nyx_tr("Appearance"), nyx_create_appearance_window);
-	lv_win_ext_t *ext = lv_obj_get_ext_attr(win);
-	lv_page_set_scrl_layout(ext->page, LV_LAYOUT_OFF);
-	lv_page_set_scrl_fit(ext->page, false, false);
-	lv_page_set_scrl_width(ext->page, 1236);
-	lv_win_set_sb_mode(win, LV_SB_MODE_AUTO);
-	int y = 20;
-	lv_obj_t *card = _settings_card(win, y);
-	_settings_button(card, SYMBOL_EDIT" Appearance & language", nyx_create_appearance_window);
-	y += _settings_help(card, "Choose your language, reading comfort and background in one place.");
-	card = _settings_card(win, y);
-	_settings_button(card, SYMBOL_COPY" Color Theme", _create_window_nyx_colors);
-	y += _settings_help(card, "Customize #C7EA46 Theme# and #C7EA46 Accent# colors in Nyx.");
-	card = _settings_card(win, y);
-	_settings_dropdown(card, SYMBOL_HOME" Home Screen", "Main menu\nAll Configs\nLaunch\nMore Configs", n_cfg.home_screen, _home_screen_action);
-	y += _settings_help(card, "Select what screen to show on Nyx boot.\nAll Configs combines extra configurations into the launch screen.");
-	card = _settings_card(win, y);
-	_settings_toggle(card, SYMBOL_GPS" Extended Boot Entries", _entries_columns_action, n_cfg.entries_5_col);
-	y += _settings_help(card, "Increase the number of boot entries shown on each row.");
-	card = _settings_card(win, y);
-	_settings_button(card, SYMBOL_DOWNLOAD" Dump Joy-Con BT", _joycon_info_dump_action);
-	y += _settings_help(card, "Save Switch and Joy-Con MAC addresses and pairing keys for Android and Linux.");
-	card = _settings_card(win, y);
-	_settings_dropdown(card, SYMBOL_MODULES_ALT" Data Verification", "Off (Fastest)\nSparse (Fast)\nFull (Slow)\nFull (Hashes)", n_cfg.verification, _data_verification_action);
-	y += _settings_help(card, "Set the type of data verification done for backup and restore.\nCan be canceled without losing the backup/restore.");
-	card = _settings_card(win, y);
-	_settings_button(card, SYMBOL_CLOCK" Clock (Offset)", _create_mbox_clock_edit);
-	y += _settings_help(card, "Change the clock offset manually. The date and time are also used for SD card operations.");
-	lv_page_set_scrl_height(ext->page, y + 20);
-	lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_nyx_options_action);
-	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
-	lv_obj_set_click(status_bar.mid, true);
-	return LV_RES_OK;
+    (void)parent_button;
+    lv_obj_t *win = nyx_create_standard_window(SYMBOL_HOME" Nyx Settings", _action_win_nyx_options_close);
+    lv_win_add_btn(win, NULL, nyx_tr("Appearance"), nyx_create_appearance_window);
+    lv_win_ext_t *ext = lv_obj_get_ext_attr(win);
+    settings_page(ext->page);
+    lv_obj_t *tabs = lv_tabview_create(ext->page, NULL);
+    lv_obj_set_size(tabs, lv_obj_get_width(ext->page), lv_obj_get_height(ext->page));
+    lv_obj_set_pos(tabs, 0, 0); lv_tabview_set_sliding(tabs, false);
+    lv_obj_t *interface_page = lv_tabview_add_tab(tabs, "Interface"); settings_page(interface_page);
+    lv_obj_t *system = lv_tabview_add_tab(tabs, "System"); settings_page(system);
+    lv_obj_t *card = _settings_card(interface_page, 0, 2);
+    _settings_button(card, SYMBOL_EDIT" Appearance & language", nyx_create_appearance_window);
+    _settings_help(card, "Choose your language, reading comfort and background in one place.");
+    card = _settings_card(interface_page, 1, 2);
+    _settings_button(card, SYMBOL_COPY" Color Theme", _create_window_nyx_colors);
+    _settings_help(card, "Customize #C7EA46 Theme# and #C7EA46 Accent# colors in Nyx.");
+    card = _settings_card(interface_page, 2, 2);
+    _settings_choices(card, SYMBOL_HOME" Home Screen", "Main menu\nAll Configs\nLaunch\nMore Configs", n_cfg.home_screen, 2, _home_screen_action, false);
+    _settings_help(card, "Select what screen to show on Nyx boot.\nAll Configs combines extra configurations into the launch screen.");
+    card = _settings_card(interface_page, 3, 2);
+    _settings_toggle(card, SYMBOL_GPS" Extended Boot Entries", _entries_columns_action, n_cfg.entries_5_col);
+    _settings_help(card, "Increase the number of boot entries shown on each row.");
+    card = _settings_card(system, 0, 2);
+    _settings_button(card, SYMBOL_DOWNLOAD" Dump Joy-Con BT", _joycon_info_dump_action);
+    _settings_help(card, "Save Switch and Joy-Con MAC addresses and pairing keys for Android and Linux.");
+    card = _settings_card(system, 1, 2);
+    _settings_choices(card, SYMBOL_MODULES_ALT" Data Verification", "Off\nSparse\nFull\nHashes", n_cfg.verification, 2, _data_verification_action, false);
+    _settings_help(card, "Set the type of data verification done for backup and restore.\nCan be canceled without losing the backup/restore.");
+    card = _settings_card(system, 2, 2);
+    _settings_button(card, SYMBOL_CLOCK" Clock (Offset)", _create_mbox_clock_edit);
+    _settings_help(card, "Change the clock offset manually. The date and time are also used for SD card operations.");
+    lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_nyx_options_action);
+    lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER); lv_obj_set_click(status_bar.mid, true);
+    return LV_RES_OK;
 }
 
 void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
 {
-	(void)theme;
-	lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
-	lv_page_set_scrl_fit(parent, false, false);
-	lv_page_set_scrl_width(parent, 1236);
-	lv_page_set_sb_mode(parent, LV_SB_MODE_AUTO);
-	int y = 20;
-	lv_obj_t *card = _settings_card(parent, y);
-	lv_obj_t *button = _settings_toggle(card, SYMBOL_GPS" Auto Boot", _autoboot_hide_delay_action, h_cfg.autoboot);
-	autoboot_btn = button;
-	/* Initialization must not invoke the action that opens the chooser. */
-	autoboot_first_time = false;
-	y += _settings_help(card, "Choose which boot entry or payload to automatically boot when injecting.");
-	card = _settings_card(parent, y);
-	_settings_dropdown(card, SYMBOL_CLOCK" Boot Time Delay", "No bootlogo\n1 second\n2 seconds\n3 seconds\n4 seconds\n5 seconds\n6 seconds", h_cfg.bootwait, _autoboot_delay_action);
-	y += _settings_help(card, "Set how long to show the boot logo when automatic boot is enabled.\nPress VOL- during that time to enter the Hekate menu.");
-	card = _settings_card(parent, y);
-	_settings_toggle(card, SYMBOL_CHIP" Auto NoGC", auto_nogc_toggle, h_cfg.autonogc);
-	y += _settings_help(card, "Check the fuses and automatically apply the game-card protection patch when needed.");
-	card = _settings_card(parent, y);
-	_settings_toggle(card, SYMBOL_POWER" Auto HOS Power Off", auto_hos_poweroff_toggle, h_cfg.autohosoff);
-	y += _settings_help(card, "Automatically power off on the next payload injection after shutting down from HOS.");
-	card = _settings_card(parent, y);
-	_settings_heading(card, SYMBOL_BRIGHTNESS" Backlight");
-	lv_obj_t *slider = lv_slider_create(card, NULL);
-	lv_obj_set_size(slider, 590, 48);
-	lv_obj_set_pos(slider, 560, 32);
-	lv_bar_set_range(slider, 30, 220);
-	lv_bar_set_value(slider, h_cfg.backlight);
-	lv_slider_set_action(slider, _slider_brightness_action);
-	y += _settings_help(card, "Set backlight brightness.");
-	card = _settings_card(parent, y);
-	_settings_toggle(card, SYMBOL_REFRESH" Update Reboot 2 Payload", _update_r2p_action, h_cfg.updater2p);
-	y += _settings_help(card, "When FSS0 is used, check and update the reboot-to-payload image to Hekate.");
-	lv_page_set_scrl_height(parent, y + 20);
+    (void)theme; settings_page(parent);
+    lv_obj_t *card = _settings_card(parent, 0, 3);
+    autoboot_btn = _settings_toggle(card, SYMBOL_GPS" Auto Boot", _autoboot_hide_delay_action, h_cfg.autoboot);
+    autoboot_first_time = false;
+    _settings_help(card, "Choose which boot entry or payload to automatically boot when injecting.");
+    card = _settings_card(parent, 1, 3);
+    _settings_choices(card, SYMBOL_CLOCK" Boot Time Delay", "0\n1\n2\n3\n4\n5\n6", h_cfg.bootwait, 7, _autoboot_delay_action, true);
+    _settings_help(card, "Set how long to show the boot logo when automatic boot is enabled.\nPress VOL- during that time to enter the Hekate menu.");
+    card = _settings_card(parent, 2, 3);
+    _settings_toggle(card, SYMBOL_CHIP" Auto NoGC", auto_nogc_toggle, h_cfg.autonogc);
+    _settings_help(card, "Check the fuses and automatically apply the game-card protection patch when needed.");
+    card = _settings_card(parent, 3, 3);
+    _settings_toggle(card, SYMBOL_POWER" Auto HOS Power Off", auto_hos_poweroff_toggle, h_cfg.autohosoff);
+    _settings_help(card, "Automatically power off on the next payload injection after shutting down from HOS.");
+    card = _settings_card(parent, 4, 3);
+    lv_obj_t *heading = _settings_heading(card, SYMBOL_BRIGHTNESS" Backlight");
+    lv_obj_t *slider = lv_slider_create(card, NULL);
+    lv_obj_set_size(slider, lv_obj_get_width(card) - 48, 40);
+    lv_obj_set_pos(slider, 24, lv_obj_get_height(heading) + 34);
+    lv_bar_set_range(slider, 30, 220); lv_bar_set_value(slider, h_cfg.backlight);
+    lv_slider_set_action(slider, _slider_brightness_action);
+    _settings_help(card, "Set backlight brightness.");
+    card = _settings_card(parent, 5, 3);
+    _settings_toggle(card, SYMBOL_REFRESH" Update Reboot 2 Payload", _update_r2p_action, h_cfg.updater2p);
+    _settings_help(card, "When FSS0 is used, check and update the reboot-to-payload image to Hekate.");
 }

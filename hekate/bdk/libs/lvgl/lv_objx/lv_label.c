@@ -146,9 +146,12 @@ lv_obj_t * lv_label_create(lv_obj_t * par, const lv_obj_t * copy)
  */
 void lv_label_set_text(lv_obj_t * label, const char * text)
 {
-    lv_obj_invalidate(label);
-
     lv_label_ext_t * ext = lv_obj_get_ext_attr(label);
+    /* Repeated owned text does not change layout or pixels. Keep the NULL
+     * refresh and static-pointer semantics for callers that edit text in place. */
+    if(text && ext->text && !ext->static_txt && text != ext->text &&
+       ext->long_mode != LV_LABEL_LONG_DOT && !strcmp(text, ext->text)) return;
+    lv_obj_invalidate(label);
 
     /*If text is NULL then refresh */
     if(text == NULL) {
@@ -973,6 +976,7 @@ static void lv_label_revert_dots(lv_obj_t * label)
 static void lv_label_set_offset_x(lv_obj_t * label, lv_coord_t x)
 {
     lv_label_ext_t * ext = lv_obj_get_ext_attr(label);
+    if(ext->offset.x == x) return;
     ext->offset.x = x;
     lv_obj_invalidate(label);
 }
@@ -980,6 +984,7 @@ static void lv_label_set_offset_x(lv_obj_t * label, lv_coord_t x)
 static void lv_label_set_offset_y(lv_obj_t * label, lv_coord_t y)
 {
     lv_label_ext_t * ext = lv_obj_get_ext_attr(label);
+    if(ext->offset.y == y) return;
     ext->offset.y = y;
     lv_obj_invalidate(label);
 }

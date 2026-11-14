@@ -81,6 +81,14 @@ bool nyx_font_available(const char *filename)
 
 static int glyph_index(const lv_font_t *font, u32 codepoint)
 {
+    if (codepoint < font->unicode_first || codepoint > font->unicode_last) return -1;
+    /* Every accepted text face includes the complete leading ASCII block.
+     * Confirm its index for compatibility with icon/custom faces, then avoid
+     * a binary search for each of the repeated width/bitmap/bpp queries. */
+    if (codepoint >= 32 && codepoint <= 126) {
+        u32 index = codepoint - 32;
+        if (index < font->glyph_cnt && font->unicode_list[index] == codepoint) return index;
+    }
     u32 low = 0, high = font->glyph_cnt;
     while (low < high) {
         u32 mid = low + (high - low) / 2;
@@ -315,6 +323,7 @@ u32 nyx_font_size(void) { return selected_size; }
 const char *nyx_font_status(void) { return status; }
 const char *nyx_font_options(void) { return font_options; }
 const char *nyx_font_filename(u32 index) { return index < font_count ? font_files[index] : ""; }
+u32 nyx_font_count(void) { return font_count; }
 u32 nyx_font_selected_index(const char *filename)
 {
     if (filename) for (u32 i = 0; i < font_count; ++i) if (!strcmp(font_files[i], filename)) return i;

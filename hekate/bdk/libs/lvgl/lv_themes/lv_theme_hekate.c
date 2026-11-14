@@ -24,24 +24,25 @@
 /*********************
  *      DEFINES
  *********************/
-#define DEF_RADIUS             28
+#define DEF_RADIUS             8
+#define COLOR_OUTLINE          LV_COLOR_HEX(0xCDD1D6)
 
-#define COLOR_HOS_TURQUOISE    (_hue ? lv_color_hsv_to_rgb(_hue, 100, 100) : LV_COLOR_HEX(0x93E1AE)) // 0x00FFC9
-#define COLOR_HOS_TEAL_LIGHTER (_hue ? lv_color_hsv_to_rgb(_hue, 100,  93) : LV_COLOR_HEX(0xB6F0C9)) // 0x00EDBA
-#define COLOR_HOS_TEAL_LIGHT   (_hue ? lv_color_hsv_to_rgb(_hue, 100,  72) : LV_COLOR_HEX(0x7BC796)) // 0x00B78F
-#define COLOR_HOS_TEAL         (_hue ? lv_color_hsv_to_rgb(_hue, 100,  64) : LV_COLOR_HEX(0x65AC80)) // 0x00A273
+#define COLOR_HOS_TURQUOISE    (_hue ? lv_color_hsv_to_rgb(_hue, 100, 100) : LV_COLOR_HEX(0xCDD1D6)) // 0x00FFC9
+#define COLOR_HOS_TEAL_LIGHTER (_hue ? lv_color_hsv_to_rgb(_hue, 100,  93) : LV_COLOR_HEX(0xE0E3E8)) // 0x00EDBA
+#define COLOR_HOS_TEAL_LIGHT   (_hue ? lv_color_hsv_to_rgb(_hue, 100,  72) : LV_COLOR_HEX(0x8E959F)) // 0x00B78F
+#define COLOR_HOS_TEAL         (_hue ? lv_color_hsv_to_rgb(_hue, 100,  64) : LV_COLOR_HEX(0x777F89)) // 0x00A273
 #define COLOR_HOS_ORANGE       LV_COLOR_HEX(0xFF5500)
-#define COLOR_HOS_TXT_WHITE    LV_COLOR_HEX(0xF2F7F3)
+#define COLOR_HOS_TXT_WHITE    LV_COLOR_HEX(0xECEFF2)
 
-#define COLOR_BG_DARK          LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x0F1512 : (theme_bg_color ? (theme_bg_color - 0x0B0B0B) : 0)) // 0x222222.
-#define COLOR_BG               LV_COLOR_HEX(theme_bg_color) /* Preserve the explicit black preset (0). */
-#define COLOR_BG_LIGHT         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x101010) : 0x202B27) // 0x3D3D3D.
-#define COLOR_BG_LIGHTER       LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x191919) : 0x2B3A31) // 0x464646.
+#define COLOR_BG_DARK          LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x101114 : (theme_bg_color ? (theme_bg_color - 0x0B0B0B) : 0)) // 0x222222.
+#define COLOR_BG               LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x17191C : theme_bg_color) /* Preserve the explicit black preset (0). */
+#define COLOR_BG_LIGHT         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x101010) : 0x222529) // 0x3D3D3D.
+#define COLOR_BG_LIGHTER       LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x191919) : 0x2C3035) // 0x464646.
 
-#define COLOR_INACTIVE         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x171717) : 0x26352D) // 0x444444.
-#define COLOR_BAR              LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x202020) : 0x35483C) // 0x4D4D4D.
-#define COLOR_PRESS            LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x232323) : 0x2D4536) // 0x505050.
-#define COLOR_LINE             LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x383838) : 0x43564B) // 0x656565.
+#define COLOR_INACTIVE         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x171717) : 0x30343A) // 0x444444.
+#define COLOR_BAR              LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x202020) : 0x4B5159) // 0x4D4D4D.
+#define COLOR_PRESS            LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x232323) : 0x363B42) // 0x505050.
+#define COLOR_LINE             LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x383838) : 0x747B85) // 0x656565.
 
 #define COLOR_SHADOW_LIGHT     LV_COLOR_HEX(0xAAAAAA)
 #define COLOR_SHADOW           LV_COLOR_HEX(theme_bg_color ? theme_bg_color : 0x181818) // 0x2D2D2D.
@@ -158,12 +159,12 @@ static void btn_init(void)
 	pr.body.main_color = COLOR_PRESS;
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.shadow.width = 0;
-	pr.body.border.color = COLOR_HOS_TEAL_LIGHTER;
-	pr.text.color = COLOR_HOS_TURQUOISE;
+	pr.body.border.color = COLOR_OUTLINE;
+	pr.text.color = COLOR_HOS_TXT_WHITE;
 	pr.body.border.width = 2;
 
 	lv_style_copy(&tgl_rel, &rel);
-	tgl_rel.body.border.color = COLOR_HOS_TURQUOISE;
+	tgl_rel.body.border.color = COLOR_OUTLINE;
 	tgl_rel.body.border.width = 2;
 	tgl_rel.body.main_color = COLOR_PRESS;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
@@ -171,14 +172,14 @@ static void btn_init(void)
 	lv_style_copy(&tgl_pr, &tgl_rel);
 	tgl_pr.body.main_color = COLOR_PRESS;
 	tgl_pr.body.grad_color = tgl_pr.body.main_color;
-	tgl_pr.text.color = COLOR_HOS_TURQUOISE;
+	tgl_pr.text.color = COLOR_HOS_TXT_WHITE;
 	tgl_pr.body.shadow.width = 0;
 
 	lv_style_copy(&ina, &rel);
 	ina.body.main_color = COLOR_BG_DARK;
 	ina.body.grad_color = ina.body.main_color;
 	//ina.body.shadow.width = 0;
-	ina.text.color = LV_COLOR_HEX(0x8DA295);
+	ina.text.color = LV_COLOR_HEX(0x9298A1);
 	ina.body.border.width = 1;
 
 	theme.btn.rel = &rel;
@@ -203,7 +204,7 @@ static void label_init(void)
 	sec.text.color = COLOR_HOS_ORANGE;
 
 	lv_style_copy(&hint, &prim);
-	hint.text.color = LV_COLOR_HEX(0xC3D4C8);
+	hint.text.color = LV_COLOR_HEX(0xBAC0C7);
 
 	theme.label.prim = &prim;
 	theme.label.sec = &sec;
@@ -299,16 +300,16 @@ static void sw_init(void)
 	sw_indic.body.radius = LV_RADIUS_CIRCLE;
 	sw_indic.body.empty = 1;
 	sw_indic.body.border.width = 1;
-	sw_indic.body.border.color = COLOR_HOS_TURQUOISE;
+	sw_indic.body.border.color = COLOR_OUTLINE;
 
 	lv_style_copy(&sw_knob_on, theme.slider.knob);
 	sw_knob_on.body.main_color = COLOR_HOS_TXT_WHITE;
 	sw_knob_on.body.grad_color = sw_knob_on.body.main_color;
 	sw_knob_on.body.border.width = 2;
-	sw_knob_on.body.border.color = COLOR_HOS_TURQUOISE;
+	sw_knob_on.body.border.color = COLOR_OUTLINE;
 
 	lv_style_copy(&sw_knob_off, &sw_knob_on);
-	sw_knob_off.body.main_color = LV_COLOR_HEX(0x8DA295);
+	sw_knob_off.body.main_color = LV_COLOR_HEX(0x9298A1);
 	sw_knob_off.body.grad_color = sw_knob_off.body.main_color;
 	sw_knob_off.body.border.width = 1;
 	sw_knob_off.body.border.color = LV_COLOR_HEX(0x999999);
@@ -443,20 +444,20 @@ static void cb_init(void)
 	lv_style_copy(&pr, &rel);
 	pr.body.main_color = COLOR_PRESS;
 	pr.body.grad_color = pr.body.main_color;
-	pr.body.border.color = COLOR_HOS_TURQUOISE;
+	pr.body.border.color = COLOR_OUTLINE;
 
 	lv_style_copy(&tgl_rel, &rel);
 	tgl_rel.body.main_color = COLOR_HOS_TURQUOISE;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
 	tgl_rel.body.shadow.width = 0;
 	tgl_rel.body.border.width = 2;
-	tgl_rel.body.border.color = COLOR_HOS_TURQUOISE;
-	tgl_rel.text.color = COLOR_HOS_TURQUOISE;
+	tgl_rel.body.border.color = COLOR_OUTLINE;
+	tgl_rel.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&tgl_pr, &tgl_rel);
 	tgl_pr.body.main_color = COLOR_HOS_TEAL_LIGHTER;
 	tgl_pr.body.grad_color = tgl_pr.body.main_color;
-	tgl_pr.body.border.color = COLOR_HOS_TEAL_LIGHTER;
+	tgl_pr.body.border.color = COLOR_OUTLINE;
 	tgl_pr.text.color = COLOR_HOS_TEAL_LIGHTER;
 
 	lv_style_copy(&ina, theme.btn.ina);
@@ -495,14 +496,14 @@ static void btnm_init(void)
 	pr.body.main_color = COLOR_PRESS;
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.border.width = 2;
-	pr.body.border.color = COLOR_HOS_TURQUOISE;
+	pr.body.border.color = COLOR_OUTLINE;
 	pr.body.empty = 1;
-	pr.text.color = COLOR_HOS_TURQUOISE;
+	pr.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&tgl_rel, &pr);
 	tgl_rel.body.main_color = COLOR_PRESS;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
-	tgl_rel.text.color = COLOR_HOS_TURQUOISE;
+	tgl_rel.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&tgl_pr, &tgl_rel);
 	tgl_pr.body.main_color = COLOR_PRESS;
@@ -636,7 +637,7 @@ static void list_init(void)
 	lv_style_copy(&rel, theme.btn.rel);
 	rel.body.padding.hor = LV_DPI / 8;
 	rel.body.padding.ver = LV_DPI / 6;
-	rel.body.radius = 18;
+	rel.body.radius = 8;
 	rel.body.border.color = COLOR_INACTIVE;
 	rel.body.border.width = 1;
 	rel.body.border.part = LV_BORDER_FULL;
@@ -646,9 +647,9 @@ static void list_init(void)
 	pr.body.main_color = COLOR_PRESS;
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.border.width = 2;
-	pr.body.border.color = COLOR_HOS_TURQUOISE;
+	pr.body.border.color = COLOR_OUTLINE;
 	pr.body.empty = 1;
-	pr.text.color = COLOR_HOS_TURQUOISE;
+	pr.text.color = COLOR_HOS_TXT_WHITE;
 	//pr.body.radius = 0;
    // pr.text.font = _font;
 
@@ -685,7 +686,7 @@ static void ddlist_init(void)
 	lv_style_copy(&bg, theme.panel);
 	bg.body.padding.hor = LV_DPI / 6;
 	//bg.body.padding.ver = LV_DPI / 6;
-	bg.body.radius = 18;
+	bg.body.radius = 8;
 	bg.body.shadow.width = 0;
 	bg.body.border.width = 1;
 	bg.text.line_space = LV_DPI / 8;
@@ -701,8 +702,8 @@ static void ddlist_init(void)
 	sel.body.main_color = COLOR_PRESS;
 	sel.body.grad_color = sel.body.main_color;
 	sel.body.border.width = 2;
-	sel.body.border.color = COLOR_HOS_TURQUOISE;
-	sel.text.color = COLOR_HOS_TURQUOISE;
+	sel.body.border.color = COLOR_OUTLINE;
+	sel.text.color = COLOR_HOS_TXT_WHITE;
 
 	theme.ddlist.bg = &bg;
 	theme.ddlist.bgo = &opened;
@@ -726,7 +727,7 @@ static void roller_init(void)
 	roller_bg.text.color = COLOR_INACTIVE;
 
 	lv_style_copy(&roller_sel, &roller_bg);
-	roller_sel.text.color = COLOR_HOS_TURQUOISE;
+	roller_sel.text.color = COLOR_HOS_TXT_WHITE;
 
 	theme.roller.bg = &roller_bg;
 	theme.roller.sel = &roller_sel;
@@ -772,34 +773,34 @@ static void tabview_init(void)
 	pr.body.grad_color = pr.body.main_color;
 	pr.body.border.width = 2;
 	pr.body.empty = 1;
-	pr.body.radius = 18;
-	pr.body.border.color = COLOR_HOS_TURQUOISE;
+	pr.body.radius = 8;
+	pr.body.border.color = COLOR_OUTLINE;
 	pr.body.border.part = LV_BORDER_BOTTOM;
 	pr.body.border.opa = LV_OPA_COVER;
-	pr.text.color = COLOR_HOS_TURQUOISE;
+	pr.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&tgl_rel, &lv_style_transp);
 	tgl_rel.glass = 0;
 	tgl_rel.body.empty = 1;
 	tgl_rel.body.border.width = 2;
-	tgl_rel.body.border.color = COLOR_HOS_TURQUOISE;
+	tgl_rel.body.border.color = COLOR_OUTLINE;
 	tgl_rel.body.border.part = LV_BORDER_BOTTOM;
 	tgl_rel.body.border.opa = LV_OPA_COVER;
-	tgl_rel.body.radius = 18;
+	tgl_rel.body.radius = 8;
 	tgl_rel.body.main_color = COLOR_PRESS;
 	tgl_rel.body.grad_color = tgl_rel.body.main_color;
 	tgl_rel.text.font = _font;
-	tgl_rel.text.color = COLOR_HOS_TURQUOISE;
+	tgl_rel.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&tgl_pr, &def);
 	tgl_pr.body.main_color = COLOR_BG_LIGHT;
 	tgl_pr.body.grad_color = tgl_pr.body.main_color;
 	tgl_pr.body.border.width = 2;
-	tgl_pr.body.border.color = COLOR_HOS_TURQUOISE;
+	tgl_pr.body.border.color = COLOR_OUTLINE;
 	tgl_pr.body.border.part = LV_BORDER_BOTTOM;
 	tgl_pr.body.empty = 1;
-	tgl_pr.body.radius = 18;
-	tgl_pr.text.color = COLOR_HOS_TURQUOISE;
+	tgl_pr.body.radius = 8;
+	tgl_pr.text.color = COLOR_HOS_TXT_WHITE;
 
 	theme.tabview.bg = theme.bg;
 	theme.tabview.indic = &indic;
@@ -863,12 +864,12 @@ static void win_init(void)
 	//header.text.color = COLOR_HOS_TXT_WHITE;
 
 	lv_style_copy(&rel, theme.btn.rel);
-	rel.body.radius = 20;
+	rel.body.radius = 8;
 	rel.body.opa = LV_OPA_0;
 	rel.body.border.width = 1;
 
 	lv_style_copy(&pr, theme.btn.pr);
-	pr.body.radius = 20;
+	pr.body.radius = 8;
 	pr.body.border.width = 2;
 
 	theme.win.bg = &window_bg;

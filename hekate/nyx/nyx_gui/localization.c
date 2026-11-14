@@ -23,6 +23,20 @@ const char *nyx_tr(const char *text)
     return text;
 }
 
+static const locale_entry *lookup_span(const char *text, u32 length)
+{
+    u32 low = 0, high = ARRAY_SIZE(locale_catalog);
+    while (low < high) {
+        u32 middle = low + (high - low) / 2;
+        const char *source = locale_catalog[middle].source;
+        int comparison = strncmp(text, source, length);
+        if (!comparison && source[length]) comparison = -1;
+        if (!comparison) return &locale_catalog[middle];
+        if (comparison < 0) high = middle; else low = middle + 1;
+    }
+    return NULL;
+}
+
 void nyx_localization_init(void) { nyx_unicode_fonts_init(); }
 
 /* Translate whole phrases first; otherwise preserve icons, matrix control
@@ -59,15 +73,15 @@ static void translate_piece(text_builder *out, const char *text, u32 length, u32
 static bool translate_pattern(text_builder *out, const char *text, u32 length, u32 depth)
 {
     u32 lang = n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN;
-    for (u32 row = 0; row < ARRAY_SIZE(locale_catalog); ++row) {
+    u32 first[2] = { '%', (u8)text[0] };
+    if (first[1] < first[0]) { u32 swap = first[0]; first[0] = first[1]; first[1] = swap; }
+    u32 buckets = first[0] == first[1] ? 1 : 2;
+    for (u32 bucket = 0; bucket < buckets; ++bucket)
+    for (u32 index = locale_pattern_start[first[bucket]]; index < locale_pattern_start[first[bucket] + 1]; ++index) {
+        u32 row = locale_pattern_rows[index];
         const char *source = locale_catalog[row].source;
-        if (source[0] != '%' && source[0] != text[0]) continue;
         const char *replacement = locale_catalog[row].text[lang];
-        if (!strchr(source, '%') || !strcmp(source, replacement)) continue;
-        u32 letters = 0;
-        for (const char *p = source; *p; ++p)
-            if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z')) ++letters;
-        if (letters < 5) continue;
+        if (!strcmp(source, replacement)) continue;
         const char *starts[12]; u32 sizes[12], count = 0, at = 0;
         const char *format = source;
         bool match = true;
@@ -140,16 +154,15 @@ static bool translate_pattern(text_builder *out, const char *text, u32 length, u
 static void translate_piece(text_builder *out, const char *text, u32 length, u32 depth)
 {
     if (!length || out->failed) return;
-    char *key = malloc(length + 1);
-    if (!key) { out->failed = true; return; }
-    memcpy(key, text, length); key[length] = 0;
-    const char *translated = nyx_tr(key);
-    if (translated != key) {
-        append(out, translated, strlen(translated));
-        if (strcmp(key, translated)) out->changed = true;
-        free(key); return;
+    const locale_entry *entry = lookup_span(text, length);
+    if (entry) {
+        u32 language = n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN;
+        const char *translated = entry->text[language];
+        u32 translated_length = strlen(translated);
+        append(out, translated, translated_length);
+        if (length != translated_length || memcmp(text, translated, length)) out->changed = true;
+        return;
     }
-    free(key);
     if (depth < 8 && translate_pattern(out, text, length, depth)) return;
     if (depth > 32) { append(out, text, length); return; }
     /* Matrix width/state control byte, independent of UTF-8 text. */
@@ -222,6 +235,17 @@ static void translate_piece(text_builder *out, const char *text, u32 length, u32
 char *nyx_translate_text(const char *text)
 {
     if (!text) return NULL;
+    const char *direct = nyx_tr(text);
+    if (direct != text) {
+        if (!strcmp(direct, text)) return NULL;
+        u32 length = strlen(direct) + 1;
+        char *copy = malloc(length); if (copy) memcpy(copy, direct, length);
+        return copy;
+    }
+    bool letters = false;
+    for (const char *at = text; *at; ++at)
+        if ((*at >= 'A' && *at <= 'Z') || (*at >= 'a' && *at <= 'z')) { letters = true; break; }
+    if (!letters) return NULL;
     text_builder out = {0};
     translate_piece(&out, text, strlen(text), 0);
     if (!out.changed || out.failed) { free(out.data); return NULL; }

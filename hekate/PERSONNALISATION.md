@@ -1,4 +1,4 @@
-# Apparence, langues et lecture — prototype 7
+# Apparence, langues et lecture — version 8
 
 Depuis l'accueil, ouvrir **Réglages Nyx → Apparence**. Le même écran regroupe
 la langue, la police, la taille du texte, la disposition de l'accueil et les
@@ -9,7 +9,9 @@ la fenêtre annule les choix provisoires.
 
 Neuf tailles principales sont proposées, de 20 à 36 pixels. Les légendes
 utilisent une taille proportionnée et les tableaux conservent une police
-à largeur fixe. Les titres trop longs défilent sans recouvrir les commandes.
+à largeur fixe. Les titres trop longs défilent sans recouvrir les commandes. Les choix très
+longs peuvent employer la taille de légende de la même police pour rester
+lisibles dans leur bouton.
 
 Trois polices prêtes à utiliser sont fournies dans `fonts/`, à copier à la
 racine de la carte SD : Lecture, Lecture renforcée et Lecture fixe. Le menu
@@ -22,21 +24,34 @@ Les TTF/OTF ne sont pas lus directement par la console. Python 3 et Pillow
 sont nécessaires uniquement sur l'ordinateur pour cette conversion.
 Les instructions détaillées sont dans `documentation/POLICES.md`.
 
-## Arrière-plans
+## Arrière-plans et fluidité
 
-Les choix sont Désactivé, Vagues, Particules et Aurore. La vitesse et
-l'intensité se règlent séparément. Les effets sont désactivés par défaut.
-Ils se suspendent pendant les mesures matérielles et ne modifient pas les
-résultats. Le rendu utilise des formes natives ; aucun fichier vidéo n'est
-nécessaire. Les fenêtres gardent une base sombre pour préserver la lecture.
+Le fond est uniforme, noir/gris. Les cartes sont transparentes et leurs
+contours gris ou blancs ont des angles légèrement arrondis. Le fond SD
+personnalisé n'est plus dessiné dans cette présentation ; son fichier est
+conservé. Les pastilles de couleur ont un remplissage propre, distinct des
+menus transparents. La première pastille correspond à l'accent gris.
+
+Les choix d'animation sont Désactivé, Vagues, Particules et Aurore, avec
+vitesse et intensité. Les effets sont concentrés dans une bande inférieure
+de 64 pixels. Ils se figent pendant l'utilisation du tactile/Joy-Con et
+reprennent après 900 ms de repos ; les diagnostics les suspendent aussi.
+Une seule présentation de l'image est effectuée par rafraîchissement LVGL,
+même lorsque plusieurs petites zones changent. Les recherches de glyphes
+et les traductions ont été optimisées sans modifier les mesures matérielles.
 
 ## Dispositions
 
-Les deux accueils Tuiles et Carrousel restent disponibles. Les menus
-Outils, Informations, Options et Réglages Nyx sont réorganisés en cartes
-avec défilement. Les aides reviennent à la ligne et leur hauteur est
-mesurée. Diagnostic utilise deux colonnes avec les grandes tailles.
-Les opérations et leurs confirmations conservent leurs fonctions.
+Les deux accueils Tuiles et Carrousel restent disponibles. Outils,
+Informations, Options et Diagnostic tiennent dans la zone entre la
+navigation haute et la barre d'état, sans défilement vertical des pages
+principales. Les aides longues sont accessibles par « ? ». Les titres
+peuvent revenir à la ligne et les contrôles gardent leurs identifiants.
+
+Réglages Nyx comprend deux onglets internes, Interface et Système.
+Apparence comprend Langue, Police, Disposition et Effet. La police se
+sélectionne avec les flèches ; les autres choix courants sont visibles.
+Les rapports détaillés et les listes de fichiers peuvent toujours défiler.
 
 ## Langues et données
 
@@ -64,6 +79,8 @@ dossiers `bootloader/` et `fonts/` avec la carte SD existante.
 ## Vérification
 
 La compilation et les contrôles sur ordinateur sont fournis dans l'archive.
+Les vérifications graphiques couvrent 1 365 scènes LVGL : les sept langues,
+les neuf tailles principales et des contrôles des trois polices fournies.
 Ils vérifient notamment la configuration, l'annulation, les erreurs de
 lecture, les formats de police, les textes UTF-8 et les commandes conservées.
 Ils ne remplacent pas l'essai sur console : vérifier la lecture à 20 et

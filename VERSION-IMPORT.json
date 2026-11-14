@@ -1,7 +1,7 @@
 {
-  "tag": "v7",
-  "source_archive": "hekate-6.5.4-personnalisation-v7-sources.zip",
-  "source_archive_sha256": "819fc1dd3b82d8e7d6c7d4f5e066289aca166361933acd81f104fe719a7aaee2",
+  "tag": "v8",
+  "source_archive": "hekate-6.5.4-interface-fluide-v8-sources.zip",
+  "source_archive_sha256": "fe352ef222f014d36594b63e1cd240925efcfaa60f0a991e4fca55a20e1ff4c0",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",

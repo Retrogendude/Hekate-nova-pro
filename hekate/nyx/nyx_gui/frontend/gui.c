@@ -314,23 +314,43 @@ exit:
 	timer = get_tmr_ms() + 2000;
 }
 
+static bool display_frame_dirty;
+static bool display_frame_ready;
+
 static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const lv_color_t *color_p)
 {
+	/* A refresh can contain many small rectangles. Wait once before updating
+	 * the source buffer, then present their completed frame together. */
+	if (!display_frame_dirty && disp_init_done)
+		vic_wait_idle();
+
 	// Draw to intermediate non-rotated framebuffer.
 	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
+	display_frame_dirty = true;
+	if ((x2 - x1 + 1) > 600)
+		display_frame_ready = true;
 
-	// Rotate and copy to visible framebuffer.
+	lv_flush_ready();
+}
+
+static void _disp_fb_present(uint32_t elapsed, uint32_t pixels)
+{
+	(void)elapsed;
+	(void)pixels;
+	if (!display_frame_dirty)
+		return;
+
+	/* LVGL calls this once after all dirty rectangles have been flushed.
+	 * Rotating the full frame per rectangle stalls input and scrolling. */
 	if (disp_init_done)
 		vic_compose();
-
-	// Check if display init was done. If it's the first big draw, init.
-	if (!disp_init_done && ((x2 - x1 + 1) > 600))
+	else if (display_frame_ready)
 	{
 		disp_init_done = true;
 		_nyx_disp_init();
 	}
-
-	lv_flush_ready();
+	display_frame_dirty = false;
+	display_frame_ready = false;
 }
 
 static touch_event_t touchpad;
@@ -354,6 +374,8 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 	}
 
 	int res = touch_poll(&touchpad);
+	if (touchpad.touch)
+		nyx_background_interaction();
 
 	// Take a screenshot if 3rd finger.
 	if (touchpad.finger > 2)
@@ -412,6 +434,8 @@ static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 		data->state = LV_INDEV_STATE_REL;
 		return false;
 	}
+	if (jc_pad->buttons)
+		nyx_background_interaction();
 
 	// Take a screenshot if Capture button is pressed.
 	if (jc_pad->cap)
@@ -605,6 +629,7 @@ console:
 	// Auto hide cursor.
 	if (jc_drv_ctx.pos_x != jc_drv_ctx.pos_last_x || jc_drv_ctx.pos_y != jc_drv_ctx.pos_last_y)
 	{
+		nyx_background_interaction();
 		jc_drv_ctx.pos_last_x = jc_drv_ctx.pos_x;
 		jc_drv_ctx.pos_last_y = jc_drv_ctx.pos_y;
 
@@ -982,12 +1007,21 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 	lv_style_copy(&win_bg_style, &lv_style_plain);
 	win_bg_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
 	win_bg_style.body.grad_color = win_bg_style.body.main_color;
-	win_bg_style.body.opa = n_cfg.background_effect ? LV_OPA_80 : LV_OPA_COVER;
+	win_bg_style.body.opa = LV_OPA_COVER;
+	win_bg_style.body.padding.hor = 0;
+	win_bg_style.body.padding.ver = 0;
+	win_bg_style.body.padding.inner = 0;
 
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
 	lv_win_set_style(win, LV_WIN_STYLE_BG, &win_bg_style);
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES);
+	/* The persistent status bar lives on the top layer. Keep the window's
+	 * page inside it, rather than drawing/scrolling controls behind the bar. */
+	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES - LV_DPI * 9 / 14);
+	lv_win_ext_t *content = lv_obj_get_ext_attr(win);
+	lv_page_set_style(content->page, LV_PAGE_STYLE_BG, &lv_style_transp_tight);
+	lv_page_set_style(content->page, LV_PAGE_STYLE_SCRL, &lv_style_transp_tight);
+	lv_obj_set_pos(lv_page_get_scrl(content->page), 0, 0);
 
 	if (!close_action)
 		close_btn = lv_win_add_btn(win, NULL, SYMBOL_CLOSE" Close", nyx_win_close_action);
@@ -1301,7 +1335,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
 	btn_onoff_rel_hos_style.body.padding.hor = 0;
-	btn_onoff_rel_hos_style.body.radius = 28;
+	btn_onoff_rel_hos_style.body.radius = 10;
 	btn_onoff_rel_hos_style.body.empty = 1;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
@@ -1353,7 +1387,7 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 	lv_style_copy(&btn_onoff_rel_hos_style, th->btn.rel);
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
-	btn_onoff_rel_hos_style.body.radius = 28;
+	btn_onoff_rel_hos_style.body.radius = 10;
 	btn_onoff_rel_hos_style.body.padding.hor = LV_DPI / 4;
 	btn_onoff_rel_hos_style.body.empty = 1;
 
@@ -2146,7 +2180,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_card_rel.body.opa = LV_OPA_COVER;
 	home_card_rel.body.main_color = th->btn.rel->body.main_color;
 	home_card_rel.body.grad_color = home_card_rel.body.main_color;
-	home_card_rel.body.radius = 28;
+	home_card_rel.body.radius = 10;
 	home_card_rel.body.border.width = 1;
 	home_card_rel.body.border.color = th->btn.rel->body.border.color;
 	home_card_rel.body.border.opa = LV_OPA_COVER;
@@ -2158,7 +2192,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_card_pr.body.main_color = th->btn.pr->body.main_color;
 	home_card_pr.body.grad_color = home_card_pr.body.main_color;
 	home_card_pr.body.border.width = 2;
-	home_card_pr.body.border.color = th->btn.pr->text.color;
+	home_card_pr.body.border.color = LV_COLOR_HEX(0xCDD1D6);
 	lv_style_copy(&home_card_sel, &home_card_pr);
 	home_card_sel.body.main_color = th->btn.tgl_rel->body.main_color;
 	home_card_sel.body.grad_color = home_card_sel.body.main_color;
@@ -2169,7 +2203,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_primary_rel.body.main_color = th->btn.pr->text.color;
 	home_primary_rel.body.grad_color = home_primary_rel.body.main_color;
 	home_primary_rel.body.border.width = 2;
-	home_primary_rel.body.border.color = th->btn.pr->text.color;
+	home_primary_rel.body.border.color = LV_COLOR_HEX(0xCDD1D6);
 	lv_color32_t accent = { .full = lv_color_to32(home_primary_rel.body.main_color) };
 	// Custom accent hues can be dark blue; keep action labels legible too.
 	unsigned brightness = (77 * accent.red + 150 * accent.green + 29 * accent.blue) >> 8;
@@ -2186,7 +2220,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_detail.text.color = th->label.hint->text.color;
 	lv_style_copy(&home_small_icon, &home_title);
 	home_small_icon.text.font = &hekate_symbol_30;
-	home_small_icon.text.color = th->btn.pr->text.color;
+	home_small_icon.text.color = n_cfg.theme_color ? lv_color_hsv_to_rgb(n_cfg.theme_color, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
 	lv_style_copy(&home_big_icon, &home_small_icon);
 	home_big_icon.text.font = &hekate_symbol_120;
 	lv_style_copy(&home_button_text, &home_detail);
@@ -2251,19 +2285,19 @@ static lv_res_t _home_modern_activate(lv_obj_t *btn)
 	return LV_RES_OK;
 }
 
-static void _home_modern_footer(lv_obj_t *parent)
+static void _home_modern_footer(lv_obj_t *parent, lv_coord_t y)
 {
-	_home_modern_button(parent, "Reglages Nyx", 32, 516, 296, 56,
+	_home_modern_button(parent, "Reglages Nyx", 32, y, 296, 56,
 		create_win_nyx_options, 0, false);
-	_home_modern_button(parent, "Recharger", 624, 516, 176, 56,
+	_home_modern_button(parent, "Recharger", 624, y, 176, 56,
 		_create_mbox_reload, 0, false);
-	_home_modern_button(parent, "Redemarrer", 816, 516, 192, 56,
+	_home_modern_button(parent, "Redemarrer", 816, y, 192, 56,
 		_create_mbox_reboot, 0, false);
-	_home_modern_button(parent, "Eteindre", 1024, 516, 192, 56,
+	_home_modern_button(parent, "Eteindre", 1024, y, 192, 56,
 		_create_mbox_poweroff, 0, false);
 }
 
-static void _home_create_tiles(lv_obj_t *parent)
+static lv_coord_t _home_create_tiles(lv_obj_t *parent)
 {
 	lv_obj_t *hero = _home_modern_button(parent, "", 32, 112, 552, 366,
 		_home_modern_activate, HOME_ACTION_BOOT, false);
@@ -2278,18 +2312,32 @@ static void _home_create_tiles(lv_obj_t *parent)
 		"Autres profils\nde demarrage", "Outils sur\nla carte microSD",
 		"Copie du systeme\nsur microSD", "Ecran, eclairage\net identite RAM"
 	};
+	lv_coord_t row_y = 112, row_height = 0;
+	lv_obj_t *previous = NULL;
 	for (u32 i = HOME_ACTION_CONFIGS; i < HOME_ACTION_COUNT; i++)
 	{
 		u32 cell = i - 1;
 		lv_coord_t x = 608 + (cell % 2) * 312;
-		lv_coord_t y = 112 + (cell / 2) * 194;
-		lv_obj_t *btn = _home_modern_button(parent, "", x, y, 288, 172,
+		lv_obj_t *btn = _home_modern_button(parent, "", x, row_y, 288, 172,
 			_home_modern_activate, i, false);
 		_home_modern_label(btn, home_action_icons[i], &home_small_icon, 24, 18, 80);
 		lv_obj_t *title = _home_modern_label(btn, home_action_titles[i], &home_title, 24, 62, 240);
-		lv_label_set_long_mode(title, LV_LABEL_LONG_ROLL);
-		_home_modern_label(btn, tile_details[cell], &home_detail, 24, 108, 240);
+		lv_coord_t detail_y = 62 + lv_obj_get_height(title) + 12;
+		if (detail_y < 108) detail_y = 108;
+		lv_obj_t *detail = _home_modern_label(btn, tile_details[cell], &home_detail, 24, detail_y, 240);
+		lv_coord_t height = 172;
+		if (detail_y + lv_obj_get_height(detail) + 24 > height) lv_obj_set_hidden(detail, true);
+		if (height > row_height) row_height = height;
+		if (cell & 1) {
+			lv_obj_set_height(previous, row_height);
+			lv_obj_set_height(btn, row_height);
+			row_y += row_height + 16;
+			row_height = 0;
+		} else previous = btn;
 	}
+	lv_coord_t bottom = row_y - 16;
+	lv_obj_set_height(hero, bottom - 112);
+	return bottom;
 }
 
 /* The viewport clips the moving track.  Only explicit Ouvrir launches an
@@ -2376,7 +2424,6 @@ static void _home_create_carousel(lv_obj_t *parent)
 		lv_label_set_text(icon, home_action_icons[i]);
 		lv_obj_align(icon, NULL, LV_ALIGN_CENTER, 0, 0);
 		lv_obj_t *title = _home_modern_label(card, home_action_titles[i], &home_title, 24, 158, 272);
-		lv_label_set_long_mode(title, LV_LABEL_LONG_ROLL);
 		lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
 	}
 	lv_obj_t *info = lv_cont_create(parent, NULL);
@@ -2401,15 +2448,20 @@ static void _create_tab_home(lv_theme_t *th, lv_obj_t *parent)
 	lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
 	lv_page_set_scrl_fit(parent, false, false);
 	lv_page_set_scrl_width(parent, LV_HOR_RES);
-	lv_page_set_scrl_height(parent, 592);
-	lv_page_set_sb_mode(parent, LV_SB_MODE_OFF);
 	_home_modern_label(parent, "hekate", &home_title, 32, 20, 500);
 	_home_modern_label(parent, "Demarrer, gerer et verifier ta console.", &home_detail, 32, 66, 1000);
+	lv_coord_t bottom = 482;
 	if (n_cfg.home_layout == HOME_LAYOUT_CAROUSEL)
 		_home_create_carousel(parent);
 	else
-		_home_create_tiles(parent);
-	_home_modern_footer(parent);
+		bottom = _home_create_tiles(parent);
+	lv_coord_t footer_y = bottom + 24;
+	if (footer_y < 516) footer_y = 516;
+	_home_modern_footer(parent, footer_y);
+	lv_coord_t height = footer_y + 76;
+	if (height < lv_obj_get_height(parent)) height = lv_obj_get_height(parent);
+	lv_page_set_scrl_height(parent, height);
+	lv_page_set_sb_mode(parent, LV_SB_MODE_AUTO);
 }
 
 
@@ -2683,19 +2735,22 @@ static void _nyx_main_menu(lv_theme_t * th)
 	lv_cont_set_style(cnr, &base_bg_style);
 	lv_obj_set_size(cnr, LV_HOR_RES, LV_VER_RES);
 
-	if (hekate_bg)
-	{
-		lv_obj_t *img = lv_img_create(cnr, NULL);
-		lv_img_set_src(img, hekate_bg);
-	}
+	/* The compact presentation uses one uniform charcoal base. Existing
+	 * SD artwork is retained, but does not compete with text or scrolling. */
 	nyx_background_create(scr);
 
 	// Add tabview page to screen.
 	lv_obj_t *tv = lv_tabview_create(scr, NULL);
+	home_tabview = tv;
+	if (hekate_bg)
+	{
+		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_PR, &tabview_btn_pr);
+		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR, &tabview_btn_tgl_pr);
+	}
 	if (nyx_font_size() > 30) {
 		static lv_style_t readable_tab_styles[4];
-		const lv_style_t *styles[4] = {th->tabview.btn.rel, th->tabview.btn.pr,
-			th->tabview.btn.tgl_rel, th->tabview.btn.tgl_pr};
+		const lv_style_t *styles[4] = {lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_REL), lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_PR),
+			lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_TGL_REL), lv_tabview_get_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR)};
 		const lv_tabview_style_t types[4] = {LV_TABVIEW_STYLE_BTN_REL, LV_TABVIEW_STYLE_BTN_PR,
 			LV_TABVIEW_STYLE_BTN_TGL_REL, LV_TABVIEW_STYLE_BTN_TGL_PR};
 		for (u32 i = 0; i < 4; ++i) {
@@ -2704,14 +2759,9 @@ static void _nyx_main_menu(lv_theme_t * th)
 			lv_tabview_set_style(tv, types[i], &readable_tab_styles[i]);
 		}
 	}
-	home_tabview = tv;
-	if (hekate_bg)
-	{
-		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_PR, &tabview_btn_pr);
-		lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BTN_TGL_PR, &tabview_btn_tgl_pr);
-	}
 	lv_tabview_set_sliding(tv, false);
-	lv_obj_set_size(tv, LV_HOR_RES, LV_VER_RES);
+	/* Navigation and pages stop above the fixed status/footer layer. */
+	lv_obj_set_size(tv, LV_HOR_RES, LV_VER_RES - LV_DPI * 9 / 14);
 
 	// Add all tabs content.
 	char version[32];
@@ -2817,6 +2867,7 @@ void nyx_load_and_run()
 	lv_disp_drv_init(&disp_drv);
 	disp_drv.disp_flush = _disp_fb_flush;
 	lv_disp_drv_register(&disp_drv);
+	lv_refr_set_monitor_cb(_disp_fb_present);
 
 	// Initialize Joy-Con.
 	if (!n_cfg.jc_disable)

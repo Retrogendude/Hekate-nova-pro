@@ -1,7 +1,30 @@
+# Correctifs du prototype 8
+
+Les onglets principaux sont compacts et bornés par les barres haute/basse.
+Le thème emploie un fond uni et des contours gris/blancs de rayon 8 pixels.
+Les couleurs des pastilles sont rendues explicitement ; leurs styles sont
+réutilisés plutôt que réalloués à chaque ouverture.
+
+Le pilote attend la fin de l'image précédente avant la première écriture,
+puis lance une seule rotation VIC à la fin du rafraîchissement LVGL.
+Les polices Unicode triées utilisent une recherche binaire ; les faces SD
+ont un accès ASCII direct. La recherche des motifs de traduction est indexée
+et la recherche de fragments ne crée plus de copie temporaire de clé.
+Les offsets d'animation et textes dynamiques identiques ne redessinent plus
+leurs labels sans changement. Aucune fréquence matérielle n'a été augmentée.
+
+Les effets n'utilisent plus vingt objets mobiles. Leur travail de dessin
+est borné à une bande de 64 pixels ou à seize petites zones, et se suspend
+pendant les gestes. Les mesures de `verification/performance-fonds.json`
+sont celles du rendu logiciel LVGL sur ordinateur, et non des FPS de console.
+Les contrôles d'affichage vérifient les présentations groupées, les contrôles
+visibles et les pastilles. Les essais physiques de cette version restent à
+faire. Les confirmations et les opérations matérielles sont conservées.
+
 # Construction Windows — prototype personnalisé
 
-Prototype 7 construit le 5 novembre 2026 à partir des Makefiles du projet.
-Les notes des prototypes 5 et 6 ci-dessous décrivent leur état historique.
+Prototype 8 construit le 5 novembre 2026 à partir des Makefiles du projet.
+Les notes des prototypes antérieurs ci-dessous décrivent leur état historique.
 Les tailles courantes et résultats détaillés sont dans BUILD-INFO.json.
 
 - Cible ARM : devkitARM GCC 16.1.0 installé par devkitPro.
@@ -34,7 +57,7 @@ des sources, avec des doublures de la carte SD : modes 0/1, valeurs invalides,
 conservation des anciens réglages et échecs de montage, ouverture, écriture et
 fermeture. Cela ne remplace pas les essais matériels.
 
-Le prototype 7 ajoute des contrôles sur les polices SD, les actions du menu
+Le prototype 7 avait ajouté des contrôles sur les polices SD, les actions du menu
 Apparence, les effets et les dispositions. Des rendus ont été produits avec
 le vrai LVGL sur ordinateur pour les cartes et l'écran Apparence, à 36 pixels
 en français et en russe. Les sélecteurs ont été corrigés après inspection.

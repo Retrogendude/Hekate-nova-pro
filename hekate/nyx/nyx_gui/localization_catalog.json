@@ -29384,6 +29384,51 @@
     "  eMMC ALLES",
     "  eMMC TUDO"
   ],
+  "Interface": [
+    "Interface",
+    "Interface",
+    "Interfaz",
+    "Interfaccia",
+    "Интерфейс",
+    "Oberfläche",
+    "Interface"
+  ],
+  "System": [
+    "System",
+    "Système",
+    "Sistema",
+    "Sistema",
+    "Система",
+    "System",
+    "Sistema"
+  ],
+  "Sparse": [
+    "Sparse",
+    "Partielle",
+    "Parcial",
+    "Parziale",
+    "Выборочно",
+    "Stichprobe",
+    "Parcial"
+  ],
+  "Hashes": [
+    "Hashes",
+    "Empreintes",
+    "Hashes",
+    "Hash",
+    "Хеши",
+    "Hashes",
+    "Hashes"
+  ],
+  "Effects pause while navigating and during diagnostics.": [
+    "Effects pause while navigating and during diagnostics.",
+    "Les effets se mettent en pause pendant la navigation et les diagnostics.",
+    "Los efectos se pausan durante la navegación y los diagnósticos.",
+    "Gli effetti si sospendono durante la navigazione e la diagnostica.",
+    "Эффекты приостанавливаются при навигации и диагностике.",
+    "Effekte pausieren während Navigation und Diagnose.",
+    "Os efeitos param durante a navegação e os diagnósticos."
+  ],
   "PASS": [
     "PASS",
     "RÉUSSI",
@@ -32129,14 +32174,14 @@
     " Datenprüfung",
     " Verificação de dados"
   ],
-  "Off (Fastest)\nSparse (Fast)\nFull (Slow)\nFull (Hashes)": [
-    "Off (Fastest)\nSparse (Fast)\nFull (Slow)\nFull (Hashes)",
-    "Désactivée (très rapide)\nPartielle (rapide)\nComplète (lente)\nComplète (empreintes)",
-    "Desactivada (más rápido)\nParcial (rápida)\nCompleta (lenta)\nCompleta (hashes)",
-    "Disattivata (più veloce)\nParziale (veloce)\nCompleta (lenta)\nCompleta (hash)",
-    "Выкл. (быстрее всего)\nВыборочно (быстро)\nПолная (медленно)\nПолная (хеши)",
-    "Aus (am schnellsten)\nStichproben (schnell)\nVollständig (langsam)\nVollständig (Hashes)",
-    "Desativada (mais rápido)\nParcial (rápida)\nCompleta (lenta)\nCompleta (hashes)"
+  "Off\nSparse\nFull\nHashes": [
+    "Off\nSparse\nFull\nHashes",
+    "Désactivé\nPartielle\nComplète\nEmpreintes",
+    "Desactivado\nParcial\nCompleta\nHashes",
+    "Disattivato\nParziale\nCompleto\nHash",
+    "Отключено\nВыборочно\nПолная\nХеши",
+    "Aus\nStichprobe\nVollständig\nHashes",
+    "Desativado\nParcial\nCompleta\nHashes"
   ],
   "Set the type of data verification done for backup and restore.\nCan be canceled without losing the backup/restore.": [
     "Set the type of data verification done for backup and restore.\nCan be canceled without losing the backup/restore.",
@@ -32164,15 +32209,6 @@
     " Задержка загрузки",
     " Startverzögerung",
     " Atraso de arranque"
-  ],
-  "No bootlogo\n1 second\n2 seconds\n3 seconds\n4 seconds\n5 seconds\n6 seconds": [
-    "No bootlogo\n1 second\n2 seconds\n3 seconds\n4 seconds\n5 seconds\n6 seconds",
-    "Sans logo de démarrage\n1 seconde\n2 secondes\n3 secondes\n4 secondes\n5 secondes\n6 secondes",
-    "Sin logo de inicio\n1 segundo\n2 segundos\n3 segundos\n4 segundos\n5 segundos\n6 segundos",
-    "Senza logo di avvio\n1 secondo\n2 secondi\n3 secondi\n4 secondi\n5 secondi\n6 secondi",
-    "Без логотипа загрузки\n1 секунда\n2 секунды\n3 секунды\n4 секунды\n5 секунд\n6 секунд",
-    "Ohne Startlogo\n1 Sekunde\n2 Sekunden\n3 Sekunden\n4 Sekunden\n5 Sekunden\n6 Sekunden",
-    "Sem logótipo de arranque\n1 segundo\n2 segundos\n3 segundos\n4 segundos\n5 segundos\n6 segundos"
   ],
   "Set how long to show the boot logo when automatic boot is enabled.\nPress VOL- during that time to enter the Hekate menu.": [
     "Set how long to show the boot logo when automatic boot is enabled.\nPress VOL- during that time to enter the Hekate menu.",
