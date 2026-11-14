@@ -8,13 +8,14 @@ static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 
 static void refresh(void)
 {
     if(!ui.label)return;
-    const nova_bt_status *s=nova_bt_get_status();char text[1200];
+    const nova_bt_status *s=nova_bt_get_status();char text[2048], detail[384];
+    s_printf(detail,"%s: %d / %d | ID: %02X / %02X | HID: %d / %d | ACK: %d / %d | ERR: %02X / %02X | BTN: %06X / %06X | XY: %d,%d / %d,%d",nyx_tr("Joy-Con reports"),(int)s->pad[0].reports,(int)s->pad[1].reports,s->pad[0].report_id,s->pad[1].report_id,s->pad[0].hid_open,s->pad[1].hid_open,s->pad[0].mode_ack,s->pad[1].mode_ack,s->pad[0].last_error,s->pad[1].last_error,(unsigned)s->pad[0].buttons,(unsigned)s->pad[1].buttons,s->pad[0].x,s->pad[0].y,s->pad[1].x,s->pad[1].y);
     const char *states[]={"Bluetooth off","Starting Bluetooth...","Bluetooth ready","Bluetooth error"};
-    s_printf(text,"%s\n%s\n\n%s : %s    %s : %s\n%s : %d / %d\n\n%s\n%s",
+    s_printf(text,"%s\n%s\n\n%s : %s    %s : %s\n%s : %d / %d\n%s\n\n%s\n%s",
         nyx_tr(states[s->state<4?s->state:3]),ui.note,
         nyx_tr("Left Joy-Con"),nyx_tr(s->pad[0].connected?"Receiving inputs":"No input"),
         nyx_tr("Right Joy-Con"),nyx_tr(s->pad[1].connected?"Receiving inputs":"No input"),
-        nyx_tr("HCI packets RX / TX"),s->rx_packets,s->tx_packets,
+        nyx_tr("HCI packets RX / TX"),(int)s->rx_packets,(int)s->tx_packets,detail,
         nyx_tr("Read pairing while the Joy-Con are attached, then detach them and start Bluetooth. Press a Joy-Con button to wake it."),
         nyx_tr("Experimental ROM service. Console validation required. Keys stay in RAM; existing pairing is not changed."));
     if(s->state==NOVA_BT_ERROR){char error[64];s_printf(error,"\n%s : %d",nyx_tr("Error code"),s->error);strcat(text,error);}

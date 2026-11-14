@@ -285,7 +285,7 @@ void nyx_nova_footer(lv_obj_t *layer, lv_action_t save)
     lv_obj_t *clock = nyx_nova_glyph(bar, "clock-3", 34, 23, 18); lv_img_set_style(clock, &nova_image_dim);
     status_bar.time_temp = nyx_nova_text(bar, "00:00 · 00.0 °C", 64, 22, 450, NOVA_SMALL); lv_label_set_style(status_bar.time_temp, &nova_dim);
     static lv_style_t compact; lv_style_copy(&compact, &nova_dim); compact.text.font = nyx_font_ui(14);
-    lv_obj_t *version = nyx_nova_text(bar, "hekate 6.5.4", 972, 24, 152, NOVA_SMALL); lv_label_set_style(version, &compact);
+    lv_obj_t *version = nyx_nova_text(bar, "hekate 6.5.5", 972, 24, 152, NOVA_SMALL); lv_label_set_style(version, &compact);
     nova_battery_icon = nyx_nova_glyph(bar, "battery-full", 1138, 20, 24); lv_img_set_style(nova_battery_icon, &nova_image_dim);
     status_bar.battery = nyx_nova_text(bar, "00.0%", 1174, 24, 72, NOVA_SMALL); lv_label_set_style(status_bar.battery, &compact);
     lv_label_set_align(status_bar.battery, LV_LABEL_ALIGN_LEFT); lv_label_set_recolor(status_bar.battery, true);
@@ -750,7 +750,7 @@ void nyx_nova_about(lv_obj_t *page)
     static const char *titles[]={"Créateurs","Remerciements","Logiciels libres","Changelog"};
     static const char *icons[]={"brand-mark","badge-check","layers-2"};
     static const char *credits[]={
-        "hekate\n(c) 2018, naehrwert, st4rk\n(c) 2018-2026, CTCaer\n\nNyx\n(c) 2019-2026, CTCaer\n\nHekate 6.5.4 / Nyx 1.9.4",
+        "hekate\n(c) 2018, naehrwert, st4rk\n(c) 2018-2026, CTCaer\n\nNyx\n(c) 2019-2026, CTCaer\n\nHekate 6.5.5 / Nyx 1.9.5",
         "derrek, nedwill, plutoo\nshuffle2, smea, thexyz\nyellows8\n\nfincs, hexkyz, SciresM\nShiny Quagsire, WinterMute\nswitchbrew",
         "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne\nBTstack (c) BlueKitchen GmbH\nLicence personnelle / non commerciale"
     };
@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v21 · Wireless Joy-Con (experimental)\nBluetooth service; requires console testing.\nCredits background and USB frame fixed.",
+                "v22 · Compatibility and input fixes\nHekate 6.5.5 / Nyx 1.9.5.\nNyx header and wireless navigation corrected.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."
@@ -779,7 +779,7 @@ void nyx_nova_about(lv_obj_t *page)
             "Hekate Nova Pro " NYX_NOVA_VERSION "\n\n"
             "Retrogen : conception et adaptation\n"
             "ChatGPT : assistance à la conception et à l'adaptation\n\n"
-            "Basé sur Hekate 6.5.4 / Nyx 1.9.4\n"
+            "Basé sur Hekate 6.5.5 / Nyx 1.9.5\n"
             "Les crédits et licences d'origine sont conservés dans les autres onglets.";
         if(i==3){
             const char *second=strstr(text,"bcl-1.2.0");char first[512];

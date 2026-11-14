@@ -1,0 +1,399 @@
+{
+  "identical_views": 49,
+  "compared_to": "v21 Nova",
+  "excluded": "footer containing the changed Hekate version",
+  "results": [
+    {
+      "view": [
+        "home",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "home",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "carousel",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "tools",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "info",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "options",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "diagnostics",
+        0,
+        6
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        0
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        1
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        2
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        3
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        4
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        5
+      ],
+      "pixel_difference": null
+    },
+    {
+      "view": [
+        "nyx",
+        2,
+        6
+      ],
+      "pixel_difference": null
+    }
+  ]
+}

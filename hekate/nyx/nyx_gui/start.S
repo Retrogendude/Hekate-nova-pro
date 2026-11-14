@@ -14,7 +14,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.section .text._start
+.section .text.nyx_entry
 .arm
 
 .extern _reloc_ipl

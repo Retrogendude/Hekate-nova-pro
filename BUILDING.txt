@@ -1,9 +1,9 @@
-Prototype personnel Hekate Nova Pro 21-BT. Lire LIRE-MOI-V21-BT.md.
-devkitARM, GNU make et Python : make -j4 -r dans les sources.
-BDK et pile BTstack Classic inclus, cette derniere avec sa licence propre.
-Aucun micrologiciel Bluetooth proprietaire fourni. RF non valide sur console.
-La suite Windows documente les chemins du workspace (work/hekate-nova-pro-v21-bt,
-work/toolchains/w64devkit, outils devkitPro, archive officielle pour le rendu).
-Les fixtures font fonctionner les vrais corps C avec entrees materielles substituees.
-Les tests de comparaison demandent aussi le projet v20 et les references amont.
-Le compagnon RAM et les ressources de la v18 sont conserves.
+Hekate Nova Pro22 : make -j4 -r avec devkitARM, GNU make et Python.
+Les outils Windows documentent les chemins du workspace de developpement.
+Lire LIRE-MOI-V22.md et les licences, dont la licence propre de BTstack.
+Le lien Nyx refuse un en-tete deplace ; ne pas retirer cette assertion.
+Les tests PC substituent la radio et ne prouvent pas le fonctionnement RF.
+La suite de regression demande la v21, l archive officielle 6.5.4 pour
+son res.pak identique a6.5.5 et les polices de test decrites dans les scripts.
+Le coeur porte les correctifs officiels jusqu a8e1392df4569ac501a115867056b13c361429e9e.
+Le compagnon RAM et ses ressources sources sont inclus comme dans la v18.

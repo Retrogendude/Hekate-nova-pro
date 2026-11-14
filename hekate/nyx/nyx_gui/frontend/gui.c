@@ -428,6 +428,7 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 
 static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 {
+	static int bluetooth_side = -1;
 	if (diagnostics_suspended || (n_cfg.jc_disable && !gui_bluetooth_active() && !nyx_interactive_joycon_active()))
 	{
 		data->state = LV_INDEV_STATE_REL;
@@ -454,10 +455,22 @@ static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 		return false;
 	}
 
-	// Calibrate left stick.
+	/* Bluetooth may be used with just one half. Recenter when its source
+     * changes, rather than waiting forever for the missing preferred half. */
+    bool wireless = gui_bluetooth_active();
+    bool use_right = n_cfg.jc_force_right;
+    if (wireless) {
+        if (use_right && !jc_pad->conn_r && jc_pad->conn_l) use_right = false;
+        else if (!use_right && !jc_pad->conn_l && jc_pad->conn_r) use_right = true;
+        if (bluetooth_side != (int)use_right) {
+            jc_drv_ctx.calibration_step = 0;
+            bluetooth_side = use_right;
+        }
+    } else bluetooth_side = -1;
+    // Calibrate the selected stick.
 	if (jc_drv_ctx.calibration_step != JC_CAL_MAX_STEPS)
 	{
-		if (n_cfg.jc_force_right)
+		if (use_right)
 		{
 			if (jc_pad->conn_r
 				&& jc_pad->rstick_x > 0x400 && jc_pad->rstick_y > 0x400
@@ -491,18 +504,20 @@ static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 			if (console_enabled)
 				goto console;
 
-			data->state = LV_INDEV_STATE_REL;
-
-			return false;
+			/* A button remains usable while the wireless stick is centering. */
+            if (wireless) goto handle_buttons;
+            data->state = LV_INDEV_STATE_REL;
+            return false;
 		}
 	}
 
 	// Re-calibrate on disconnection.
-	if (n_cfg.jc_force_right && !jc_pad->conn_r)
+	if (use_right && !jc_pad->conn_r)
 		jc_drv_ctx.calibration_step = 0;
-	else if (!n_cfg.jc_force_right && !jc_pad->conn_l)
+	else if (!use_right && !jc_pad->conn_l)
 		jc_drv_ctx.calibration_step = 0;
 
+handle_buttons:
 	// Set button presses.
 	if (jc_pad->a || jc_pad->zl || jc_pad->zr)
 		data->state = LV_INDEV_STATE_PR;
@@ -557,8 +572,9 @@ console:
 		return false;
 	}
 
+	if (wireless && jc_drv_ctx.calibration_step != JC_CAL_MAX_STEPS) goto set_cursor;
 	// Calculate new cursor position.
-	if (!n_cfg.jc_force_right)
+	if (!use_right)
 	{
 		// Left stick X.
 		if (jc_pad->lstick_x <= jc_drv_ctx.cx_max && jc_pad->lstick_x >= jc_drv_ctx.cx_min)
@@ -619,6 +635,7 @@ console:
 		}
 	}
 
+set_cursor:
 	// Ensure value inside screen limits.
 	if (jc_drv_ctx.pos_x < 0)
 		jc_drv_ctx.pos_x = 0;
@@ -635,7 +652,8 @@ console:
 	data->point.y = jc_drv_ctx.pos_y;
 
 	// Auto hide cursor.
-	if (jc_drv_ctx.pos_x != jc_drv_ctx.pos_last_x || jc_drv_ctx.pos_y != jc_drv_ctx.pos_last_y)
+	if (jc_drv_ctx.pos_x != jc_drv_ctx.pos_last_x || jc_drv_ctx.pos_y != jc_drv_ctx.pos_last_y ||
+        (wireless && (jc_pad->a || jc_pad->zl || jc_pad->zr)))
 	{
 		nyx_background_interaction();
 		jc_drv_ctx.pos_last_x = jc_drv_ctx.pos_x;

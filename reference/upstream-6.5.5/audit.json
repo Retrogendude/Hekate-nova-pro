@@ -1,0 +1,29 @@
+{
+  "official_release": "Hekate 6.5.5 / Nyx 1.9.5",
+  "release_url": "https://github.com/CTCaer/hekate/releases/tag/v6.5.5",
+  "tag_sha": "9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+  "latest_fix_sha": "8e1392df4569ac501a115867056b13c361429e9e",
+  "post_tag_fixes": [
+    "184584a95c348c75c93990eb28f53a00c45e4876",
+    "8e1392df4569ac501a115867056b13c361429e9e"
+  ],
+  "state": "Reference audit completed; changes ported selectively to Nova22 after user resumed corrections.",
+  "reference_sha256": {
+    "after-tag.json": "fcc93a0276599e1f723e9c05bc0ef4f24080992a2b5b51dfcb4a076ce8edcbec",
+    "compare.json": "692bd9d063c0e6a5047bed9d4dbac68c58bad967d25f49a05c37252eb8b77d53",
+    "official-6.5.5.zip": "e3c6613fc9e099d00683063855812a6059247da6e9d75f2caa203f9e78e5df56",
+    "v6.5.4/Versions.inc": "2d9970bb511740ee2fbc21992131a8c3906fb8e6e2801a5df234887037f6b358",
+    "v6.5.5/Versions.inc": "72ee0e50f0e1ee75a6f28c5663dd15e8f7db6152eef3d5c393751e7a891c5fb4",
+    "v6.5.5/bootloader/main.c": "35dc23144eca7516db884dd609b3a2fc86df7667dd391034ddcd320e5c9fb1bf",
+    "v6.5.5/nyx/nyx_gui/frontend/gui_info.c": "d2f44fa60add633c6a9bee05cafb9abd4b3056a1da57ae208cee6428c13bf6ca",
+    "v6.5.5/nyx/nyx_gui/hos/pkg1.c": "6a28794a2fb24b0c368d17a211b182d5d5d250bdf312bda86420c3aeb17d1783",
+    "v6.5.5/bootloader/hos/pkg1.c": "9db4832dbc0ebbe20ce472756965a22b02ae45a31d2316a947aa58b1f422ea43",
+    "v6.5.5/bootloader/hos/pkg2_patches.inl": "eb39442a70978d3aee939a5818fab707a59e2ab89a6741437cf4b44f4c988fc2",
+    "v6.5.4/bootloader/main.c": "f506acdfbddf87b1f8f024e76226ed3fdc320bb5987b32a360f221527c4d6b67",
+    "v6.5.4/nyx/nyx_gui/frontend/gui_info.c": "6c8be9a1f515e9d7020943a4f6ead9793b9cb7acf452ea8578a26ff4b0d731b8",
+    "v6.5.4/nyx/nyx_gui/hos/pkg1.c": "c6157ab881b4502488167bfd702213aba4297e6948c3307e8790c7a866426df1",
+    "v6.5.4/bootloader/hos/pkg1.c": "5cd8042abe8180b3886ef7727ebf5829133c6dc8cf44e654773112a9a6557afd",
+    "v6.5.4/bootloader/hos/pkg2_patches.inl": "8f227a9ee85ca863269cf5e0098b41b7e1a9076a6812c0740ec1328e48ffaf41",
+    "8e1392df4569ac501a115867056b13c361429e9e/bootloader/hos/pkg2_patches.inl": "153d3e5875f110468a4ca4acfa815bec410b1f77cb9cdbcd1832c8fef69589c8"
+  }
+}

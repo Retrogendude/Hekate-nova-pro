@@ -71,7 +71,7 @@ static int key_next(btstack_link_key_iterator_t *it,bd_addr_t addr,link_key_t ke
 static void key_done(btstack_link_key_iterator_t *it){(void)it;}
 static const btstack_link_key_db_t keys={noop,key_local,noop,key_get,key_put,key_delete,key_iter,key_next,key_done};
 
-static void clear_pad(unsigned i){memset(&status.pad[i],0,sizeof(status.pad[i]));}
+static void clear_pad(unsigned i){status.pad[i].connected=0;status.pad[i].buttons=0;status.pad[i].x=status.pad[i].y=2048;}
 static int side_cid(uint16_t cid)
 {for(unsigned i=0;i<2;i++)if(cid&&link[i].cid==cid)return i;return -1;}
 static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
@@ -102,8 +102,10 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
         case HID_SUBEVENT_CONNECTION_OPENED:
             hid_subevent_connection_opened_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
             if(hid_subevent_connection_opened_get_status(p)){
+                status.pad[i].last_error=hid_subevent_connection_opened_get_status(p);status.pad[i].hid_open=0;
                 link[i].cid=0;link[i].next=nova_bt_now()+5000;clear_pad(i);
             }else{
+                status.pad[i].hid_open=1;status.pad[i].last_error=0;status.pad[i].mode_ack=0;
                 link[i].cid=hid_subevent_connection_opened_get_hid_cid(p);
                 link[i].mode_tries=0;link[i].mode_next=nova_bt_now()+150;
             }break;
@@ -113,7 +115,7 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
             break;
         case HID_SUBEVENT_CONNECTION_CLOSED:
             i=side_cid(hid_subevent_connection_closed_get_hid_cid(p));if(i<0)break;
-            clear_pad(i);link[i].cid=0;link[i].next=nova_bt_now()+5000;break;
+            clear_pad(i);status.pad[i].hid_open=0;link[i].cid=0;link[i].next=nova_bt_now()+5000;break;
         default:break;
         }break;
     default:break;
@@ -149,7 +151,7 @@ void nova_bt_stop(void)
         initialized=0;
     }
     memset(peers,0,sizeof(peers));memset(link,0,sizeof(link));
-    tx_len=rx_len=rx_need=rx_type=0;receive_packet=0;clear_pad(0);clear_pad(1);status.state=NOVA_BT_OFF;status.error=0;
+    tx_len=rx_len=rx_need=rx_type=0;receive_packet=0;memset(status.pad,0,sizeof(status.pad));status.state=NOVA_BT_OFF;status.error=0;
 }
 int nova_bt_start(const nova_bt_peer p[2])
 {
@@ -192,7 +194,7 @@ void nova_bt_poll(void)
             link[i].retries++;link[i].next=now+5000;
             if(hid_host_connect(peers[i].mac,HID_PROTOCOL_MODE_REPORT,&link[i].cid))link[i].cid=0;
         }
-        if(link[i].cid&&link[i].mode_next&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
+        if(link[i].cid&&link[i].mode_next&&!status.pad[i].mode_ack&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
             /* Keep the output storage alive until BTstack sends it. No rumble. */
             static const uint8_t neutral[]={0,1,0x40,0x40,0,1,0x40,0x40};
             if(!link[i].mode_tries){

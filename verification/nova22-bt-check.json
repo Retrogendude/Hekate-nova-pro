@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "physical_radio": false,
+  "output": "PASS real BTstack initialization (57 HCI commands), framing, keys, input, restart and deadlines\n",
+  "source_sha256": {
+    "btstack_config.h": "866e99909f178fa9aab24ec9e853ba84e2ff037e6fd1f282c2bcb5b6f93a714f",
+    "nova_bt.h": "3320db9f8e5f2a311621ad3174a1db21f04e1207c4ddd4ea777546ba5317618a",
+    "nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
+    "nova_bt_radio.c": "bee7821707cac692c85317a4c8bfa87316ec3ef79a2f92f2aa2ed19e66c578a2",
+    "nova_bt_stack.c": "5ba9d4926ff719b7714e75c9acb72a8681346b3ea60ff8a3282046574975ba55"
+  }
+}

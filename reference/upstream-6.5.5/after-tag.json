@@ -1,0 +1,360 @@
+{
+  "url": "https://api.github.com/repos/CTCaer/hekate/compare/v6.5.5...master",
+  "html_url": "https://github.com/CTCaer/hekate/compare/v6.5.5...master",
+  "permalink_url": "https://github.com/CTCaer/hekate/compare/CTCaer:9593272...CTCaer:8e1392d",
+  "diff_url": "https://github.com/CTCaer/hekate/compare/v6.5.5...master.diff",
+  "patch_url": "https://github.com/CTCaer/hekate/compare/v6.5.5...master.patch",
+  "base_commit": {
+    "sha": "9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "node_id": "C_kwDOB9m9eNoAKDk1OTMyNzJjNTRmOGRjMTI3YTVhMjVmOTFlMWFjOTBlMWJlNjIwNWQ",
+    "commit": {
+      "author": {
+        "name": "CTCaer",
+        "email": "ctcaer@gmail.com",
+        "date": "2026-11-11T17:23:27Z"
+      },
+      "committer": {
+        "name": "CTCaer",
+        "email": "ctcaer@gmail.com",
+        "date": "2026-11-11T17:23:27Z"
+      },
+      "message": "Bump hekate to v6.5.5 and Nyx to v1.9.5",
+      "tree": {
+        "sha": "12e39943953388df35a8ba532e8bb40d0c48b324",
+        "url": "https://api.github.com/repos/CTCaer/hekate/git/trees/12e39943953388df35a8ba532e8bb40d0c48b324"
+      },
+      "url": "https://api.github.com/repos/CTCaer/hekate/git/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "html_url": "https://github.com/CTCaer/hekate/commit/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "comments_url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d/comments",
+    "author": {
+      "login": "CTCaer",
+      "id": 3665130,
+      "node_id": "MDQ6VXNlcjM2NjUxMzA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3665130?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/CTCaer",
+      "html_url": "https://github.com/CTCaer",
+      "followers_url": "https://api.github.com/users/CTCaer/followers",
+      "following_url": "https://api.github.com/users/CTCaer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/CTCaer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/CTCaer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/CTCaer/subscriptions",
+      "organizations_url": "https://api.github.com/users/CTCaer/orgs",
+      "repos_url": "https://api.github.com/users/CTCaer/repos",
+      "events_url": "https://api.github.com/users/CTCaer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/CTCaer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "CTCaer",
+      "id": 3665130,
+      "node_id": "MDQ6VXNlcjM2NjUxMzA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3665130?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/CTCaer",
+      "html_url": "https://github.com/CTCaer",
+      "followers_url": "https://api.github.com/users/CTCaer/followers",
+      "following_url": "https://api.github.com/users/CTCaer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/CTCaer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/CTCaer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/CTCaer/subscriptions",
+      "organizations_url": "https://api.github.com/users/CTCaer/orgs",
+      "repos_url": "https://api.github.com/users/CTCaer/repos",
+      "events_url": "https://api.github.com/users/CTCaer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/CTCaer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "0928365b1f460111a1a6ea6042ad42cb1968938d",
+        "url": "https://api.github.com/repos/CTCaer/hekate/commits/0928365b1f460111a1a6ea6042ad42cb1968938d",
+        "html_url": "https://github.com/CTCaer/hekate/commit/0928365b1f460111a1a6ea6042ad42cb1968938d"
+      }
+    ]
+  },
+  "merge_base_commit": {
+    "sha": "9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "node_id": "C_kwDOB9m9eNoAKDk1OTMyNzJjNTRmOGRjMTI3YTVhMjVmOTFlMWFjOTBlMWJlNjIwNWQ",
+    "commit": {
+      "author": {
+        "name": "CTCaer",
+        "email": "ctcaer@gmail.com",
+        "date": "2026-11-11T17:23:27Z"
+      },
+      "committer": {
+        "name": "CTCaer",
+        "email": "ctcaer@gmail.com",
+        "date": "2026-11-11T17:23:27Z"
+      },
+      "message": "Bump hekate to v6.5.5 and Nyx to v1.9.5",
+      "tree": {
+        "sha": "12e39943953388df35a8ba532e8bb40d0c48b324",
+        "url": "https://api.github.com/repos/CTCaer/hekate/git/trees/12e39943953388df35a8ba532e8bb40d0c48b324"
+      },
+      "url": "https://api.github.com/repos/CTCaer/hekate/git/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "html_url": "https://github.com/CTCaer/hekate/commit/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+    "comments_url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d/comments",
+    "author": {
+      "login": "CTCaer",
+      "id": 3665130,
+      "node_id": "MDQ6VXNlcjM2NjUxMzA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3665130?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/CTCaer",
+      "html_url": "https://github.com/CTCaer",
+      "followers_url": "https://api.github.com/users/CTCaer/followers",
+      "following_url": "https://api.github.com/users/CTCaer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/CTCaer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/CTCaer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/CTCaer/subscriptions",
+      "organizations_url": "https://api.github.com/users/CTCaer/orgs",
+      "repos_url": "https://api.github.com/users/CTCaer/repos",
+      "events_url": "https://api.github.com/users/CTCaer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/CTCaer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "CTCaer",
+      "id": 3665130,
+      "node_id": "MDQ6VXNlcjM2NjUxMzA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3665130?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/CTCaer",
+      "html_url": "https://github.com/CTCaer",
+      "followers_url": "https://api.github.com/users/CTCaer/followers",
+      "following_url": "https://api.github.com/users/CTCaer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/CTCaer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/CTCaer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/CTCaer/subscriptions",
+      "organizations_url": "https://api.github.com/users/CTCaer/orgs",
+      "repos_url": "https://api.github.com/users/CTCaer/repos",
+      "events_url": "https://api.github.com/users/CTCaer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/CTCaer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "0928365b1f460111a1a6ea6042ad42cb1968938d",
+        "url": "https://api.github.com/repos/CTCaer/hekate/commits/0928365b1f460111a1a6ea6042ad42cb1968938d",
+        "html_url": "https://github.com/CTCaer/hekate/commit/0928365b1f460111a1a6ea6042ad42cb1968938d"
+      }
+    ]
+  },
+  "status": "ahead",
+  "ahead_by": 2,
+  "behind_by": 0,
+  "total_commits": 2,
+  "commits": [
+    {
+      "sha": "184584a95c348c75c93990eb28f53a00c45e4876",
+      "node_id": "C_kwDOB9m9eNoAKDE4NDU4NGE5NWMzNDhjNzVjOTM5OTBlYjI4ZjUzYTAwYzQ1ZTQ4NzY",
+      "commit": {
+        "author": {
+          "name": "Edouard DOUBET",
+          "email": "150632846+edouarddbt@users.noreply.github.com",
+          "date": "2026-11-11T17:47:28Z"
+        },
+        "committer": {
+          "name": "Edouard DOUBET",
+          "email": "150632846+edouarddbt@users.noreply.github.com",
+          "date": "2026-11-11T17:47:28Z"
+        },
+        "message": "hos: pkg2_patches: fix non-exFAT 23.5.0 nogc offset\n\nIn _fs_nogc_2350 (non-exFAT), the first KIP1_FS_NOGC_PATCH_SDMMC3 offset was accidentally set to the exFAT offset (0x1BE7CD) instead of 0x1B35CD (0x1B35BD + 0x10).",
+        "tree": {
+          "sha": "20e17ec05761f961f24cfa5ab4742c97d423600b",
+          "url": "https://api.github.com/repos/CTCaer/hekate/git/trees/20e17ec05761f961f24cfa5ab4742c97d423600b"
+        },
+        "url": "https://api.github.com/repos/CTCaer/hekate/git/commits/184584a95c348c75c93990eb28f53a00c45e4876",
+        "comment_count": 0,
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "url": "https://api.github.com/repos/CTCaer/hekate/commits/184584a95c348c75c93990eb28f53a00c45e4876",
+      "html_url": "https://github.com/CTCaer/hekate/commit/184584a95c348c75c93990eb28f53a00c45e4876",
+      "comments_url": "https://api.github.com/repos/CTCaer/hekate/commits/184584a95c348c75c93990eb28f53a00c45e4876/comments",
+      "author": {
+        "login": "edouarddbt",
+        "id": 150632846,
+        "node_id": "U_kgDOCPp5jg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/150632846?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/edouarddbt",
+        "html_url": "https://github.com/edouarddbt",
+        "followers_url": "https://api.github.com/users/edouarddbt/followers",
+        "following_url": "https://api.github.com/users/edouarddbt/following{/other_user}",
+        "gists_url": "https://api.github.com/users/edouarddbt/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/edouarddbt/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/edouarddbt/subscriptions",
+        "organizations_url": "https://api.github.com/users/edouarddbt/orgs",
+        "repos_url": "https://api.github.com/users/edouarddbt/repos",
+        "events_url": "https://api.github.com/users/edouarddbt/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/edouarddbt/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "edouarddbt",
+        "id": 150632846,
+        "node_id": "U_kgDOCPp5jg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/150632846?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/edouarddbt",
+        "html_url": "https://github.com/edouarddbt",
+        "followers_url": "https://api.github.com/users/edouarddbt/followers",
+        "following_url": "https://api.github.com/users/edouarddbt/following{/other_user}",
+        "gists_url": "https://api.github.com/users/edouarddbt/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/edouarddbt/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/edouarddbt/subscriptions",
+        "organizations_url": "https://api.github.com/users/edouarddbt/orgs",
+        "repos_url": "https://api.github.com/users/edouarddbt/repos",
+        "events_url": "https://api.github.com/users/edouarddbt/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/edouarddbt/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+          "url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+          "html_url": "https://github.com/CTCaer/hekate/commit/9593272c54f8dc127a5a25f91e1ac90e1be6205d"
+        }
+      ]
+    },
+    {
+      "sha": "8e1392df4569ac501a115867056b13c361429e9e",
+      "node_id": "C_kwDOB9m9eNoAKDhlMTM5MmRmNDU2OWFjNTAxYTExNTg2NzA1NmIxM2MzNjE0MjllOWU",
+      "commit": {
+        "author": {
+          "name": "CTCaer",
+          "email": "ctcaer@gmail.com",
+          "date": "2026-11-11T20:36:05Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-11-11T20:36:05Z"
+        },
+        "message": "hos: fix 23.5.0 FAT32 FS nogc offset",
+        "tree": {
+          "sha": "20e17ec05761f961f24cfa5ab4742c97d423600b",
+          "url": "https://api.github.com/repos/CTCaer/hekate/git/trees/20e17ec05761f961f24cfa5ab4742c97d423600b"
+        },
+        "url": "https://api.github.com/repos/CTCaer/hekate/git/commits/8e1392df4569ac501a115867056b13c361429e9e",
+        "comment_count": 0,
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq9NG1CRC1aQ7uu5UhlAAA9S4QAErZitX5bDjU/nuZpP3lbm0J\nZ5J4lEvEFmZCy9SDz2Vas26XgwySdYyhhq+EvDyMyXwsKBqldS5zvvF9b4iN6LPh\nY3U/DfZcL/cxeT644QnRIjEHbwCnZfLGgDC9VG1dvUNcoyIx1b/osCfkO2NE4ZzR\ndPe8MjJAjfVwG4F/DFXk3HOnBmsv0nqHpraT8h7g7ZkFQBkKPKO5Fh+iq9Cll4vg\nWa50OBz9cRhXD+05aNWcMnunGDNneHQDlXISJ29xU6sJ20dY0XTe8DX8XyIg1FBj\nF86/Hu+VpIixFt3XLZmg/wMH1sNgUvPWM5SXzrQzso8KShdkN9maBYjS/ZwjG+xV\nCiGI7PC2Bx7eqCL33AFdVX8mk3RT2Xdt+6uN/by3BFFK/0ZYCk+mUZatzsOZc1uv\nDPIIAKaTBA4WsELSMr8PnjNusWcxKPKcolW2PX0Y4Na9323Vpvj7NupwdRK/cSHc\nXYx9kbBA6ssr7mNNOhazLXA17VLfdWWX79kfS5W4LjB56cCTPb76ZQQxiVhPlazk\nAd7L1YtMIIRXxqQZlyCooqcKsipQnKPvtc4mXEnR4QB1/qp954IS2zCuUfL0CdGF\nfSaOvWND7HewpyUvDCLhXX/wlAOH70T+ZwuDXMOa/VBzwo74rSTsUMOkl6+hYaWj\nCHPaTVn7QqgZun0VsUBj\n=egGI\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree 20e17ec05761f961f24cfa5ab4742c97d423600b\nparent 9593272c54f8dc127a5a25f91e1ac90e1be6205d\nparent 184584a95c348c75c93990eb28f53a00c45e4876\nauthor CTCaer <ctcaer@gmail.com> 1794429365 +0200\ncommitter GitHub <noreply@github.com> 1794429365 +0200\n\nhos: fix 23.5.0 FAT32 FS nogc offset",
+          "verified_at": "2026-11-11T20:36:06Z"
+        }
+      },
+      "url": "https://api.github.com/repos/CTCaer/hekate/commits/8e1392df4569ac501a115867056b13c361429e9e",
+      "html_url": "https://github.com/CTCaer/hekate/commit/8e1392df4569ac501a115867056b13c361429e9e",
+      "comments_url": "https://api.github.com/repos/CTCaer/hekate/commits/8e1392df4569ac501a115867056b13c361429e9e/comments",
+      "author": {
+        "login": "CTCaer",
+        "id": 3665130,
+        "node_id": "MDQ6VXNlcjM2NjUxMzA=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/3665130?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/CTCaer",
+        "html_url": "https://github.com/CTCaer",
+        "followers_url": "https://api.github.com/users/CTCaer/followers",
+        "following_url": "https://api.github.com/users/CTCaer/following{/other_user}",
+        "gists_url": "https://api.github.com/users/CTCaer/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/CTCaer/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/CTCaer/subscriptions",
+        "organizations_url": "https://api.github.com/users/CTCaer/orgs",
+        "repos_url": "https://api.github.com/users/CTCaer/repos",
+        "events_url": "https://api.github.com/users/CTCaer/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/CTCaer/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "web-flow",
+        "id": 19864447,
+        "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+        "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/web-flow",
+        "html_url": "https://github.com/web-flow",
+        "followers_url": "https://api.github.com/users/web-flow/followers",
+        "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+        "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+        "organizations_url": "https://api.github.com/users/web-flow/orgs",
+        "repos_url": "https://api.github.com/users/web-flow/repos",
+        "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/web-flow/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+          "url": "https://api.github.com/repos/CTCaer/hekate/commits/9593272c54f8dc127a5a25f91e1ac90e1be6205d",
+          "html_url": "https://github.com/CTCaer/hekate/commit/9593272c54f8dc127a5a25f91e1ac90e1be6205d"
+        },
+        {
+          "sha": "184584a95c348c75c93990eb28f53a00c45e4876",
+          "url": "https://api.github.com/repos/CTCaer/hekate/commits/184584a95c348c75c93990eb28f53a00c45e4876",
+          "html_url": "https://github.com/CTCaer/hekate/commit/184584a95c348c75c93990eb28f53a00c45e4876"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "sha": "e64e8055ed7fee82cfa5d4c14ae3ee1abc01b455",
+      "filename": "bootloader/hos/pkg2_patches.inl",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/CTCaer/hekate/blob/8e1392df4569ac501a115867056b13c361429e9e/bootloader%2Fhos%2Fpkg2_patches.inl",
+      "raw_url": "https://github.com/CTCaer/hekate/raw/8e1392df4569ac501a115867056b13c361429e9e/bootloader%2Fhos%2Fpkg2_patches.inl",
+      "contents_url": "https://api.github.com/repos/CTCaer/hekate/contents/bootloader%2Fhos%2Fpkg2_patches.inl?ref=8e1392df4569ac501a115867056b13c361429e9e",
+      "patch": "@@ -919,7 +919,7 @@ static const kip1_patchset_t _fs_patches_2300_exfat[] = {\n \n static const kip1_patch_t _fs_nogc_2350[] = {\n \t{ KPS(KIP_TEXT) | 0x186250, 8, KIP1_PATCH_SRC_NO_CHECK, KIP1_FS_NOGC_PATCH_NOINIT },\n-\t{ KPS(KIP_TEXT) | 0x1BE7CD, 1, KIP1_PATCH_SRC_NO_CHECK, KIP1_FS_NOGC_PATCH_SDMMC3 },\n+\t{ KPS(KIP_TEXT) | 0x1B35CD, 1, KIP1_PATCH_SRC_NO_CHECK, KIP1_FS_NOGC_PATCH_SDMMC3 },\n \t{ KPS(KIP_TEXT) | 0x1B35E5, 1, KIP1_PATCH_SRC_NO_CHECK, KIP1_FS_NOGC_PATCH_SDMMC3 },\n \t{ 0, 0, NULL, NULL }\n };"
+    }
+  ]
+}

@@ -9,6 +9,8 @@ typedef struct {
     uint32_t buttons, updated;
     uint16_t x, y;
     uint8_t connected, battery;
+    uint8_t report_id, mode_ack, hid_open, last_error;
+    uint32_t reports;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
