@@ -37,10 +37,14 @@ nova_plan_result nova_partition_simplified(nova_partition_plan *plan,
     plan->emu_mib=chosen_model==3u?NOVA_EMU_64_MIB:NOVA_EMU_32_MIB;
     plan->linux_mib=linux_choice?(linux_choice==1u?16384u:32768u):0u;
     plan->android_mib=android_choice?(android_choice==1u?16384u:32768u):0u;
-    if(actual_model!=chosen_model)return NOVA_PLAN_MODEL;
+    /* Keep the proposed free capacity visible even when a different model
+     * is previewed. Validation for destructive actions remains separate. */
+    nova_plan_result capacity=nova_partition_validate(plan);
+    bool same_family=actual_model==chosen_model||(actual_model<2u&&chosen_model<2u);
+    if(!same_family)return NOVA_PLAN_MODEL;
     if(!emmc_data_mib)return NOVA_PLAN_EMMC_UNAVAILABLE;
     if((u64)emmc_data_mib+NOVA_EMU_RESERVE_MIB>plan->emu_mib)return NOVA_PLAN_EMMC_UPGRADED;
-    return nova_partition_validate(plan);
+    return capacity;
 }
 
 void nova_partition_widths(const nova_partition_plan *plan,u32 width,u32 out[4])

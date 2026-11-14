@@ -109,6 +109,13 @@ static bool valid_wallpaper_basename(const char *value)
 		(value[length - 2] | 32) == 'm' && (value[length - 1] | 32) == 'p';
 }
 
+static bool valid_launch_basename(const char *value)
+{
+    if(valid_wallpaper_basename(value))return true;
+    u32 n=strlen(value);if(n<5||n>=64)return false;
+    char bmp[64];strcpy(bmp,value);bmp[n-3]='b';bmp[n-2]='m';bmp[n-1]='p';
+    return (value[n-3]|32)=='p'&&(value[n-2]|32)=='n'&&(value[n-1]|32)=='g'&&valid_wallpaper_basename(bmp);
+}
 void nyx_sanitize_appearance(void)
 {
 	if(n_cfg.theme_bg>0xFFFFFF)n_cfg.theme_bg=0x141A19;
@@ -132,7 +139,7 @@ void nyx_sanitize_appearance(void)
 	n_cfg.wallpaper_file[sizeof(n_cfg.wallpaper_file) - 1] = 0;
 	if (!valid_wallpaper_basename(n_cfg.wallpaper_file)) n_cfg.wallpaper_file[0] = 0;
 	n_cfg.launch_image[sizeof(n_cfg.launch_image) - 1] = 0;
-	if (!valid_wallpaper_basename(n_cfg.launch_image)) n_cfg.launch_image[0] = 0;
+	if (!valid_launch_basename(n_cfg.launch_image)) n_cfg.launch_image[0] = 0;
 	if (n_cfg.boot_logo_color > 0xFFFFFF) n_cfg.boot_logo_color = 0x55C9F1;
 	if (n_cfg.boot_bar_color > 0xFFFFFF) n_cfg.boot_bar_color = 0x55C9F1;
 }
@@ -187,7 +194,7 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "boot_bar_color")) n_cfg.boot_bar_color = appearance_rgb(value, 0x55C9F1);
 	else if (!strcmp(key, "launch_image")) {
 		n_cfg.launch_image[0] = 0;
-		if (valid_wallpaper_basename(value)) strcpy(n_cfg.launch_image, value);
+		if (valid_launch_basename(value)) strcpy(n_cfg.launch_image, value);
 	}
 	else if (!strcmp(key, "wallpaper_file")) {
 		n_cfg.wallpaper_file[0] = 0;

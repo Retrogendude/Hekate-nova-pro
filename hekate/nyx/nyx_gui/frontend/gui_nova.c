@@ -526,6 +526,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
     lv_obj_set_size(button, width, height); lv_obj_set_pos(button, 0, 0); lv_obj_set_free_num(button, index);
     lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     nova_home_icons[index] = nyx_nova_icon_box(card, item->icon, hero ? 32 : 22, hero ? 32 : 22, hero ? 82 : 44, hero);
+    nyx_nova_custom_icon(nova_home_icons[index],index);
     int title_y = hero ? height - 184 : 84;
     lv_obj_t *title = nyx_nova_text(card, item->title, hero ? 32 : 22, title_y, width - (hero ? 64 : 44), hero ? NOVA_HEADING : NOVA_TITLE);
     nyx_nova_fit_text(title, hero ? 48 : 56);
@@ -618,6 +619,7 @@ void nyx_nova_carousel(lv_obj_t *page, lv_action_t activate)
         if(!i)nyx_nova_launch_backdrop(card);
         lv_obj_set_free_num(card, i); lv_btn_set_action(card, LV_BTN_ACTION_CLICK, nova_carousel_select);
         home_carousel.icons[i] = nyx_nova_icon_box(card, nova_reference_home[i].icon, 124, 26, 72, i == 0);
+        nyx_nova_custom_icon(home_carousel.icons[i],i);
         lv_obj_t *title = nyx_nova_text(card, nova_reference_home[i].title, 22, 128, 276, NOVA_TITLE); nyx_nova_fit_text(title, 54);
         lv_obj_t *description = nyx_nova_text(card, nova_reference_home[i].description, 22, 186, 276, NOVA_SMALL);
         lv_label_set_style(description, &nova_dim); nyx_nova_fit_text(description, 44);
@@ -750,7 +752,7 @@ void nyx_nova_about(lv_obj_t *page)
     static const char *credits[]={
         "hekate\n(c) 2018, naehrwert, st4rk\n(c) 2018-2026, CTCaer\n\nNyx\n(c) 2019-2026, CTCaer\n\nHekate 6.5.4 / Nyx 1.9.4",
         "derrek, nedwill, plutoo\nshuffle2, smea, thexyz\nyellows8\n\nfincs, hexkyz, SciresM\nShiny Quagsire, WinterMute\nswitchbrew",
-        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw"
+        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne"
     };
     (void)icons;
     lv_obj_t *tabs=lv_tabview_create(page,NULL);
@@ -764,8 +766,13 @@ void nyx_nova_about(lv_obj_t *page)
             "ChatGPT : assistance à la conception et à l'adaptation\n\n"
             "Basé sur Hekate 6.5.4 / Nyx 1.9.4\n"
             "Les crédits et licences d'origine sont conservés dans les autres onglets.";
-        lv_obj_t *report=nyx_nova_report(section,text,0,8,1212,lv_obj_get_height(section)-16);
-        nyx_nova_report_style(report,nyx_nova_text_style(NOVA_SMALL));
+        if(i==3){
+            const char *second=strstr(text,"bcl-1.2.0");char first[512];
+            u32 length=second?(u32)(second-text):strlen(text);if(length>=sizeof(first))length=sizeof(first)-1;
+            memcpy(first,text,length);first[length]=0;
+            nyx_nova_text(section,first,20,12,566,NOVA_SMALL);
+            if(second)nyx_nova_text(section,second,626,12,566,NOVA_SMALL);
+        }else nyx_nova_text(section,text,20,12,1172,NOVA_SMALL);
     }
     lv_obj_t *resources=nyx_nova_text(page,"HWTest-RCM 0.15 · Noto Sans (OFL) · Lucide (ISC) · Nova Pro (GPL)",34,520,1212,NOVA_SMALL);nyx_nova_fit_text(resources,44);
 }

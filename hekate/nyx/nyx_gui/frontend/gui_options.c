@@ -1489,6 +1489,14 @@ static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int
     lv_label_set_align(label, LV_LABEL_ALIGN_CENTER); nyx_nova_fit_text(label, 24); return button;
 }
 
+/* The system column keeps its fill and switch state, with no surrounding
+ * outlines. Other settings retain their normal selection feedback. */
+static void nova_system_flat(lv_obj_t *button)
+{
+    static lv_style_t styles[4];
+    const u32 states[]={LV_BTN_STYLE_REL,LV_BTN_STYLE_PR,LV_BTN_STYLE_TGL_REL,LV_BTN_STYLE_TGL_PR};
+    for(u32 i=0;i<4;++i){lv_style_copy(&styles[i],lv_btn_get_style(button,states[i]));styles[i].body.border.width=0;lv_btn_set_style(button,states[i],&styles[i]);}
+}
 void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
 {
     (void)theme; nyx_nova_page(parent, 4);
@@ -1497,13 +1505,16 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     int right_width = LV_HOR_RES - 68 - 22 - left_width;
     lv_obj_t *system = nyx_nova_panel(parent, 34, 140, left_width, height);
     lv_obj_t *reading = nyx_nova_panel(parent, 34 + left_width + 22, 140, right_width, height);
-    _nova_heading_button(system, "Options système", "toggle-right", _nova_boot_options);
+    static lv_style_t flat_panel,flat_heading;
+    lv_style_copy(&flat_panel,lv_cont_get_style(system));flat_panel.body.border.width=0;lv_cont_set_style(system,&flat_panel);
+    lv_obj_t *system_heading=_nova_heading_button(system,"Options système","toggle-right",_nova_boot_options);
+    lv_style_copy(&flat_heading,lv_btn_get_style(system_heading,LV_BTN_STYLE_PR));flat_heading.body.border.width=0;lv_btn_set_style(system_heading,LV_BTN_STYLE_PR,&flat_heading);
     _nova_heading_button(reading, "Apparence et lecture", "paintbrush", create_win_nyx_options);
     int row_height = (height - 64 - 16) / 4;
-    nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height);
-    nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height);
-    nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height);
-    nyx_nova_switch_row(system, "Effets de sélection", "Reflet blanc discret sur la tuile sélectionnée.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
+    nova_system_flat(nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height));
+    nova_system_flat(nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height));
+    nova_system_flat(nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height));
+    nova_system_flat(nyx_nova_switch_row(system, "Effets de sélection", "Reflet blanc discret sur la tuile sélectionnée.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height));
     const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português"};
     _nova_setting_line(reading, "Language", language_names[n_cfg.language < 7 ? n_cfg.language : 0], 64, _nova_language_menu);
     const u32 order[] = {1,0,2,3,4,5,6}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT"};

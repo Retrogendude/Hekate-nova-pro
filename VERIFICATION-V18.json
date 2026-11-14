@@ -1,6 +1,6 @@
 {
   "product": "Hekate Nova Pro",
-  "version": "17",
+  "version": "18",
   "build_exit_code": 0,
   "hardware_validation": "not performed",
   "native_ui": {
@@ -21,10 +21,10 @@
     "partition_action_scenes": 180,
     "first_start_carbon_scenes": 78,
     "failures": [],
-    "elapsed_seconds": 27.0,
+    "elapsed_seconds": 30.7,
     "hardware_io": "substituted; no console or SD operations performed"
   },
-  "v17_checks": {
+  "feature_checks": {
     "hands-check-v17.json": {
       "scenes": 224,
       "fonts": [
@@ -128,10 +128,39 @@
       "update_ms": 20,
       "method": "cooperative timer polling; suspended for training and handoff",
       "hardware": "not tested"
+    },
+    "png-check-v18.json": {
+      "assertions": 11141480,
+      "formats": [
+        "RGBA",
+        "RGB",
+        "LA",
+        "L",
+        "palette+tRNS",
+        "Adam7 RGBA"
+      ],
+      "alpha": "exact BGRA including zero, partial and opaque alpha",
+      "bounds": "source 1920x1080; target 1280x720; file 8 MiB; per-allocation 20 MiB",
+      "crc_truncation_dimensions_and_failed_growth": "checked"
+    },
+    "changes-ui-v18.json": {
+      "scenes": 224,
+      "languages": 7,
+      "credits_tabs": 4,
+      "credits": "no report pagination, no clipped labels; complete OSS columns",
+      "images": "native PNG loading plus Launch preview",
+      "fonts": [
+        "Lecture.nyxf",
+        "Caviar.nyxf"
+      ],
+      "sizes": [
+        20,
+        36
+      ]
     }
   },
   "partition_planner": {
-    "assertions": 141902,
+    "assertions": 141918,
     "preserved_storage_functions": {
       "_create_gpt_partition": "44c42cd4b4e515a6c77102958d707b18559267a0a55080e04a27643a74910bb9",
       "_sd_prepare_and_flash_mbr_gpt": "dcec21d3cf883a7b01df638d58108221d9bd1052d8bf586c78ad4a2cc95424d9",
@@ -158,7 +187,7 @@
     "existing_preferences": "preserved by existing INI parser"
   },
   "test_summaries": [
-    "PASS: 141902 assertions on actual C partition planner; original storage/extraction mechanisms preserved.",
+    "PASS: 141918 assertions on actual C partition planner; original storage/extraction mechanisms preserved.",
     "PASS: 574 actual-C brightness assertions; complete existing range, live output, dirty state and shared save action.",
     "PASS: 666 Nova Pro configuration cases; independent RGB colors, all opacity values, black/white colors, malformed input, wallpaper names and 75 extended INI roundtrips.",
     "PASS: 31 actual-C Nova save assertions; mount/boot/Nyx failures, partial-save reporting, retry, dirty flags and shared Appearance commit.",
@@ -175,9 +204,9 @@
     "PASS: 139 executed C cases; seven languages, all 12 month roller options, 24-line lists, aliases, Cyrillic/accent bytes, icons/control bytes, colors/newlines, copied static labels, retained/replaced maps and cleanup; 8 map allocation positions and 2 text allocation positions.",
     "PASS: 139 executed C cases; seven languages, all 12 month roller options, 24-line lists, aliases, Cyrillic/accent bytes, icons/control bytes, colors/newlines, copied static labels, retained/replaced maps and cleanup; 8 map allocation positions and 2 text allocation positions.",
     "PASS: bounded localized diagnostics, canaries for 40 capacities, UTF-8 truncation, allocation failures; 187 combined cases.",
-    "PASS: 55653 probe translation checks; 1268 source literals covered, seven languages, exact numeric notation and paths, 201 reviewed overrides. Linguistic and hardware review remain separate.",
+    "PASS: 55695 probe translation checks; 1268 source literals covered, seven languages, exact numeric notation and paths, 201 reviewed overrides. Linguistic and hardware review remain separate.",
     "PASS: native lookup, 4bpp offsets, catalog characters and repeat/shared-chain initialization",
-    "PASS: all 116 non-ASCII catalog characters covered (4104 entries, seven languages; 0 icons use symbol fonts)",
+    "PASS: all 116 non-ASCII catalog characters covered (4110 entries, seven languages; 0 icons use symbol fonts)",
     "PASS: 28 actual-C readability assertions: long buttons, ON/OFF reservation, automatic layouts, compound cards and coalesced refresh",
     "PASS: 1126 display checks; 1-32 dirty regions copied completely, one presentation per refresh, prior frame waited before writes, initial display transition retained.",
     "PASS: actual-C decompression of the final injector payload matches all 139049 bytes of the newly compiled Hekate, including the Nova Pro boot artwork.",
@@ -209,8 +238,8 @@
       "sha256": "2338412b557c3fd1bf21fa76ba7fd788df467e3de268beb8b67be9f580988fd6"
     },
     "nyx.bin": {
-      "bytes": 2037565,
-      "sha256": "1d939281aba9e549b90f6adecd755b13d0f5e6fe8da94a47f8a2246787c1e07d"
+      "bytes": 2078825,
+      "sha256": "e05cbb6a8a3c25c2d9508f0b0b6a5ba00230565016ba8aabcfa9c69fab4d7f7a"
     },
     "hwtest_ram.bin": {
       "bytes": 77200,
@@ -235,6 +264,7 @@
     "LIRE-MOI-V15.txt": "04801f3667c91361992814e548a776acd06d8f81281f3bd45711c67a71827e1e",
     "LIRE-MOI-V16.txt": "50a9c225577eb75c1b25f0020b5ad99a5e19fc8b5514d0df320aac7963058a50",
     "LIRE-MOI-V17.txt": "560a90a70e919e27931d10ef1e6e46733ce8063d7c7521a39ca8031733082ff4",
+    "LIRE-MOI-V18.txt": "04eebfb3f179f0ae82fd4aaac4dc814ad30b9b60f284546ab635f9854d9853ef",
     "LIRE-MOI-V7.txt": "1ca52e816f731174aebe968d9381d5a59db10463bc53f1927cc43ce9147a6c23",
     "LIRE-MOI-V8.txt": "cc53b24972c2d86777e63927096b18f6d5c6b8bee8ff73350d155bd28901ea58",
     "LIRE-MOI-V9.txt": "663887866bda19f0fcae1556e403c87ed43c4a1f33304c8c1658f57055edf39e",
@@ -258,13 +288,14 @@
     "bootloader\\link.ld": "1c9a2c02da98183b4ed6ab9817ca7f30dafddf2dac4210e5288f1d61a9cdb1db",
     "bootloader\\main.c": "062adc473afbbec5ed89a0448433f972a90c0b946e053abaafbb3c7f0625b30b",
     "bootloader\\start.S": "e6cb9d791c5553f19b6d94b8c62d7e750859e6c59d1ad13f5967aa108f08bba6",
+    "icone\\LIRE-MOI.txt": "4a5df4b78e78f462e7d261d50ac3b0e82fefe8cbc1b7d4f669ff4cce8d436a78",
     "loader\\link.ld": "a1e03ac54f698e7d88cc7517b45b54141e1b3f1f4d16581878e241979d4527cd",
     "loader\\loader.c": "2e4f6c058dc67654adceec1205aaf88d6646a8829a0ffa25937317a189fcd4df",
     "loader\\Makefile": "d47a765ca7434202854ffce7b6d82bbf16f133ca5e668bb52378aabbb8e909fd",
     "loader\\payload_00.h": "64e869d2d5ab4fe110ba9d722c897e2d67b4c39be64cb29a4c3b1a835b97a2fc",
     "loader\\payload_01.h": "ca26a67c951b00e2e89bb2536ab6098657f50546410e28b2bda7b76e9fe4f0d8",
     "loader\\start.S": "c4a3de0e7f0c86fc7c22455dc3b5c0bd5a18c225ef7788acee93295f50ba40ff",
-    "nyx\\Makefile": "221f86e7750947510148794f9d0bce68aa932c66a54ff698c800937e61fbc4d1",
+    "nyx\\Makefile": "3cdac6d60cb7ee16ccc594ff8a9682c692f6b08b62741b0e7020e6eb8f6b7c01",
     "nyx\\README_RES.md": "ca3fba3d4155d8085245ccac5baa85161cb496099195190a34e38770c4e7946d",
     "res\\hekate_ipl_template.ini": "847fb212bccd567ee042b4ff055e085e0e4e7014b9159e66184f0ab4380273af",
     "res\\patches_template.ini": "2ecdfae4ec0c437389ac62c9ac3e4b5ae25961c7b434ef7c6b2f8ba3dacaaccb",
@@ -294,13 +325,13 @@
     "res\\bootlogo\\bootD_(ARGB).bmp": "5ac65fb9d637fb6b2c969643243a55dd0d0a1d7604bb7acbab18c208809ecc9c",
     "res\\bootlogo\\bootD_ctc_(ARGB).bmp": "fa64574c0222e4df7137d661170e330c3081ced074401154f5e6ff9462765fd1",
     "res\\bootlogo\\bootlogo.psd": "4e1537a42172eaf7a096d69d1fb10c555eac13a1864e6597b4d8f1b59345caaf",
-    "nyx\\nyx_gui\\config.c": "9ca39bfd2846d0f0ef51718481bd890f50418e68957c2f521a27660f38fc64b8",
+    "nyx\\nyx_gui\\config.c": "87dc62265c36e36856dd00872d0a68aa28eb338c19aad6cd9640592b154a6faa",
     "nyx\\nyx_gui\\config.h": "0b1cf9762875df9553e475796c4ae6a1dc1c6e3565b53435e8b253ac5049c2f4",
     "nyx\\nyx_gui\\link.ld": "09920707cc5b0fc015c88885e73145d6a689d9471145cd837d186689ab64429a",
     "nyx\\nyx_gui\\localization.c": "35f3d44cfa3f0f9845d90baa0548487634c7048f68a302331252f16d07242b0e",
     "nyx\\nyx_gui\\localization.h": "2e36f86a3b2b8539fda5faefde99b76ac7d64e1414d0c3a6ee98bd96640017e7",
-    "nyx\\nyx_gui\\localization_catalog.inc": "03d4f06310215c4d872df51255a265542c1cdf8f158adb33bcdcc1bc5411a17a",
-    "nyx\\nyx_gui\\localization_catalog.json": "1f73b71477e37160157af95cdd0385ee385835334c713190beeacd0ba5e855b6",
+    "nyx\\nyx_gui\\localization_catalog.inc": "91ced4e3b853513f5f258995f3eee047b217cfb6cfa8b08f9743eab8ca73669d",
+    "nyx\\nyx_gui\\localization_catalog.json": "f32db495671492e2dec9a745b882d233b0890bacf79905b57d03b0fb2994e43d",
     "nyx\\nyx_gui\\localization_extra.json": "c4c54f467df96331da236095a1a8a818091d0cb2324ea8ad784b68668d0c38b5",
     "nyx\\nyx_gui\\localization_final_extra.json": "e8faa9d13cad3fd1c67a8b19dfe429da49f2369cc45b45b8b348c414b982aea1",
     "nyx\\nyx_gui\\localization_legacy_extra.json": "d13d9d375ba30c06c6d58a2ad0f8c9a51d9683ede6d663479d50a41fb596c4a6",
@@ -311,11 +342,12 @@
     "nyx\\nyx_gui\\localization_nova_v15.json": "e7faa492314bed55aa01a75326367136ae2a3f1271da10a5dd17bc553c63dc96",
     "nyx\\nyx_gui\\localization_nova_v16.json": "fa963474a5c9c87d8a92628dad264ff6626d6937a44baa8592a01a034c6d19ca",
     "nyx\\nyx_gui\\localization_nova_v17.json": "da0312d9d4531b1e27f4832ab8a942d90f9539ae504b1791c77897c52979d588",
+    "nyx\\nyx_gui\\localization_nova_v18.json": "91f5225f404a748b6f7b417c7ca42f77eb92a3ffd52c77eadc3db4f6730f5619",
     "nyx\\nyx_gui\\localization_probe_extra.json": "cb67affc1bfdc30c4e831ed97c8463f1695614f07a36cd48079a4381d368cfc2",
     "nyx\\nyx_gui\\localization_probe_provenance.json": "d56d0dab04229136890a0cf868e9493011df953058b85cb8dad0d4182a311300",
     "nyx\\nyx_gui\\localization_probe_review.json": "5cda6e50aec0a35456ba9164b2617aaa80297e07e09187890ee79e242839e78e",
     "nyx\\nyx_gui\\localization_ram_extra.json": "0e7bd0c36cd376d7434e637d479a8d97f65fff6b8bd2e33ede1fdda70c0db7d7",
-    "nyx\\nyx_gui\\nova_version.h": "f2fa298864a7e32a28cf3de8e73516c0d4df0bc773e55eaa35e08ea84fadbfba",
+    "nyx\\nyx_gui\\nova_version.h": "359f3b5c57b706e7e43aff70c2abcabedcb61875a12a9e424ef986f1942ffbd8",
     "nyx\\nyx_gui\\nyx.c": "2ad7ceda4e1ae7c8baaab443cef2f2ac0e7656812d2d4a63f61d7158dc40f255",
     "nyx\\nyx_gui\\start.S": "60ea632ad1d78724edea9962dc368abf84600711482f860aef23aa48bdaa211e",
     "nyx\\resources\\icon_lakka.bmp": "5b00a2f6b58569ddaa5c9475a94794a59dbdefd979ba0cbef2fbb43dc3ed1f39",
@@ -362,15 +394,15 @@
     "nyx\\nyx_gui\\frontend\\gui_interactive.h": "0af528ba551ddebe6cf57b5497867a3c6f1eb9994105358538d6ad6fc4afaeba",
     "nyx\\nyx_gui\\frontend\\gui_layout.c": "3dba60d8eb328fadc6c46c268ba47bf713d3700b1c8df3389d6da0fafb3e80bd",
     "nyx\\nyx_gui\\frontend\\gui_layout.h": "a61b93eb1f306d30ca43cef2e6015a5eb5a9b0efb2e0106e37eb48a789264957",
-    "nyx\\nyx_gui\\frontend\\gui_nova.c": "29ce987aad4b7d7a02dc9e05b64455fa76d66b673015a3abcb738a9653c2e44b",
-    "nyx\\nyx_gui\\frontend\\gui_nova.h": "a46bce4c71198aa8c2916f8f52793114362f75e349f767b88185ca64d4d91139",
+    "nyx\\nyx_gui\\frontend\\gui_nova.c": "2faf816c1fb8484308253dd0716f48b3068b11949b44397232d7c271ca73a0e7",
+    "nyx\\nyx_gui\\frontend\\gui_nova.h": "e23761991aba0c32105b8090fd52e768637515779f84f674944bd7ff43d80b74",
     "nyx\\nyx_gui\\frontend\\gui_nova_reflection.c": "fc712c79f2216e29017ee997ee2a8686ca90583080658cdfd581164ae297a901",
     "nyx\\nyx_gui\\frontend\\gui_nova_report.c": "2166e483b9b6c15f703306b7d0bd11380772d7c5b80f6bdfe0a4cd290c792871",
-    "nyx\\nyx_gui\\frontend\\gui_nova_theme.c": "457948afede65ede2beaf3da02454eacb0b352ee813d144351274fb530db9643",
-    "nyx\\nyx_gui\\frontend\\gui_options.c": "d9d00602c65b55a8c2270c2325927e1ee76d9f9902e06d571bb29ca5b950cf54",
+    "nyx\\nyx_gui\\frontend\\gui_nova_theme.c": "f375e5a554c8e25f3fb29a46b48daee5d1a716d824e8c6995c489530655e6caf",
+    "nyx\\nyx_gui\\frontend\\gui_options.c": "62241c357a586286998804b3b09f7d823dfa8eea29841c7fafccf00f3f8c5d03",
     "nyx\\nyx_gui\\frontend\\gui_options.h": "b4db02b41a2a2774e527a5b6ddffa7a1727f6b81da82b1a9d08f8b793779e150",
-    "nyx\\nyx_gui\\frontend\\gui_partition_nova.inc": "c1acf96ef837058ad50cedcb765c2a9481310f0f7ee0f708097919f87400c23d",
-    "nyx\\nyx_gui\\frontend\\gui_partition_plan.c": "f0f2c925ddc0b47b25a9214076add729e9b4c139d10aad78adc9f3acd255e567",
+    "nyx\\nyx_gui\\frontend\\gui_partition_nova.inc": "1cd4a67158048e9572b3858c03778205e457ad4a21f26c89d14b1c27d9e33403",
+    "nyx\\nyx_gui\\frontend\\gui_partition_plan.c": "19530cae42686f04da47723901fb5c4729d67e676ef67e8fb293f65b0dc2be6d",
     "nyx\\nyx_gui\\frontend\\gui_partition_plan.h": "ebb1231f679f4d008c7c7b1434d26d1430157e318425fa749d07531d14a80fa2",
     "nyx\\nyx_gui\\frontend\\gui_readability.c": "025a560bae3e347644b74db1b9cdcb9a76f1cde20a56b9455ad6a2b6e1ead822",
     "nyx\\nyx_gui\\frontend\\gui_readability.h": "5b4ce2d41d8419b1f1847be4219a0e4d94c7274bb0929bd2d0d3bb9b2560ce07",
@@ -382,6 +414,8 @@
     "nyx\\nyx_gui\\frontend\\gui_tools.h": "deb110a141eeace0a8d7c9f9f355fde0e398e32a651335d69e5102b77aba6776",
     "nyx\\nyx_gui\\frontend\\gui_tools_partition_manager.c": "2c601ccd8bff611c51b32d1f8e78352e1930723315c724d42cf953595a2f26dc",
     "nyx\\nyx_gui\\frontend\\gui_tools_partition_manager.h": "4aaee7983524bffcae8dcb08196588939bfc1a36e551a8c12d2ed0c0a587694f",
+    "nyx\\nyx_gui\\frontend\\nova_image.c": "855bf8f732885b131bf6b15bc522a7f747b88815dbdf9238f4a34c57310d4702",
+    "nyx\\nyx_gui\\frontend\\nova_image.h": "44b4d15c47328958d5b52fcaed7d4b55ffb82cbad6d0702727064968819cb425",
     "nyx\\nyx_gui\\gfx\\gfx.c": "6525c6a58a64db68bc4ee9f443bfe72f5b51351d157dc734accde5fe7d21b83f",
     "nyx\\nyx_gui\\gfx\\gfx.h": "6508174dfe2162e31040a82f08ee5dabc79b1fd603fb86d71b2458c688ed93b9",
     "nyx\\nyx_gui\\gfx\\logos-gui.h": "4346834c77cf4498788ef61c22f3d90cbf195cf5bb7acdc5c971fe7abc516d36",
@@ -393,6 +427,11 @@
     "nyx\\nyx_gui\\hos\\pkg2.h": "82f2a13d9935ffcfc4823e0358d46c006840eb0f6441376de74ccf4fc37d80fa",
     "nyx\\nyx_gui\\libs\\fatfs\\diskio.c": "888b1738629f644ab68052090fadb5c3fbcd7775e2151011ef28ce78d9f24d2d",
     "nyx\\nyx_gui\\libs\\fatfs\\ffconf.h": "018b5ce41e55cffc35ec4103185ae0db9ed03c24bf6a40eac9bc7fbbf3cc6bae",
+    "nyx\\nyx_gui\\libs\\png\\lodepng.c": "32cdd7a395b5476a3fe4615305a99066dc4d37aaea6988643cca8b4eccc352cc",
+    "nyx\\nyx_gui\\libs\\png\\lodepng.h": "a49b98b45ea603a05e2a77bd6b0320e7535a9c6e18aef8ce904692a3e02b87ab",
+    "nyx\\nyx_gui\\libs\\png\\lodepng_nyx.c": "eb839a253b52b219c47c2457dda525627233e7c264c8a4bcab7ec11d812d08fd",
+    "nyx\\nyx_gui\\libs\\png\\nova_png.h": "fe4e18277517060fb28f4b72ccb5b397bb71972683d4081734dffc6b88b8eff0",
+    "nyx\\nyx_gui\\libs\\png\\VENDOR.txt": "6dcf13ade4cd8a2d13f70881b595bb1b9acc5a10393cc92495e12cdecffb8b31",
     "nyx\\nyx_gui\\frontend\\nova_assets\\activity.svg": "64b99931a8f3dcd810d08037685be160a7d75fbb748c21a7e42510d38d497c66",
     "nyx\\nyx_gui\\frontend\\nova_assets\\arrow-up-right.svg": "244e6ed1b6cd655fcb72a44fce8eab9da6e603fb8c29c715ff6a248904926b1d",
     "nyx\\nyx_gui\\frontend\\nova_assets\\audio-lines.svg": "dd148f7dc0da8d2dcbae04dd0b9ef626d3c21941467f38dd4f08aae407d869e0",

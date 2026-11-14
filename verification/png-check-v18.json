@@ -1,0 +1,14 @@
+{
+  "assertions": 11141480,
+  "formats": [
+    "RGBA",
+    "RGB",
+    "LA",
+    "L",
+    "palette+tRNS",
+    "Adam7 RGBA"
+  ],
+  "alpha": "exact BGRA including zero, partial and opaque alpha",
+  "bounds": "source 1920x1080; target 1280x720; file 8 MiB; per-allocation 20 MiB",
+  "crc_truncation_dimensions_and_failed_growth": "checked"
+}

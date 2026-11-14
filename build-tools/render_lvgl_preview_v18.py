@@ -15,7 +15,7 @@ from PIL import Image
 
 work=Path(__file__).resolve().parent
 project=work/'hekate-6.5.4'
-directory=work/'lvgl-preview-v17';directory.mkdir(exist_ok=True)
+directory=work/'lvgl-preview-v18';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -88,13 +88,13 @@ static bool mounted;
 static bool sd_get_card_mounted(void){return mounted;}
 static int sd_mount(void){mounted=true;return 0;}
 static void sd_unmount(void){mounted=false;}
-static int f_open(FIL*f,const char*path,int mode){(void)mode;char full[1200];snprintf(full,sizeof(full),strstr(path,"wallpapers/")==path?"%s/../../../../wallpapers/%s":"%s/%s",font_root,strrchr(path,'/')?strrchr(path,'/')+1:path);f->fp=fopen(full,"rb");if(!f->fp)return 1;fseek(f->fp,0,SEEK_END);f->size=ftell(f->fp);rewind(f->fp);return 0;}
+static int f_open(FIL*f,const char*path,int mode){(void)mode;char full[1200];snprintf(full,sizeof(full),strstr(path,"icone/")==path?"%s/../../../../icone/%s":strstr(path,"wallpapers/")==path?"%s/../../../../wallpapers/%s":"%s/%s",font_root,strrchr(path,'/')?strrchr(path,'/')+1:path);f->fp=fopen(full,"rb");if(!f->fp)return 1;fseek(f->fp,0,SEEK_END);f->size=ftell(f->fp);rewind(f->fp);return 0;}
 static int f_close(FIL*f){return fclose(f->fp);}
 static int f_lseek(FIL*f,u32 off){return fseek(f->fp,off,SEEK_SET);}
 static int f_read(FIL*f,void*p,u32 length,UINT*actual){*actual=fread(p,1,length,f->fp);return ferror(f->fp)?1:0;}
 static int f_stat(const char*p,void*x){(void)p;(void)x;return 0;}
-static int f_opendir(DIR*d,const char*p){d->index=0;d->wallpaper=!strcmp(p,"wallpapers");return 0;}
-static int f_readdir(DIR*d,FILINFO*f){static const char*names[]={"Lecture.nyxf","Lecture-renforcee.nyxf","Lecture-fixe.nyxf",""};strcpy(f->fname,d->wallpaper?(d->index++?"":"Nova-Carbon.bmp"):names[d->index<3?d->index++:3]);f->fattrib=0;return 0;}
+static int f_opendir(DIR*d,const char*p){d->index=0;d->wallpaper=!strcmp(p,"icone")?2:!strcmp(p,"wallpapers");return 0;}
+static int f_readdir(DIR*d,FILINFO*f){static const char*names[]={"Lecture.nyxf","Lecture-renforcee.nyxf","Lecture-fixe.nyxf",""};strcpy(f->fname,d->wallpaper?(d->index++?"":d->wallpaper==2?"launch.png":"Nova-Carbon.bmp"):names[d->index<3?d->index++:3]);f->fattrib=0;return 0;}
 static int f_closedir(DIR*d){(void)d;return 0;}
 static int create_nyx_config_entry(bool b){(void)b;return 0;}
 static int create_config_entry(void){return 0;}
@@ -112,7 +112,7 @@ static bool get_set_autorcm_status(bool b){(void)b;return false;}
 static lv_res_t nyx_generic_onoff_toggle(lv_obj_t*b);
 static bool _lockpick_exists_check(void){return getenv("NYX_PREVIEW_LOCKPICK")!=NULL;}
 '''
-headers=stripped(nyx/'nova_version.h')+'\n'+stripped(nyx/'frontend/gui_partition_plan.h')+'\n'+'\n'.join(stripped(p)for p in [nyx/'fonts/font_manager.h',nyx/'localization.h',nyx/'fonts/unicode_fonts.h',nyx/'frontend/gui_nova.h',nyx/'frontend/gui_color_picker.h',nyx/'frontend/gui_options.h',nyx/'frontend/gui_readability.h',nyx/'frontend/gui_layout.h',nyx/'frontend/gui_choices.h',nyx/'frontend/gui_appearance.h'])
+headers=stripped(nyx/'nova_version.h')+'\n'+stripped(nyx/'frontend/gui_partition_plan.h')+'\n'+'\n'.join(stripped(p)for p in [nyx/'fonts/font_manager.h',nyx/'localization.h',nyx/'fonts/unicode_fonts.h',nyx/'frontend/gui_nova.h',nyx/'frontend/gui_color_picker.h',nyx/'frontend/nova_image.h',nyx/'frontend/gui_options.h',nyx/'frontend/gui_readability.h',nyx/'frontend/gui_layout.h',nyx/'frontend/gui_choices.h',nyx/'frontend/gui_appearance.h'])
 body=common+headers+stripped(nyx/'fonts/font_manager.c')+stripped(nyx/'localization.c',True)
 body+='static bool legacy_scale_font(const lv_font_t *source, u32 height, managed_font *target, bool icons, bool fixed)\n{\n    u32 codepoints[MAX_GLYPHS], count = make_codepoints(codepoints, icons), total = 0;\n    u32 widths[MAX_GLYPHS], source_height = source->h_px;\n    u32 fixed_width = (10u * height + source_height / 2) / source_height;\n    for (u32 i = 0; i < count; ++i) {\n        u32 source_width = lv_font_get_width(source, codepoints[i]);\n        widths[i] = fixed ? fixed_width : (source_width * height + source_height / 2) / source_height;\n        if (!widths[i]) widths[i] = height / 2;\n        if (widths[i] > 128) return false;\n        total += ((widths[i] + 1) / 2) * height;\n    }\n    if (!allocate_font(target, count, total, height)) return false;\n    memset(target->bitmap, 0, total);\n    u32 offset = 0;\n    for (u32 i = 0; i < count; ++i) {\n        u32 cp = codepoints[i], width = widths[i];\n        const u8 *source_bitmap = lv_font_get_bitmap(source, cp);\n        u32 source_width = lv_font_get_width(source, cp), source_bpp = lv_font_get_bpp(source, cp);\n        u32 source_stride = source_bpp == 8 ? source_width : (source_width + 1) / 2;\n        target->codepoints[i] = cp; target->glyphs[i].w_px = width; target->glyphs[i].glyph_index = offset;\n        if (source_bitmap && source_width && (source_bpp == 4 || source_bpp == 8)) {\n            for (u32 y = 0; y < height; ++y) {\n                u32 source_y = y * source_height / height;\n                for (u32 x = 0; x < width; ++x) {\n                    u32 source_x = x * source_width / width;\n                    u8 byte = source_bitmap[source_y * source_stride + (source_bpp == 8 ? source_x : source_x / 2)];\n                    u8 pixel = source_bpp == 8 ? (byte + 8) / 17 : (source_x & 1 ? byte & 15 : byte >> 4);\n                    target->bitmap[offset + y * ((width + 1) / 2) + x / 2] |= pixel << (x & 1 ? 0 : 4);\n                }\n            }\n        }\n        offset += ((width + 1) / 2) * height;\n    }\n    target->font.unicode_first = target->codepoints[0]; target->font.unicode_last = target->codepoints[count - 1];\n    if (fixed) target->font.monospace = fixed_width;\n    return true;\n}\n'
 guih=(nyx/'frontend/gui.h').read_text();macros='\n'.join(re.findall(r'^#define lv_.*$',guih,re.M))
@@ -240,7 +240,7 @@ static void exercise_partition_controls(void){
    lv_btn_get_action(no,LV_BTN_ACTION_CLICK)(no);assert(!part_info.l4t_size);
    for(lv_obj_t *child=lv_obj_get_child(partition_nova.presets[0],NULL);child;child=lv_obj_get_child(partition_nova.presets[0],child))assert(!lv_obj_get_click(child));
    lv_btn_get_action(yes,LV_BTN_ACTION_CLICK)(yes);assert(part_info.l4t_size==(partition_nova.preset[0]+1)*16384);
-   partition_nova.model=(model+1)%4;nova_partition_refresh();assert(partition_nova.result==NOVA_PLAN_MODEL&&!lv_obj_get_click(part_info.partition_button));
+   partition_nova.model=model<2?2:0;nova_partition_refresh();assert(partition_nova.result==NOVA_PLAN_MODEL&&!lv_obj_get_click(part_info.partition_button));
    partition_nova.model=model;
   }
  }
@@ -395,6 +395,16 @@ static lv_obj_t*find_choice(lv_obj_t*object,u32 group,u32 value){
  for(lv_obj_t*child=lv_obj_get_child(object,NULL);child;child=lv_obj_get_child(object,child)){lv_obj_t*found=find_choice(child,group,value);if(found)return found;}
  return NULL;
 }
+static lv_obj_t *find_type(lv_obj_t *object,const char *name){
+ if(type_is(object,name))return object;
+ for(lv_obj_t *c=lv_obj_get_child(object,NULL);c;c=lv_obj_get_child(object,c)){lv_obj_t *found=find_type(c,name);if(found)return found;}
+ return NULL;
+}
+static void verify_credit_labels(lv_obj_t *object){
+ if(lv_obj_get_hidden(object))return;
+ if(type_is(object,"lv_label")){assert(lv_label_get_long_mode(object)!=LV_LABEL_LONG_DOT);assert(lv_obj_get_y(object)+lv_obj_get_height(object)<=lv_obj_get_height(lv_obj_get_parent(object)));}
+ for(lv_obj_t *c=lv_obj_get_child(object,NULL);c;c=lv_obj_get_child(object,c))verify_credit_labels(c);
+}
 
 static lv_indev_state_t preview_pointer_state;
 static lv_point_t preview_pointer_point;
@@ -447,6 +457,13 @@ static void verify_glyph_pixels(lv_obj_t*object,lv_area_t clip){
  lv_area_t area,visible;lv_obj_get_coords(object,&area);if(!lv_area_intersect(&visible,&area,&clip))return;
  if(type_is(object,"lv_img")&&area.x1>=clip.x1&&area.y1>=clip.y1&&area.x2<=clip.x2&&area.y2<=clip.y2){
   const lv_img_dsc_t*asset=lv_img_get_src(object);
+  if(asset&&lv_obj_get_signal_func(object)==launch_image_signal&&asset->header.cf==LV_IMG_CF_TRUE_COLOR_ALPHA&&lv_obj_get_width(lv_obj_get_parent(object))<=100){
+   const u32 *pixel=(const u32 *)asset->data;
+   for(u32 i=0;i<asset->header.w*asset->header.h;++i)if((pixel[i]>>24)==255){
+    u32 actual=screen_pixels[(area.y1+i/asset->header.w)*LV_HOR_RES+area.x1+i%asset->header.w].full&0xFFFFFF;
+    assert(actual==(pixel[i]&0xFFFFFF));++glyph_pixel_checks;break;
+   }
+  }
   if(asset&&lv_img_src_get_type(asset)==LV_IMG_SRC_VARIABLE&&asset->header.cf==LV_IMG_CF_ALPHA_8BIT){
    const lv_style_t*style=lv_img_get_style(object);u32 strongest=0;
    for(u32 i=1;i<asset->data_size;i++)if(asset->data[i]>asset->data[strongest])strongest=i;
@@ -556,6 +573,7 @@ else {
 if(!strcmp(argv[3],"package"))lv_tabview_set_tab_act(fixture_log_tabs,atoi(argv[6]),false);
 if(!strcmp(argv[3],"emmc-info"))lv_tabview_set_tab_act(preview_emmc_tabs,atoi(argv[6]),false);
 if(!strcmp(argv[3],"colors"))lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);
+if(!strcmp(argv[3],"about")){lv_obj_t *tabs=find_type(root,"lv_tabview");assert(tabs);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);lv_tabview_ext_t *ext=lv_obj_get_ext_attr(tabs);verify_credit_labels(ext->content);}
 if(!root){assert(nova_navigation_locks);for(u32 i=1;i<6;i++)assert(!lv_obj_get_click(nova_nav_buttons[i]));lv_obj_t*window=lv_win_get_from_btn(close_btn);lv_win_ext_t*ext=lv_obj_get_ext_attr(window);root=ext->page;
  if(!strcmp(argv[3],"appearance")||!strcmp(argv[3],"nyx")){lv_obj_t*tabs=lv_obj_get_child(lv_page_get_scrl(root),NULL);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);}}
 if(!strncmp(argv[3],"partition-",10)){verify_partition_state();if(getenv("NYX_TEST_PARTITION_ACTIONS"))exercise_partition_controls();}
@@ -631,6 +649,21 @@ if(!strcmp(argv[3],"colors")&&getenv("NYX_TEST_BOOT_LAUNCH")){
  bool found=false;for(lv_obj_t*c=lv_obj_get_child(nova_theme.launch_card,NULL);c;c=lv_obj_get_child(nova_theme.launch_card,c))if(lv_obj_get_signal_func(c)==launch_image_signal){launch_image_ext *ext=lv_obj_get_ext_attr(c);assert(ext->pixels&&ext->pixels->header.w==472&&ext->pixels->header.h==288);found=true;}
  assert(found);launch_step(&fake);assert(!nova_theme.pending.launch_image[0]);
  assert(!memcmp(&actual,&n_cfg,sizeof actual));
+ lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);lv_refr_now();
+}
+if(!strcmp(argv[3],"colors")&&getenv("NYX_TEST_V18")){
+ nyx_config before=n_cfg;lv_obj_t next;memset(&next,0,sizeof next);lv_obj_set_free_num(&next,1);
+ bool png=false,bmp=false,empty=false;
+ for(u32 i=0;i<=launch_count;++i){
+  launch_step(&next);const char *file=nova_theme.pending.launch_image;
+  if(!*file)empty=true;
+  else if(image_png_name(file)){
+   png=true;bool found=false;
+   for(lv_obj_t*c=lv_obj_get_child(nova_theme.launch_card,NULL);c;c=lv_obj_get_child(nova_theme.launch_card,c))if(lv_obj_get_signal_func(c)==launch_image_signal){const lv_img_dsc_t *img=lv_img_get_src(c);assert(img->header.cf==LV_IMG_CF_TRUE_COLOR_ALPHA);found=true;}
+   assert(found);
+  }else bmp=true;
+ }
+ assert(png&&bmp&&empty&&!memcmp(&before,&n_cfg,sizeof before));
  lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);lv_refr_now();
 }
 if(!strcmp(argv[3],"colors")&&!atoi(argv[6])){
@@ -747,7 +780,7 @@ printf("PASS UI %s language=%s size=%s tab=%s controls=%u\n",argv[3],argv[4],arg
 (directory/'preview.c').write_text(body,encoding='utf-8')
 cc=work/'toolchains/w64devkit/bin/gcc.exe'
 flags=['-std=gnu11','-O1','-include','stdint.h','-DLV_CONF_INCLUDE_SIMPLE','-I'+str(directory),'-I'+str(project/'bdk'),'-I'+str(nyx)]
-sources=list(lvgl.rglob('*.c'))+[nyx/'fonts/unicode_fonts.c',directory/'preview.c']
+sources=list(lvgl.rglob('*.c'))+[nyx/'fonts/unicode_fonts.c',nyx/'frontend/nova_image.c',nyx/'libs/png/lodepng_nyx.c',directory/'preview.c']
 def compile_one(p):
     obj=directory/(p.stem+'.o')
     result=subprocess.run([str(cc),*flags,'-c',str(p),'-o',str(obj)],capture_output=True,text=True)
@@ -782,7 +815,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-v17-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-v18-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

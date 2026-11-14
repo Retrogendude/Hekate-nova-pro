@@ -34109,6 +34109,60 @@
     "Ursprüngliche Detailberichte bleiben ohne erneuten Testlauf verfügbar.",
     "Os relatórios detalhados originais continuam disponíveis sem repetir os testes."
   ],
+  "Minimum": [
+    "Minimum",
+    "Minimum",
+    "Mínimo",
+    "Minimo",
+    "Минимум",
+    "Minimum",
+    "Mínimo"
+  ],
+  "Recommandé": [
+    "Recommended",
+    "Recommandé",
+    "Recomendado",
+    "Consigliato",
+    "Рекомендуется",
+    "Empfohlen",
+    "Recomendado"
+  ],
+  "Capacité : %d MiB (%d,%02d Go) · réserves : %d MiB": [
+    "Capacity: %d MiB (%d.%02d GiB) · reserved: %d MiB",
+    "Capacité : %d MiB (%d,%02d Go) · réserves : %d MiB",
+    "Capacidad: %d MiB (%d,%02d GiB) · reserva: %d MiB",
+    "Capacità: %d MiB (%d,%02d GiB) · riserva: %d MiB",
+    "Ёмкость: %d МиБ (%d,%02d ГиБ) · резерв: %d МиБ",
+    "Kapazität: %d MiB (%d,%02d GiB) · Reserve: %d MiB",
+    "Capacidade: %d MiB (%d,%02d GiB) · reserva: %d MiB"
+  ],
+  "%d,%02d Go": [
+    "%d.%02d GiB",
+    "%d,%02d Go",
+    "%d,%02d GiB",
+    "%d,%02d GiB",
+    "%d,%02d ГиБ",
+    "%d,%02d GiB",
+    "%d,%02d GiB"
+  ],
+  "Choisissez un PNG transparent du dossier icone. L’image couvre uniquement la tuile Launch. Les anciens BMP restent disponibles.": [
+    "Choose a transparent PNG from icone. It covers only the Launch tile. Existing BMP images remain available.",
+    "Choisissez un PNG transparent du dossier icone. L’image couvre uniquement la tuile Launch. Les anciens BMP restent disponibles.",
+    "Elija un PNG transparente de icone. Solo cubre la tarjeta de inicio. Los BMP anteriores siguen disponibles.",
+    "Scegli un PNG trasparente da icone. Copre solo il riquadro di avvio. I vecchi BMP restano disponibili.",
+    "Выберите прозрачный PNG из icone. Он покроет только плитку запуска. Прежние BMP остаются доступны.",
+    "Transparentes PNG aus icone wählen. Es füllt nur die Startkachel. Bisherige BMP-Bilder bleiben verfügbar.",
+    "Escolha um PNG transparente de icone. Cobre apenas o mosaico de início. Os BMP anteriores continuam disponíveis."
+  ],
+  "Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.": [
+    "Image missing or invalid. Use a PNG in icone or an uncompressed BMP in wallpapers.",
+    "Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.",
+    "Imagen inexistente o inválida. Use PNG en icone o BMP sin comprimir en wallpapers.",
+    "Immagine mancante o non valida. Usa PNG in icone o BMP non compresso in wallpapers.",
+    "Изображение отсутствует или некорректно. Используйте PNG в icone или несжатый BMP в wallpapers.",
+    "Bild fehlt oder ist ungültig. PNG in icone oder unkomprimiertes BMP in wallpapers verwenden.",
+    "Imagem ausente ou inválida. Use PNG em icone ou BMP sem compressão em wallpapers."
+  ],
   "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n": [
     "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n",
     "\n#FF0000 Écriture du fichier d'empreinte impossible (erreur %d) !#\n#FF0000 Annulation…#\n",

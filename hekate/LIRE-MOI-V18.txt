@@ -1,0 +1,42 @@
+HEKATE NOVA PRO 18 - Base Hekate 6.5.4 / Nyx 1.9.4
+
+MISE A JOUR
+Copier les dossiers bootloader, fonts, wallpapers et icone a la racine de
+la carte SD. Utiliser hekate_nova_pro_6.5.4_v18.bin comme payload.
+Les fichiers nyx.ini et hekate_ipl.ini existants sont conserves.
+
+CHANGEMENTS DE CETTE VERSION
+- Credits : uniquement les quatre onglets du haut. Plus de pagination
+  inferieure ; licences et auteurs conserves dans deux colonnes.
+- Icones des tuiles : PNG avec transparence dans /icone/. Voir le fichier
+  /icone/LIRE-MOI.txt pour les cinq noms de fichiers et les dimensions.
+  Les icones Nova restent utilisees si une image manque ou est invalide.
+- Image de la grande tuile Launch : choix des PNG de /icone/ dans Reglages
+  Nyx > Themes et couleurs > Tuile Launch. Anciens BMP toujours disponibles.
+- Colonne Options systeme : contours retires de cette colonne et de ses
+  options ; les interrupteurs et leurs etats restent visibles.
+- Partitions SD : choix Switch V1 V2, Switch Lite, Switch OLED. L'espace
+  FAT32 restant est affiche pour chaque proposition calculable, meme si
+  elle ne correspond pas a la console ; cette incompatibilite continue
+  de bloquer la validation. V1 et V2 partagent le meme profil.
+- Linux/Android : Minimum sous 16 Go, Recommande sous 32 Go.
+- Mode expert : tailles emuMMC, Linux et Android en Go. Capacite dans les
+  deux modes en MiB avec equivalent Go entre parentheses (base 1024).
+
+Toutes les fonctions et diagnostics de la v17 sont conserves. Le paquet
+contient les sept langues ; les preferences existantes restent prioritaires.
+
+SORTIE TV SUR DOCK OFFICIEL
+La sortie TV n'est pas encore activee. L'etude du code et les etapes de
+developpement sont dans documentation/DEVELOPPEMENT-TV-DOCK.md.
+La negociation video avec le dock et les pilotes DisplayPort doivent etre
+developpes et valides sur materiel. La Switch Lite reste exclue.
+
+VERIFICATIONS
+Compilation et tests PC : documentation/VERIFICATION-V18.json.
+Le decodeur PNG est teste sur les transparences, palettes, niveaux de gris,
+PNG entrelaces, redimensionnements et fichiers invalides. Les tests du
+partitionnement utilisent le vrai calculateur et les commandes de l'interface.
+Les routines de formatage et de copie d'origine sont conservees.
+Validation physique sur Switch non effectuee ; les tests PC ne mesurent
+pas les FPS reels de la console.

@@ -28,7 +28,7 @@ TRACK_LDFLAGS = $(BUILDDIR)/.ldflags
 
 # Main and graphics.
 OBJS =  start exception_handlers nyx heap gfx nova_splash \
-		gui gui_info gui_tools gui_options gui_appearance gui_readability gui_layout gui_choices gui_nova gui_nova_reflection gui_nova_theme gui_color_picker gui_nova_report gui_diagnostics gui_component_summary gui_interactive gui_stick gui_emmc_tools gui_emummc_tools gui_tools_partition_manager gui_partition_plan \
+		gui gui_info gui_tools gui_options gui_appearance gui_readability gui_layout gui_choices gui_nova gui_nova_reflection gui_nova_theme gui_color_picker nova_image lodepng_nyx gui_nova_report gui_diagnostics gui_component_summary gui_interactive gui_stick gui_emmc_tools gui_emummc_tools gui_tools_partition_manager gui_partition_plan \
 		fe_emummc_tools fe_emmc_tools
 
 # Hardware.

@@ -1,0 +1,15 @@
+{
+  "scenes": 224,
+  "languages": 7,
+  "credits_tabs": 4,
+  "credits": "no report pagination, no clipped labels; complete OSS columns",
+  "images": "native PNG loading plus Launch preview",
+  "fonts": [
+    "Lecture.nyxf",
+    "Caviar.nyxf"
+  ],
+  "sizes": [
+    20,
+    36
+  ]
+}

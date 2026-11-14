@@ -68,23 +68,23 @@ static void nova_partition_refresh(void)
     part_info.and_size=plan.android_mib;part_info.emu_double=plan.emu_double;
     if(valid)part_info.hos_size=plan.fat_mib;
     char text[320];
-    s_printf(text,"%s: %d MiB\nemuMMC%s: %d MiB\nLinux: %d MiB\nAndroid: %d MiB",part_info.emmc?"USER":"FAT32",valid?plan.fat_mib:0,plan.emu_double?" (2x)":"",plan.emu_mib,plan.linux_mib,plan.android_mib);
+    s_printf(text,"%s: %d MiB\nemuMMC%s: %d MiB\nLinux: %d MiB\nAndroid: %d MiB",part_info.emmc?"USER":"FAT32",plan.fat_mib,plan.emu_double?" (2x)":"",plan.emu_mib,plan.linux_mib,plan.android_mib);
     lv_label_set_text(partition_nova.summary,text);
     lv_label_set_text(partition_nova.message,nova_partition_error(partition_nova.result));
     nyx_nova_fit_text(partition_nova.message,70);
     lv_obj_set_click(part_info.partition_button,valid);
     lv_btn_set_state(part_info.partition_button,valid?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
-    s_printf(text,nyx_tr("Capacité : %d MiB · réserves : %d MiB"),(part_info.total_sct>>11),16);
+    s_printf(text,nyx_tr("Capacité : %d MiB (%d,%02d Go) · réserves : %d MiB"),(part_info.total_sct>>11),(part_info.total_sct>>11)/1024,((part_info.total_sct>>11)%1024)*100/1024,16);
     lv_label_set_text(partition_nova.capacity,text);
     u32 widths[4];nova_partition_widths(&plan,1164,widths);int x=24;
     for(u32 i=0;i<4;++i){
-        lv_obj_set_hidden(partition_nova.segments[i],!valid||!widths[i]);
+        lv_obj_set_hidden(partition_nova.segments[i],!plan.fat_mib||!widths[i]);
         lv_obj_set_pos(partition_nova.segments[i],x,42);
         lv_obj_set_width(partition_nova.segments[i],widths[i]?widths[i]:1);x+=widths[i];
     }
     lv_obj_t *labels[]={part_info.lbl_hos,part_info.lbl_emu,part_info.lbl_l4t,part_info.lbl_and};
-    const u32 values[]={valid?plan.fat_mib:0,plan.emu_mib,plan.linux_mib,plan.android_mib};
-    for(u32 i=0;i<4;++i)if(labels[i]){s_printf(text,"%d MiB",values[i]);lv_label_set_text(labels[i],text);}
+    const u32 values[]={plan.fat_mib,plan.emu_mib,plan.linux_mib,plan.android_mib};
+    for(u32 i=0;i<4;++i)if(labels[i]){s_printf(text,nyx_tr("%d,%02d Go"),values[i]/1024,(values[i]%1024)*100/1024);lv_label_set_text(labels[i],text);}
     if(!partition_nova.mode&&!part_info.emmc){
         for(u32 i=0;i<2;++i)if(partition_nova.presets[i])
             for(lv_obj_t *button=lv_obj_get_child(partition_nova.presets[i],NULL);button;button=lv_obj_get_child(partition_nova.presets[i],button)){
@@ -97,7 +97,7 @@ static void nova_partition_refresh(void)
 static lv_res_t nova_partition_simple_choice(lv_obj_t *button)
 {
     u32 group=lv_obj_get_free_num(lv_obj_get_parent(button)),value=lv_obj_get_free_num(button);
-    if(group==70)partition_nova.model=value;
+    if(group==70)partition_nova.model=value==0?(partition_nova.actual_model<2?partition_nova.actual_model:0):value+1;
     else if(group==71||group==72){u32 index=group-71;partition_nova.option[index]=value?partition_nova.preset[index]+1:0;}
     else if(group==73||group==74){u32 index=group-73;partition_nova.preset[index]=value;partition_nova.option[index]=value+1;}
     nova_partition_refresh();return LV_RES_OK;
@@ -136,7 +136,7 @@ static void nova_partition_build_controls(void)
     lv_obj_t *panel=partition_nova.content;
     if(!partition_nova.mode&&!part_info.emmc){
         nyx_nova_text(panel,"Modèle de console",24,12,696,NOVA_SMALL);
-        partition_nova.models=nyx_choices_create(panel,"Switch V1\nSwitch V2\nSwitch Lite\nSwitch OLED",partition_nova.model,4,696,38,nova_partition_simple_choice,70,true);
+        partition_nova.models=nyx_choices_create(panel,"Switch V1 V2\nSwitch Lite\nSwitch OLED",partition_nova.model<2?0:partition_nova.model-1,3,696,38,nova_partition_simple_choice,70,true);
         lv_obj_set_pos(partition_nova.models,24,40);
         const char *titles[]={"Installer Linux ?","Installer Android ?"};
         for(u32 i=0;i<2;++i){
@@ -144,8 +144,14 @@ static void nova_partition_build_controls(void)
             lv_obj_t *title=nyx_nova_text(panel,titles[i],24,y+7,205,NOVA_BODY);nyx_nova_fit_text(title,38);
             partition_nova.enabled[i]=nyx_choices_create(panel,"Non\nOui",partition_nova.option[i]?1:0,2,180,40,nova_partition_simple_choice,71+i,false);
             lv_obj_set_pos(partition_nova.enabled[i],240,y);
-            partition_nova.presets[i]=nyx_choices_create(panel,"16 Go\n32 Go",partition_nova.preset[i],2,282,40,nova_partition_simple_choice,73+i,false);
+            partition_nova.presets[i]=nyx_choices_create(panel,"16 Go\n32 Go",partition_nova.preset[i],2,282,58,nova_partition_simple_choice,73+i,false);
             lv_obj_set_pos(partition_nova.presets[i],438,y);
+            for(lv_obj_t *choice=lv_obj_get_child(partition_nova.presets[i],NULL);choice;choice=lv_obj_get_child(partition_nova.presets[i],choice)){
+                lv_obj_t *size=lv_obj_get_child(choice,NULL);lv_obj_set_y(size,4);nyx_nova_fit_text(size,24);
+                lv_obj_t *hint=nyx_nova_text(choice,lv_obj_get_free_num(choice)?"Recommandé":"Minimum",4,32,lv_obj_get_width(choice)-8,NOVA_KICKER);
+                static lv_style_t caption;lv_style_copy(&caption,nyx_nova_text_style(NOVA_KICKER));caption.text.letter_space=0;lv_label_set_style(hint,&caption);
+                lv_label_set_align(hint,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(hint,20);
+            }
         }
     }else{
         const char *titles[]={"emuMMC","Linux","Android (total)"};

@@ -3,6 +3,7 @@
 #include "gui.h"
 #include "gui_nova.h"
 #include "gui_color_picker.h"
+#include "nova_image.h"
 #include "gui_choices.h"
 #include "gui_options.h"
 #include "gui_appearance.h"
@@ -14,7 +15,8 @@
 #define WALLPAPER_LIMIT 32
 static lv_img_dsc_t *nova_wallpaper;
 static char wallpaper_names[WALLPAPER_LIMIT][64];
-static u32 wallpaper_count;
+static u32 wallpaper_count,launch_count;
+static char launch_names[WALLPAPER_LIMIT][64];
 static void theme_to_front(lv_obj_t *object)
 {
     lv_obj_t *parent=lv_obj_get_parent(object);if(!parent)return;
@@ -34,7 +36,7 @@ static void wallpaper_free(lv_img_dsc_t *image)
 /* Decode a bounded uncompressed 24/32-bit BMP and crop/scale it ONCE. A single
  * source row and the final opaque image are allocated; no per-frame SD I/O.
  * The preview and the real background share this exact checked decoder. */
-static lv_img_dsc_t *wallpaper_read(const char *file, u32 width, u32 height)
+static lv_img_dsc_t *wallpaper_read_bmp(const char *file, u32 width, u32 height)
 {
     if(!file||!*file||strlen(file)>=64||strchr(file,'/')||strchr(file,'\\')||strstr(file,".."))return NULL;
     char path[96];s_printf(path,"wallpapers/%s",file);
@@ -73,6 +75,26 @@ done:
     free(row);f_close(&stream);return image;
 }
 
+/* PNG assets are separate from the full-screen BMP wallpaper folder. */
+static lv_img_dsc_t *icon_read(const char *file,u32 width,u32 height,bool cover)
+{
+    if(!file||!*file||strlen(file)>=64||strchr(file,'/')||strchr(file,'\\')||strstr(file,".."))return NULL;
+    char path[96];s_printf(path,"icone/%s",file);FIL stream;
+    if(f_open(&stream,path,FA_READ)!=FR_OK)return NULL;
+    u32 bytes=f_size(&stream);UINT actual=0;u8 *data=NULL;u32 *pixels=NULL;lv_img_dsc_t *image=NULL;
+    if(bytes<33||bytes>8u*1024u*1024u)goto done;
+    data=malloc(bytes);if(!data)goto done;
+    if(f_read(&stream,data,bytes,&actual)!=FR_OK||actual!=bytes||!nova_image_png(data,bytes,width,height,cover,&pixels))goto done;
+    image=calloc(1,sizeof(*image));if(!image){free(pixels);goto done;}
+    image->header.cf=LV_IMG_CF_TRUE_COLOR_ALPHA;image->header.w=width;image->header.h=height;
+    image->data=(u8 *)pixels;image->data_size=width*height*4;
+done:
+    free(data);f_close(&stream);return image;
+}
+static bool image_png_name(const char *file)
+{u32 n=strlen(file);return n>=5&&file[n-4]=='.'&&(file[n-3]|32)=='p'&&(file[n-2]|32)=='n'&&(file[n-1]|32)=='g';}
+static lv_img_dsc_t *wallpaper_read(const char *file,u32 width,u32 height)
+{return image_png_name(file)?icon_read(file,width,height,true):wallpaper_read_bmp(file,width,height);}
 /* The image owns its decoded buffer. Its lifetime follows the card, including
  * theme previews and menu reloads; there is no per-frame decode or SD access. */
 typedef struct {lv_img_ext_t image;lv_signal_func_t base;lv_img_dsc_t *pixels;} launch_image_ext;
@@ -83,6 +105,32 @@ static lv_res_t launch_image_signal(lv_obj_t *object,lv_signal_t signal,void *pa
     lv_res_t result=base(object,signal,parameter);
     if(signal==LV_SIGNAL_CLEANUP)wallpaper_free(pixels);
     return result;
+}
+static bool image_owned(lv_obj_t *image,lv_img_dsc_t *pixels)
+{
+    lv_signal_func_t base=lv_obj_get_signal_func(image);
+    launch_image_ext *ext=lv_obj_allocate_ext_attr(image,sizeof(*ext));if(!ext)return false;
+    ext->base=base;ext->pixels=pixels;lv_obj_set_signal_func(image,launch_image_signal);
+    lv_img_set_src(image,pixels);return true;
+}
+void nyx_nova_custom_icon(lv_obj_t *box,u32 index)
+{
+    static const char *names[]={"launch.png","configs.png","payloads.png","emummc.png","diagnostic.png"};
+    if(index>=5)return;
+    bool mounted=sd_get_card_mounted();lv_img_dsc_t *pixels=NULL;
+    u32 size=lv_obj_get_width(box)-8;
+    if(!sd_mount())pixels=icon_read(names[index],size,size,false);
+    if(!mounted)sd_unmount();if(!pixels)return;
+    lv_obj_t *old=NULL;
+    for(lv_obj_t *child=lv_obj_get_child(box,NULL);child;child=lv_obj_get_child(box,child)){
+        lv_obj_type_t type;lv_obj_get_type(child,&type);
+        if(type.type[0]&&!strcmp(type.type[0],"lv_img")){old=child;break;}
+    }
+    lv_obj_t *image=lv_img_create(box,NULL);
+    if(!image_owned(image,pixels)){lv_obj_del(image);wallpaper_free(pixels);return;}
+    static lv_style_t natural;lv_style_copy(&natural,&lv_style_plain);natural.image.intense=0;natural.image.opa=LV_OPA_COVER;
+    lv_img_set_style(image,&natural);lv_obj_set_pos(image,4,4);lv_obj_set_click(image,false);
+    if(old)lv_obj_del(old);
 }
 static bool launch_image_place(lv_obj_t *card,const char *file)
 {
@@ -281,6 +329,20 @@ static void wallpaper_scan(void)
     f_closedir(&directory);
     for(u32 i=1;i<wallpaper_count;++i)for(u32 j=i;j>0&&strcmp(wallpaper_names[j-1],wallpaper_names[j])>0;--j){char temp[64];strcpy(temp,wallpaper_names[j]);strcpy(wallpaper_names[j],wallpaper_names[j-1]);strcpy(wallpaper_names[j-1],temp);}
 }
+static void launch_scan(void)
+{
+    launch_count=0;
+    DIR directory;FILINFO entry;
+    if(f_opendir(&directory,"icone")!=FR_OK)goto legacy_bmp;
+    while(launch_count<WALLPAPER_LIMIT&&f_readdir(&directory,&entry)==FR_OK&&entry.fname[0]){
+        if(entry.fattrib&(AM_DIR|AM_HID)||!image_png_name(entry.fname)||strlen(entry.fname)>=64||entry.fname[0]=='.'||strstr(entry.fname,".."))continue;
+        bool valid=true;for(u32 i=0;entry.fname[i];++i){char c=entry.fname[i];if(!((c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_'||c=='-'||c=='.'||c==' ')){valid=false;break;}}
+        if(valid)strcpy(launch_names[launch_count++],entry.fname);
+    }
+    f_closedir(&directory);
+legacy_bmp:
+    for(u32 i=0;i<wallpaper_count&&launch_count<WALLPAPER_LIMIT;++i)strcpy(launch_names[launch_count++],wallpaper_names[i]);
+}
 static void wallpaper_preview_refresh(void)
 {
     if(nova_theme.preview_image){lv_obj_del(nova_theme.preview_image);nova_theme.preview_image=NULL;}
@@ -292,7 +354,7 @@ static void wallpaper_preview_refresh(void)
     if(*file&&!sd_mount())nova_theme.thumbnail=wallpaper_read(file,516,405);
     if(!mounted)sd_unmount();
     if(nova_theme.thumbnail){nova_theme.preview_image=lv_img_create(nova_theme.preview,NULL);lv_img_set_src(nova_theme.preview_image,nova_theme.thumbnail);lv_obj_set_pos(nova_theme.preview_image,0,0);lv_obj_set_click(nova_theme.preview_image,false);theme_to_back(nova_theme.preview_image);}
-    else if(*file)theme_notice("Image introuvable ou invalide. Choisissez une image BMP non compressée.");
+    else if(*file)theme_notice("Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.");
 }
 static lv_res_t wallpaper_step(lv_obj_t *button)
 {
@@ -310,14 +372,14 @@ static void launch_preview_refresh(void)
     nyx_nova_text(nova_theme.launch_card,"Launch",24,166,428,NOVA_TITLE);
     lv_obj_t *caption=nyx_nova_text(nova_theme.launch_card,"Choisir un système",24,214,428,NOVA_BODY);nyx_nova_fit_text(caption,50);
     (lv_label_set_text)(nova_theme.launch_file,nova_theme.pending.launch_image[0]?nova_theme.pending.launch_image:nyx_tr("Aucune image"));
-    char count[24];s_printf(count,"%d / %d",nova_theme.launch+1,wallpaper_count+1);(lv_label_set_text)(nova_theme.launch_counter,count);
-    if(!valid)theme_notice("Image introuvable ou invalide. Choisissez une image BMP non compressée.");
+    char count[24];s_printf(count,"%d / %d",nova_theme.launch+1,launch_count+1);(lv_label_set_text)(nova_theme.launch_counter,count);
+    if(!valid)theme_notice("Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.");
 }
 static lv_res_t launch_step(lv_obj_t *button)
 {
-    nova_theme.launch=(nova_theme.launch+(lv_obj_get_free_num(button)?1:wallpaper_count))%(wallpaper_count+1);
+    nova_theme.launch=(nova_theme.launch+(lv_obj_get_free_num(button)?1:launch_count))%(launch_count+1);
     nova_theme.pending.launch_image[0]=0;
-    if(nova_theme.launch)strcpy(nova_theme.pending.launch_image,wallpaper_names[nova_theme.launch-1]);
+    if(nova_theme.launch)strcpy(nova_theme.pending.launch_image,launch_names[nova_theme.launch-1]);
     launch_preview_refresh();return LV_RES_OK;
 }
 static void theme_apply(const nyx_config *source)
@@ -337,12 +399,12 @@ static lv_res_t theme_save(lv_obj_t *button)
     if(f_stat("bootloader/sys/nyx.bin",NULL)!=FR_OK){if(!mounted)sd_unmount();theme_notice("Nyx is missing. Nothing was saved.");return LV_RES_OK;}
     if(nova_theme.pending.launch_image[0]){
         lv_img_dsc_t *check=wallpaper_read(nova_theme.pending.launch_image,32,18);
-        if(!check){if(!mounted)sd_unmount();theme_notice("Image introuvable ou invalide. Choisissez une image BMP non compressée.");return LV_RES_OK;}
+        if(!check){if(!mounted)sd_unmount();theme_notice("Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.");return LV_RES_OK;}
         wallpaper_free(check);
     }
     if(nova_theme.pending.wallpaper_file[0]){
         lv_img_dsc_t *check=wallpaper_read(nova_theme.pending.wallpaper_file,32,18);
-        if(!check){if(!mounted)sd_unmount();theme_notice("Image introuvable ou invalide. Choisissez une image BMP non compressée.");return LV_RES_OK;}
+        if(!check){if(!mounted)sd_unmount();theme_notice("Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.");return LV_RES_OK;}
         wallpaper_free(check);
     }
     if(!nyx_options_commit_boot()){if(!mounted)sd_unmount();theme_notice("Could not save settings. Check the SD card and retry.");return LV_RES_OK;}
@@ -389,9 +451,9 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button)
     (void)button;if(nova_theme.open)return LV_RES_OK;
     memset(&nova_theme,0,sizeof(nova_theme));nova_theme.open=true;nova_theme.pending=n_cfg;nova_theme.parent_close=close_btn;
     wallpaper_count=0;
-    bool mounted=sd_get_card_mounted();if(!sd_mount())wallpaper_scan();if(!mounted)sd_unmount();
+    bool mounted=sd_get_card_mounted();if(!sd_mount()){wallpaper_scan();launch_scan();}if(!mounted)sd_unmount();
     for(u32 i=0;i<wallpaper_count;++i)if(!strcmp(wallpaper_names[i],n_cfg.wallpaper_file))nova_theme.wallpaper=i+1;
-    for(u32 i=0;i<wallpaper_count;++i)if(!strcmp(wallpaper_names[i],n_cfg.launch_image))nova_theme.launch=i+1;
+    for(u32 i=0;i<launch_count;++i)if(!strcmp(launch_names[i],n_cfg.launch_image))nova_theme.launch=i+1;
     lv_obj_t *win=nyx_create_standard_window("Thèmes et couleurs",theme_close);nova_theme.window=win;
     lv_win_add_btn(win,NULL,nyx_tr("Réinitialiser"),theme_reset);lv_win_add_btn(win,NULL,nyx_tr("Save & reload"),theme_save);
     lv_win_ext_t *ext=lv_obj_get_ext_attr(win);theme_page(ext->page);
@@ -443,7 +505,7 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button)
     nova_theme.launch_file=nyx_nova_text(left,"",24,88,620,NOVA_BODY);nyx_nova_fit_text(nova_theme.launch_file,54);
     theme_button(left,"Précédent",launch_step,24,160,270,0);theme_button(left,"Suivant",launch_step,318,160,270,1);
     nova_theme.launch_counter=nyx_nova_text(left,"",24,228,620,NOVA_SMALL);
-    help=nyx_nova_text(left,"Choisissez un BMP du dossier wallpapers. L’image couvre uniquement la tuile Launch, sans modifier le fond d’écran.",24,276,620,NOVA_SMALL);nyx_nova_fit_text(help,104);
+    help=nyx_nova_text(left,"Choisissez un PNG transparent du dossier icone. L’image couvre uniquement la tuile Launch. Les anciens BMP restent disponibles.",24,276,620,NOVA_SMALL);nyx_nova_fit_text(help,104);
     nova_theme.launch_preview=nyx_nova_panel(launch_tab,730,14,516,panel_height);
     nyx_nova_text(nova_theme.launch_preview,"Aperçu",24,22,468,NOVA_TITLE);
     theme_controls_refresh();wallpaper_preview_refresh();boot_controls_refresh();launch_preview_refresh();nyx_options_appearance_active(true,false);return LV_RES_OK;
