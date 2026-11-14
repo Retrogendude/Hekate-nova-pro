@@ -1,0 +1,9 @@
+/build/
+/output/
+**/__pycache__/
+*.pyc
+**/joycon-pairing.bin
+**/joycon-pairing.bak
+**/joycon-pairing.tmp
+prod.keys
+title.keys

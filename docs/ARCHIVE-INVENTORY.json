@@ -1,0 +1,262 @@
+{
+  "correctif-convertisseur-polices.zip": {
+    "size": 301445,
+    "sha256": "175d51eba581cb0432220d7fd04fc2ef93bb2469d4b21d97a2437d507f7e1f0e"
+  },
+  "hekate-6.5.4-custom-sources.zip": {
+    "size": 1443097,
+    "sha256": "e0433422f004303af1ef4b8b4b43e2072292b1b56240f62a3025257c4cec1df1"
+  },
+  "hekate-6.5.4-diagnostic-prototype.zip": {
+    "size": 1442384,
+    "sha256": "86c2bd4f79ef3b700262e6a976d0f8be8c48d622876319deb16602aeb90411ae"
+  },
+  "hekate-6.5.4-diagnostics-complets-sources.zip": {
+    "size": 3840187,
+    "sha256": "471331c5ae6aa4fb62a712e34e344506552377a7d86d8f4972d92b21d56e3c1c"
+  },
+  "hekate-6.5.4-interface-console-prototype-2.zip": {
+    "size": 1439094,
+    "sha256": "6a480ca4a9332d4fa5736dcb7769bdc932a73e270892f6b8b564e537a35c9bc5"
+  },
+  "hekate-6.5.4-interface-fluide-v8-sources.zip": {
+    "size": 6846143,
+    "sha256": "fe352ef222f014d36594b63e1cd240925efcfaa60f0a991e4fca55a20e1ff4c0"
+  },
+  "hekate-6.5.4-interface-fluide-v8.zip": {
+    "size": 10554113,
+    "sha256": "d2c9c6c56d26ebaace1c84123bac794977efc4e69a4a3121de3484bf0c9e8c07"
+  },
+  "hekate-6.5.4-interface-langues-sources.zip": {
+    "size": 4426585,
+    "sha256": "b9403738c537a6d910ef5f3a112b7271b49ab90bb49b0a6b1558bb024612b60b"
+  },
+  "hekate-6.5.4-interface-originale-prototype-3.zip": {
+    "size": 1438146,
+    "sha256": "8dec92b2ac8dc7cf36822b246033f0ea96133b250a541b5f9964ccb5762c02d4"
+  },
+  "hekate-6.5.4-interface-transparente-langues.zip": {
+    "size": 5431340,
+    "sha256": "8af14fb9aa19e0dbadfc63c1a9528dd124ee54aec2f68839240ad8dd72aacf8b"
+  },
+  "hekate-6.5.4-nova-v10-sources.zip": {
+    "size": 6977968,
+    "sha256": "e8854dc4e3011923b420a9d46ef2cafe3f81c13692e4f876e944327366e12966"
+  },
+  "hekate-6.5.4-nova-v10.zip": {
+    "size": 11213543,
+    "sha256": "69a6ab26dfb353d2cfc4911e84c38c5dc4780aac5616609dbf6ba4ab7a905733"
+  },
+  "hekate-6.5.4-personnalisation-v7-sources.zip": {
+    "size": 6820074,
+    "sha256": "819fc1dd3b82d8e7d6c7d4f5e066289aca166361933acd81f104fe719a7aaee2"
+  },
+  "hekate-6.5.4-personnalisation-v7.zip": {
+    "size": 10288172,
+    "sha256": "798236b6687cfbe748d5157ee7e403e3bb13b68bea7877ab527e3bde96077ebe"
+  },
+  "hekate-6.5.4-studio-v9-sources.zip": {
+    "size": 6858346,
+    "sha256": "f2c7c31aa58431657625d8618c65f26df373897a9af4a3e8f56aea18f5b3031c"
+  },
+  "hekate-6.5.4-studio-v9.zip": {
+    "size": 11000583,
+    "sha256": "b5c03e81b70cfd9cad6ed6c1f0fc9ae6c9c665d2ac0e9f01672c0a3468a60229"
+  },
+  "hekate-6.5.4-tuiles-carrousel-reglages-prototype-4.zip": {
+    "size": 1441657,
+    "sha256": "15ddd240ede230f4232190e2b5b6458e8df53bfe1859d1cec6371d0d4cc3620c"
+  },
+  "hekate-nova-pro-v11-sources.zip": {
+    "size": 7073361,
+    "sha256": "9cec769005e5455834086c9b63a53c006167ac13ca7af13320503cf443060317"
+  },
+  "hekate-nova-pro-v11.zip": {
+    "size": 11927159,
+    "sha256": "9bfef5f25c326fc10b4cb0de8c77bba2994dba41a7dbdd2db85ab049b9ff5585"
+  },
+  "hekate-nova-pro-v12-sources.zip": {
+    "size": 7086393,
+    "sha256": "38be03265d569b772318ae5aa1577410bfe7005ed1c1c8d47c00bdd30ab601cb"
+  },
+  "hekate-nova-pro-v12.zip": {
+    "size": 11992971,
+    "sha256": "85d3d139b9ef9fcbf4e731139c27fcb4a44afe93e98cd43344eae89d413bd729"
+  },
+  "hekate-nova-pro-v13-sources.zip": {
+    "size": 7094476,
+    "sha256": "135dea9f2daccf7f45fb0b654a46d0feec75321e3a62d3ddc83db829e9fe6362"
+  },
+  "hekate-nova-pro-v13.zip": {
+    "size": 12190183,
+    "sha256": "b20af2fd05032d8abd0ab5a163caa59dca77096a5aec42dbfbfa3f8ccd1f912b"
+  },
+  "hekate-nova-pro-v14-sources.zip": {
+    "size": 7098290,
+    "sha256": "6b10585736355f2662589fef5791efac496cb96b968ca68bf74cc2ce910c4aa8"
+  },
+  "hekate-nova-pro-v14.zip": {
+    "size": 12244718,
+    "sha256": "c7760e572c08f47bd10dc3eb39b590134e9ba2b18e05ef780b1983a1ab5e76ea"
+  },
+  "hekate-nova-pro-v15-sources.zip": {
+    "size": 7120347,
+    "sha256": "82aa3eb95e66bb73d5a8f43d4ea4864afd52a4abdb1b640a0d5ee7c8650a369c"
+  },
+  "hekate-nova-pro-v15.zip": {
+    "size": 12598780,
+    "sha256": "d406b8f85632bbe18448a4351d3e042bd5710a72bb2c4c3b4122d528e5524823"
+  },
+  "hekate-nova-pro-v16-sources.zip": {
+    "size": 7095667,
+    "sha256": "cb432de2d30d29929884e4fd4855a3a7a75f353b1de65b0bfc6496179a1726e2"
+  },
+  "hekate-nova-pro-v16.zip": {
+    "size": 10394385,
+    "sha256": "3764d373d604f57ab0899ae5034ede9a92cdeeed59ff343d48502a0866d8ffe7"
+  },
+  "hekate-nova-pro-v17-sources.zip": {
+    "size": 7777473,
+    "sha256": "c6635cc256907a446e2f48e799b9546da913dd206b842b872037aecebb0a8641"
+  },
+  "hekate-nova-pro-v17.zip": {
+    "size": 10507187,
+    "sha256": "7c3e64c65ac56c57a6ee22fc5f53671107b1164bdfdae9005f66be60a2e69904"
+  },
+  "hekate-nova-pro-v18-sources.zip": {
+    "size": 7931031,
+    "sha256": "0115bed096442893e26a15bd1e5fdaf13ce13fa51ad9828c8d2beeb1d80a562c"
+  },
+  "hekate-nova-pro-v18.zip": {
+    "size": 10539796,
+    "sha256": "f816f8d6448dd16873afed5676bd451bfbf32eb9f4e26f4747dab30e2b0ded4f"
+  },
+  "hekate-nova-pro-v19-tv-sources.zip": {
+    "size": 7865675,
+    "sha256": "3693e7217d1d1e6bca4fe2f9479038b095f72783a8a403b84e74d3e0b7dfe179"
+  },
+  "hekate-nova-pro-v19-tv.zip": {
+    "size": 10457560,
+    "sha256": "d484d901fcca392e0689bbffaa453f0c82a840006d4d79c29220f52901fd412e"
+  },
+  "hekate-nova-pro-v20-dock-sources.zip": {
+    "size": 7895992,
+    "sha256": "3c55517b87ca79c82ca1325b586deee873719eb8b9e4e2b2e12bc1d8a53d6a17"
+  },
+  "hekate-nova-pro-v20-dock.zip": {
+    "size": 10463910,
+    "sha256": "af583e38e5acecf6507ef78e30846ce30f1aa195281e66ec9668537e094acbb0"
+  },
+  "hekate-nova-pro-v21-bt-sources.zip": {
+    "size": 8743345,
+    "sha256": "49618bee7114e1c057293f9d7871ee633568017c78a49818ea8ab64ceb8a87c0"
+  },
+  "hekate-nova-pro-v21-bt.zip": {
+    "size": 10514699,
+    "sha256": "93c032e46bc9b2df0c75d6b58fb2de3282d11860ea0a8576ae65542354fa4952"
+  },
+  "hekate-nova-pro-v22-sources.zip": {
+    "size": 9772101,
+    "sha256": "49bc1153ba483f8013c3a1665c5e3472e0fad40bd4030ba856c09d068cf526a0"
+  },
+  "hekate-nova-pro-v22.zip": {
+    "size": 10519853,
+    "sha256": "5d06a79c38ec0a96b39e6a45d75b0118ea5bbf5e45ea78319b132fc166ddb5ce"
+  },
+  "hekate-nova-pro-v23-sources.zip": {
+    "size": 9796205,
+    "sha256": "71e1c525ea7d76423dcc84c88233f67e29fc1197c86ccd859bbd321b62e3f7e9"
+  },
+  "hekate-nova-pro-v23.zip": {
+    "size": 10522324,
+    "sha256": "afa39da09cc68abd27465bd95339b0b653bd16fe4c3e179638cf72bf4155a492"
+  },
+  "hekate-nova-pro-v24-sources.zip": {
+    "size": 10695059,
+    "sha256": "179c835da58abbbaeee6339be5ca80b9f781d03e80812bf28eda62483556d6ef"
+  },
+  "hekate-nova-pro-v24.zip": {
+    "size": 10528676,
+    "sha256": "c64de03abd5ad7b249e6e8b8ceb05cb628abbae86855c7eb102c2fe3edd20f4e"
+  },
+  "hekate-nova-pro-v25-sources.zip": {
+    "size": 10709417,
+    "sha256": "c2d7c1e53faf8b0247b9356f9fc0386ba125c9c58974b538e11073e78183cd87"
+  },
+  "hekate-nova-pro-v25.zip": {
+    "size": 10532734,
+    "sha256": "c537a260d835ed3de9d0959dc840eae5da29d072abce4fccc9fd3b6a60a1578b"
+  },
+  "hekate-nova-pro-v26-sources.zip": {
+    "size": 10727966,
+    "sha256": "b60a0f29bf05f4955ac257da680f08c4f73eb6500713ca6c435b11be92b7df1e"
+  },
+  "hekate-nova-pro-v26.zip": {
+    "size": 10532833,
+    "sha256": "f16c0247e2b16117c1b21afb99f34394044e21dd9b3d46d992845791cffce256"
+  },
+  "hekate-nova-pro-v27-sources.zip": {
+    "size": 10747466,
+    "sha256": "e81a172b185a0f9c9294295807eeabf2571ab9018d01bed4a3fa3b2fcbae0c85"
+  },
+  "hekate-nova-pro-v27.zip": {
+    "size": 10540350,
+    "sha256": "0a5ce269d61f4f226e3797cfb67f0004b42623df9c883cf23b385479ed05c804"
+  },
+  "hekate-nova-pro-v28-sources.zip": {
+    "size": 10763844,
+    "sha256": "2b66ff35a0839fef23307bda568d5d39f7f90e273a85bb0de8e3d1fc2dfb3e4c"
+  },
+  "hekate-nova-pro-v28.zip": {
+    "size": 10544195,
+    "sha256": "413f7c70ed75bb333519d0a4364a649b467e8c8dfa8b05b7a5a4a7a90ed1eaa9"
+  },
+  "hekate-nova-pro-v29-sources.zip": {
+    "size": 10802175,
+    "sha256": "64e75b5327f737d7e77361ac444ba6781148e6096408d90e1e312f9673203849"
+  },
+  "hekate-nova-pro-v29.zip": {
+    "size": 10552506,
+    "sha256": "084601e5d9acbe276bf25a9f1d0dbe4cfcbe85e4d4b9fd375ffd99756a87f440"
+  },
+  "hekate-nova-pro-v30-sources.zip": {
+    "size": 11222904,
+    "sha256": "fbaf9614ce39bb3edc64b6d6420fd2dc5b113ae0a0326673d26a62cc3e3f2835"
+  },
+  "hekate-nova-pro-v30.zip": {
+    "size": 10572503,
+    "sha256": "548870e33c8b8e2ae9d2f7788ed87bdf1b61ff1980bdcdabae44516132bf2cb5"
+  },
+  "hekate-nova-pro-v31-sources.zip": {
+    "size": 11262660,
+    "sha256": "efeac2f6493e24e10e9a07453facb820b32199d05033ef75318c40dfa02cb069"
+  },
+  "hekate-nova-pro-v31.zip": {
+    "size": 10592953,
+    "sha256": "a9afc22bd52e8aaf961dbf8a872676967034b94ed670e3683d5b257780de41b9"
+  },
+  "hekate-nova-pro-v32-sources.zip": {
+    "size": 11292791,
+    "sha256": "0730d79b2fc6d78dcb42e8bdf5bd4dd92bda3c0887c6c910c97f42f9e5368133"
+  },
+  "hekate-nova-pro-v32.zip": {
+    "size": 10698181,
+    "sha256": "47f623bbdfa4b697a60fc977a7419c17ae3855c9a824a7bd1aa11aa020d546d7"
+  },
+  "hekate-tv-experiment-01-sources.zip": {
+    "size": 1690037,
+    "sha256": "e8bc2344798462014b5236979c013f36dbe583e7ec70b7cc2a3573ace816e476"
+  },
+  "hekate-tv-experiment-01.zip": {
+    "size": 912066,
+    "sha256": "5bbcf52e99cbae1be19dc4b2092e84c178c153ae7757a1b7eb1ac6a387fa9dfc"
+  },
+  "hekate-tv-experiment-02-sources.zip": {
+    "size": 1692017,
+    "sha256": "cbe08ee9441b68a086e29cc358dac1d681500b2d70ef12325fbbd37dcb99468a"
+  },
+  "hekate-tv-experiment-02.zip": {
+    "size": 912982,
+    "sha256": "3098248e4d29e1fa175a5fc06cb557d34839638cff7c54fdfe67cc3814cc8ceb"
+  }
+}

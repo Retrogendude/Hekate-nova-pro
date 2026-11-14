@@ -1,0 +1,10 @@
+{
+  "tag": "v1",
+  "source_archive": "hekate-6.5.4-diagnostic-prototype.zip",
+  "source_archive_sha256": "86c2bd4f79ef3b700262e6a976d0f8be8c48d622876319deb16602aeb90411ae",
+  "original_source_directory": "hekate-6.5.4",
+  "repository_source_directory": "hekate",
+  "imported_on": "2026-11-14",
+  "original_commit_history": false,
+  "kind": "source-archive-only"
+}
