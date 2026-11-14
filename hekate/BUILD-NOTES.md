@@ -1,4 +1,25 @@
-# Correctifs du prototype 8
+# Studio — prototype 9
+
+La version actuelle ajoute une navigation latérale native de 224 pixels,
+un en-tête de 64 pixels et une zone principale de 1 056 × 592 pixels.
+Les indices d'onglets et les actions existantes sont conservés. Le thème
+anthracite/violet et les angles de 6 pixels sont partagés avec les fenêtres
+détaillées. Les icônes sont celles des ressources officielles du projet.
+Le halo de 28 pixels utilise une ombre locale sur l'icône sélectionnée,
+sans tâche d'animation ni allocation par image. Les interrupteurs lisent
+l'état réel du bouton, y compris après fermeture du choix Auto Boot.
+
+Le rendu LVGL sur ordinateur vérifie la navigation, les interrupteurs,
+les dimensions dans les sept langues et les trois polices fournies.
+Le contrôle du halo borne le dessin lors d'un changement et vérifie
+l'absence de rafraîchissement au repos, effets de fond mis en pause.
+Les mesures courantes figurent dans verification/performance-halo-studio.json.
+Les contrôles matériels et le service RAM n'ont pas été modifiés.
+
+Les notes du prototype 8 ci-dessous décrivent les optimisations conservées
+et la présentation précédente. BUILD-INFO.json décrit la construction actuelle.
+
+# Correctifs du prototype 8 (historique)
 
 Les onglets principaux sont compacts et bornés par les barres haute/basse.
 Le thème emploie un fond uni et des contours gris/blancs de rayon 8 pixels.
@@ -23,7 +44,7 @@ faire. Les confirmations et les opérations matérielles sont conservées.
 
 # Construction Windows — prototype personnalisé
 
-Prototype 8 construit le 5 novembre 2026 à partir des Makefiles du projet.
+Prototype 9 construit le 5 novembre 2026 à partir des Makefiles du projet.
 Les notes des prototypes antérieurs ci-dessous décrivent leur état historique.
 Les tailles courantes et résultats détaillés sont dans BUILD-INFO.json.
 

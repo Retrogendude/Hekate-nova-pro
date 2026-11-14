@@ -13,12 +13,12 @@ scripts = ['check_nyx_config_writer.py', 'check_language_config.py',
            'check_language_actions.py', 'check_appearance_config.py', 'check_appearance_actions.py',
            'check_localization.py', 'check_diag_format.py', 'check_probe_translations.py', 'check_unicode_fonts.py',
            'check_font_manager.py', 'check_gui_readability.py', 'check_action_grid.py',
-           'check_display_present.py', 'check_background_performance.py', 'render_lvgl_preview_v8.py', 'check_alternate_fonts.py',
+           'check_display_present.py', 'check_background_performance.py', 'render_lvgl_preview_v9.py', 'check_alternate_fonts.py',
            'check_ram_locale.py', 'check_report_paging.py', 'check_payload_reader.py',
            'test_native_backend_host.py', 'test_native_verdict_host.py',
            'check_ram_handoff.py', 'check_ram_payload.py']
 for script in scripts:
-    arguments = ['--check-all'] if script == 'render_lvgl_preview_v8.py' else []
+    arguments = ['--check-all'] if script == 'render_lvgl_preview_v9.py' else []
     result = subprocess.run([sys.executable, str(work / script), *arguments], capture_output=True, text=True)
     logs.append(script + '\n' + result.stdout + result.stderr)
     if result.returncode:
@@ -58,7 +58,8 @@ summary = {
     'ram_service_bytes': ram.stat().st_size,
     'hardware_validation': 'not performed',
     'languages': ['English', 'Français', 'Español', 'Italiano', 'Русский', 'Deutsch', 'Português'],
-    'ui_chrome': 'compact main tabs above status bar; uniform black/gray background; transparent cards with 8px gray/white borders; inline choices and help buttons',
+    'ui_chrome': 'Studio: 224px sidebar, 64px header, 1056x592px main viewport above the fixed status bar; charcoal/violet palette, 6px corners, native icon frames and input-driven 28px halo; actual state switches and inline choices',
+    'studio_halo_performance': json.loads((work/'lvgl-preview-v9/studio-performance.json').read_text(encoding='utf-8')),
     'display_batching': 'one VIC presentation per LVGL refresh',
     'background_performance': json.loads((work/'background-performance-check/results.json').read_text(encoding='utf-8')),
     'ui_geometry_matrix': '1365 real-LVGL scenes: 819 across 13 views, 7 languages and 9 sizes with Lecture; 546 with the fixed/reinforced faces at 20/30/36px; actual selector and palette fill assertions',
@@ -71,7 +72,7 @@ summary = {
     'tests': {'config_writer_cases': 96, 'language_config_cases': 21,
               'language_action_cases': 49, 'translation_runtime_cases': 97,
               'appearance_configuration_cases': 2331, 'appearance_actions_and_effects_cases': 499,
-              'font_loader_assertions': 562, 'readability_assertions': 28, 'action_grid_assertions': 954,
+              'font_loader_assertions': 562, 'readability_assertions': 28, 'action_grid_assertions': 1794,
               'ram_locale_assertions': 55332,
               'unicode_fonts': '707 glyphs at 20 and 30px; catalog coverage, offsets, shared chains',
               'payload_reader_assertions': 108,

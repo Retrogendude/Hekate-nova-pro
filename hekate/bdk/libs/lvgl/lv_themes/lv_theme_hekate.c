@@ -24,25 +24,25 @@
 /*********************
  *      DEFINES
  *********************/
-#define DEF_RADIUS             8
-#define COLOR_OUTLINE          LV_COLOR_HEX(0xCDD1D6)
+#define DEF_RADIUS             6
+#define COLOR_OUTLINE          LV_COLOR_HEX(0xA6A4FB)
 
-#define COLOR_HOS_TURQUOISE    (_hue ? lv_color_hsv_to_rgb(_hue, 100, 100) : LV_COLOR_HEX(0xCDD1D6)) // 0x00FFC9
-#define COLOR_HOS_TEAL_LIGHTER (_hue ? lv_color_hsv_to_rgb(_hue, 100,  93) : LV_COLOR_HEX(0xE0E3E8)) // 0x00EDBA
-#define COLOR_HOS_TEAL_LIGHT   (_hue ? lv_color_hsv_to_rgb(_hue, 100,  72) : LV_COLOR_HEX(0x8E959F)) // 0x00B78F
-#define COLOR_HOS_TEAL         (_hue ? lv_color_hsv_to_rgb(_hue, 100,  64) : LV_COLOR_HEX(0x777F89)) // 0x00A273
+#define COLOR_HOS_TURQUOISE    (_hue ? lv_color_hsv_to_rgb(_hue, 100, 100) : LV_COLOR_HEX(0xA6A4FB))
+#define COLOR_HOS_TEAL_LIGHTER (_hue ? lv_color_hsv_to_rgb(_hue, 100,  93) : LV_COLOR_HEX(0xBDBBFF))
+#define COLOR_HOS_TEAL_LIGHT   (_hue ? lv_color_hsv_to_rgb(_hue, 100,  72) : LV_COLOR_HEX(0x8581CE))
+#define COLOR_HOS_TEAL         (_hue ? lv_color_hsv_to_rgb(_hue, 100,  64) : LV_COLOR_HEX(0x68649F))
 #define COLOR_HOS_ORANGE       LV_COLOR_HEX(0xFF5500)
 #define COLOR_HOS_TXT_WHITE    LV_COLOR_HEX(0xECEFF2)
 
-#define COLOR_BG_DARK          LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x101114 : (theme_bg_color ? (theme_bg_color - 0x0B0B0B) : 0)) // 0x222222.
-#define COLOR_BG               LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x17191C : theme_bg_color) /* Preserve the explicit black preset (0). */
-#define COLOR_BG_LIGHT         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x101010) : 0x222529) // 0x3D3D3D.
-#define COLOR_BG_LIGHTER       LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x191919) : 0x2C3035) // 0x464646.
+#define COLOR_BG_DARK          LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x0D0E15 : (theme_bg_color ? (theme_bg_color - 0x0B0B0B) : 0))
+#define COLOR_BG               LV_COLOR_HEX(theme_bg_color == 0x141A19 ? 0x111219 : theme_bg_color) /* Preserve the explicit black preset (0). */
+#define COLOR_BG_LIGHT         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x101010) : 0x1B1D28)
+#define COLOR_BG_LIGHTER       LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x191919) : 0x252735)
 
-#define COLOR_INACTIVE         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x171717) : 0x30343A) // 0x444444.
-#define COLOR_BAR              LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x202020) : 0x4B5159) // 0x4D4D4D.
-#define COLOR_PRESS            LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x232323) : 0x363B42) // 0x505050.
-#define COLOR_LINE             LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x383838) : 0x747B85) // 0x656565.
+#define COLOR_INACTIVE         LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x171717) : 0x30323F)
+#define COLOR_BAR              LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x202020) : 0x343746)
+#define COLOR_PRESS            LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x232323) : 0x303040)
+#define COLOR_LINE             LV_COLOR_HEX(theme_bg_color && theme_bg_color != 0x141A19 ? (theme_bg_color + 0x383838) : 0x55586B)
 
 #define COLOR_SHADOW_LIGHT     LV_COLOR_HEX(0xAAAAAA)
 #define COLOR_SHADOW           LV_COLOR_HEX(theme_bg_color ? theme_bg_color : 0x181818) // 0x2D2D2D.

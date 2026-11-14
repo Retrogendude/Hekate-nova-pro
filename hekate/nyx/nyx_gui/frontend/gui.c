@@ -860,6 +860,7 @@ lv_img_dsc_t *bmp_to_lvimg_obj(const char *path)
 
 lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 {
+	if (nyx_studio_toggle_refresh(btn)) return LV_RES_OK;
 	lv_obj_t *label_btn = lv_obj_get_child(btn, NULL);
 	lv_obj_t *label_btn2 = lv_obj_get_child(btn, label_btn);
 
@@ -2158,7 +2159,7 @@ static const char *const home_action_details[HOME_ACTION_COUNT] = {
 	"Verifier l'ecran, le retroeclairage et l'identite de la RAM."
 };
 static const char *const home_action_icons[HOME_ACTION_COUNT] = {
-	SYMBOL_DOT, SYMBOL_CLOCK, SYMBOL_OK, SYMBOL_LIST, SYMBOL_CHIP
+	SYMBOL_GPS, SYMBOL_CLOCK, SYMBOL_OK, SYMBOL_LIST, SYMBOL_CHIP
 };
 
 static void _home_modern_init_styles(lv_theme_t *th)
@@ -2180,7 +2181,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_card_rel.body.opa = LV_OPA_COVER;
 	home_card_rel.body.main_color = th->btn.rel->body.main_color;
 	home_card_rel.body.grad_color = home_card_rel.body.main_color;
-	home_card_rel.body.radius = 10;
+	home_card_rel.body.radius = 6;
 	home_card_rel.body.border.width = 1;
 	home_card_rel.body.border.color = th->btn.rel->body.border.color;
 	home_card_rel.body.border.opa = LV_OPA_COVER;
@@ -2192,7 +2193,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_card_pr.body.main_color = th->btn.pr->body.main_color;
 	home_card_pr.body.grad_color = home_card_pr.body.main_color;
 	home_card_pr.body.border.width = 2;
-	home_card_pr.body.border.color = LV_COLOR_HEX(0xCDD1D6);
+	home_card_pr.body.border.color = LV_COLOR_HEX(0xA6A4FB);
 	lv_style_copy(&home_card_sel, &home_card_pr);
 	home_card_sel.body.main_color = th->btn.tgl_rel->body.main_color;
 	home_card_sel.body.grad_color = home_card_sel.body.main_color;
@@ -2203,7 +2204,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_primary_rel.body.main_color = th->btn.pr->text.color;
 	home_primary_rel.body.grad_color = home_primary_rel.body.main_color;
 	home_primary_rel.body.border.width = 2;
-	home_primary_rel.body.border.color = LV_COLOR_HEX(0xCDD1D6);
+	home_primary_rel.body.border.color = LV_COLOR_HEX(0xA6A4FB);
 	lv_color32_t accent = { .full = lv_color_to32(home_primary_rel.body.main_color) };
 	// Custom accent hues can be dark blue; keep action labels legible too.
 	unsigned brightness = (77 * accent.red + 150 * accent.green + 29 * accent.blue) >> 8;
@@ -2220,7 +2221,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	home_detail.text.color = th->label.hint->text.color;
 	lv_style_copy(&home_small_icon, &home_title);
 	home_small_icon.text.font = &hekate_symbol_30;
-	home_small_icon.text.color = n_cfg.theme_color ? lv_color_hsv_to_rgb(n_cfg.theme_color, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
+	home_small_icon.text.color = LV_COLOR_HEX(0xBDBBFF);
 	lv_style_copy(&home_big_icon, &home_small_icon);
 	home_big_icon.text.font = &hekate_symbol_120;
 	lv_style_copy(&home_button_text, &home_detail);
@@ -2261,7 +2262,14 @@ static lv_obj_t *_home_modern_button(lv_obj_t *parent, const char *text,
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, action);
 	lv_obj_t *label = lv_label_create(btn, NULL);
 	lv_obj_set_style(label, primary ? &home_primary_text : &home_button_text);
+	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
+	lv_obj_set_width(label, width - 24);
+	lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
 	lv_label_set_text(label, text);
+	if (lv_obj_get_height(label) > height - 12) {
+		lv_label_set_long_mode(label, LV_LABEL_LONG_ROLL);
+		lv_obj_set_height(label, lv_font_get_height(home_button_text.text.font));
+	}
 	lv_obj_align(label, NULL, LV_ALIGN_CENTER, 0, 0);
 	return btn;
 }
@@ -2279,7 +2287,10 @@ static lv_res_t _home_modern_activate(lv_obj_t *btn)
 		return create_win_emummc_tools(btn);
 	case HOME_ACTION_DIAGNOSTIC:
 		if (home_tabview)
+		{
 			lv_tabview_set_tab_act(home_tabview, 5, false);
+			nyx_studio_navigation_select(5);
+		}
 		break;
 	}
 	return LV_RES_OK;
@@ -2287,27 +2298,30 @@ static lv_res_t _home_modern_activate(lv_obj_t *btn)
 
 static void _home_modern_footer(lv_obj_t *parent, lv_coord_t y)
 {
-	_home_modern_button(parent, "Reglages Nyx", 32, y, 296, 56,
+	lv_coord_t width = (lv_obj_get_width(parent) - 64 - 36) / 4;
+	_home_modern_button(parent, "Reglages Nyx", 32, y, width, 56,
 		create_win_nyx_options, 0, false);
-	_home_modern_button(parent, "Recharger", 624, y, 176, 56,
+	_home_modern_button(parent, "Recharger", 32 + (width + 12), y, width, 56,
 		_create_mbox_reload, 0, false);
-	_home_modern_button(parent, "Redemarrer", 816, y, 192, 56,
+	_home_modern_button(parent, "Redemarrer", 32 + 2 * (width + 12), y, width, 56,
 		_create_mbox_reboot, 0, false);
-	_home_modern_button(parent, "Eteindre", 1024, y, 192, 56,
+	_home_modern_button(parent, "Eteindre", 32 + 3 * (width + 12), y, width, 56,
 		_create_mbox_poweroff, 0, false);
 }
 
 static lv_coord_t _home_create_tiles(lv_obj_t *parent)
 {
-	lv_obj_t *hero = _home_modern_button(parent, "", 32, 112, 552, 366,
+	lv_coord_t hero_width = (lv_obj_get_width(parent) - 88) * 44 / 100;
+	lv_coord_t tile_width = (lv_obj_get_width(parent) - 88 - hero_width - 16) / 2;
+	lv_obj_t *hero = _home_modern_button(parent, "", 32, 112, hero_width, 366,
 		_home_modern_activate, HOME_ACTION_BOOT, false);
 	lv_btn_set_style(hero, LV_BTN_STYLE_REL, &home_hero_rel);
 	lv_btn_set_style(hero, LV_BTN_STYLE_PR, &home_hero_pr);
 	_home_modern_label(hero, SYMBOL_DOT, &home_big_icon, 28, 24, 180);
-	_home_modern_label(hero, "Demarrer", &home_title, 28, 184, 496);
+	_home_modern_label(hero, "Demarrer", &home_title, 28, 184, hero_width - 56);
 	_home_modern_label(hero, home_action_details[HOME_ACTION_BOOT],
-		&home_detail, 28, 232, 470);
-	_home_modern_label(hero, "Choisir un systeme  >", &home_detail, 28, 310, 470);
+		&home_detail, 28, 232, hero_width - 56);
+	_home_modern_label(hero, "Choisir un systeme  >", &home_detail, 28, 310, hero_width - 56);
 	static const char *const tile_details[4] = {
 		"Autres profils\nde demarrage", "Outils sur\nla carte microSD",
 		"Copie du systeme\nsur microSD", "Ecran, eclairage\net identite RAM"
@@ -2317,14 +2331,15 @@ static lv_coord_t _home_create_tiles(lv_obj_t *parent)
 	for (u32 i = HOME_ACTION_CONFIGS; i < HOME_ACTION_COUNT; i++)
 	{
 		u32 cell = i - 1;
-		lv_coord_t x = 608 + (cell % 2) * 312;
-		lv_obj_t *btn = _home_modern_button(parent, "", x, row_y, 288, 172,
+		lv_coord_t x = 32 + hero_width + 24 + (cell % 2) * (tile_width + 16);
+		lv_obj_t *btn = _home_modern_button(parent, "", x, row_y, tile_width, 172,
 			_home_modern_activate, i, false);
-		_home_modern_label(btn, home_action_icons[i], &home_small_icon, 24, 18, 80);
-		lv_obj_t *title = _home_modern_label(btn, home_action_titles[i], &home_title, 24, 62, 240);
+		nyx_studio_icon(btn, home_action_icons[i], 20, 14, false);
+		lv_obj_t *title = _home_modern_label(btn, home_action_titles[i], &home_title, 20, 62, tile_width - 40);
+		nyx_studio_fit_label(title, 86);
 		lv_coord_t detail_y = 62 + lv_obj_get_height(title) + 12;
 		if (detail_y < 108) detail_y = 108;
-		lv_obj_t *detail = _home_modern_label(btn, tile_details[cell], &home_detail, 24, detail_y, 240);
+		lv_obj_t *detail = _home_modern_label(btn, tile_details[cell], &home_detail, 20, detail_y, tile_width - 40);
 		lv_coord_t height = 172;
 		if (detail_y + lv_obj_get_height(detail) + 24 > height) lv_obj_set_hidden(detail, true);
 		if (height > row_height) row_height = height;
@@ -2346,6 +2361,7 @@ static struct {
 	u32 selected;
 	lv_obj_t *track;
 	lv_obj_t *cards[HOME_ACTION_COUNT];
+	lv_obj_t *icons[HOME_ACTION_COUNT];
 	lv_obj_t *title;
 	lv_obj_t *detail;
 	lv_obj_t *counter;
@@ -2355,16 +2371,20 @@ static struct {
 static void _home_carousel_update(void)
 {
 	u32 selected = home_carousel.selected;
-	lv_obj_set_x(home_carousel.track, 372 - (lv_coord_t)(selected * 344));
+	lv_obj_set_x(home_carousel.track, (lv_obj_get_width(lv_obj_get_parent(home_carousel.track)) - 320) / 2 - (lv_coord_t)(selected * 344));
 	for (u32 i = 0; i < HOME_ACTION_COUNT; i++)
 	{
 		lv_obj_t *card = home_carousel.cards[i];
 		lv_btn_set_style(card, LV_BTN_STYLE_REL, i == selected ? &home_card_sel : &home_card_rel);
+		nyx_studio_icon_select(home_carousel.icons[i], i == selected);
 		lv_obj_set_y(card, i == selected ? 0 : 16);
 		lv_obj_set_height(card, i == selected ? 244 : 212);
 	}
 	lv_label_set_text(home_carousel.title, home_action_titles[selected]);
 	lv_label_set_text(home_carousel.detail, home_action_details[selected]);
+	lv_coord_t detail_y = lv_obj_get_height(home_carousel.title) + 24;
+	lv_obj_set_y(home_carousel.detail, detail_y);
+	lv_obj_set_hidden(home_carousel.detail, detail_y + lv_obj_get_height(home_carousel.detail) > 120);
 	lv_obj_set_free_num(home_carousel.open, selected);
 	char counter[24];
 	s_printf(counter, "%d / %d", selected + 1, HOME_ACTION_COUNT);
@@ -2394,13 +2414,14 @@ static lv_res_t _home_carousel_step(lv_obj_t *btn)
 
 static void _home_create_carousel(lv_obj_t *parent)
 {
+	lv_coord_t width = lv_obj_get_width(parent), viewport_width = width - 216;
 	home_carousel.selected = HOME_ACTION_BOOT;
 	_home_modern_button(parent, "<", 32, 200, 52, 64, _home_carousel_step, 0, false);
-	_home_modern_button(parent, ">", 1196, 200, 52, 64, _home_carousel_step, 1, false);
+	_home_modern_button(parent, ">", width - 84, 200, 52, 64, _home_carousel_step, 1, false);
 	lv_obj_t *viewport = lv_cont_create(parent, NULL);
 	lv_cont_set_style(viewport, &home_transp);
 	lv_cont_set_fit(viewport, false, false);
-	lv_obj_set_size(viewport, 1064, 244);
+	lv_obj_set_size(viewport, viewport_width, 244);
 	lv_obj_set_pos(viewport, 108, 108);
 	lv_obj_set_click(viewport, false);
 	home_carousel.track = lv_cont_create(viewport, NULL);
@@ -2413,30 +2434,22 @@ static void _home_create_carousel(lv_obj_t *parent)
 		lv_obj_t *card = _home_modern_button(home_carousel.track, "", i * 344, 0,
 			320, 244, _home_carousel_select, i, false);
 		home_carousel.cards[i] = card;
-		lv_obj_t *disc = lv_cont_create(card, NULL);
-		lv_cont_set_style(disc, &home_icon_disc);
-		lv_cont_set_fit(disc, false, false);
-		lv_obj_set_size(disc, 88, 88);
-		lv_obj_set_pos(disc, 116, 36);
-		lv_obj_set_click(disc, false);
-		lv_obj_t *icon = lv_label_create(disc, NULL);
-		lv_obj_set_style(icon, &home_small_icon);
-		lv_label_set_text(icon, home_action_icons[i]);
-		lv_obj_align(icon, NULL, LV_ALIGN_CENTER, 0, 0);
+		home_carousel.icons[i] = nyx_studio_icon(card, home_action_icons[i], 142, 60, i == HOME_ACTION_BOOT);
 		lv_obj_t *title = _home_modern_label(card, home_action_titles[i], &home_title, 24, 158, 272);
 		lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
+		nyx_studio_fit_label(title, 46);
 	}
 	lv_obj_t *info = lv_cont_create(parent, NULL);
 	lv_cont_set_style(info, &home_card_rel);
 	lv_cont_set_fit(info, false, false);
-	lv_obj_set_size(info, 1064, 112);
+	lv_obj_set_size(info, viewport_width, 128);
 	lv_obj_set_pos(info, 108, 370);
 	lv_obj_set_click(info, false);
-	home_carousel.title = _home_modern_label(info, "", &home_title, 24, 16, 740);
-	home_carousel.detail = _home_modern_label(info, "", &home_detail, 24, 60, 740);
-	home_carousel.open = _home_modern_button(info, "Ouvrir", 820, 24, 220, 64,
+	home_carousel.title = _home_modern_label(info, "", &home_title, 24, 16, viewport_width - 292);
+	home_carousel.detail = _home_modern_label(info, "", &home_detail, 24, 60, viewport_width - 292);
+	home_carousel.open = _home_modern_button(info, "Ouvrir", viewport_width - 244, 32, 220, 64,
 		_home_modern_activate, HOME_ACTION_BOOT, true);
-	home_carousel.counter = _home_modern_label(parent, "", &home_detail, 1100, 66, 116);
+	home_carousel.counter = _home_modern_label(parent, "", &home_detail, width - 148, 66, 116);
 	_home_carousel_update();
 }
 
@@ -2447,9 +2460,9 @@ static void _create_tab_home(lv_theme_t *th, lv_obj_t *parent)
 	lv_page_set_style(parent, LV_PAGE_STYLE_SCRL, &home_transp);
 	lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
 	lv_page_set_scrl_fit(parent, false, false);
-	lv_page_set_scrl_width(parent, LV_HOR_RES);
+	lv_page_set_scrl_width(parent, lv_obj_get_width(parent));
 	_home_modern_label(parent, "hekate", &home_title, 32, 20, 500);
-	_home_modern_label(parent, "Demarrer, gerer et verifier ta console.", &home_detail, 32, 66, 1000);
+	_home_modern_label(parent, "Demarrer, gerer et verifier ta console.", &home_detail, 32, 66, lv_obj_get_width(parent) - 64);
 	lv_coord_t bottom = 482;
 	if (n_cfg.home_layout == HOME_LAYOUT_CAROUSEL)
 		_home_create_carousel(parent);
@@ -2461,7 +2474,9 @@ static void _create_tab_home(lv_theme_t *th, lv_obj_t *parent)
 	lv_coord_t height = footer_y + 76;
 	if (height < lv_obj_get_height(parent)) height = lv_obj_get_height(parent);
 	lv_page_set_scrl_height(parent, height);
-	lv_page_set_sb_mode(parent, LV_SB_MODE_AUTO);
+	lv_page_set_sb_mode(parent, LV_SB_MODE_OFF);
+	lv_obj_set_pos(lv_page_get_scrl(parent), 0, 0);
+	lv_obj_set_drag(lv_page_get_scrl(parent), false);
 }
 
 
@@ -2593,6 +2608,7 @@ void nyx_check_ini_changes()
 
 static lv_res_t _show_hide_save_button(lv_obj_t *tv, uint16_t tab_idx)
 {
+	nyx_studio_navigation_select(tab_idx);
 	if (tab_idx == 4) // Options.
 	{
 		lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_options_action);
@@ -2720,6 +2736,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 
 	// Initialize global styles.
 	_nyx_set_default_styles(th);
+	nyx_studio_init(th);
 
 	// Create screen container.
 	lv_obj_t *scr = lv_cont_create(NULL, NULL);
@@ -2740,7 +2757,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 	nyx_background_create(scr);
 
 	// Add tabview page to screen.
-	lv_obj_t *tv = lv_tabview_create(scr, NULL);
+	lv_obj_t *tv = nyx_studio_tabview(scr);
 	home_tabview = tv;
 	if (hekate_bg)
 	{
@@ -2759,9 +2776,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 			lv_tabview_set_style(tv, types[i], &readable_tab_styles[i]);
 		}
 	}
-	lv_tabview_set_sliding(tv, false);
-	/* Navigation and pages stop above the fixed status/footer layer. */
-	lv_obj_set_size(tv, LV_HOR_RES, LV_VER_RES - LV_DPI * 9 / 14);
+	/* Studio owns the sidebar/header geometry above the fixed status bar. */
 
 	// Add all tabs content.
 	char version[32];
@@ -2792,6 +2807,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 	// Append to preserve existing Options tab index and saved navigation.
 	lv_obj_t *tab_diag = lv_tabview_add_tab(tv, SYMBOL_CHIP" Diagnostic");
 	create_tab_diagnostics(th, tab_diag);
+	nyx_studio_navigation(scr, tv, version, create_win_nyx_options);
 
 	lv_tabview_set_tab_act(tv, 1, false);
 
@@ -2821,12 +2837,13 @@ static void _nyx_main_menu(lv_theme_t * th)
 	line_style.body.shadow.width = 0;
 
 	lv_cont_set_style(line, &line_style);
-	lv_obj_set_size(line, LV_HOR_RES - LV_DPI * 3 / 5, 1);
-	lv_obj_set_pos(line, LV_DPI * 3 / 10, 63);
+	lv_obj_set_size(line, LV_HOR_RES - NYX_STUDIO_SIDEBAR - 32, 1);
+	lv_obj_set_pos(line, NYX_STUDIO_SIDEBAR + 16, 63);
 
 	lv_obj_set_top(line, true);
 
 	line = lv_cont_create(lv_layer_top(), line);
+	lv_obj_set_width(line, LV_HOR_RES - LV_DPI * 3 / 5);
 	lv_obj_set_pos(line, LV_DPI * 3 / 10, 656);
 	lv_obj_set_top(line, true);
 

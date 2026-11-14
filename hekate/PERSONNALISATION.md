@@ -1,4 +1,4 @@
-# Apparence, langues et lecture — version 8
+# Apparence, langues et lecture — Studio, version 9
 
 Depuis l'accueil, ouvrir **Réglages Nyx → Apparence**. Le même écran regroupe
 la langue, la police, la taille du texte, la disposition de l'accueil et les
@@ -26,11 +26,13 @@ Les instructions détaillées sont dans `documentation/POLICES.md`.
 
 ## Arrière-plans et fluidité
 
-Le fond est uniforme, noir/gris. Les cartes sont transparentes et leurs
-contours gris ou blancs ont des angles légèrement arrondis. Le fond SD
+Le fond est uniforme, anthracite. Studio ajoute des accents violets, des
+cadres d'icônes et des angles de 6 pixels. Le halo de 28 pixels reste fixe
+autour de l'icône sélectionnée : aucun minuteur ne l'anime. Les cartes
+conservent des fonds transparents et des contours discrets. Le fond SD
 personnalisé n'est plus dessiné dans cette présentation ; son fichier est
 conservé. Les pastilles de couleur ont un remplissage propre, distinct des
-menus transparents. La première pastille correspond à l'accent gris.
+menus transparents. La première pastille correspond à l'accent violet.
 
 Les choix d'animation sont Désactivé, Vagues, Particules et Aurore, avec
 vitesse et intensité. Les effets sont concentrés dans une bande inférieure
@@ -44,9 +46,12 @@ et les traductions ont été optimisées sans modifier les mesures matérielles.
 
 Les deux accueils Tuiles et Carrousel restent disponibles. Outils,
 Informations, Options et Diagnostic tiennent dans la zone entre la
-navigation haute et la barre d'état, sans défilement vertical des pages
+navigation latérale, l'en-tête et la barre d'état, sans défilement vertical des pages
 principales. Les aides longues sont accessibles par « ? ». Les titres
 peuvent revenir à la ligne et les contrôles gardent leurs identifiants.
+Les mots trop larges utilisent d'abord la taille de légende de la police
+choisie. Les options à deux états ont un interrupteur et un état écrit ;
+Auto Boot continue d'ouvrir le choix de l'entrée de démarrage.
 
 Réglages Nyx comprend deux onglets internes, Interface et Système.
 Apparence comprend Langue, Police, Disposition et Effet. La police se

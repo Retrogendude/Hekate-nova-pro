@@ -1,0 +1,50 @@
+HEKATE 6.5.4 / NYX 1.9.4 - STUDIO, VERSION 9
+
+PRESENTATION
+Le style Studio est integre dans le programme : navigation laterale,
+fond anthracite, accents violets, angles de 6 pixels et cadres d'icones.
+Un halo de 28 pixels indique l'icone selectionnee. Il est fixe et ne
+declenche aucun rafraichissement continu. Les reglages principaux utilisent
+des interrupteurs avec position et texte ON/OFF traduits.
+
+Les pages principales restent entre l'en-tete et la barre d'etat, sans
+defilement vertical. Outils, Informations et Diagnostic ont des icones.
+L'accueil conserve Tuiles et Carrousel. Les titres s'adaptent a la place
+disponible ; les aides longues restent accessibles par les boutons ?.
+Les fenetres detaillees gardent leur barre de fermeture et le meme theme.
+
+INSTALLATION
+1. Garder une copie du dossier bootloader actuel.
+2. Fusionner bootloader et fonts avec la racine de la carte SD.
+3. Lancer hekate_ctcaer_6.5.4_custom.bin avec la methode habituelle.
+4. Ouvrir Reglages Nyx -> Apparence pour langues, polices et disposition.
+Aucun nyx.ini ni hekate_ipl.ini n'est fourni : les reglages sont conserves.
+Le nouveau style s'affiche au chargement de ce Nyx. La premiere pastille du
+menu Couleurs correspond a l'accent violet par defaut ; les autres choix
+d'accent et de fond deja enregistres restent disponibles.
+
+FLUIDITE
+Les optimisations de la version 8 sont conservees : une presentation par
+image, recherches de textes/glyphes accelerees et effets limites a une bande
+inferieure. Les effets se suspendent pendant la navigation et les tests.
+Le halo est dessine uniquement lors d'un changement ou d'une exposition.
+Les controles sur ordinateur ne mesurent pas les FPS reels de la console.
+Cette version 9 doit encore etre essayee sur une console reelle.
+
+POLICES ET LANGUES
+Trois polices sont fournies dans /fonts, avec neuf tailles de 20 a 36 pixels.
+Pour ajouter une police TTF/OTF, utiliser outils-polices, copier le fichier
+.nyxf dans fonts a la racine de la SD, puis recharger Nyx. Python 3 et Pillow
+sont necessaires seulement sur l'ordinateur pour cette conversion.
+Sept langues restent disponibles. Enregistrer et recharger applique les
+choix d'Apparence ; Fermer les annule. Voir documentation/POLICES.md et
+documentation/TRADUCTIONS.md pour les details et limites des traductions.
+
+DIAGNOSTIC
+Les 42 sondes natives et le service RAM separe sont conserves.
+Le test RAM recharge Hekate a la fin. Garder les fichiers ram-ui-*.bin
+avec bootloader/sys/hwtest_ram.bin. Les rapports et les listes de fichiers
+peuvent toujours defiler.
+
+Sources, licences, resultats de verification et apercus du moteur graphique
+reel inclus. Les valeurs de batterie/heure des apercus sont demonstratives.

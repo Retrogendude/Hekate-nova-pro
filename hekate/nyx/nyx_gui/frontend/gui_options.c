@@ -390,7 +390,7 @@ void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 	u32 index = 0;
 	for (u32 i = 0; i < ARRAY_SIZE(theme_colors); ++i)
 		if (theme_colors[i] == color_idx) { index = i; break; }
-	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
+	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0xA6A4FB);
 	lv_style_t *btn_onoff_rel_hos_style = &palette_rel[index];
 	lv_style_t *btn_onoff_pr_hos_style  = &palette_pr[index];
 	lv_style_copy(btn_onoff_rel_hos_style, lv_theme_get_current()->btn.rel);
@@ -487,11 +487,11 @@ static void _show_new_nyx_color(bool update_bg)
 	u32 bg = color_test.bg;
 	u16 hue = color_test.hue;
 
-	lv_color_t bgc       = LV_COLOR_HEX(bg); // Includes the explicit black preset.
-	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x202B27); // COLOR_HOS_BG_LIGHT.
-	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x2D4536); // 0x505050.
-	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x35483C); // COLOR_HOS_BG_LIGHTER.
-	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0xCDD1D6);
+	lv_color_t bgc       = LV_COLOR_HEX(bg == 0x141A19 ? 0x111219 : bg); // Preserve explicit black.
+	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x1B1D28);
+	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x303040);
+	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x343746);
+	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0xA6A4FB);
 
 	static lv_style_t btn_tgl_pr_test;
 	lv_style_copy(&btn_tgl_pr_test, lv_btn_get_style(color_test.button, LV_BTN_STATE_TGL_PR));
@@ -567,7 +567,7 @@ static void _show_new_nyx_color(bool update_bg)
 
 		static lv_style_t slider_ind;
 		lv_style_copy(&slider_ind, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_INDIC));
-		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x8E959F);
+		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x8581CE);
 		slider_ind.body.grad_color = slider_ind.body.main_color;
 		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_INDIC, &slider_ind);
 		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_INDIC, &slider_ind);
@@ -1775,22 +1775,9 @@ static lv_obj_t *_settings_button(lv_obj_t *card, const char *title, lv_action_t
 
 static lv_obj_t *_settings_toggle(lv_obj_t *card, const char *title, lv_action_t action, bool enabled)
 {
-    lv_obj_t *button = lv_btn_create(card, NULL);
-    lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
-    lv_obj_set_size(button, lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
-    lv_obj_set_pos(button, 14, 14); lv_btn_set_toggle(button, true);
-    lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
-    lv_obj_t *label = lv_label_create(button, NULL);
-    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(label, lv_obj_get_width(button) - 24); lv_label_set_text(label, title);
-    lv_obj_set_pos(label, 12, 10);
-    lv_obj_t *state = lv_label_create(button, NULL);
-    lv_label_set_style(state, &hint_small_style); lv_label_set_recolor(state, true);
-    lv_label_set_long_mode(state, LV_LABEL_LONG_BREAK); lv_label_set_align(state, LV_LABEL_ALIGN_RIGHT);
-    lv_obj_set_width(state, lv_obj_get_width(button) - 24);
-    lv_obj_set_pos(state, 12, lv_obj_get_height(button) - lv_font_get_height(hint_small_style.text.font) - 12);
-    if (enabled) lv_btn_set_state(button, LV_BTN_STATE_TGL_REL);
-    nyx_generic_onoff_toggle(button);
+    lv_obj_t *button = nyx_studio_toggle(card, title, action, enabled,
+        lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
+    if (button) lv_obj_set_pos(button, 14, 14);
     return button;
 }
 

@@ -47,14 +47,16 @@ lv_obj_t *nyx_action_grid_add(nyx_action_grid *grid, const char *title,
     lv_obj_set_pos(card, x, grid->y + grid->count / 2 * (grid->row_height + GRID_GAP));
     lv_obj_t *button = lv_btn_create(card, NULL);
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_CENTER);
-    lv_obj_set_width(button, width - 2 * CARD_PADDING - 40);
-    lv_obj_set_pos(button, CARD_PADDING, CARD_PADDING);
+    lv_obj_set_width(button, width - 2 * CARD_PADDING - 88);
+    lv_obj_set_pos(button, CARD_PADDING + 48, CARD_PADDING);
     lv_obj_set_free_num(button, id); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     if (long_action) lv_btn_set_action(button, LV_BTN_ACTION_LONG_PR, long_action);
     lv_obj_t *label = lv_label_create(button, NULL);
     lv_label_set_recolor(label, true); lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
     lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-    lv_obj_set_width(label, lv_obj_get_width(button) - 16); lv_label_set_text(label, title);
+    char symbol[5];
+    const char *caption = nyx_studio_action_title(title, symbol);
+    lv_obj_set_width(label, lv_obj_get_width(button) - 16); lv_label_set_text(label, caption);
     if (lv_obj_get_height(label) + 16 > grid->row_height - 2 * CARD_PADDING)
         lv_label_set_style(label, &hint_small_style);
     lv_coord_t button_height = lv_obj_get_height(label) + 16;
@@ -62,7 +64,7 @@ lv_obj_t *nyx_action_grid_add(nyx_action_grid *grid, const char *title,
     /* AutoRCM appends its translated state after constructing the grid.
      * Large/fixed-width faces can wrap that later text to a second line. */
     lv_coord_t font_height = lv_font_get_height(grid->theme->panel->text.font);
-    if (font_height > 30 && button_height < 2 * font_height + 18)
+    if (font_height >= 28 && button_height < 2 * font_height + 18)
         button_height = 2 * font_height + 18;
     lv_obj_set_height(button, button_height);
     lv_obj_t *help = lv_label_create(card, NULL);
@@ -78,6 +80,7 @@ lv_obj_t *nyx_action_grid_add(nyx_action_grid *grid, const char *title,
     lv_obj_set_free_ptr(info, (void *)description); lv_btn_set_action(info, LV_BTN_ACTION_CLICK, action_help);
     lv_obj_t *mark = lv_label_create(info, NULL); lv_label_set_style(mark, &hint_small_style);
     lv_label_set_text(mark, "?");
+    nyx_studio_icon(card, symbol, CARD_PADDING, CARD_PADDING + (button_height - 36) / 2, false);
     ++grid->count;
     return button;
 }

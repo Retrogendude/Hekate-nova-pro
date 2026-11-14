@@ -4,7 +4,7 @@ import os
 import subprocess
 
 WORK=Path(__file__).resolve().parent
-directory=WORK/'lvgl-preview-v8'
+directory=WORK/'lvgl-preview-v9'
 executable=directory/'preview.exe'
 fonts=WORK/'hekate-6.5.4/nyx/nyx_gui/fonts/sd'
 modes=[('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),

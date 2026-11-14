@@ -1,8 +1,10 @@
-# Présentation compacte — version 8
+# Studio — version 9
 
-La version actuelle conserve Tuiles et Carrousel dans un thème noir/gris
-uniforme, avec cartes transparentes et contours gris/blancs peu arrondis.
-Les onglets principaux n'utilisent plus de défilement vertical. Réglages Nyx
+Studio conserve Tuiles et Carrousel dans un thème anthracite/violet,
+avec navigation latérale, icônes encadrées, angles de 6 pixels et un halo
+fixe de 28 pixels sur la sélection. Les interrupteurs affichent leur état
+par leur position et leur texte traduit. Les pages principales utilisent
+1 056 × 592 pixels, entre l'en-tête et la barre d'état, sans défilement vertical. Réglages Nyx
 et Apparence sont répartis en onglets internes ; les aides sont derrière « ? ».
 Voir PERSONNALISATION.md pour l'utilisation et BUILD-INFO.json pour les tests.
 Les notes ci-dessous décrivent les étapes précédentes de l'interface.

@@ -19,6 +19,7 @@
 
 #include <libs/lvgl/lvgl.h>
 #include "../localization.h"
+#include "gui_studio.h"
 
 /* Translate UI strings; keep file lists and boot names verbatim. */
 #define lv_label_set_text(...) nyx_label_set_text(__VA_ARGS__)

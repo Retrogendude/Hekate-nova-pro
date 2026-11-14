@@ -317,23 +317,31 @@ void create_tab_diagnostics(lv_theme_t *th, lv_obj_t *parent)
     lv_page_set_style(parent, LV_PAGE_STYLE_SCRL, &page);
     lv_page_set_scrl_layout(parent, LV_LAYOUT_OFF);
     lv_page_set_scrl_fit(parent, false, false);
-    lv_page_set_scrl_width(parent, LV_HOR_RES);
+    lv_coord_t page_width = lv_obj_get_width(parent);
+    lv_page_set_scrl_width(parent, page_width);
     u32 columns = 3;
-    lv_coord_t column_step = 400;
+    lv_coord_t column_step = (page_width - 64 + 16) / columns;
     lv_coord_t row_step = (lv_obj_get_height(parent) - 124) / 4;
     lv_coord_t tile_width = column_step - 16;
     lv_page_set_scrl_height(parent, lv_obj_get_height(parent));
     lv_page_set_sb_mode(parent, LV_SB_MODE_OFF);
     lv_obj_set_pos(lv_page_get_scrl(parent), 0, 0);
     lv_obj_set_drag(lv_page_get_scrl(parent), false);
-    text(parent, "Diagnostic materiel", 32, 12, 1180, false);
-    text(parent, "HWTest-RCM : 42 controles natifs et un service RAM isole. Choisissez une categorie.", 32, 58, 1180, true);
+    text(parent, "Diagnostic materiel", 32, 12, page_width - 64, false);
+    lv_obj_t *intro = text(parent, "HWTest-RCM : 42 controles natifs et un service RAM isole. Choisissez une categorie.", 32, 58, page_width - 64, true);
+    if (58 + lv_obj_get_height(intro) > 100) lv_obj_set_hidden(intro, true);
+    static const char *const icons[] = {SYMBOL_CHIP, SYMBOL_INFO, SYMBOL_BATTERY_FULL,
+        SYMBOL_CIRCUIT, SYMBOL_SD, SYMBOL_GPS, SYMBOL_MODULES, SYMBOL_HINT,
+        SYMBOL_BRIGHTNESS, SYMBOL_KEYBOARD, SYMBOL_TOOLS, SYMBOL_REFRESH};
     for (u32 i = 0; i < ARRAY_SIZE(groups); i++) {
         lv_coord_t x = 32 + (i % columns) * column_step, y = 108 + (i / columns) * row_step;
         lv_obj_t *tile = button(parent, "", x, y, tile_width, show_group, i);
         lv_btn_set_layout(tile, LV_LAYOUT_OFF); lv_obj_set_height(tile, row_step - 10);
-        lv_obj_t *title = text(tile, groups[i].title, 16, 12, tile_width - 32, false);
+        nyx_studio_icon(tile, icons[i], 12, 12, false);
+        lv_obj_t *title = text(tile, groups[i].title, 60, 12, tile_width - 72, false);
+        nyx_studio_fit_label(title, row_step - 34);
         int detail_y = 20 + lv_obj_get_height(title);
+        if (detail_y < 60) detail_y = 60;
         lv_obj_t *detail = text(tile, groups[i].detail, 16, detail_y, tile_width - 32, true);
         if (detail_y + lv_obj_get_height(detail) > row_step - 20) lv_obj_set_hidden(detail, true);
     }

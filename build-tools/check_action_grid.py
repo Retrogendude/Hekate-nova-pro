@@ -73,6 +73,8 @@ static const char*shown_help;
 static void nyx_show_help(const char*t){shown_help=t;}
 static void lv_label_set_text(lv_obj_t*,const char*);
 static void lv_obj_set_pos(lv_obj_t*o,int x,int y){o->x=x;o->y=y;}
+static const char*nyx_studio_action_title(const char*t,char symbol[5]){symbol[0]=0;return t;}
+static lv_obj_t*nyx_studio_icon(lv_obj_t*p,const char*s,int x,int y,bool selected){(void)s;(void)selected;lv_obj_t*o=create(p,4);lv_obj_set_pos(o,x,y);return o;}
 static void lv_obj_set_free_num(lv_obj_t*o,u32 id){o->id=id;}
 static void lv_btn_set_action(lv_obj_t*o,int type,lv_action_t a){if(type==LV_BTN_ACTION_CLICK)o->click=a;else o->long_press=a;}
 static void lv_btn_set_fit(lv_obj_t*o,bool h,bool v){(void)o;(void)h;(void)v;}
@@ -95,11 +97,11 @@ ACTION(_create_window_bootrom_info_status) ACTION(_create_mbox_lockpick) ACTION(
 harness=r'''
 static unsigned assertions;
 #define CHECK(c)do{assertions++;assert(c);}while(0)
-static lv_obj_t*button(lv_obj_t*p,u32 index){CHECK(p->count>index);CHECK(p->children[index]->kind==1);CHECK(p->children[index]->count==3);return p->children[index]->children[0];}
+static lv_obj_t*button(lv_obj_t*p,u32 index){CHECK(p->count>index);CHECK(p->children[index]->kind==1);CHECK(p->children[index]->count==4);return p->children[index]->children[0];}
 static void geometry(lv_obj_t*p){
 for(u32 i=0;i<p->count;i++){
  lv_obj_t*c=p->children[i],*b=c->children[0],*h=c->children[1],*info=c->children[2];
- CHECK(c->x>=32&&c->x+c->w<=1280-32);CHECK(c->y>=16&&c->y+c->h<=p->h-16);
+ CHECK(c->x>=32&&c->x+c->w<=p->w-32);CHECK(c->y>=16&&c->y+c->h<=p->h-16);
  CHECK(b->y+b->h<=c->h-12);CHECK(b->x+b->w<=info->x-8);CHECK(b->count==1);
  if(!h->hidden){CHECK(b->y+b->h<h->y);CHECK(h->y+h->h<=c->h-12);}
  CHECK(info->click!=NULL);info->click(info);CHECK(shown_help==h->text);
@@ -108,13 +110,13 @@ for(u32 i=0;i<p->count;i++){
 }CHECK(p->scroll==p->h);}
 
 int main(void){
-for(int large=0;large<2;large++)for(int guarded=0;guarded<2;guarded++){
+for(int narrow=0;narrow<2;narrow++)for(int large=0;large<2;large++)for(int guarded=0;guarded<2;guarded++){
 memset(pool,0,sizeof(pool));used=0;regular_font.height=large?36:30;small_font.height=large?24:20;expansion=1;autorcm_enabled=guarded;h_cfg.rcm_patched=guarded;lockpick_available=!guarded;
-lv_obj_t tools={.w=1280,.h=592};create_tab_tools(&theme,&tools);CHECK(tools.count==8);geometry(&tools);
+lv_obj_t tools={.w=narrow?1056:1280,.h=592};create_tab_tools(&theme,&tools);CHECK(tools.count==8);geometry(&tools);
 lv_action_t tools_actions[]={create_window_backup_restore_tool,create_window_backup_restore_tool,create_window_sd_partition_manager,_create_window_usb_tools,_create_window_unset_abit_tool,_create_mbox_fix_touchscreen,_create_mbox_autorcm_status,_create_window_dump_pk12_tool};
 for(u32 i=0;i<8;i++){CHECK(button(&tools,i)->click==tools_actions[i]);}
 CHECK(button(&tools,0)->id==0);CHECK(button(&tools,1)->id==1);CHECK(button(&tools,2)->long_press==create_window_emmc_partition_manager);CHECK(autorcm_btn==button(&tools,6));CHECK(autorcm_btn->state==(guarded?LV_BTN_STATE_INA:LV_BTN_STATE_REL));CHECK(autorcm_btn->clickable==!guarded);
-lv_obj_t info={.w=1280,.h=592};create_tab_info(&theme,&info);CHECK(info.count==7);geometry(&info);
+lv_obj_t info={.w=narrow?1056:1280,.h=592};create_tab_info(&theme,&info);CHECK(info.count==7);geometry(&info);
 lv_action_t info_actions[]={_create_window_bootrom_info_status,_create_mbox_lockpick,_create_window_hw_info_status,_kfuse_dump_window_action,_create_window_emmc_info_status,_create_window_sdcard_info_status,_create_window_battery_status};
 for(u32 i=0;i<7;i++){CHECK(button(&info,i)->click==info_actions[i]);}
 CHECK(button(&info,1)->clickable==!guarded);CHECK(button(&info,1)->state==(guarded?LV_BTN_STATE_INA:0));
