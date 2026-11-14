@@ -46,6 +46,7 @@ bool gui_bluetooth_active(void)
 {return nova_bt_get_status()->state==NOVA_BT_READY;}
 void gui_bluetooth_poll(void){nova_bt_poll();}
 void gui_bluetooth_poll_fast(void){nova_bt_poll_fast();}
+void gui_bluetooth_draw_poll(void){nova_bt_draw_poll();}
 static lv_res_t import_pairing(lv_obj_t *button)
 {
     (void)button;gui_bluetooth_shutdown();memset(paired,0,sizeof(paired));
@@ -94,6 +95,8 @@ static lv_res_t start(lv_obj_t *button)
     refresh();return LV_RES_OK;
 }
 /* Only a deliberate Stop writes to SD. Teardown/diagnostics never use SD. */
+static void report_signed(char *out,int32_t value)
+{s_printf(out,"%s%d",value<0?"-":"",(unsigned)(value<0?0u-(uint32_t)value:(uint32_t)value));}
 static bool save_report(void)
 {
     char *buffer=malloc(8192);if(!buffer)return false;
@@ -102,7 +105,9 @@ static bool save_report(void)
         "Metadata only: no addresses, pairing keys or packet payloads.\n"
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
-    u32 length=strlen(buffer);
+    u32 captured=get_tmr_ms(),length=strlen(buffer);
+    s_printf(buffer+length,"Capture_ms=%d; radio_image=ROM (no HCD loaded); chipset_hint=%s\n",captured,
+        s->controller_manufacturer==15&&s->controller_subversion==0x2409?"BCM4356A3":"unknown");length=strlen(buffer);
     s_printf(buffer+length,"Autostart=%d (1=rails 2=started 3=no-file 4=disabled 5=unknown 6=active 7=failed)\n",boot_status);length=strlen(buffer);
     s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d recognized=%d/%d source=%d (1=rails 2=SD)\n",
         import_info.attempted,import_info.rail[0],import_info.rail[1],import_info.record[0],import_info.record[1],
@@ -114,6 +119,8 @@ static bool save_report(void)
         (int)s->rx_bytes,(int)s->rx_polls,(int)s->rx_max_us);length=strlen(buffer);
     s_printf(buffer+length,"Poll total_max_us=%d fast_max_us=%d normal_max_us=%d gap_max_us=%d RX_budget_hits=%d\n",
         (int)s->poll_max_us,(int)s->poll_fast_max_us,(int)s->poll_normal_max_us,(int)s->poll_gap_max_us,(int)s->rx_budget_hits);length=strlen(buffer);
+    s_printf(buffer+length,"Draw_yields=%d RF_queries=%d RF_bad_replies=%d\nRF kinds: 0=RSSI_relative_dB 1=quality_vendor_0_255 2=TX_current_dBm 3=TX_max_dBm 4=consecutive_failed_contacts\n",
+        (int)s->draw_yields,(int)s->rf_queries,(int)s->rf_bad_replies);length=strlen(buffer);
     for(unsigned side=0;side<2;side++){
         const nova_bt_pad *p=&s->pad[side];
         s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X BR_ONLY=%d MODE=%d SEEN=%d\n",
@@ -125,6 +132,15 @@ static bool save_report(void)
         s_printf(buffer+length,"  Buttons seen=%06X first_report_ms=%d last_report_ms=%d avg_reports_s=%d\n",
             (unsigned)p->buttons_seen,(int)p->first_report_ms,(int)p->updated,(int)rate);
         length=strlen(buffer);
+        s_printf(buffer+length,"  Full_reports=%d full_age_ms=%d max_full_gap_ms=%d gaps_over_50ms=%d gaps_over_250ms=%d\n",
+            (int)p->full_reports,p->full_reports?(u32)(captured-p->last_full_ms):0,(int)p->max_full_gap_ms,(int)p->full_gaps_50ms,(int)p->full_gaps_250ms);length=strlen(buffer);
+        for(unsigned k=0;k<NOVA_BT_RF_METRICS;k++){
+            char value[16],low[16],high[16];
+            if(p->rf.samples[k]){report_signed(value,p->rf.value[k]);report_signed(low,p->rf.minimum[k]);report_signed(high,p->rf.maximum[k]);}
+            else{strcpy(value,"n/a");strcpy(low,"n/a");strcpy(high,"n/a");}
+            s_printf(buffer+length,"  RF kind=%d samples=%d age_ms=%d last=%s min=%s max=%s error=%02X\n",k,(int)p->rf.samples[k],
+                p->rf.samples[k]?(u32)(captured-p->rf.updated[k]):0,value,low,high,p->rf.error[k]);length=strlen(buffer);
+        }
     }
     strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared) 20=pageTimeout(opcode,slots,reserved)\n");
     length=strlen(buffer);

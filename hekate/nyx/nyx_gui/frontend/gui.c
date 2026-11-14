@@ -21,6 +21,7 @@
 #include "gui.h"
 #include "gui_tv.h"
 #include "gui_bluetooth.h"
+#include <libs/lvgl/lv_draw/lv_draw_vbasic.h>
 #include <display/nova_splash.h>
 #include "gui_emummc_tools.h"
 #include "gui_tools.h"
@@ -326,10 +327,15 @@ static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const
 	/* A refresh can contain many small rectangles. Wait once before updating
 	 * the source buffer, then present their completed frame together. */
 	if (!display_frame_dirty && disp_init_done)
-		vic_wait_idle();
+		vic_wait_idle_poll(gui_bluetooth_draw_poll);
 
 	// Draw to intermediate non-rotated framebuffer.
-	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
+	for (int y = y1; y <= y2; y += 16)
+	{
+		int bottom = y + 15 > y2 ? y2 : y + 15;
+		gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (const u32 *)color_p + (y - y1) * (x2 - x1 + 1), 1280, x1, y, x2, bottom);
+		gui_bluetooth_draw_poll();
+	}
 	gui_tv_dirty(y1, y2);
 	gui_bluetooth_poll_fast();
 	display_frame_dirty = true;
@@ -349,7 +355,7 @@ static void _disp_fb_present(uint32_t elapsed, uint32_t pixels)
 	/* LVGL calls this once after all dirty rectangles have been flushed.
 	 * Rotating the full frame per rectangle stalls input and scrolling. */
 	if (disp_init_done)
-		vic_compose();
+		vic_compose_poll(gui_bluetooth_draw_poll);
 	else if (display_frame_ready)
 	{
 		disp_init_done = true;
@@ -2427,6 +2433,7 @@ void nyx_load_and_run()
 	memset(&system_tasks, 0, sizeof(system_maintenance_tasks_t));
 
 	lv_init();
+	lv_draw_set_service_cb(gui_bluetooth_draw_poll);
 	nyx_localization_init();
 	nyx_font_manager_init();
     nova_splash_animate((u32 *)IPL_FB_ADDRESS,85,100,500);

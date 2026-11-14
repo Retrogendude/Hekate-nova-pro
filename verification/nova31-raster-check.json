@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "pixel_exact_frames": [
+    {
+      "screen": "home",
+      "sha256": "92c44faa610a7ae0c7bd26c9d0a1cf4196b729b8625ffc44e1fb6ef013713c80"
+    },
+    {
+      "screen": "partition-expert",
+      "sha256": "a73f1946bd2c8d9201b0f49798a4db116db3463735b7af7ce415d76b1304dd16"
+    },
+    {
+      "screen": "partition-emmc",
+      "sha256": "fb3c9aad15bdf0f9263cc69ce57fe6550f99dcf86e93d615f8537953edd9be76"
+    },
+    {
+      "screen": "nyx",
+      "sha256": "0d9de6409480f590426bca7c6467c78ecd882b810b123946cdb3f8f47fcb3426"
+    },
+    {
+      "screen": "about",
+      "sha256": "364af9f6fe7337721e60cb00d3e87572e654fba922e6463df609e92f0473ca28"
+    },
+    {
+      "screen": "bluetooth",
+      "sha256": "4b6d049c5bd0b9740ca9bed1a9359a5ebb5fb14c6ee570280886711419d58a40"
+    }
+  ],
+  "source_sha256": {
+    "bdk/libs/lvgl/lv_draw/lv_draw_vbasic.c": "a2752a449dfe491a7266fbc8c71ad8ccd40b1643b263464f1adc734639654e8a",
+    "bdk/libs/lvgl/lv_draw/lv_draw_vbasic.h": "664f3c52ba3e8d3dc11c0715ce884e0ee18a11d36cc81cc4c3141adff1aa8c14"
+  },
+  "reference": "v30 rasterizer, same current UI/font/theme, service setter substituted only in baseline"
+}

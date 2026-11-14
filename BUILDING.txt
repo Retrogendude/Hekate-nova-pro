@@ -1,6 +1,6 @@
-Hekate Nova Pro30: build with devkitARM, GNU make -j4 -r and Python.
-Read LIRE-MOI-V30.md, HWTEST-BLUETOOTH-SOURCES.md and all licenses.
-The Windows scripts retain the development workspace layout: scripts in work/, project in work/hekate-nova-pro-v30.
+Hekate Nova Pro31: build with devkitARM, GNU make -j4 -r and Python.
+Read LIRE-MOI-V31.md, HWTEST-BLUETOOTH-SOURCES.md and all licenses.
+The Windows scripts retain the development workspace layout: scripts in work/, project in work/hekate-nova-pro-v31.
 Adjust the portable tools paths when using another machine; the project Makefiles also support the usual devkitPro environment.
 Native UI tests additionally use the prior official res.pak archive and font fixtures described in the renderer.
 For negative regressions, restore build-tools/regression-reference/v23-gui_bluetooth.c as work/hekate-nova-pro-v23/nyx/nyx_gui/frontend/gui_bluetooth.c,
@@ -12,8 +12,8 @@ Restore v27-nova_bt_stack.c as work/hekate-nova-pro-v27/nyx/nyx_gui/bluetooth/no
 Restore v28-nova_bt_stack.c and v28-gui_bluetooth.c under work/hekate-nova-pro-v28/nyx/nyx_gui/bluetooth/ and frontend/ for the v28 regressions.
 For new v29 regressions, copy current project into work/hekate-nova-pro-v29 and overwrite nyx/nyx_gui with build-tools/regression-reference/v29 contents.
 Restore resources/preview-v29 to work/lvgl-preview-nova29 for the faithful reflection timing test.
-Run pairing SD before autostart; run the four new audit checks before verify.
+Run pairing SD before autostart; run display/raster/RF/partition checks before verify. The two v30 audit JSON files describe unchanged sources and are checked against current hashes.
 Run pairing before negotiation (it builds the SPI/import fixture object); build renderer and run native UI before navigation.
 Run verify after the tests and final ARM build. Do not remove the Nyx metadata linker assertion.
-PC tests substitute the radio and do not establish successful wireless operation on real hardware.
+PC tests substitute hardware and do not establish wireless range or storage safety on real hardware. No physical partitioning has been executed.
 The separate BTstack personal/noncommercial license remains applicable; vendor HID changes are documented in the supplied patch.

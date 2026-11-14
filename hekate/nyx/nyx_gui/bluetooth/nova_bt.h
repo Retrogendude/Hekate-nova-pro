@@ -5,6 +5,13 @@
 typedef struct {
     uint8_t valid, mac[6], host[6], key[16]; /* key in HCI wire order */
 } nova_bt_peer;
+#define NOVA_BT_RF_METRICS 5
+enum {NOVA_RF_RSSI,NOVA_RF_QUALITY,NOVA_RF_TX_CURRENT,NOVA_RF_TX_MAX,NOVA_RF_FAILED_CONTACTS};
+typedef struct {
+    int32_t value[5],minimum[5],maximum[5];
+    uint32_t samples[5],updated[5];
+    uint8_t error[5];
+} nova_bt_rf;
 typedef struct {
     uint32_t buttons, updated;
     /* Rising edges await one UI read; each expires independently. */
@@ -19,6 +26,9 @@ typedef struct {
     uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
     uint8_t br_only, radio_mode, mode_seen;
     uint32_t buttons_seen, first_report_ms;
+    uint32_t full_reports,last_full_ms,max_full_gap_ms,full_gaps_50ms,full_gaps_250ms;
+    uint8_t full_gap_valid;
+    nova_bt_rf rf;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
@@ -31,6 +41,7 @@ typedef struct {
     uint32_t rx_bytes, rx_polls, rx_max_us;
     uint32_t poll_max_us, poll_fast_max_us, poll_normal_max_us, poll_gap_max_us;
     uint32_t rx_budget_hits;
+    uint32_t draw_yields,rf_queries,rf_bad_replies;
     nova_bt_pad pad[2];
 } nova_bt_status;
 typedef struct {uint32_t ms;uint16_t kind,a,b,c;} nova_bt_trace;
@@ -43,6 +54,7 @@ int nova_bt_start(const nova_bt_peer peers[2]);
 void nova_bt_stop(void);
 void nova_bt_poll(void);
 void nova_bt_poll_fast(void); /* No quiet wait; short RX budget while drawing. */
+void nova_bt_draw_poll(void); /* Rate-limited cooperative service, no LVGL work. */
 const nova_bt_status *nova_bt_get_status(void);
 /* Consume once per side per UI read, including when wired input wins.
  * Held buttons remain held; released short presses survive for at most 100 ms. */

@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v30 · Background and responsiveness\nAutomatic wireless start without attached Joy-Con.\nBounded redraws and brief button press retention.",
+                "v31 · Expert partitions and wireless\nFull-width controls and integer GB / Full sizes.\nBluetooth servicing during drawing and radio metrics.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."

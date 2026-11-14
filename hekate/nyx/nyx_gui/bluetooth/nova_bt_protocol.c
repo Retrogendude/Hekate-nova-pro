@@ -3,7 +3,18 @@
 static int nonzero(const uint8_t *p, unsigned n)
 { unsigned v=0; while(n--) v |= *p++; return v!=0; }
 static void observe(nova_bt_pad *p,uint32_t now)
-{if(!p->reports)p->first_report_ms=now;p->buttons_seen|=p->buttons;p->reports++;}
+{
+    if(!p->reports)p->first_report_ms=now;
+    p->buttons_seen|=p->buttons;p->reports++;
+    if(p->report_id==0x30){
+        if(p->full_gap_valid){uint32_t gap=now-p->last_full_ms;
+            if(gap>p->max_full_gap_ms)p->max_full_gap_ms=gap;
+            if(gap>50)p->full_gaps_50ms++;
+            if(gap>250)p->full_gaps_250ms++;
+        }
+        p->last_full_ms=now;p->full_gap_valid=1;p->full_reports++;
+    }
+}
 static void buttons_update(nova_bt_pad *p,uint32_t buttons,uint32_t now)
 {
     uint32_t rising=buttons&~p->buttons;
