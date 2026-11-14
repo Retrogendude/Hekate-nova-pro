@@ -1,7 +1,7 @@
 """End-to-end real decoder/merge/pointer/LVGL tests, plus v21 regressions."""
 from pathlib import Path
 import subprocess,os,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v24';d=w/'lvgl-preview-nova24';t=w/'nova24-tests'
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v25';d=w/'lvgl-preview-nova25';t=w/'nova25-tests'
 cc=w/'toolchains/w64devkit/bin/gcc.exe';nyx=p/'nyx/nyx_gui'
 c=(d/'preview.c').read_text(encoding='utf-8')
 old=(w/'hekate-nova-pro-v21-bt/nyx/nyx_gui/frontend/gui.c').read_text()
@@ -13,7 +13,7 @@ r=subprocess.run([str(cc),*flags,'-c',str(t/'old_navigation.c'),'-o',str(t/'old_
 assert r.returncode==0,r.stderr
 objs=[str(f)for f in d.glob('*.o')if f.name!='preview.o']
 subprocess.run([str(cc),*objs,str(t/'old_navigation.o'),'-o',str(t/'old_navigation.exe')],check=True)
-font=w/'test-sd-nova24/nyx/nyx_gui/fonts/sd'
+font=w/'test-sd-nova25/nyx/nyx_gui/fonts/sd'
 env=os.environ.copy();env.update(NYX_TEST_BT_INPUT='1',NYX_PREVIEW_NO_DUMP='1')
 base=[]
 for right,expected in [(False,'calibration_step==JC_CAL_MAX_STEPS'),(True,'!jc_drv_ctx.cursor_hidden')]:
@@ -34,5 +34,5 @@ for language in range(7):
 files=['frontend/gui.c','frontend/gui_bluetooth.c','bluetooth/nova_bt_protocol.c','bluetooth/nova_bt.h']
 report={'passed_scenes':passed,'regressions_fail_on_v21':base,'real_code':'decoder, merge, pointer callback and LVGL widgets; radio substituted',
     'source_sha256':{f:hashlib.sha256((nyx/f).read_bytes()).hexdigest()for f in files}}
-(w/'nova24-navigation-check.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+(w/'nova25-navigation-check.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
 print(f'PASS: {passed} end-to-end wireless navigation scenes; missing-half and hidden-cursor regressions reproduced on v21.')

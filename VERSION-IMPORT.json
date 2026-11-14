@@ -1,8 +1,8 @@
 {
-  "tag": "v24",
-  "source_archive": "hekate-nova-pro-v24-sources.zip",
-  "source_archive_sha256": "179c835da58abbbaeee6339be5ca80b9f781d03e80812bf28eda62483556d6ef",
-  "original_source_directory": "hekate-nova-pro-v24",
+  "tag": "v25",
+  "source_archive": "hekate-nova-pro-v25-sources.zip",
+  "source_archive_sha256": "c2d7c1e53faf8b0247b9356f9fc0386ba125c9c58974b538e11073e78183cd87",
+  "original_source_directory": "hekate-nova-pro-v25",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",
   "original_commit_history": false,

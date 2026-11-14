@@ -33,13 +33,20 @@ static int side_handle(uint16_t handle)
 static void trace_frame(int outgoing,uint8_t type,const uint8_t *p,unsigned size)
 {
     if(type==HCI_COMMAND_DATA_PACKET&&outgoing&&size>=3){
-        nova_bt_trace_add(1,little_endian_read_16(p,0),p[2],0);return;
+        uint16_t op=little_endian_read_16(p,0);
+        nova_bt_trace_add(1,op,p[2],0);
+        if(op==HCI_OPCODE_HCI_ACCEPT_CONNECTION_REQUEST&&size>=10){
+            bd_addr_t addr;reverse_bd_addr(p+3,addr);int i=side_for(addr);
+            if(i>=0)nova_bt_trace_add(14,i,op,p[9]);
+        }
+        return;
     }
     if(type==HCI_EVENT_PACKET&&!outgoing&&size>=2){
         if(p[0]==HCI_EVENT_COMMAND_COMPLETE&&size>=6)nova_bt_trace_add(2,little_endian_read_16(p,3),p[5],0);
         else if(p[0]==HCI_EVENT_COMMAND_STATUS&&size>=6)nova_bt_trace_add(3,little_endian_read_16(p,4),p[2],0);
         else if(p[0]==HCI_EVENT_CONNECTION_COMPLETE||p[0]==HCI_EVENT_DISCONNECTION_COMPLETE||
-                p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE||p[0]==HCI_EVENT_ENCRYPTION_CHANGE||p[0]==HCI_EVENT_HARDWARE_ERROR)
+                p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE||p[0]==HCI_EVENT_ENCRYPTION_CHANGE||
+                p[0]==HCI_EVENT_ENCRYPTION_CHANGE_V2||p[0]==HCI_EVENT_HARDWARE_ERROR)
             nova_bt_trace_add(4,p[0],p[0]==HCI_EVENT_DISCONNECTION_COMPLETE&&size>=6?p[5]:size>=3?p[2]:0,size>=5?little_endian_read_16(p,3):0);
         return;
     }
@@ -111,6 +118,10 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
     bd_addr_t addr;int i;uint16_t cid;
     switch(hci_event_packet_get_type(p)){
     case HCI_EVENT_COMMAND_COMPLETE:
+        if(size>=14 && little_endian_read_16(p,3)==HCI_OPCODE_HCI_READ_LOCAL_VERSION_INFORMATION && !p[5]){
+            status.controller_hci_version=p[6];status.controller_revision=little_endian_read_16(p,7);
+            status.controller_manufacturer=little_endian_read_16(p,10);status.controller_subversion=little_endian_read_16(p,12);
+        }
         /* Verify the controller's readback, never log either address. */
         if(size>=12 && little_endian_read_16(p,3)==HCI_OPCODE_HCI_READ_BD_ADDR && !p[5]){
             reverse_bd_addr(p+6,addr);
@@ -124,14 +135,34 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
         hci_event_connection_complete_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
         status.pad[i].last_error=hci_event_connection_complete_get_status(p);
         if(status.pad[i].last_error)status.pad[i].stage=7;
-        else{link[i].handle=hci_event_connection_complete_get_connection_handle(p);status.pad[i].stage=2;}
+        else{
+            link[i].handle=hci_event_connection_complete_get_connection_handle(p);status.pad[i].stage=2;
+            status.pad[i].role=gap_get_role(link[i].handle);
+            nova_bt_trace_add(13,i,link[i].handle,status.pad[i].role);
+        }
         break;
+    case HCI_EVENT_ROLE_CHANGE:
+        if(size<10||hci_event_role_change_get_status(p))break;
+        hci_event_role_change_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
+        status.pad[i].role=hci_event_role_change_get_role(p);
+        nova_bt_trace_add(13,i,link[i].handle,status.pad[i].role);break;
     case HCI_EVENT_AUTHENTICATION_COMPLETE:
     case HCI_EVENT_ENCRYPTION_CHANGE:
+    case HCI_EVENT_ENCRYPTION_CHANGE_V2:
         if(size<5)break;
         i=side_handle(little_endian_read_16(p,3));if(i<0)break;
-        if(p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE)status.pad[i].auth_error=p[2];
+        if(p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE){status.pad[i].auth_seen=1;status.pad[i].auth_error=p[2];}
+        else{
+            if(size<6)break;
+            status.pad[i].encryption_seen=1;status.pad[i].encryption_error=p[2];
+            status.pad[i].encrypted=p[2]?0:p[5];
+        }
         status.pad[i].last_error=p[2];status.pad[i].stage=p[2]?7:3;break;
+    case HCI_EVENT_DISCONNECTION_COMPLETE:
+        if(size<6||p[2])break;
+        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+        status.pad[i].disconnect_reason=p[5];status.pad[i].encrypted=0;
+        clear_pad(i);status.pad[i].hid_open=0;break;
     case BTSTACK_EVENT_STATE:
         if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){
             if(status.host_identity==1)status.state=NOVA_BT_READY;
@@ -175,7 +206,9 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
             break;
         case HID_SUBEVENT_CONNECTION_CLOSED:
             i=side_cid(hid_subevent_connection_closed_get_hid_cid(p));if(i<0)break;
-            clear_pad(i);status.pad[i].hid_open=0;status.pad[i].stage=0;link[i].cid=0;link[i].handle=HCI_CON_HANDLE_INVALID;link[i].next=nova_bt_now()+5000;break;
+            clear_pad(i);status.pad[i].hid_open=0;
+            if(!status.pad[i].last_error)status.pad[i].stage=0;
+            link[i].cid=0;link[i].next=nova_bt_now()+5000;break;
         default:break;
         }break;
     default:break;
@@ -211,18 +244,25 @@ void nova_bt_stop(void)
         initialized=0;
     }
     memset(peers,0,sizeof(peers));memset(link,0,sizeof(link));
-    tx_len=rx_len=rx_need=rx_type=0;receive_packet=0;memset(status.pad,0,sizeof(status.pad));status.state=NOVA_BT_OFF;status.error=0;
+    tx_len=rx_len=rx_need=rx_type=0;receive_packet=0;
+    /* Release every live input but retain session evidence until next Start.
+     * A second Stop/export must not turn an encryption failure into all zeros. */
+    for(unsigned i=0;i<2;i++){clear_pad(i);status.pad[i].hid_open=0;status.pad[i].encrypted=0;}
+    status.state=NOVA_BT_OFF;
 }
 int nova_bt_start(const nova_bt_peer p[2])
 {
     nova_bt_stop();memset(&status,0,sizeof(status));nova_bt_trace_reset();
-    for(unsigned i=0;i<2;i++)link[i].handle=HCI_CON_HANDLE_INVALID;
+    for(unsigned i=0;i<2;i++){link[i].handle=HCI_CON_HANDLE_INVALID;status.pad[i].role=0xff;}
     if(!nova_bt_validate_peers(p)){status.state=NOVA_BT_ERROR;status.error=1;return 0;}
     if(!nova_bt_radio_open()){status.state=NOVA_BT_ERROR;status.error=2;return 0;}
     memcpy(peers,p,sizeof(peers));failure=0;started=nova_bt_now();
     btstack_memory_init();btstack_run_loop_init(&run_loop);hci_init(&transport,0);initialized=1;
     hci_set_chipset(&chipset);hci_set_link_key_db(&keys);hci_set_bd_addr(peers[peers[0].valid?0:1].host);
     gap_set_security_level(LEVEL_2);gap_ssp_set_auto_accept(0);
+    /* HID host policy also used by Bluepad32: request central on reconnect.
+     * This is a role preference, not a claim that the controller accepted it. */
+    hci_set_master_slave_policy(HCI_ROLE_MASTER);
     gap_register_classic_connection_filter(known_connection);gap_discoverable_control(0);gap_connectable_control(1);
     l2cap_init();hid_host_init(descriptors,sizeof(descriptors));hid_host_register_packet_handler(event);
     event_registration.callback=event;hci_add_event_handler(&event_registration);
@@ -250,13 +290,16 @@ void nova_bt_poll(void)
     uint32_t now=nova_bt_now();
     if(rx_type&&(uint32_t)(now-rx_started)>2000)failure=5;
     if(status.state==NOVA_BT_STARTING&&(uint32_t)(now-started)>15000)failure=3;
+    int pending=0;
+    for(unsigned i=0;i<2;i++)if(link[i].cid&&!status.pad[i].hid_open)pending=1;
     for(unsigned i=0;i<2&&!failure&&status.state==NOVA_BT_READY;i++){
         if(status.pad[i].connected&&(uint32_t)(now-status.pad[i].updated)>500)clear_pad(i);
-        if(peers[i].valid&&!link[i].cid&&link[i].retries<3&&(int32_t)(now-link[i].next)>=0){
+        if(!pending&&peers[i].valid&&!link[i].cid&&link[i].retries<3&&(int32_t)(now-link[i].next)>=0){
             link[i].retries++;link[i].next=now+5000;
             status.pad[i].stage=1;
             uint8_t result=hid_host_connect(peers[i].mac,HID_PROTOCOL_MODE_REPORT,&link[i].cid);
             if(result){link[i].cid=0;status.pad[i].last_error=result;status.pad[i].stage=7;nova_bt_trace_add(10,i,result,0);}
+            else pending=1;
         }
         if(link[i].cid&&link[i].mode_next&&!status.pad[i].mode_ack&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
             /* Keep the output storage alive until BTstack sends it. No rumble. */

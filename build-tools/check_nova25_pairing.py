@@ -5,7 +5,7 @@ Also compile the previous import to demonstrate that this fixture rejects it.
 from pathlib import Path
 import subprocess, json, hashlib, re
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v24';d=w/'nova24-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v25';d=w/'nova25-tests';d.mkdir(exist_ok=True)
 bdk=(p/'bdk/input/joycon.c').read_text()
 gui=(p/'nyx/nyx_gui/frontend/gui_bluetooth.c').read_text()
 def function(text,start,end):return text[text.index(start):text.index(end,text.index(start))]
@@ -65,7 +65,7 @@ void nova_test_import(nova_bt_peer out[2]){
 int main(void){
  nova_bt_peer out[2];nova_test_import(out);assert(nova_bt_validate_peers(out)==2);
  for(unsigned i=0;i<2;i++){
-  assert(!memcmp(out[i].key,hci_keys[i],16));
+  if(memcmp(out[i].key,hci_keys[i],16)){fputs("FAIL: imported key byte order\n",stderr);return 42;}
   assert(out[i].mac[0]==0x40&&out[i].mac[5]==i+1&&out[i].host[0]==0x60&&out[i].host[5]==3);
  }
  hos_mask=1;import_pairing(NULL);assert(paired[0].valid&&!paired[1].valid);
@@ -92,5 +92,5 @@ for old in (False,True):
  else:assert r.returncode==0,r.stderr;print(r.stdout);outputs.append(r.stdout.strip())
 r=subprocess.run([*args,'-c',str(d/'pairing.c'),'-o',str(d/'pairing.o')],capture_output=True,text=True)
 assert r.returncode==0,r.stderr
-(w/'nova24-pairing-check.json').write_text(json.dumps({'passed':True,'old_double_reversal_rejected':True,'synthetic_keys_only':True,'physical_rail_io':False,'logs':outputs,
+(w/'nova25-pairing-check.json').write_text(json.dumps({'passed':True,'old_double_reversal_rejected':True,'synthetic_keys_only':True,'physical_rail_io':False,'logs':outputs,
  'source_sha256':{n:hashlib.sha256((p/n).read_bytes()).hexdigest()for n in ['bdk/input/joycon.c','bdk/input/joycon.h','nyx/nyx_gui/frontend/gui_bluetooth.c'] }},indent=2))

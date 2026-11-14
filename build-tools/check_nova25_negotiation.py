@@ -4,19 +4,22 @@ The virtual peer intentionally ignores SDP, but implements standard HID channels
 """
 from pathlib import Path
 import subprocess,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v24/nyx/nyx_gui';d=w/'nova24-tests';d.mkdir(exist_ok=True)
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v25/nyx/nyx_gui';d=w/'nova25-tests';d.mkdir(exist_ok=True)
 c=r'''
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#undef assert
+#define assert(x) do {if(!(x)){fprintf(stderr,"assertion %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1);}}while(0)
 #include "nova_bt.h"
 #include "bluetooth.h"
 static unsigned now,reads_n,reads_at,writes_n,auth_count,psm_count[32],mode_count,ssp_commands;
 static uint8_t reads[16384],writes[16384];static nova_bt_peer pair[2];
 extern void nova_test_import(nova_bt_peer out[2]);
 static const uint8_t golden_keys[2][16]={{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0},{47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32}};
-static int wrong_key,wrong_host,ssp;
+static int wrong_key,wrong_host,ssp,incoming,encrypt_timeout,stall_first,incoming_collision;
+static unsigned accepts,create_count,conn_ready[2],encrypt_due[2];
 static int ignore_control,ignore_interrupt;static unsigned disconnect_requests;
 static struct {unsigned host,peer,psm,side,configured;} channels[4];static unsigned nc;
 uint32_t nova_bt_now(void){return now;}
@@ -49,7 +52,16 @@ static void cmd(const uint8_t*p,unsigned n){
  case 0x1009:len=6;for(unsigned j=0;j<6;j++)b[j]=pair[0].host[5-j];if(wrong_host)b[0]^=1;break;
  case 0x0c14:len=248;break;
  case 0x0405:{
-   unsigned side=a[0]-1;assert(side<2);cs(op);b[0]=0;put(b+1,0x40+side);memcpy(b+3,a,6);b[9]=1;b[10]=0;ev(3,b,11);return;}
+   unsigned side=a[0]-1;assert(side<2);cs(op);create_count++;
+   if(side==1&&!incoming)assert(!stall_first&&(nova_bt_get_status()->pad[0].hid_open||nova_bt_get_status()->pad[0].last_error));
+   if(stall_first)return;
+   if(incoming){memcpy(b,a,6);b[6]=8;b[7]=5;b[9]=1;ev(4,b,10);if(incoming_collision){memset(b,0,sizeof b);b[0]=0x0b;put(b+1,0x40+side);memcpy(b+3,a,6);b[9]=1;ev(3,b,11);}return;}
+   conn_ready[side]=1;b[0]=0;put(b+1,0x40+side);memcpy(b+3,a,6);b[9]=1;b[10]=0;ev(3,b,11);return;}
+ case 0x0409:{
+   unsigned side=a[0]-1;assert(side<2&&incoming);assert(a[6]==0);accepts++;cs(op);
+   conn_ready[side]=1;b[0]=0;put(b+1,0x40+side);memcpy(b+3,a,6);b[9]=1;ev(3,b,11);
+   memset(b,0,sizeof b);memcpy(b+1,a,6);b[7]=a[6];ev(0x12,b,8);return;}
+
  case 0x041b:cs(op);put(b+1,le(a));b[3]=b[4]=b[5]=255;b[6]=0xfe;if(ssp){b[9]=8;b[10]=0x80;}ev(0x0b,b,11);return;
  case 0x041c:cs(op);put(b+1,le(a));b[3]=a[2];b[4]=2;if(ssp&&a[2]==1)b[5]=9;if(ssp&&a[2]==2)b[6]=1;ev(0x23,b,13);return;
  case 0x0411:{unsigned side=le(a)-0x40;assert(side<2);cs(op);for(unsigned j=0;j<6;j++)b[j]=pair[side].mac[5-j];ev(0x17,b,6);return;}
@@ -57,7 +69,9 @@ static void cmd(const uint8_t*p,unsigned n){
    unsigned side=a[0]-1;assert(side<2);int good=!memcmp(a+6,golden_keys[side],16);assert(good!=wrong_key);auth_count++;
    cc(op,a,6);b[0]=good?0:5;put(b+1,0x40+side);ev(6,b,3);return;}
  case 0x1408:len=3;put(b,le(a));b[2]=16;break;
- case 0x0413:cs(op);put(b+1,le(a));b[3]=a[2];ev(8,b,4);return;
+ case 0x0413:{unsigned side=le(a)-0x40;assert(side<2&&conn_ready[side]&&a[2]==1);cs(op);
+   if(encrypt_timeout){encrypt_due[side]=now+5000;return;}
+   put(b+1,le(a));b[3]=a[2];ev(8,b,4);return;}
  case 0x040f:cs(op);put(b+1,le(a));put(b+3,le(a+2));ev(0x1d,b,5);return;
  case 0x041d:cs(op);put(b+1,le(a));b[3]=6;b[4]=15;ev(0x0c,b,8);return;
  case 0x080b:cs(op);memcpy(b+1,a,6);b[7]=0;ev(0x12,b,8);return;
@@ -120,22 +134,41 @@ int main(int argc,char**argv){
  wrong_key=argc>1&&!strcmp(argv[1],"wrong-key");
  wrong_host=argc>1&&!strcmp(argv[1],"wrong-host");
  ssp=argc>1&&!strcmp(argv[1],"ssp-sc");
+ incoming=argc>1&&(!strcmp(argv[1],"incoming")||!strcmp(argv[1],"incoming-collision")||!strcmp(argv[1],"encryption-timeout"));
+ encrypt_timeout=argc>1&&!strcmp(argv[1],"encryption-timeout");
+ stall_first=argc>1&&!strcmp(argv[1],"stalled-first");
+ incoming_collision=argc>1&&!strcmp(argv[1],"incoming-collision");if(incoming)ssp=1;
  nova_test_import(pair);
  if(wrong_key)for(unsigned i=0;i<2;i++)for(unsigned j=0;j<8;j++){uint8_t t=pair[i].key[j];pair[i].key[j]=pair[i].key[15-j];pair[i].key[15-j]=t;}
 
  assert(nova_bt_start(pair));
  for(unsigned step=0;step<35000;step++){
    nova_bt_poll();consume();now++;
+   if(stall_first&&now>=1000)break;
+   for(unsigned i=0;i<2;i++)if(encrypt_due[i]&&now>=encrypt_due[i]){
+    uint8_t enc[]={8,0x40+i,0,0};ev(8,enc,4);
+    uint8_t dis[]={0,0x40+i,0,8};ev(5,dis,4);encrypt_due[i]=0;
+   }
    const nova_bt_status*s=nova_bt_get_status();
    if(s->pad[0].reports&&s->pad[1].reports)break;
-   if(s->pad[0].last_error==0x69 || s->pad[0].auth_error==5 || s->state==NOVA_BT_ERROR)break;
+   if(s->pad[0].last_error==0x69 || s->pad[0].auth_error==5 || s->pad[0].encryption_error==8 || s->state==NOVA_BT_ERROR)break;
  }
  const nova_bt_status*s=nova_bt_get_status();
 #ifdef EXPECT_SDP_TIMEOUT
  assert(psm_count[1]&&!s->pad[0].reports&&s->pad[0].last_error==0x69);
  puts("PASS: descriptor-query path reproduces 0x69 when the SDP channel does not answer");
 #else
- if(wrong_host){assert(s->state==NOVA_BT_ERROR&&s->error==9&&s->host_identity==2&&!auth_count&&!s->tx_acl);puts("PASS: controller identity mismatch stops before authentication; no addresses logged");}
+ if(stall_first){assert(create_count==1&&!accepts&&!auth_count);puts("PASS: a pending first connection prevents a concurrent second HCI Create Connection");}
+ else if(encrypt_timeout){
+  for(unsigned j=0;j<12;j++){nova_bt_poll();consume();now++;}
+  assert(s->pad[0].auth_seen&&s->pad[0].auth_error==0&&s->pad[0].encryption_seen&&s->pad[0].encryption_error==8);
+  assert(!s->rx_acl&&!s->tx_acl&&!s->pad[0].connected&&!s->pad[0].encrypted);
+  assert(s->pad[0].disconnect_reason==8&&s->pad[0].role==0);
+  nova_bt_stop();nova_bt_stop();
+  assert(s->state==NOVA_BT_OFF&&s->pad[0].encryption_error==8&&s->pad[0].encryption_seen&&s->pad[0].auth_seen&&s->pad[0].disconnect_reason==8);
+  puts("PASS: incoming auth succeeds then encryption 08/disconnect 08; evidence survives repeated Stop; no inputs leak");
+ }
+ else if(wrong_host){assert(s->state==NOVA_BT_ERROR&&s->error==9&&s->host_identity==2&&!auth_count&&!s->tx_acl);puts("PASS: controller identity mismatch stops before authentication; no addresses logged");}
  else if(wrong_key){assert(s->pad[0].auth_error==5&&!s->pad[0].reports&&!s->rx_acl&&!s->tx_acl);puts("PASS: reversed key reproduces hardware authentication 05 and ACL 0/0");}
  else if(ignore_interrupt){
   assert(!psm_count[1]&&psm_count[19]&&s->pad[0].last_error==0x69&&s->pad[0].last_psm==19);
@@ -145,10 +178,12 @@ int main(int argc,char**argv){
  else if(ignore_control){assert(!psm_count[1]&&psm_count[17]&&s->pad[0].last_error==0x69&&s->pad[0].last_psm==17&&!s->pad[0].reports);puts("PASS: HID control timeout is recorded as 0x69 with channel 0x0011");}
  else{
   if(!(s->pad[0].reports&&s->pad[1].reports))fprintf(stderr,"state%d err%d L:%u/%u psm%x stage%u R:%u/%u psm%x stage%u auth%u ctrl%u int%u mode%u now%u\n",s->state,s->error,s->pad[0].reports,s->pad[0].last_error,s->pad[0].last_psm,s->pad[0].stage,s->pad[1].reports,s->pad[1].last_error,s->pad[1].last_psm,s->pad[1].stage,auth_count,psm_count[17],psm_count[19],mode_count,now);
-  assert(s->host_identity==1);assert(ssp_commands==(unsigned)ssp);assert(!psm_count[1]&&psm_count[17]==2&&psm_count[19]==2&&mode_count==2&&auth_count==2);
+  assert(accepts==(incoming?2u:0));assert(s->host_identity==1);assert(ssp_commands==(unsigned)ssp);assert(!psm_count[1]&&psm_count[17]==2&&psm_count[19]==2&&mode_count==2&&auth_count==2);
   assert(s->pad[0].reports&&s->pad[1].reports&&s->pad[0].hid_open&&s->pad[1].hid_open);
   assert(s->pad[0].buttons==(1u<<23)&&s->pad[1].buttons==8);
   assert(s->pad[0].x==2100&&s->pad[1].y==2001&&s->pad[0].mode_ack&&s->pad[1].mode_ack);
+  for(unsigned side=0;side<2;side++)assert(s->pad[side].auth_seen&&s->pad[side].encryption_seen&&!s->pad[side].encryption_error&&s->pad[side].encrypted);
+  if(incoming){assert(s->pad[0].role==0&&s->pad[1].role==0);puts("PASS: Joy-Con initiated HCI connections request central; Role Change updates both roles");}
   uint8_t disconnect[]={0,0x40,0,0x13};ev(5,disconnect,4);for(unsigned j=0;j<4;j++){nova_bt_poll();consume();now++;}
   assert(!s->pad[0].connected&&!s->pad[0].buttons&&s->pad[1].connected);
   puts("PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack");
@@ -172,11 +207,27 @@ for baseline in (False,True):
     if baseline:args+=['-DEXPECT_SDP_TIMEOUT']
     r=subprocess.run([*args,str(d/'negotiation.c'),*sources,'-o',str(exe)],capture_output=True,text=True)
     assert r.returncode==0,r.stderr
-    for mode in ([]if baseline else ['control-timeout','interrupt-timeout','wrong-key','wrong-host','ssp-sc'])+['']:
+    for mode in ([]if baseline else ['control-timeout','interrupt-timeout','wrong-key','wrong-host','ssp-sc','incoming','incoming-collision','encryption-timeout','stalled-first'])+['']:
         try:r=subprocess.run([str(exe),*([mode]if mode else [])],capture_output=True,text=True,timeout=10)
         except subprocess.TimeoutExpired as e:
             print((e.stderr or b'')[-6000:]);raise
-        print(r.stdout,r.stderr);assert r.returncode==0,r.returncode;logs.append(r.stdout.strip())
-(w/'nova24-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'physical_radio':False,
+        print(r.stdout,r.stderr);assert r.returncode==0,r.returncode;logs.append({'mode':('sdp-baseline'if baseline else mode or 'outgoing'),'output':r.stdout.strip()})
+# Compile the actual previous policy against the same ABI and virtual peer.
+# Regression success requires rejection at the policy assertion, not a crash.
+old_source=(w/'hekate-nova-pro-v24/nyx/nyx_gui/bluetooth/nova_bt_stack.c').read_text()
+(d/'old-stack.c').write_text(old_source)
+old_sources=[str(d/'old-stack.c')if n==str(p/'bluetooth/nova_bt_stack.c')else n for n in sources]
+old_exe=d/'negotiation-old.exe'
+old_args=[str(cc),'-std=gnu11','-O1','-g','-ffunction-sections','-fdata-sections','-Wl,--gc-sections',
+ '-I'+str(d/'known-config'),'-I'+str(p/'bluetooth'),'-I'+str(lib)]
+r=subprocess.run([*old_args,str(d/'negotiation.c'),*old_sources,'-o',str(old_exe)],capture_output=True,text=True)
+assert r.returncode==0,r.stderr
+old_failures=[]
+for mode,expected in [('incoming','a[6]==0'),('stalled-first','!stall_first')]:
+ r=subprocess.run([str(old_exe),mode],capture_output=True,text=True,timeout=10)
+ assert r.returncode==1 and expected in r.stderr,(mode,r.returncode,r.stderr)
+ old_failures.append({'mode':mode,'expected_assertion':expected})
+print('PASS: v24 policy fails both central-role and concurrent-paging regressions at their precise assertions')
+(w/'nova25-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'old_policy_failures':old_failures,'physical_radio':False,
     'source_sha256':{f.relative_to(p).as_posix():hashlib.sha256(f.read_bytes()).hexdigest()for f in (p/'bluetooth').glob('*.[ch]')},
     'hid_host_sha256':hashlib.sha256((lib/'classic/hid_host.c').read_bytes()).hexdigest()},indent=2))

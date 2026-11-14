@@ -13,11 +13,15 @@ typedef struct {
     uint32_t reports;
     uint16_t last_psm;
     uint8_t stage, auth_error;
+    uint8_t auth_seen, encryption_seen, encryption_error, encrypted;
+    uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
     int state, error;
     uint8_t host_identity; /* 0 unknown, 1 controller matches imported host, 2 mismatch */
+    uint8_t controller_hci_version;
+    uint16_t controller_manufacturer, controller_revision, controller_subversion;
     uint32_t rx_packets, tx_packets;
     uint32_t rx_acl, tx_acl;
     nova_bt_pad pad[2];

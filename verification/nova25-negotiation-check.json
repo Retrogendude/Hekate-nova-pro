@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "logs": [
+    {
+      "mode": "control-timeout",
+      "output": "PASS: HID control timeout is recorded as 0x69 with channel 0x0011"
+    },
+    {
+      "mode": "interrupt-timeout",
+      "output": "PASS: interrupt timeout closes the established control channel before retry"
+    },
+    {
+      "mode": "wrong-key",
+      "output": "PASS: reversed key reproduces hardware authentication 05 and ACL 0/0"
+    },
+    {
+      "mode": "wrong-host",
+      "output": "PASS: controller identity mismatch stops before authentication; no addresses logged"
+    },
+    {
+      "mode": "ssp-sc",
+      "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "incoming",
+      "output": "PASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "incoming-collision",
+      "output": "PASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "encryption-timeout",
+      "output": "PASS: incoming auth succeeds then encryption 08/disconnect 08; evidence survives repeated Stop; no inputs leak"
+    },
+    {
+      "mode": "stalled-first",
+      "output": "PASS: a pending first connection prevents a concurrent second HCI Create Connection"
+    },
+    {
+      "mode": "outgoing",
+      "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "sdp-baseline",
+      "output": "PASS: descriptor-query path reproduces 0x69 when the SDP channel does not answer"
+    }
+  ],
+  "old_policy_failures": [
+    {
+      "mode": "incoming",
+      "expected_assertion": "a[6]==0"
+    },
+    {
+      "mode": "stalled-first",
+      "expected_assertion": "!stall_first"
+    }
+  ],
+  "physical_radio": false,
+  "source_sha256": {
+    "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
+    "bluetooth/nova_bt.h": "0f8304cc2093da5f9678976ddffbc17a160a1a8c0dddd99e8892f3c63f0cbdb5",
+    "bluetooth/nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
+    "bluetooth/nova_bt_radio.c": "bee7821707cac692c85317a4c8bfa87316ec3ef79a2f92f2aa2ed19e66c578a2",
+    "bluetooth/nova_bt_stack.c": "e1ad2f95bae0c5d93bfb193d3364c814abd4cbd19319fb19aee24d89989b2ae3",
+    "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
+  },
+  "hid_host_sha256": "50699e1dc20a82797ed0aac125678448d1b9d4656158bf578a47c553008d029f"
+}

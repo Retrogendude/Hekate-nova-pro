@@ -79,13 +79,17 @@ static bool save_report(void)
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 length=strlen(buffer);
+    s_printf(buffer+length,"Controller: HCI=%02X revision=%04X manufacturer=%04X subversion=%04X\n",
+        s->controller_hci_version,s->controller_revision,s->controller_manufacturer,s->controller_subversion);
+    length=strlen(buffer);
     for(unsigned side=0;side<2;side++){
         const nova_bt_pad *p=&s->pad[side];
-        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X\n",
-            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error);
+        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X\n",
+            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error,p->auth_seen,
+            p->encryption_error,p->encryption_seen,p->encrypted,p->disconnect_reason,p->role);
         length=strlen(buffer);
     }
-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity\n");
+    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role)\n");
     length=strlen(buffer);
     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;
