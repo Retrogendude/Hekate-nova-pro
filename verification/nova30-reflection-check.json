@@ -1,0 +1,565 @@
+{
+  "platform": "native host LVGL; substituted hardware; no console FPS claim",
+  "results": [
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 6,
+      "peak": 32,
+      "frames": 256,
+      "full_frames": 5,
+      "max_pixels": 921600,
+      "total_pixels": 8073993,
+      "variant": "before",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 129,
+      "full_frames": 4,
+      "max_pixels": 921600,
+      "total_pixels": 5404041,
+      "variant": "before",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 84,
+      "full_frames": 3,
+      "max_pixels": 921600,
+      "total_pixels": 3798853,
+      "variant": "before",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 6,
+      "peak": 32,
+      "frames": 256,
+      "full_frames": 5,
+      "max_pixels": 921600,
+      "total_pixels": 6106329,
+      "variant": "before",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 129,
+      "full_frames": 4,
+      "max_pixels": 921600,
+      "total_pixels": 4429120,
+      "variant": "before",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 84,
+      "full_frames": 3,
+      "max_pixels": 921600,
+      "total_pixels": 3225298,
+      "variant": "before",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 256,
+      "full_frames": 3,
+      "max_pixels": 921600,
+      "total_pixels": 4946025,
+      "variant": "before",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 129,
+      "full_frames": 4,
+      "max_pixels": 921600,
+      "total_pixels": 4746427,
+      "variant": "before",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 428,
+      "overflow": 4,
+      "peak": 32,
+      "frames": 84,
+      "full_frames": 3,
+      "max_pixels": 921600,
+      "total_pixels": 3416943,
+      "variant": "before",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 1,
+        "overflow": 1
+      }
+    },
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 256,
+      "full_frames": 0,
+      "max_pixels": 143392,
+      "total_pixels": 3868461,
+      "variant": "fixed",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 129,
+      "full_frames": 0,
+      "max_pixels": 172745,
+      "total_pixels": 2175204,
+      "variant": "fixed",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 84,
+      "full_frames": 0,
+      "max_pixels": 132807,
+      "total_pixels": 1261931,
+      "variant": "fixed",
+      "scene": "home",
+      "pixels": [
+        [
+          "0",
+          "f4617a04"
+        ],
+        [
+          "5",
+          "6b09bd7e"
+        ],
+        [
+          "16",
+          "fcec2304"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 256,
+      "full_frames": 0,
+      "max_pixels": 38736,
+      "total_pixels": 1605560,
+      "variant": "fixed",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 129,
+      "full_frames": 0,
+      "max_pixels": 40454,
+      "total_pixels": 853696,
+      "variant": "fixed",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 84,
+      "full_frames": 0,
+      "max_pixels": 36967,
+      "total_pixels": 533951,
+      "variant": "fixed",
+      "scene": "tools",
+      "pixels": [
+        [
+          "0",
+          "62ded70f"
+        ],
+        [
+          "5",
+          "a534543b"
+        ],
+        [
+          "16",
+          "36fbd00f"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 33,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 256,
+      "full_frames": 0,
+      "max_pixels": 64351,
+      "total_pixels": 2306984,
+      "variant": "fixed",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 66,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 129,
+      "full_frames": 0,
+      "max_pixels": 69155,
+      "total_pixels": 1236478,
+      "variant": "fixed",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    },
+    {
+      "refresh": 100,
+      "elapsed": 8480,
+      "phase": 432,
+      "overflow": 0,
+      "peak": 28,
+      "frames": 84,
+      "full_frames": 0,
+      "max_pixels": 58942,
+      "total_pixels": 765098,
+      "variant": "fixed",
+      "scene": "carousel",
+      "pixels": [
+        [
+          "0",
+          "99120805"
+        ],
+        [
+          "5",
+          "4606809e"
+        ],
+        [
+          "16",
+          "8ac5c505"
+        ]
+      ],
+      "crowded": {
+        "queue": 30,
+        "overflow": 0
+      }
+    }
+  ],
+  "production_source_sha256": "3244a4f5cde0eae28b6cc7ffcbf358a6a678f037af49a7eb8f8f8868610c99a9",
+  "passed": true
+}

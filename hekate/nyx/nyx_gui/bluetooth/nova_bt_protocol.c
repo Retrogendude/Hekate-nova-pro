@@ -4,6 +4,14 @@ static int nonzero(const uint8_t *p, unsigned n)
 { unsigned v=0; while(n--) v |= *p++; return v!=0; }
 static void observe(nova_bt_pad *p,uint32_t now)
 {if(!p->reports)p->first_report_ms=now;p->buttons_seen|=p->buttons;p->reports++;}
+static void buttons_update(nova_bt_pad *p,uint32_t buttons,uint32_t now)
+{
+    uint32_t rising=buttons&~p->buttons;
+    p->pending_buttons|=rising;
+    for(unsigned bit=0;rising;bit++,rising>>=1)
+        if(rising&1)p->pressed_ms[bit]=now;
+    p->buttons=buttons;
+}
 int nova_bt_validate_peers(const nova_bt_peer p[2])
 {
     int count=0;
@@ -67,12 +75,12 @@ int nova_bt_decode(nova_bt_pad *p, unsigned side, const uint8_t *r, unsigned n, 
         static const int8_t y[9]={0,-1,-1,-1,0,1,1,1,0};
         int sign=side?-1:1;
         p->x=2048+sign*x[r[3]]*1024;p->y=2048+sign*y[r[3]]*1024;
-        p->buttons=buttons;p->updated=now;p->connected=1;p->report_id=0x3f;observe(p,now);
+        buttons_update(p,buttons,now);p->updated=now;p->connected=1;p->report_id=0x3f;observe(p,now);
         return 1;
     }
     if(n<13||(r[0]!=0x30&&r[0]!=0x21)) return 0;
     uint32_t buttons=r[3]|((uint32_t)r[4]<<8)|((uint32_t)r[5]<<16);
-    p->buttons=buttons & (side?0x0016ffu:0xff2900u);
+    buttons_update(p,buttons & (side?0x0016ffu:0xff2900u),now);
     unsigned at=side?9:6;
     p->x=r[at]|((r[at+1]&15)<<8);p->y=(r[at+1]>>4)|(r[at+2]<<4);
     p->battery=(r[2]>>4)&0xf;p->updated=now;p->connected=1;p->report_id=r[0];observe(p,now);

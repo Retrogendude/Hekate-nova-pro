@@ -15,6 +15,8 @@ static nova_bt_status status;
 static nova_bt_peer peers[2];
 static int initialized, failure;
 static uint32_t started, tx_started, rx_started;
+static uint32_t poll_started_us;
+static uint8_t have_poll_started;
 static uint8_t tx[1030], rx[1030];
 static unsigned tx_len, tx_pos, rx_len, rx_need, rx_header;
 static uint8_t rx_type;
@@ -151,7 +153,7 @@ static int key_next(btstack_link_key_iterator_t *it,bd_addr_t addr,link_key_t ke
 static void key_done(btstack_link_key_iterator_t *it){(void)it;}
 static const btstack_link_key_db_t keys={noop,key_local,noop,key_get,key_put,key_delete,key_iter,key_next,key_done};
 
-static void clear_pad(unsigned i){status.pad[i].connected=0;status.pad[i].buttons=0;status.pad[i].x=status.pad[i].y=2048;}
+static void clear_pad(unsigned i){status.pad[i].connected=0;status.pad[i].buttons=status.pad[i].pending_buttons=0;status.pad[i].x=status.pad[i].y=2048;}
 static int side_cid(uint16_t cid)
 {for(unsigned i=0;i<2;i++)if(cid&&link[i].cid==cid)return i;return -1;}
 static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
@@ -294,6 +296,20 @@ static void input_byte(uint8_t value)
     }
 }
 const nova_bt_status *nova_bt_get_status(void){return &status;}
+uint32_t nova_bt_take_buttons(unsigned side)
+{
+    if(side>=2)return 0;
+    nova_bt_pad *p=&status.pad[side];uint32_t now=nova_bt_now(),buttons=0;
+    if(p->connected&&(uint32_t)(now-p->updated)<=500){
+        buttons=p->buttons;
+        uint32_t pending=p->pending_buttons;
+        for(unsigned bit=0;pending;bit++,pending>>=1)
+            if((pending&1)&&(uint32_t)(now-p->pressed_ms[bit])<=NOVA_BT_PRESS_LATCH_MS)
+                buttons|=1u<<bit;
+    }
+    p->pending_buttons=0;
+    return buttons;
+}
 void nova_bt_stop(void)
 {
     if(initialized){
@@ -303,6 +319,7 @@ void nova_bt_stop(void)
     }
     memset(peers,0,sizeof(peers));memset(link,0,sizeof(link));
     tx_len=rx_len=rx_need=rx_type=0;receive_packet=0;
+    have_poll_started=0;
     /* Release every live input but retain session evidence until next Start.
      * A second Stop/export must not turn an encryption failure into all zeros. */
     for(unsigned i=0;i<2;i++){clear_pad(i);status.pad[i].hid_open=0;status.pad[i].encrypted=0;}
@@ -340,12 +357,18 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
      * The foreground drains bursts with a quiet period; drawing uses a short
      * budget without waiting for a UART restart. An empty line returns now. */
     uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
+    if(have_poll_started){uint32_t gap=t0-poll_started_us;if(gap>status.poll_gap_max_us)status.poll_gap_max_us=gap;}
+    poll_started_us=t0;have_poll_started=1;
     for(unsigned n=0;n<2048&&!failure;){
-        int value=nova_bt_radio_read();uint32_t us=nova_bt_now_us();
+        int value=nova_bt_radio_read();
         if(value==-2){failure=4;break;}
-        if(value>=0){input_byte(value);bytes++;n++;last=us;}
+        if(value>=0){input_byte(value);bytes++;n++;}
+        /* Include packet callbacks in the same clock sample, without adding
+         * a timer read per byte. A callback cannot be preempted mid-packet. */
+        uint32_t us=nova_bt_now_us();
+        if(value>=0)last=us;
         else if(!bytes||(uint32_t)(us-last)>=quiet_us)break;
-        if((uint32_t)(us-t0)>=max_us)break;
+        if((uint32_t)(us-t0)>=max_us){status.rx_budget_hits++;break;}
     }
     status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
     if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
@@ -389,6 +412,11 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
         }
     }
     if(failure){int code=failure;nova_bt_stop();status.state=NOVA_BT_ERROR;status.error=code;}
+    /* One extra clock read per poll covers TX, callbacks, timers and teardown. */
+    uint32_t total=nova_bt_now_us()-t0;
+    if(total>status.poll_max_us)status.poll_max_us=total;
+    uint32_t *maximum=quiet_us?&status.poll_normal_max_us:&status.poll_fast_max_us;
+    if(total>*maximum)*maximum=total;
 }
 /* Drain long bursts once in the foreground, not for every display rectangle. */
 void nova_bt_poll(void){poll_budget(8000,2000);}

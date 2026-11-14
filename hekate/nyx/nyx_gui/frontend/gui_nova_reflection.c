@@ -11,6 +11,8 @@
 #define REFLECTION_CYCLE (REFLECTION_FIRST + REFLECTION_SWEEP + 250) /* Then 5 seconds. */
 #define REFLECTION_STRIPS 16
 #define REFLECTION_HALF 64
+/* Leave one entry for ordinary widgets in LVGL's 32-entry invalidation FIFO. */
+#define REFLECTION_QUEUE_LIMIT 31
 typedef struct {
     lv_obj_t *target,*overlay;
     lv_area_t dirty[REFLECTION_STRIPS];
@@ -20,7 +22,7 @@ typedef struct {
 static reflection_target reflection_targets[REFLECTION_TARGETS];
 static lv_task_t *reflection_task;
 static lv_signal_func_t reflection_base_signal;
-static u32 reflection_phase,reflection_pause_depth,reflection_interaction_tick;
+static u32 reflection_phase,reflection_pause_depth,reflection_interaction_tick,reflection_phase_tick,reflection_first_target;
 static bool reflection_interacting;
 static bool reflection_visible(lv_obj_t *target, lv_area_t *visible)
 {
@@ -109,8 +111,9 @@ static void reflection_invalidate(const reflection_target *target,const lv_area_
         if(lv_area_intersect(&clipped,&target->dirty[i],visible))lv_inv_area(&clipped);
     }
 }
-static void reflection_transition(const reflection_target *before,const reflection_target *after,const lv_area_t *visible)
+static u32 reflection_transition(const reflection_target *before,const reflection_target *after,const lv_area_t *visible,bool invalidate)
 {
+    u32 count=0;
     bool merged[REFLECTION_STRIPS]={false};
     for(u32 i=0;before->painted&&i<before->dirty_count;++i){
         lv_area_t area=before->dirty[i],clip;
@@ -120,20 +123,23 @@ static void reflection_transition(const reflection_target *before,const reflecti
             if(after->dirty[j].x2>area.x2)area.x2=after->dirty[j].x2;
             merged[j]=true;break;
         }
-        if(lv_area_intersect(&clip,&area,visible))lv_inv_area(&clip);
+        if(lv_area_intersect(&clip,&area,visible)){++count;if(invalidate)lv_inv_area(&clip);}
     }
     for(u32 j=0;after->painted&&j<after->dirty_count;++j)if(!merged[j]){
-        lv_area_t clip;if(lv_area_intersect(&clip,&after->dirty[j],visible))lv_inv_area(&clip);
+        lv_area_t clip;if(lv_area_intersect(&clip,&after->dirty[j],visible)){++count;if(invalidate)lv_inv_area(&clip);}
     }
+    return count;
 }
-static void reflection_border_invalidate(const reflection_target *target,const lv_area_t *visible)
+static u32 reflection_border_invalidate(const reflection_target *target,const lv_area_t *visible,bool invalidate)
 {
+    u32 count=0;
     lv_area_t c;lv_obj_get_coords(target->target,&c);
     const lv_area_t edges[]={
         {c.x1,c.y1,c.x2,c.y1+1},{c.x1,c.y2-1,c.x2,c.y2},
         {c.x1,c.y1+2,c.x1+7,c.y2-2},{c.x2-7,c.y1+2,c.x2,c.y2-2}
     };
-    for(u32 i=0;i<4;++i){lv_area_t clip;if(lv_area_intersect(&clip,&edges[i],visible))lv_inv_area(&clip);}
+    for(u32 i=0;i<4;++i){lv_area_t clip;if(lv_area_intersect(&clip,&edges[i],visible)){++count;if(invalidate)lv_inv_area(&clip);}}
+    return count;
 }
 
 static void reflection_border_draw(const reflection_target *target,const lv_area_t *coords,const lv_area_t *clip)
@@ -205,18 +211,34 @@ static lv_res_t reflection_signal(lv_obj_t *object,lv_signal_t signal,void *para
 static void reflection_frame(void *unused)
 {
     (void)unused;if(reflection_pause_depth||!n_cfg.nova_halo)return;
+    /* Advance by wall time even when a busy refresh cannot accept a phase.
+     * Rendering may skip intermediate phases, never slow the actual sweep. */
+    u32 steps=lv_tick_elaps(reflection_phase_tick)/REFLECTION_PERIOD;
+    reflection_phase+=steps;reflection_phase_tick+=steps*REFLECTION_PERIOD;
     if(reflection_interacting&&lv_tick_elaps(reflection_interaction_tick)<160)return;
-    reflection_interacting=false;++reflection_phase;
-    for(u32 i=0;i<REFLECTION_TARGETS;++i){
+    reflection_interacting=false;
+    u32 first=reflection_first_target;
+    reflection_first_target=(reflection_first_target+1)%REFLECTION_TARGETS;
+    for(u32 n=0;n<REFLECTION_TARGETS;++n){
+        u32 i=(first+n)%REFLECTION_TARGETS;
         reflection_target *target=&reflection_targets[i];if(!target->target)continue;
         lv_area_t visible;
         if(!reflection_visible(target->target,&visible)){target->painted=false;continue;}
-        reflection_target before=*target;
-        reflection_border_invalidate(target,&visible);
-        target->phase=reflection_phase;target->painted=reflection_sweeping(reflection_phase);
-        if(lv_obj_get_width(target->target)<100||lv_obj_get_height(target->target)<64)target->painted=false;
-        if(target->painted)reflection_bounds(target);
-        reflection_transition(&before,target,&visible);
+        reflection_target next=*target;
+        next.phase=reflection_phase;next.painted=reflection_sweeping(reflection_phase);
+        if(lv_obj_get_width(target->target)<100||lv_obj_get_height(target->target)<64)next.painted=false;
+        if(next.painted)reflection_bounds(&next);
+        /* Preflight the complete old/new transition against the GLOBAL queue,
+         * including other widgets and earlier effects. LVGL only joins areas
+         * after insertion, so a second 20ms phase before its 33ms refresh used
+         * to overflow into a full-screen redraw. Never remove another widget's
+         * invalidations. Retain the painted state until its entire next phase
+         * fits; the next refresh then coalesces from that state to wall time. */
+        u32 count=reflection_border_invalidate(target,&visible,false)+reflection_transition(target,&next,&visible,false);
+        if(lv_refr_get_buf_size()+count>REFLECTION_QUEUE_LIMIT)continue;
+        reflection_border_invalidate(target,&visible,true);
+        reflection_transition(target,&next,&visible,true);
+        *target=next;
     }
 }
 void nyx_nova_reflect(lv_obj_t *object,bool selected)
@@ -238,14 +260,14 @@ void nyx_nova_reflect(lv_obj_t *object,bool selected)
     reflection_bounds(vacant);lv_obj_set_free_ptr(overlay,vacant);
     if(!reflection_base_signal)reflection_base_signal=lv_obj_get_signal_func(overlay);
     lv_obj_set_signal_func(overlay,reflection_signal);lv_obj_set_design_func(overlay,reflection_design);
-    if(!reflection_task)reflection_task=lv_task_create(reflection_frame,REFLECTION_PERIOD,LV_TASK_PRIO_LOWEST,NULL);
+    if(!reflection_task){reflection_phase_tick=lv_tick_get();reflection_task=lv_task_create(reflection_frame,REFLECTION_PERIOD,LV_TASK_PRIO_LOWEST,NULL);}
 }
 void nyx_nova_reflection_reset(void)
 {
     if(reflection_task)lv_task_del(reflection_task);
     reflection_task=NULL;
     for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].overlay)lv_obj_del(reflection_targets[i].overlay);
-    memset(reflection_targets,0,sizeof(reflection_targets));reflection_phase=reflection_pause_depth=0;reflection_interacting=false;
+    memset(reflection_targets,0,sizeof(reflection_targets));reflection_phase=reflection_pause_depth=reflection_first_target=0;reflection_phase_tick=lv_tick_get();reflection_interacting=false;
 }
 void nyx_nova_reflection_pause(bool pause)
 {
@@ -253,7 +275,7 @@ void nyx_nova_reflection_pause(bool pause)
     lv_area_t screen={0,0,LV_HOR_RES-1,LV_VER_RES-1};
     for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].target){
         if(reflection_targets[i].painted)reflection_invalidate(&reflection_targets[i],&screen);
-        reflection_border_invalidate(&reflection_targets[i],&screen);reflection_targets[i].painted=false;
+        reflection_border_invalidate(&reflection_targets[i],&screen,true);reflection_targets[i].painted=false;
     }
     if(reflection_task)lv_task_set_prio(reflection_task,reflection_pause_depth?LV_TASK_PRIO_OFF:LV_TASK_PRIO_LOWEST);
 }

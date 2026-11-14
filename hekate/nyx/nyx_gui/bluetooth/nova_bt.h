@@ -7,6 +7,8 @@ typedef struct {
 } nova_bt_peer;
 typedef struct {
     uint32_t buttons, updated;
+    /* Rising edges await one UI read; each expires independently. */
+    uint32_t pending_buttons, pressed_ms[24];
     uint16_t x, y;
     uint8_t connected, battery;
     uint8_t report_id, mode_ack, hid_open, last_error;
@@ -27,6 +29,8 @@ typedef struct {
     uint32_t rx_packets, tx_packets;
     uint32_t rx_acl, tx_acl;
     uint32_t rx_bytes, rx_polls, rx_max_us;
+    uint32_t poll_max_us, poll_fast_max_us, poll_normal_max_us, poll_gap_max_us;
+    uint32_t rx_budget_hits;
     nova_bt_pad pad[2];
 } nova_bt_status;
 typedef struct {uint32_t ms;uint16_t kind,a,b,c;} nova_bt_trace;
@@ -40,6 +44,10 @@ void nova_bt_stop(void);
 void nova_bt_poll(void);
 void nova_bt_poll_fast(void); /* No quiet wait; short RX budget while drawing. */
 const nova_bt_status *nova_bt_get_status(void);
+/* Consume once per side per UI read, including when wired input wins.
+ * Held buttons remain held; released short presses survive for at most 100 ms. */
+#define NOVA_BT_PRESS_LATCH_MS 100
+uint32_t nova_bt_take_buttons(unsigned side);
 /* Pure protocol helpers are exercised on the host as well as on ARM. */
 int nova_bt_decode(nova_bt_pad *pad, unsigned side, const uint8_t *report, unsigned len, uint32_t now);
 int nova_bt_validate_peers(const nova_bt_peer peers[2]);

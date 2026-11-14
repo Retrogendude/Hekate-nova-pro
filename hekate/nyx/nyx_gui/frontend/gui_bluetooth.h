@@ -7,5 +7,6 @@ void gui_bluetooth_shutdown(void);
 bool gui_bluetooth_active(void);
 void gui_bluetooth_poll(void);
 void gui_bluetooth_poll_fast(void);
+void gui_bluetooth_autostart(void);
 jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired);
 #endif

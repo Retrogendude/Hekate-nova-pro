@@ -116,6 +116,7 @@ static void _reloc_append(u32 payload_dst, u32 payload_src, u32 payload_size)
 
 lv_res_t launch_payload(lv_obj_t *list)
 {
+	void *buf = NULL;
 	const char *filename = lv_list_get_btn_text(list);
 
 	if (!filename || !filename[0])
@@ -129,21 +130,37 @@ lv_res_t launch_payload(lv_obj_t *list)
 	if (sd_mount())
 		goto out;
 
-	// Read payload.
-	u32 size = 0;
-	void *buf = sd_file_read(path, &size);
-	if (!buf)
+	// Validate before allocating so a refused file cannot consume the heap.
+	FIL file;
+	if (f_open(&file, path, FA_READ) != FR_OK)
 	{
 		EPRINTFARGS("Payload file is missing!\n(%s)", path);
 
 		goto out;
 	}
 
+	u32 size = f_size(&file);
 	// Check if it safely fits IRAM.
 	if (size > 0x30000)
 	{
+		f_close(&file);
 		EPRINTF("Payload is too big!");
 
+		goto out;
+	}
+	if (!size)
+	{
+		f_close(&file);
+		EPRINTF("Payload file is empty!");
+		goto out;
+	}
+	buf = malloc(size);
+	UINT received = 0;
+	FRESULT read_result = buf ? f_read(&file, buf, size, &received) : FR_NOT_ENOUGH_CORE;
+	FRESULT close_result = f_close(&file);
+	if (read_result != FR_OK || close_result != FR_OK || received != size)
+	{
+		EPRINTFARGS("Failed to read payload!\n(%s)", path);
 		goto out;
 	}
 
@@ -162,6 +179,7 @@ lv_res_t launch_payload(lv_obj_t *list)
 	(*payload_ptr)();
 
 out:
+	free(buf);
 	sd_unmount();
 
 	return LV_RES_OK;
@@ -406,10 +424,22 @@ static int nyx_load_resources()
 	if (res)
 		return res;
 
-	res = f_read(&fp, (void *)NYX_RES_ADDR, f_size(&fp), NULL);
-	f_close(&fp);
-
-	return res;
+	/* The last referenced font starts at 0x36E00 and has four 103x120
+	 * 8-bit glyphs (hekate_symbol_120.c). All referenced bytes must exist. */
+	u32 size = f_size(&fp);
+	if (size < 0x36E00 + 4 * 103 * 120 || size > NYX_RES_SZ)
+	{
+		f_close(&fp);
+		return FR_INVALID_OBJECT;
+	}
+	UINT received = 0;
+	res = f_read(&fp, (void *)NYX_RES_ADDR, size, &received);
+	FRESULT close_result = f_close(&fp);
+	if (res != FR_OK)
+		return res;
+	if (received != size)
+		return FR_INT_ERR;
+	return close_result;
 }
 
 static void nyx_load_bg_icons()

@@ -789,6 +789,8 @@ void manual_system_maintenance(bool refresh)
 			lv_refr_now();
 		return;
 	}
+	// Long storage/USB operations also service wireless input cooperatively.
+	gui_bluetooth_poll_fast();
 	for (u32 task_idx = 0; task_idx < (sizeof(system_maintenance_tasks_t) / sizeof(lv_task_t *)); task_idx++)
 	{
 		lv_task_t *task = system_tasks.tasks[task_idx];
@@ -2413,6 +2415,13 @@ static void _nyx_main_menu(lv_theme_t * th)
 		task_bpmp_clock = lv_task_create(first_time_bpmp_clock, 10000, LV_TASK_PRIO_LOWEST, NULL);
 }
 
+static void _joycon_boot_init(void *unused)
+{
+	(void)unused;
+	jc_init_hw();
+	gui_bluetooth_autostart();
+}
+
 void nyx_load_and_run()
 {
 	memset(&system_tasks, 0, sizeof(system_maintenance_tasks_t));
@@ -2433,7 +2442,7 @@ void nyx_load_and_run()
 	// Initialize Joy-Con.
 	if (!n_cfg.jc_disable)
 	{
-		lv_task_t *task_jc_init_hw = lv_task_create(jc_init_hw, LV_TASK_ONESHOT, LV_TASK_PRIO_LOWEST, NULL);
+		lv_task_t *task_jc_init_hw = lv_task_create(_joycon_boot_init, LV_TASK_ONESHOT, LV_TASK_PRIO_LOWEST, NULL);
 		lv_task_once(task_jc_init_hw);
 	}
 	lv_indev_drv_t indev_drv_jc;

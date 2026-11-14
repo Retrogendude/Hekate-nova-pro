@@ -536,6 +536,14 @@ static void _jc_rail_detect()
 	usleep(20);
 }
 
+int jc_get_attached_mask(void)
+{
+	if (!jc_init_done || jc_gamepad.sio_mode)
+		return -1;
+	_jc_rail_detect();
+	return (jc_l.detected ? 1 : 0) | (jc_r.detected ? 2 : 0);
+}
+
 static void _jc_conn_check()
 {
 	if (jc_gamepad.sio_mode)

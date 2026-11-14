@@ -6,6 +6,9 @@
 #include "../config.h"
 #include "../nova_version.h"
 static nova_bt_peer paired[2];
+static bool boot_checked;
+static u8 boot_status; /* 1 rails, 2 started, 3 no file, 4 disabled/Lite,
+                       * 5 detection unavailable, 6 already active, 7 failure. */
 static struct {u8 attempted,rail[2],record[2],hos[2],compatible,recognized[2],source;} import_info;
 static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[512];} ui;
 static void refresh(void)
@@ -33,6 +36,8 @@ static void tick(void *unused)
 }
 void gui_bluetooth_shutdown(void)
 {
+    /* A manual Stop or a diagnostic must not be undone by the boot task. */
+    boot_checked=true;
     nova_bt_stop();
     if(ui.task){lv_task_del(ui.task);ui.task=NULL;}
     refresh();
@@ -98,6 +103,7 @@ static bool save_report(void)
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 length=strlen(buffer);
+    s_printf(buffer+length,"Autostart=%d (1=rails 2=started 3=no-file 4=disabled 5=unknown 6=active 7=failed)\n",boot_status);length=strlen(buffer);
     s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d recognized=%d/%d source=%d (1=rails 2=SD)\n",
         import_info.attempted,import_info.rail[0],import_info.rail[1],import_info.record[0],import_info.record[1],
         import_info.hos[0],import_info.hos[1],import_info.compatible,import_info.recognized[0],import_info.recognized[1],import_info.source);length=strlen(buffer);
@@ -106,6 +112,8 @@ static bool save_report(void)
     length=strlen(buffer);
     s_printf(buffer+length,"RX bytes=%d polls=%d max_call_us=%d; profile=HWTest-RCM BR/sniff/QoS\n",
         (int)s->rx_bytes,(int)s->rx_polls,(int)s->rx_max_us);length=strlen(buffer);
+    s_printf(buffer+length,"Poll total_max_us=%d fast_max_us=%d normal_max_us=%d gap_max_us=%d RX_budget_hits=%d\n",
+        (int)s->poll_max_us,(int)s->poll_fast_max_us,(int)s->poll_normal_max_us,(int)s->poll_gap_max_us,(int)s->rx_budget_hits);length=strlen(buffer);
     for(unsigned side=0;side<2;side++){
         const nova_bt_pad *p=&s->pad[side];
         s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X BR_ONLY=%d MODE=%d SEEN=%d\n",
@@ -143,7 +151,7 @@ static bool save_report(void)
 }
 static lv_res_t stop(lv_obj_t *button)
 {
-    (void)button;bool had_trace=nova_bt_trace_count()!=0||import_info.attempted;
+    (void)button;bool had_trace=nova_bt_trace_count()!=0||import_info.attempted||boot_status;
     bool saved=had_trace&&save_report();gui_bluetooth_shutdown();
     if(had_trace){strcpy(ui.note,nyx_tr(saved?"Bluetooth report saved: bootloader/bluetooth/last-session.txt":"Bluetooth stopped. Report could not be saved."));refresh();}
     return LV_RES_OK;
@@ -229,6 +237,27 @@ lv_res_t gui_bluetooth_open(lv_obj_t *button)
     for(unsigned i=0;i<6;i++)nyx_nova_action(scrl,titles[i],NULL,icons[i],actions[i],i==3,24+(i%3)*(width+12),318+(i/3)*88,width,76);
     refresh();return LV_RES_OK;
 }
+void gui_bluetooth_autostart(void)
+{
+    if(boot_checked)return;
+    boot_checked=true;
+    if(n_cfg.jc_disable||fuse_read_hw_type()==FUSE_NX_HW_TYPE_HOAG){boot_status=4;return;}
+    int attached=jc_get_attached_mask();
+    if(attached<0){boot_status=5;return;}
+    if(attached){boot_status=1;return;}
+    const nova_bt_status *s=nova_bt_get_status();
+    if(s->state==NOVA_BT_STARTING||s->state==NOVA_BT_READY){boot_status=6;return;}
+    if(!pairing_file(false)){boot_status=3;return;}
+    /* Recheck after SD I/O: a newly attached controller always wins. */
+    attached=jc_get_attached_mask();
+    if(attached){
+        memset(paired,0,sizeof(paired));memset(&import_info,0,sizeof(import_info));
+        boot_status=attached<0?5:1;return;
+    }
+    s_printf(ui.note,"%s\n%s : %d / 2",nyx_tr("Saved pairing loaded. Bluetooth starts automatically."),nyx_tr("Pairing records imported"),nova_bt_validate_peers(paired));
+    start(NULL);
+    s=nova_bt_get_status();boot_status=(s->state==NOVA_BT_STARTING||s->state==NOVA_BT_READY)?2:7;
+}
 jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired)
 {
     static jc_gamepad_rpt_t merged;
@@ -239,10 +268,11 @@ jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired)
     }
     for(unsigned i=0;i<2;i++){
         const nova_bt_pad *p=&s->pad[i];
+        u32 buttons=nova_bt_take_buttons(i);
         if(!p->connected||(u32)(get_tmr_ms()-p->updated)>500)continue;
         if(i?!merged.conn_r:!merged.conn_l){
             u32 mask=i?0x0016ff:0xff2900;
-            merged.buttons=(merged.buttons&~mask)|p->buttons;
+            merged.buttons=(merged.buttons&~mask)|buttons;
             if(i){merged.conn_r=true;merged.rstick_x=p->x;merged.rstick_y=p->y;merged.batt_info_r=p->battery;}
             else{merged.conn_l=true;merged.lstick_x=p->x;merged.lstick_y=p->y;merged.batt_info_l=p->battery;}
         }
