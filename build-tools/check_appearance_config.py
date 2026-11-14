@@ -24,7 +24,7 @@ config_type=re.search(r'typedef struct _nyx_config\s*\{.*?\} nyx_config;',HEADER
 constants='\n'.join(re.findall(r'^#define HOME_LAYOUT_\w+[^\n]*',HEADER,re.M)+
     re.findall(r'^#define I18N_\w+[^\n]*',LOCALE,re.M))
 body='\n'.join(function(SOURCE,name) for name in ('set_nyx_default_configuration',
-    'valid_font_basename','nyx_sanitize_appearance','appearance_number','nyx_appearance_key','create_nyx_config_entry'))
+    'valid_font_basename','valid_wallpaper_basename','nyx_sanitize_appearance','appearance_number','appearance_rgb','appearance_percent','nyx_appearance_key','create_nyx_config_entry'))
 body+='\n'+function(FONTS,'nyx_font_filename_valid')
 tests=r'''
 static void reset(void) {
@@ -119,7 +119,7 @@ int main(void) {
    n_cfg.background_effect=effect;n_cfg.background_speed=speed;n_cfg.background_opacity=opacity;
    u32 halo=(size/2+effect)&1;n_cfg.nova_halo=halo;
    n_cfg.language=I18N_RU;n_cfg.home_layout=HOME_LAYOUT_CAROUSEL;
-   require(create_nyx_config_entry(false)==0&&writes==39,"all appearance combinations write all fields");
+   require(create_nyx_config_entry(false)==0&&writes==51,"all appearance combinations write all fields");
    set_nyx_default_configuration();load_written();
    require(!strcmp(n_cfg.font_file,roundtrip_names[font])&&n_cfg.font_size==size&&
     n_cfg.background_effect==effect&&n_cfg.background_speed==speed&&n_cfg.background_opacity==opacity&&n_cfg.nova_halo==halo,"actual INI appearance roundtrip");++cases;

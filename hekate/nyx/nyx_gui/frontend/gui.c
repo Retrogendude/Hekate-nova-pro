@@ -1018,7 +1018,7 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 	lv_win_set_style(win, LV_WIN_STYLE_BG, &win_bg_style);
 	/* The persistent status bar lives on the top layer. Keep the window's
 	 * page inside it, rather than drawing/scrolling controls behind the bar. */
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES - LV_DPI * 9 / 14);
+	nyx_nova_window(win);
 	lv_win_ext_t *content = lv_obj_get_ext_attr(win);
 	lv_page_set_style(content->page, LV_PAGE_STYLE_BG, &lv_style_transp_tight);
 	lv_page_set_style(content->page, LV_PAGE_STYLE_SCRL, &lv_style_transp_tight);
@@ -1336,8 +1336,8 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
 	btn_onoff_rel_hos_style.body.padding.hor = 0;
-	btn_onoff_rel_hos_style.body.radius = 10;
-	btn_onoff_rel_hos_style.body.empty = 1;
+	btn_onoff_rel_hos_style.body.radius = 8;
+	btn_onoff_rel_hos_style.body.empty = 0;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
 	if (transparent)
@@ -1349,7 +1349,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT.
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
-	btn_onoff_pr_hos_style.body.empty = 1;
+	btn_onoff_pr_hos_style.body.empty = 0;
 	btn_onoff_pr_hos_style.body.border.width = 2;
 	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
@@ -1388,9 +1388,9 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 	lv_style_copy(&btn_onoff_rel_hos_style, th->btn.rel);
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
-	btn_onoff_rel_hos_style.body.radius = 10;
+	btn_onoff_rel_hos_style.body.radius = 8;
 	btn_onoff_rel_hos_style.body.padding.hor = LV_DPI / 4;
-	btn_onoff_rel_hos_style.body.empty = 1;
+	btn_onoff_rel_hos_style.body.empty = 0;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
 	if (hekate_bg)
@@ -1402,7 +1402,7 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
-	btn_onoff_pr_hos_style.body.empty = 1;
+	btn_onoff_pr_hos_style.body.empty = 0;
 	btn_onoff_pr_hos_style.body.border.width = 2;
 	btn_onoff_pr_hos_style.body.border.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.border.opa = LV_OPA_COVER;
@@ -1424,80 +1424,9 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, action);
 }
 
-static void _create_tab_about(lv_theme_t * th, lv_obj_t * parent)
+static void _create_tab_about(lv_theme_t *th,lv_obj_t *parent)
 {
-	lv_obj_t * lbl_credits = lv_label_create(parent, NULL);
-
-	lv_obj_align(lbl_credits, NULL, LV_ALIGN_IN_TOP_LEFT, LV_DPI / 2, LV_DPI / 2);
-	lv_label_set_style(lbl_credits, &monospace_text);
-	lv_label_set_recolor(lbl_credits, true);
-	lv_label_set_static_text(lbl_credits,
-		"#C7EA46 hekate# (c) 2018,      #C7EA46 naehrwert#, #C7EA46 st4rk#\n"
-		"       (c) 2018-2026, #C7EA46 CTCaer#\n"
-		"\n"
-		"#C7EA46 Nyx#    (c) 2019-2026, #C7EA46 CTCaer#\n"
-		"\n"
-		"Thanks to: #00CCFF derrek, nedwill, plutoo, #\n"
-		"           #00CCFF shuffle2, smea, thexyz, yellows8 #\n"
-		"\n"
-		"Greetings to: fincs, hexkyz, SciresM,\n"
-		"              Shiny Quagsire, WinterMute\n"
-		"\n"
-		"Open source and free packages used:                    \n" // Label width alignment padding.
-		" - Littlev Graphics Library,\n"
-		"   Copyright (c) 2016-2018, Gabor Kiss-Vamosi\n\n"
-		" - FatFs R0.13c,\n"
-		"   Copyright (c) 2006-2018, ChaN\n"
-		"   Copyright (c) 2018-2022, CTCaer\n\n"
-		" - bcl-1.2.0,\n"
-		"   Copyright (c) 2003-2006, Marcus Geelnard\n\n"
-		" - blz,\n"
-		"   Copyright (c) 2018, SciresM\n\n"
-		" - elfload,\n"
-		"   Copyright (c) 2014, Owen Shepherd\n"
-		"   Copyright (c) 2018, M4xw"
-	);
-
-	lv_obj_t * lbl_octopus = lv_label_create(parent, NULL);
-	lv_obj_align(lbl_octopus, lbl_credits, LV_ALIGN_OUT_RIGHT_TOP, -LV_DPI / 10, 0);
-	lv_label_set_style(lbl_octopus, &monospace_text);
-	lv_label_set_recolor(lbl_octopus, true);
-
-	lv_label_set_static_text(lbl_octopus,
-		"\n#00CCFF                          ___#\n"
-		"#00CCFF                       .-'   `'.#\n"
-		"#00CCFF                      /         \\#\n"
-		"#00CCFF                      |         ;#\n"
-		"#00CCFF                      |         |           ___.--,#\n"
-		"#00CCFF             _.._     |0) = (0) |    _.---'`__.-( (_.#\n"
-		"#00CCFF      __.--'`_.. '.__.\\    '--. \\_.-' ,.--'`     `\"\"`#\n"
-		"#00CCFF     ( ,.--'`   ',__ /./;   ;, '.__.'`    __#\n"
-		"#00CCFF     _`) )  .---.__.' / |   |\\   \\__..--\"\"  \"\"\"--.,_#\n"
-		"#00CCFF    `---' .'.''-._.-'`_./  /\\ '.  \\ _.--''````'''--._`-.__.'#\n"
-		"#00CCFF          | |  .' _.-' |  |  \\  \\  '.               `----`#\n"
-		"#00CCFF           \\ \\/ .'     \\  \\   '. '-._)#\n"
-		"#00CCFF            \\/ /        \\  \\    `=.__`'-.#\n"
-		"#00CCFF            / /\\         `) )    / / `\"\".`\\#\n"
-		"#00CCFF      , _.-'.'\\ \\        / /    ( (     / /#\n"
-		"#00CCFF       `--'`   ) )    .-'.'      '.'.  | (#\n"
-		"#00CCFF              (/`    ( (`          ) )  '-;    ##00FFCC [switchbrew]#\n"
-		"#00CCFF               `      '-;         (-'#"
-	);
-
-	lv_obj_t *hekate_img = lv_img_create(parent, NULL);
-	lv_img_set_src(hekate_img, &hekate_logo);
-	lv_obj_align(hekate_img, lbl_octopus, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 2 / 3);
-
-	lv_obj_t *ctcaer_img = lv_img_create(parent, NULL);
-	lv_img_set_src(ctcaer_img, &ctcaer_logo);
-	lv_obj_align(ctcaer_img, lbl_octopus, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI * 2 / 3);
-
-	char version[32];
-	s_printf(version, "Nyx %s%d.%d.%d%c", NYX_VER_RL ? "v" : "", NYX_VER_MJ, NYX_VER_MN, NYX_VER_HF, NYX_VER_RL > 'A' ? NYX_VER_RL : 0);
-	lv_obj_t * lbl_ver = lv_label_create(parent, NULL);
-	lv_obj_align(lbl_ver, ctcaer_img, LV_ALIGN_OUT_BOTTOM_RIGHT, -LV_DPI / 20, LV_DPI / 4);
-	lv_label_set_style(lbl_ver, &monospace_text);
-	lv_label_set_text(lbl_ver, version);
+    (void)th;nyx_nova_about(parent);
 }
 
 static void _update_status_bar(void *params)
@@ -1538,7 +1467,7 @@ static void _update_status_bar(void *params)
 	nyx_nova_battery((batt_percent >> 8) & 0xFF, charge_status != 0);
 
 	lv_label_set_text(status_bar.battery, label);
-	lv_obj_realign(status_bar.battery);
+	lv_obj_set_pos(status_bar.battery, 1174, 24);
 
 	// Set battery current draw and voltage.
 	s_printf(label, "#%s%d", batt_curr >= 0 ? "96FF00 +" : "FF3C28 ", batt_curr / 1000);
@@ -1679,7 +1608,7 @@ static lv_obj_t *create_window_launch(const char *win_title)
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
 
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES);
+	nyx_nova_window(win);
 
 	if (n_cfg.home_screen && !launch_bg_done && hekate_bg)
 	{
@@ -2260,7 +2189,7 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	monospace_text.body.border.color = COLOR_HOS_BG_DARKER;
 	monospace_text.body.border.width = 0;
 	monospace_text.body.opa = LV_OPA_TRANSP;
-	monospace_text.text.color = LV_COLOR_HEX(0xD8D8D8);
+	monospace_text.text.color = nyx_nova_color(NOVA_COLOR_TEXT);
 	monospace_text.text.font = nyx_font_mono();
 	monospace_text.text.letter_space = 0;
 	monospace_text.text.line_space = 0;
@@ -2421,6 +2350,8 @@ static void _nyx_main_menu(lv_theme_t * th)
 	lv_obj_t *tab_diag = lv_tabview_add_tab(tv, SYMBOL_CHIP" Diagnostic");
 	create_tab_diagnostics(th, tab_diag);
 	nyx_nova_navigation(scr, tv, version, _create_nova_quick_actions);
+	lv_action_t quick_actions[] = {create_win_nyx_options, _create_mbox_reload, _create_mbox_reboot, _create_mbox_poweroff};
+	nyx_nova_quick_actions(quick_actions);
 
 	lv_tabview_set_tab_act(tv, 1, false);
 
@@ -2505,7 +2436,8 @@ void nyx_load_and_run()
 	tmp451_init();
 
 	// Set hekate theme based on chosen hue.
-	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, (lv_font_t *)nyx_font_regular());
+	lv_theme_hekate_set_colors(n_cfg.nova_text_color, n_cfg.nova_border_color, n_cfg.nova_reflection_color, n_cfg.nova_menu_opacity);
+	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, (lv_font_t *)nyx_font_ui(20));
 	lv_theme_set_current(th);
 
 	// Create main menu

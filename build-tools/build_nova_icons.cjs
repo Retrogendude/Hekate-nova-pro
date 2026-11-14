@@ -20,7 +20,7 @@ const entries=[];
 for(const name of names){
  const nodes=name==='brand-mark'?[]:lucide.icons[pascal(name)];
  if(!nodes)throw Error('Missing Lucide icon: '+name);
- const svg=name==='brand-mark'?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="white" transform="rotate(-12 12 12)"><rect x="5" y="1" width="5" height="10" rx="1"/><rect x="13" y="1" width="5" height="10" rx="1"/><rect x="5" y="14" width="5" height="10" rx="1"/><rect x="13" y="14" width="5" height="10" rx="1"/></g></svg>':`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${nodes.map(nodeSvg).join('')}</svg>`;
+ const svg=name==='brand-mark'?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3.8 12 1.7 2.8 6.8v10.4l9.2 5.1 9.2-5.1V9.3"/><path d="M7.3 16V8l9.4 8V8"/><path d="m20.2 1.4.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z" fill="white" stroke="none"/></svg>':`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${nodes.map(nodeSvg).join('')}</svg>`;
  fs.writeFileSync(path.join(target,name+'.svg'),svg);
  for(const size of [18,24,40]){
   const png=await sharp(Buffer.from(svg),{density:192}).resize(size,size).png().toBuffer();

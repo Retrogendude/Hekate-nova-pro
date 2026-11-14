@@ -54,5 +54,8 @@
     "rotate-ccw",
     "x",
     "brand-mark"
+  ],
+  "customIcons": [
+    "brand-mark"
   ]
 }

@@ -18,7 +18,7 @@ def function(name):
 
 defaults = function('set_nyx_default_configuration')
 writer = function('create_nyx_config_entry')
-appearance_helpers = function('valid_font_basename') + '\n' + function('nyx_sanitize_appearance')
+appearance_helpers = function('valid_font_basename') + '\n' + function('valid_wallpaper_basename') + '\n' + function('nyx_sanitize_appearance')
 config_type = re.search(r'typedef struct _nyx_config\s*\{.*?\} nyx_config;', header, re.S).group()
 layout_macros = '\n'.join(re.findall(r'^#define HOME_LAYOUT_\w+\s+\d+', header, re.M))
 language_macros = '\n'.join(re.findall(r'^#define I18N_\w+\s+\d+', localization_header, re.M))
@@ -76,6 +76,7 @@ static char *test_itoa(unsigned value, char *output, int base) {
     return output;
 }
 #define itoa test_itoa
+#define s_printf sprintf
 '''
 
 tests = r'''
@@ -122,12 +123,12 @@ int main(void) {
             "[config]\nthemebg=1a2b3c\nthemecolor=173\nentries5col=1\ntimeoffset=1234abcd"
             "\ntimedst=1\nhomescreen=3\nhome_layout=%u\nverification=2\numsemmcrw=1"
             "\njcdisable=0\njcforceright=1\nbpmpclock=5\nlanguage=%u"
-            "\nfont_file=Readable.nyxf\nfont_size=36\nbackground_effect=3\nbackground_speed=1\nbackground_opacity=50\nnova_halo=1\n", layout, I18N_RU);
+            "\nfont_file=Readable.nyxf\nfont_size=36\nbackground_effect=3\nbackground_speed=1\nbackground_opacity=50\nnova_halo=1\nnova_text_color=F2F5FA\nnova_border_color=334050\nnova_reflection_color=55C9F1\nnova_menu_opacity=100\nnova_icon_opacity=100\nwallpaper_file=\n", layout, I18N_RU);
         require(!strcmp(written, expected), "exact full configuration and bases");
         require(closes == 1 && unmounts == 1 && !mounted, "success cleanup");
         require(n_cfg.home_layout == layout, "valid layout remains chosen");
         require(n_cfg.language == I18N_RU, "valid language remains chosen independently");
-        require(writes == 39, "all 39 configuration writes execute");
+        require(writes == 51, "all 51 configuration writes execute");
         successful_writes = writes; cases++;
     }
     unsigned invalid_language[] = {I18N_LANGUAGE_COUNT, 17, UINT32_MAX};

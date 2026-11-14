@@ -23,6 +23,7 @@
 
 #include "config.h"
 #include "gfx/logos.h"
+#include <display/nova_splash.h>
 #include "gfx/tui.h"
 #include "hos/hos.h"
 #include "hos/secmon_exo.h"
@@ -579,13 +580,15 @@ out:
 
 static void _nyx_load_run()
 {
+	render_static_bootlogo();
+	nova_splash_progress(gfx_ctxt.fb,2,10);
 	u8 *nyx = sd_file_read("bootloader/sys/nyx.bin", NULL);
 	if (!nyx)
 		return;
 
 	sd_end();
 
-	render_static_bootlogo();
+	nova_splash_progress(gfx_ctxt.fb,8,35);
 	display_backlight_brightness(h_cfg.backlight, 1000);
 
 	// Check if Nyx version is old.
@@ -648,6 +651,7 @@ static void _nyx_load_run()
 	// Some cards (Sandisk U1), do not like a fast power cycle.
 	sdmmc_storage_init_wait_sd();
 
+	nova_splash_progress(gfx_ctxt.fb,14,50);
 	void (*nyx_ptr)() = (void *)nyx;
 	(*nyx_ptr)();
 }

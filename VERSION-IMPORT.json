@@ -1,7 +1,7 @@
 {
-  "tag": "v10",
-  "source_archive": "hekate-6.5.4-nova-v10-sources.zip",
-  "source_archive_sha256": "e8854dc4e3011923b420a9d46ef2cafe3f81c13692e4f876e944327366e12966",
+  "tag": "v11",
+  "source_archive": "hekate-nova-pro-v11-sources.zip",
+  "source_archive_sha256": "9cec769005e5455834086c9b63a53c006167ac13ca7af13320503cf443060317",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",

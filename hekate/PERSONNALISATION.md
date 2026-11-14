@@ -1,3 +1,10 @@
+# Personnalisation actuelle — Nova Pro 11
+
+Consulter [NOVA-PRO-V11.md](NOVA-PRO-V11.md) pour les couleurs indépendantes, le fond d'écran fixe, les transparences, le reflet et les sous-menus. Le carrousel, les sept langues et les polices SD restent disponibles. Les vagues, particules et aurores sont supprimées ; leurs descriptions ci-dessous appartiennent à l'historique.
+
+---
+## Historique — personnalisation avant la version 11
+
 # Apparence, langues et lecture — Nova, version 10
 
 Ouvrir **Réglages** dans la navigation haute. Les codes de langue, la ligne

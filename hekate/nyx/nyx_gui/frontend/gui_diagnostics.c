@@ -150,6 +150,61 @@ static lv_res_t close_results(lv_obj_t *btn)
     return nyx_win_close_action(btn);
 }
 
+/* Stable pages of native Nova cards replace the long vertical probe lists. */
+static const char *const diagnostic_titles[NYX_DIAG_PROBE_COUNT]={
+    "Bilan général","SoC","Fusibles","KFUSE","PMIC","Régulateur CPU","Entrées/sorties PMIC","Alimentations","Tension 5 V","Batterie","Chargeur","USB-C Power Delivery","Températures","Ventilateur",
+    "Mémoire DRAM","Horloges","Stockage","Numéros de série","Partitions","Santé eMMC","Table GPT","Démarrage BOOT0","AutoRCM","Contenu de la carte SD","Erreurs de stockage","Lecteur de jeux",
+    "Bluetooth","Wi-Fi PCIe","Connexion Wi-Fi","Codec audio","Horloges audio","Test sonore","Dalle écran","Rétroéclairage","Écran tactile","Capteur de luminosité","Joy-Con","Boutons","GPIO","UART B","État de réinitialisation","Registres PMC"
+};
+typedef struct {
+    lv_cont_ext_t container;
+    u32 indices[NYX_DIAG_PROBE_COUNT],count,page;
+    bool results;
+    lv_obj_t *tiles,*position,*previous,*next;
+} diag_tiles_ext;
+
+static void diagnostic_tiles_fill(lv_obj_t *holder)
+{
+    diag_tiles_ext *ext=lv_obj_get_ext_attr(holder);
+    lv_obj_clean(ext->tiles);
+    int width=(lv_obj_get_width(holder)-24)/3,height=(lv_obj_get_height(ext->tiles)-24)/3;
+    for(u32 slot=0;slot<9&&ext->page*9+slot<ext->count;++slot){
+        u32 index=ext->indices[ext->page*9+slot];const nyx_diag_probe_t *probe=nyx_diag_probe(index);
+        char detail[192];
+        if(ext->results)s_printf(detail,"[%s] %s",state_name(probe->state),nyx_tr(probe->name));
+        else s_printf(detail,"%s",nyx_tr(probe->name));
+        nyx_nova_action(ext->tiles,diagnostic_titles[index],detail,"activity",ext->results?show_report:run_selection,
+            ext->results?index:ONE_PROBE|index,slot%3*(width+12),slot/3*(height+12),width,height);
+    }
+    char position[64];s_printf(position,nyx_tr("Page %d / %d"),ext->page+1,ext->count?(ext->count+8)/9:1);lv_label_set_text(ext->position,position);
+    lv_obj_set_click(ext->previous,ext->page>0);lv_btn_set_state(ext->previous,ext->page?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
+    bool next=(ext->page+1)*9<ext->count;lv_obj_set_click(ext->next,next);lv_btn_set_state(ext->next,next?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
+}
+static lv_res_t diagnostic_tiles_step(lv_obj_t *button)
+{
+    lv_obj_t *holder=lv_obj_get_free_ptr(button);diag_tiles_ext *ext=lv_obj_get_ext_attr(holder);
+    if(lv_obj_get_free_num(button)){if((ext->page+1)*9<ext->count)++ext->page;}else if(ext->page)--ext->page;
+    diagnostic_tiles_fill(holder);return LV_RES_OK;
+}
+static void diagnostic_tiles(lv_obj_t *win,u32 group,bool results)
+{
+    lv_win_ext_t *window=lv_obj_get_ext_attr(win);
+    lv_obj_t *holder=lv_cont_create(win,NULL);lv_cont_set_fit(holder,false,false);lv_cont_set_layout(holder,LV_LAYOUT_OFF);lv_cont_set_style(holder,&lv_style_transp_tight);
+    lv_obj_set_pos(holder,34,108);lv_obj_set_size(holder,1212,lv_obj_get_height(window->page)-122);
+    diag_tiles_ext *ext=lv_obj_allocate_ext_attr(holder,sizeof(*ext));if(!ext){lv_obj_del(holder);return;}
+    ext->count=ext->page=0;ext->results=results;
+    for(u32 i=results?0:1;i<NYX_DIAG_PROBE_COUNT;++i){const nyx_diag_probe_t *probe=nyx_diag_probe(i);if(probe&&(results?probe->state!=NYX_DIAG_NOT_RUN:!!(probe->group&group)))ext->indices[ext->count++]=i;}
+    ext->tiles=lv_cont_create(holder,NULL);lv_cont_set_fit(ext->tiles,false,false);lv_cont_set_layout(ext->tiles,LV_LAYOUT_OFF);lv_cont_set_style(ext->tiles,&lv_style_transp_tight);
+    lv_obj_set_size(ext->tiles,1212,lv_obj_get_height(holder)-58);lv_obj_set_pos(ext->tiles,0,0);
+    int y=lv_obj_get_height(holder)-46;
+    ext->previous=button(holder,"Precedent",0,y,200,diagnostic_tiles_step,0);
+    ext->next=button(holder,"Suivant",1012,y,200,diagnostic_tiles_step,1);
+    lv_obj_set_height(ext->previous,44);lv_obj_set_height(ext->next,44);
+    lv_obj_set_free_ptr(ext->previous,holder);lv_obj_set_free_ptr(ext->next,holder);
+    ext->position=nyx_nova_text(holder,"",300,y+12,612,NOVA_SMALL);lv_label_set_align(ext->position,LV_LABEL_ALIGN_CENTER);
+    diagnostic_tiles_fill(holder);
+}
+
 static void show_results(int result)
 {
     results_window = nyx_create_standard_window("Diagnostic - Derniere execution", close_results);
@@ -168,19 +223,9 @@ static void show_results(int result)
         result ? nyx_tr("Execution ou restauration incomplete. ") : "",
         nyx_diag_truncated() ? nyx_tr("Rapport tronque : consultez le marqueur de fin.") :
         nyx_tr("Les observations sans verdict ne constituent pas un test reussi."));
-    text(results_window, summary, 32, 16, 1180, true);
-    lv_obj_t *list = lv_list_create(results_window, NULL);
-    lv_obj_set_size(list, 1180, 440);
-    lv_obj_set_pos(list, 32, 108);
-    for (u32 i = 0; i < NYX_DIAG_PROBE_COUNT; i++) {
-        const nyx_diag_probe_t *p = nyx_diag_probe(i);
-        if (!p || p->state == NYX_DIAG_NOT_RUN) continue;
-        char row[512];
-        s_printf(row, "[%s] %s / %s", state_name(p->state), nyx_tr(p->name), p->function);
-        lv_obj_t *entry = lv_list_add(list, NULL, row, show_report);
-        lv_obj_set_free_num(entry, i);
-        lv_label_set_style(lv_list_get_btn_label(entry), &hint_small_style);
-    }
+    lv_obj_t *summary_label=text(results_window, summary, 34, 16, 1212, true);
+    nyx_nova_fit_text(summary_label,80);
+    diagnostic_tiles(results_window,0,true);
     if (!gui_diagnostics_inputs_ready())
         notice("Commandes tactiles", "La restauration du tactile a echoue.\nUtilisez les Joy-Con ou rechargez Nyx.");
 }
@@ -244,19 +289,7 @@ static lv_res_t show_group(lv_obj_t *btn)
     text(win, groups[index].groups == NYX_DIAG_G_SOUND ?
         "Un son est emis sur chaque sortie. Verifiez le resultat a l'ecoute." :
         groups[index].detail, 480, 32, 720, true);
-    lv_obj_t *list = lv_list_create(win, NULL);
-    lv_obj_set_size(list, 1180, 420);
-    lv_obj_set_pos(list, 32, 110);
-    for (u32 i = 1; i < NYX_DIAG_PROBE_COUNT; i++) {
-        const nyx_diag_probe_t *p = nyx_diag_probe(i);
-        if (p && (p->group & groups[index].groups)) {
-            char label[512];
-            s_printf(label, "%s / %s", nyx_tr(p->name), p->function);
-            lv_obj_t *entry = lv_list_add(list, NULL, label, run_selection);
-            lv_obj_set_free_num(entry, ONE_PROBE | i);
-            lv_label_set_style(lv_list_get_btn_label(entry), &hint_small_style);
-        }
-    }
+    diagnostic_tiles(win,groups[index].groups,false);
     return LV_RES_OK;
 }
 

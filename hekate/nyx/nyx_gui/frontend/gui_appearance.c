@@ -10,163 +10,19 @@
 #include <libs/lvgl/lv_misc/lv_math.h>
 #include <string.h>
 
-/* Keep animation below the menu viewport. One fixed drawing object replaces
- * moving lv_line children: their old/new invalidations overflowed LVGL's 32
- * entry FIFO and promoted small particle updates to whole-screen repaints.
- * Waves/aurora redraw one 64px strip; particles invalidate at most 16 tiny
- * rectangles. Input freezes the decorative frame until navigation settles. */
-#define FX_LINES 8
-#define FX_POINTS 17
-#define FX_BAND_HEIGHT 64
-#define FX_IDLE_MS 900
-#define FX_PERIOD_MS 100
-static struct {
-    lv_obj_t *holder;
-    lv_style_t styles[FX_LINES];
-    lv_point_t points[FX_LINES][FX_POINTS];
-    lv_task_t *task;
-    u32 phase, effect, speed, opacity, pause_depth, interaction_tick;
-    bool frame_ready, interaction_pending;
-    lv_signal_func_t original_signal;
-} background;
-
-static u32 bounded(u32 value, u32 low, u32 high, u32 fallback)
-{
-    return value >= low && value <= high ? value : fallback;
-}
-
-static u32 background_line_count(void)
-{
-    return background.effect == 2 ? FX_LINES : (background.effect == 3 ? 3 : 2);
-}
-
-static void background_particle_invalidate(u32 line)
-{
-    lv_area_t coordinates;
-    lv_obj_get_coords(background.holder, &coordinates);
-    lv_point_t first = background.points[line][0], last = background.points[line][1];
-    lv_area_t changed = {
-        coordinates.x1 + first.x - 3, coordinates.y1 + first.y - 3,
-        coordinates.x1 + last.x + 3, coordinates.y1 + last.y + 3
-    };
-    lv_inv_area(&changed);
-}
-
-static bool background_design(lv_obj_t *object, const lv_area_t *mask, lv_design_mode_t mode)
-{
-    if (mode == LV_DESIGN_COVER_CHK) return false;
-    if (mode != LV_DESIGN_DRAW_MAIN || !background.frame_ready) return true;
-    lv_area_t coordinates;
-    lv_obj_get_coords(object, &coordinates);
-    u32 points = background.effect == 2 ? 2 : FX_POINTS;
-    for (u32 line = 0; line < background_line_count(); ++line) {
-        for (u32 point = 1; point < points; ++point) {
-            lv_point_t first = background.points[line][point - 1];
-            lv_point_t last = background.points[line][point];
-            first.x += coordinates.x1; first.y += coordinates.y1;
-            last.x += coordinates.x1; last.y += coordinates.y1;
-            lv_draw_line(&first, &last, mask, &background.styles[line], LV_OPA_COVER);
-        }
-    }
-    return true;
-}
-
-static void background_frame(void *unused)
-{
-    (void)unused;
-    if (!background.holder || background.pause_depth || !background.effect) return;
-    if (background.interaction_pending) {
-        if (lv_tick_elaps(background.interaction_tick) < FX_IDLE_MS) return;
-        background.interaction_pending = false;
-    }
-    /* This uses unsigned elapsed ticks, including wraparound. No allocation,
-     * object movement or object-size updates happen in the frame callback. */
-    background.phase += background.speed;
-    for (u32 line = 0; line < background_line_count(); ++line) {
-        if (background.effect == 2) {
-            if (background.frame_ready) background_particle_invalidate(line);
-            u32 x = (line * 137 + background.phase * (line % 3 + 1)) % (LV_HOR_RES - 20);
-            u32 y = 8 + (line * 17 + background.phase / 3) % (FX_BAND_HEIGHT - 16);
-            background.points[line][0] = (lv_point_t){x, y};
-            background.points[line][1] = (lv_point_t){x + 4 + line % 3, y + 1};
-            background_particle_invalidate(line);
-        } else {
-            for (u32 point = 0; point < FX_POINTS; ++point) {
-                int angle = (point * (background.effect == 3 ? 19 : 15) + background.phase + line * 37) % 360;
-                int amplitude = background.effect == 3 ? 9 : 8;
-                int baseline = background.effect == 3 ? 12 + line * 18 : 17 + line * 27;
-                int x = point * (LV_HOR_RES - 1) / (FX_POINTS - 1);
-                int y = baseline + lv_trigo_sin(angle) * amplitude / LV_TRIGO_SIN_MAX;
-                background.points[line][point] = (lv_point_t){x, y};
-            }
-        }
-    }
-    background.frame_ready = true;
-    if (background.effect != 2) lv_obj_invalidate(background.holder);
-}
-
-static lv_res_t background_signal(lv_obj_t *object, lv_signal_t signal, void *param)
-{
-    lv_res_t result = background.original_signal(object, signal, param);
-    if (signal == LV_SIGNAL_CLEANUP) {
-        if (background.task) lv_task_del(background.task);
-        background.task = NULL; background.holder = NULL;
-    }
-    return result;
-}
-
-void nyx_background_create(lv_obj_t *screen)
-{
-    if (background.holder) lv_obj_del(background.holder);
-    memset(&background, 0, sizeof(background));
-    background.effect = n_cfg.background_effect < 4 ? n_cfg.background_effect : 0;
-    background.speed = bounded(n_cfg.background_speed, 1, 3, 2);
-    background.opacity = bounded(n_cfg.background_opacity, 10, 50, 20);
-    if (!background.effect) return;
-    background.holder = lv_obj_create(screen, NULL);
-    lv_obj_set_style(background.holder, &lv_style_transp);
-    lv_obj_set_size(background.holder, LV_HOR_RES, FX_BAND_HEIGHT);
-    lv_obj_set_pos(background.holder, 0, LV_VER_RES - FX_BAND_HEIGHT);
-    lv_obj_set_click(background.holder, false);
-    background.original_signal = lv_obj_get_signal_func(background.holder);
-    lv_obj_set_signal_func(background.holder, background_signal);
-    lv_obj_set_design_func(background.holder, background_design);
-    for (u32 line = 0; line < background_line_count(); ++line) {
-        lv_style_copy(&background.styles[line], &lv_style_plain);
-        background.styles[line].body.empty = 1;
-        background.styles[line].body.border.width = 0;
-        background.styles[line].line.width = background.effect == 3 ? 6 : 2;
-        background.styles[line].line.rounded = 0;
-        background.styles[line].line.opa = background.opacity * 255 / 100;
-        lv_color_t accent = lv_theme_get_current()->btn.pr->text.color;
-        background.styles[line].line.color = background.effect == 3 ?
-            lv_color_mix(accent, LV_COLOR_HEX(0x5878D8), 80 + line * 32) : accent;
-    }
-    background_frame(NULL);
-    background.task = lv_task_create(background_frame, FX_PERIOD_MS, LV_TASK_PRIO_LOWEST, NULL);
-}
-
-void nyx_background_pause(bool pause)
-{
-    if (pause) ++background.pause_depth;
-    else if (background.pause_depth) --background.pause_depth;
-    if (background.task)
-        lv_task_set_prio(background.task, background.pause_depth ? LV_TASK_PRIO_OFF : LV_TASK_PRIO_LOWEST);
-}
-
-void nyx_background_interaction(void)
-{
-    if (!background.holder) return;
-    background.interaction_tick = lv_tick_get();
-    background.interaction_pending = true;
-}
+/* Static wallpaper only. Compatibility hooks now control the selected-border
+ * reflection; waves, particles and aurora are removed from this build. */
+void nyx_background_create(lv_obj_t *screen) { nyx_nova_backdrop(screen, 0); }
+void nyx_background_pause(bool pause) { nyx_nova_reflection_pause(pause); }
+void nyx_background_interaction(void) { nyx_nova_reflection_interaction(); }
 
 static nyx_config appearance_pending;
 static lv_obj_t *appearance_parent_close;
 static bool appearance_open;
 static lv_obj_t *appearance_tabs, *appearance_language_choice, *appearance_size_choice;
 
-enum { AP_LANGUAGE, AP_FONT, AP_SIZE, AP_LAYOUT, AP_EFFECT, AP_SPEED, AP_OPACITY };
+enum { AP_LANGUAGE, AP_FONT, AP_SIZE, AP_LAYOUT };
+static u32 bounded(u32 value,u32 low,u32 high,u32 fallback) { return value>=low&&value<=high?value:fallback; }
 
 static void appearance_notice(const char *message)
 {
@@ -201,9 +57,6 @@ static lv_res_t appearance_set_selection(u32 id, u32 selected)
     }
     case AP_SIZE: appearance_pending.font_size = selected <= 8 ? 20 + selected * 2 : 30; break;
     case AP_LAYOUT: appearance_pending.home_layout = selected == HOME_LAYOUT_CAROUSEL ? selected : HOME_LAYOUT_TILES; break;
-    case AP_EFFECT: appearance_pending.background_effect = selected < 4 ? selected : 0; break;
-    case AP_SPEED: appearance_pending.background_speed = selected < 3 ? selected + 1 : 2; break;
-    case AP_OPACITY: appearance_pending.background_opacity = selected < 5 ? (selected + 1) * 10 : 20; break;
     }
     return LV_RES_OK;
 }
@@ -214,9 +67,6 @@ static void appearance_apply(const nyx_config *settings)
     memcpy(n_cfg.font_file, settings->font_file, sizeof(n_cfg.font_file));
     n_cfg.font_size = settings->font_size;
     n_cfg.home_layout = settings->home_layout;
-    n_cfg.background_effect = settings->background_effect;
-    n_cfg.background_speed = settings->background_speed;
-    n_cfg.background_opacity = settings->background_opacity;
 }
 
 static lv_res_t appearance_save(lv_obj_t *button)
@@ -252,11 +102,7 @@ static lv_res_t appearance_save(lv_obj_t *button)
 static lv_obj_t *appearance_text(lv_obj_t *parent, const char *text,
     int x, int y, int width, bool small)
 {
-    lv_obj_t *label = lv_label_create(parent, NULL);
-    lv_label_set_style(label, small ? &hint_small_style : lv_theme_get_current()->label.prim);
-    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(label, width); lv_label_set_text(label, text);
-    lv_obj_set_pos(label, x, y); return label;
+    return nyx_nova_text(parent,text,x,y,width,small?NOVA_SMALL:NOVA_TITLE);
 }
 
 static lv_obj_t *appearance_font_name, *appearance_font_counter;
@@ -327,37 +173,31 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     lv_obj_t *language = lv_tabview_add_tab(tabs, "Language"); appearance_page(language);
     lv_obj_t *reading = lv_tabview_add_tab(tabs, "Font"); appearance_page(reading);
     lv_obj_t *layout = lv_tabview_add_tab(tabs, "Layout"); appearance_page(layout);
-    lv_obj_t *effect = lv_tabview_add_tab(tabs, "Effect"); appearance_page(effect);
-    appearance_text(language, "Interface language", 32, 18, 1150, false);
-    appearance_language_choice = appearance_choices(language, "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",
-        bounded(n_cfg.language, 0, I18N_LANGUAGE_COUNT - 1, I18N_EN), 3, 32, 86, 1216, 104, AP_LANGUAGE, true);
-    appearance_text(language, "Save & reload applies all choices. Closing cancels the pending changes.", 32, 438, 1216, true);
-    appearance_text(reading, "Font", 32, 18, 540, false);
+    int height=lv_obj_get_height(language)-28;
+    lv_obj_t *language_card=nyx_nova_panel(language,34,14,1212,height);
+    appearance_text(language_card, "Interface language", 24, 20, 1164, false);
+    appearance_language_choice = appearance_choices(language_card, "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",
+        bounded(n_cfg.language, 0, I18N_LANGUAGE_COUNT - 1, I18N_EN), 3, 24, 78, 1164, 82, AP_LANGUAGE, true);
+    lv_obj_t *note=appearance_text(language_card, "Save & reload applies all choices. Closing cancels the pending changes.", 24, height-62, 1164, true);nyx_nova_fit_text(note,52);
+    lv_obj_t *font_card=nyx_nova_panel(reading,34,14,594,height);
+    lv_obj_t *size_card=nyx_nova_panel(reading,652,14,594,height);
+    appearance_text(font_card, "Font", 24, 20, 546, false);
     const char *file = appearance_pending.font_file;
-    appearance_font_name = appearance_text(reading, "", 32, 84, 540, true);
+    appearance_font_name = appearance_text(font_card, "", 24, 82, 546, true);
     (lv_label_set_text)(appearance_font_name, *file ? file : nyx_tr("Default font"));
-    appearance_step_button(reading, "<", 32, 0); appearance_step_button(reading, ">", 294, 1);
+    appearance_step_button(font_card, "<", 24, 0); appearance_step_button(font_card, ">", 294, 1);
     u32 count = nyx_font_count();
     char counter[24]; s_printf(counter, "%d / %d", nyx_font_selected_index(file) + 1, count);
-    appearance_font_counter = appearance_text(reading, counter, 32, 294, 540, true);
-    appearance_text(reading, "To add a font, copy a Nyx font file into /fonts on the SD card, then reload Nyx.", 32, 350, 540, true);
-    appearance_text(reading, "Text size", 640, 18, 580, false);
+    appearance_font_counter = appearance_text(font_card, counter, 24, 286, 546, true);
+    note=appearance_text(font_card, "To add a font, copy a Nyx font file into /fonts on the SD card, then reload Nyx.", 24, 332, 546, true);nyx_nova_fit_text(note,height-344);
+    appearance_text(size_card, "Text size", 24, 20, 546, false);
     u32 size = bounded(n_cfg.font_size, 20, 36, 30);
-    appearance_size_choice = appearance_choices(reading, "20\n22\n24\n26\n28\n30\n32\n34\n36", (size - 20) / 2, 3, 640, 86, 608, 88, AP_SIZE, true);
-    appearance_text(layout, "Home layout", 32, 18, 1150, false);
-    appearance_choices(layout, "Tiles\nCarousel", n_cfg.home_layout == HOME_LAYOUT_CAROUSEL ? 1 : 0,
-        2, 32, 104, 1216, 132, AP_LAYOUT, false);
-    appearance_text(layout, "Save & reload applies all choices. Closing cancels the pending changes.", 32, 302, 1216, true);
-    appearance_text(effect, "Effect", 32, 12, 1150, false);
-    appearance_choices(effect, "None\nWaves\nParticles\nAurora", n_cfg.background_effect < 4 ? n_cfg.background_effect : 0,
-        4, 32, 66, 1216, 80, AP_EFFECT, false);
-    appearance_text(effect, "Speed", 32, 170, 1150, false);
-    appearance_choices(effect, "Slow\nNormal\nFast", bounded(n_cfg.background_speed, 1, 3, 2) - 1,
-        3, 32, 222, 1216, 72, AP_SPEED, false);
-    appearance_text(effect, "Intensity", 32, 320, 1150, false);
-    appearance_choices(effect, "10%\n20%\n30%\n40%\n50%", bounded(n_cfg.background_opacity, 10, 50, 20) / 10 - 1,
-        5, 32, 372, 1216, 72, AP_OPACITY, true);
-    appearance_text(effect, "Effects pause while navigating and during diagnostics.", 32, 472, 1216, true);
+    appearance_size_choice = appearance_choices(size_card, "20\n22\n24\n26\n28\n30\n32\n34\n36", (size - 20) / 2, 3, 24, 82, 546, 82, AP_SIZE, true);
+    lv_obj_t *layout_card=nyx_nova_panel(layout,34,14,1212,height);
+    appearance_text(layout_card, "Home layout", 24, 20, 1164, false);
+    appearance_choices(layout_card, "Tiles\nCarousel", n_cfg.home_layout == HOME_LAYOUT_CAROUSEL ? 1 : 0,
+        2, 24, 104, 1164, 152, AP_LAYOUT, false);
+    note=appearance_text(layout_card, "Save & reload applies all choices. Closing cancels the pending changes.", 24, height-62, 1164, true);nyx_nova_fit_text(note,52);
     nyx_options_appearance_active(true, false);
     return LV_RES_OK;
 }

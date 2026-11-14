@@ -1,3 +1,10 @@
+# Accueil courant — Hekate Nova Pro 11
+
+La maquette Nova est conservée avec les douze modifications demandées : navigation à gauche, quatre commandes à droite, pourcentage de batterie à côté de son icône, nouveau logo et reflet de sélection. Les badges d'en-tête ont été retirés. Outils, Infos et Diagnostic utilisent deux appuis sur la tuile, sans flèche d'ouverture. Voir [NOVA-PRO-V11.md](NOVA-PRO-V11.md).
+
+---
+## Historique — accueil des versions précédentes
+
 # Nova — version 10
 
 Nova utilise la navigation haute de la maquette, les mêmes icônes Lucide,

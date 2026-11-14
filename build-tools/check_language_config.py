@@ -28,7 +28,7 @@ config_type = re.search(r'typedef struct _nyx_config\s*\{.*?\} nyx_config;', typ
 layout_constants = '\n'.join(re.findall(r'^#define HOME_LAYOUT_\w+[^\n]*', types, re.M))
 harness = (preamble+'\n'+locale_constants+'\n'+layout_constants+'\n'+config_type+
            '\nstatic nyx_config n_cfg;\n'+function('set_nyx_default_configuration')+
-           '\n'+function('valid_font_basename')+'\n'+function('nyx_sanitize_appearance')+
+           '\n'+function('valid_font_basename')+'\n'+function('valid_wallpaper_basename')+'\n'+function('nyx_sanitize_appearance')+
            '\n'+function('create_nyx_config_entry')+r'''
 struct entry { const char *val; };
 static u32 parse_language(const char *value) {

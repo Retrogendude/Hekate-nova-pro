@@ -1050,151 +1050,26 @@ out1:
 
 lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 {
-	lv_obj_t *win = nyx_create_standard_window(SYMBOL_EDIT"  emuMMC Manage", NULL);
-
-	// Set resources to be managed by other windows.
-	emummc_manage_window = win;
-	emummc_tools = (void *)create_win_emummc_tools;
-
-	sd_mount();
-
-	emummc_cfg_t emu_info;
-	load_emummc_cfg(&emu_info);
-
-	sd_unmount();
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_theme_get_current()->panel);
-	h_style.body.padding.inner = 0;
-	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
-	h_style.body.padding.ver = LV_DPI / 9;
-
-	// Create emuMMC Info & Selection container.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h1, &h_style);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "emuMMC Info & Selection");
-	lv_obj_set_style(label_txt, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 11);
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create emuMMC info labels.
-	lv_obj_t *label_btn = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_btn, true);
-	lv_label_set_static_text(label_btn, emu_info.enabled ? "#96FF00 "SYMBOL_OK"  Enabled!#" : "#FF8000 "SYMBOL_CLOSE"  Disabled!#");
-	lv_obj_align(label_btn, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-
-	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	char *txt_buf = (char *)malloc(SZ_16K);
-
-	if (emu_info.enabled)
-	{
-		if (emu_info.sector)
-			s_printf(txt_buf, "#00DDFF Type:# SD Raw Partition\n#00DDFF Sector:# 0x%08X\n#00DDFF Nintendo folder:# %s\n",
-				emu_info.sector, emu_info.nintendo_path ? emu_info.nintendo_path : "");
-		else
-			s_printf(txt_buf, "#00DDFF Type:# SD File\n#00DDFF Base folder:# %s\n#00DDFF Nintendo folder:# %s\n",
-				emu_info.path ? emu_info.path : "", emu_info.nintendo_path ? emu_info.nintendo_path : "");
-
-		lv_label_set_text(label_txt2, txt_buf);
-	}
-	else
-	{
-		lv_label_set_static_text(label_txt2, "emuMMC is disabled and eMMC will be used for boot.\n\n\n");
-	}
-
-	if (emu_info.path)
-		free(emu_info.path);
-	if (emu_info.nintendo_path)
-		free(emu_info.nintendo_path);
-	free(txt_buf);
-
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, label_btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Change emuMMC button.
-	lv_obj_t *btn2 = lv_btn_create(h1, NULL);
-	lv_btn_set_fit(btn2, true, true);
-	label_btn = lv_label_create(btn2, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_SETTINGS"  Change emuMMC");
-	lv_obj_align(btn2, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 10);
-	lv_btn_set_action(btn2, LV_BTN_ACTION_CLICK, _create_change_emummc_window);
-
-	label_txt2 = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_txt2, true);
-	lv_label_set_static_text(label_txt2,
-		"Choose between images created in the emuMMC folder\n"
-		"or in SD card partitions. You can have at most 3 partition\n"
-		"based and countless file based.");
-
-	lv_obj_set_style(label_txt2, &hint_small_style);
-	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create emuMMC Tools container.
-	lv_obj_t *h2 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, true);
-	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h2, false);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 17 / 29, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "emuMMC Tools");
-	lv_obj_set_style(label_txt3, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 5);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create Create emuMMC button.
-	lv_obj_t *btn3 = lv_btn_create(h2, btn2);
-	label_btn = lv_label_create(btn3, NULL);
-	lv_btn_set_fit(btn3, true, true);
-	lv_label_set_static_text(label_btn, SYMBOL_DRIVE"  Create emuMMC");
-	lv_obj_align(btn3, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-	lv_btn_set_action(btn3, LV_BTN_ACTION_CLICK, _create_mbox_emummc_create);
-
-	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_static_text(label_txt4,
-		"Allows you to create a new #C7EA46 SD File# or #C7EA46 SD Raw Partition#\n"
-		"emuMMC. You can create it from eMMC or a eMMC Backup.\n");
-
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	// Create Migrate emuMMC button.
-	lv_obj_t *btn4 = lv_btn_create(h2, btn2);
-	label_btn = lv_label_create(btn4, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_SHUFFLE"  Migrate emuMMC");
-	lv_obj_align(btn4, label_txt4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
-	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, NULL);
-	lv_btn_set_action(btn4, LV_BTN_ACTION_CLICK, _create_mbox_emummc_migrate);
-
-	label_txt4 = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_txt4, true);
-	lv_label_set_static_text(label_txt4,
-		"Migrate a backup to a #C7EA46 SD File emuMMC# or repair an existing\n#C7EA46 SD Raw Partition emuMMC#.\n");
-	lv_obj_set_style(label_txt4, &hint_small_style);
-	lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
-
-	return LV_RES_OK;
+    (void)btn;
+    lv_obj_t *win=nyx_create_standard_window(SYMBOL_EDIT" emuMMC Manage",NULL);
+    emummc_manage_window=win;emummc_tools=(void *)create_win_emummc_tools;
+    sd_mount();emummc_cfg_t info;load_emummc_cfg(&info);sd_unmount();
+    int height=lv_obj_get_height(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page)-36;
+    lv_obj_t *panel=nyx_nova_panel(win,34,18,594,height);
+    nyx_nova_icon_box(panel,"database",24,24,48,false);
+    lv_obj_t *state=nyx_nova_text(panel,info.enabled?"Enabled":"Disabled",90,38,456,NOVA_TITLE);
+    nyx_nova_fit_text(state,36);
+    char details[1024],paths[2][256];
+    const char *sources[]={info.path?info.path:"",info.nintendo_path?info.nintendo_path:""};
+    for(u32 i=0;i<2;++i){u32 length=strlen(sources[i]),copy=length>252?252:length;while(copy&&((u8)sources[i][copy]&0xC0)==0x80)--copy;memcpy(paths[i],sources[i],copy);paths[i][copy]=0;if(copy<length)strcat(paths[i],"…");}
+    if(info.enabled&&info.sector)s_printf(details,nyx_tr("Type : partition SD\nSecteur : 0x%08X\nDossier Nintendo : %s"),info.sector,paths[1]);
+    else if(info.enabled)s_printf(details,nyx_tr("Type : fichiers SD\nDossier : %s\nDossier Nintendo : %s"),paths[0],paths[1]);
+    else strcpy(details,nyx_tr("emuMMC is disabled and eMMC will be used for boot."));
+    lv_obj_t *text=nyx_nova_text(panel,details,24,112,546,NOVA_BODY);nyx_nova_fit_text(text,height-140);
+    free(info.path);free(info.nintendo_path);
+    int tile_height=(height-32)/3;
+    nyx_nova_action(win,"Change emuMMC","Choisir une image emuMMC sur la carte SD.","settings-2",_create_change_emummc_window,0,652,18,594,tile_height);
+    nyx_nova_action(win,"Create emuMMC","Créer une copie sous forme de fichiers ou dans une partition SD.","database",_create_mbox_emummc_create,0,652,34+tile_height,594,tile_height);
+    nyx_nova_action(win,"Migrate emuMMC","Migrer une sauvegarde ou réparer une partition emuMMC existante.","refresh-cw",_create_mbox_emummc_migrate,0,652,50+tile_height*2,594,tile_height);
+    return LV_RES_OK;
 }

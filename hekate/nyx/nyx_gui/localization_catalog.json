@@ -2343,8 +2343,8 @@
     "Storage",
     "Stockage",
     "Almacenamiento",
-    "Memoria di massa",
-    "Накопители",
+    "Memoria",
+    "Хранилище",
     "Speicher",
     "Armazenamento"
   ],
@@ -2399,7 +2399,7 @@
     "Prueba de sonido",
     "Test audio",
     "Проверка звука",
-    "Tontest",
+    "Klangtest",
     "Teste de som"
   ],
   "Speakers and headphone jack": [
@@ -2740,8 +2740,8 @@
     "Fusibles",
     "Fusibles",
     "Fusibili",
-    "Фьюзы",
-    "Fuses",
+    "Предохранители",
+    "Sicherungen",
     "Fusíveis"
   ],
   "Power & charging": [
@@ -2812,8 +2812,8 @@
     "Horloges",
     "Relojes",
     "Clock",
-    "Частоты",
-    "Takte",
+    "Тактовые частоты",
+    "Taktraten",
     "Relógios"
   ],
   "Partitions": [
@@ -2827,7 +2827,7 @@
   ],
   "eMMC health": [
     "eMMC health",
-    "État de l'eMMC",
+    "Santé eMMC",
     "Estado de eMMC",
     "Stato eMMC",
     "Состояние eMMC",
@@ -2839,7 +2839,7 @@
     "Erreurs de stockage",
     "Errores de almacenamiento",
     "Errori di memoria",
-    "Ошибки накопителей",
+    "Ошибки хранилища",
     "Speicherfehler",
     "Erros de armazenamento"
   ],
@@ -2863,12 +2863,12 @@
   ],
   "Light sensor": [
     "Light sensor",
-    "Capteur de lumière",
+    "Capteur de luminosité",
     "Sensor de luz",
-    "Sensore di luce",
+    "Sensore di luminosità",
     "Датчик освещённости",
-    "Lichtsensor",
-    "Sensor de luz"
+    "Helligkeitssensor",
+    "Sensor de luminosidade"
   ],
   "Touchscreen": [
     "Touchscreen",
@@ -6330,8 +6330,8 @@
     "Storage",
     "Stockage",
     "Almacenamiento",
-    "Memoria di massa",
-    "Накопители",
+    "Memoria",
+    "Хранилище",
     "Speicher",
     "Armazenamento"
   ],
@@ -6377,7 +6377,7 @@
     "Prueba de sonido",
     "Test audio",
     "Проверка звука",
-    "Tontest",
+    "Klangtest",
     "Teste de som"
   ],
   "Haut-parleurs et prise casque": [
@@ -6916,8 +6916,8 @@
     "Fusibles",
     "Fusibles",
     "Fusibili",
-    "Фьюзы",
-    "Fuses",
+    "Предохранители",
+    "Sicherungen",
     "Fusíveis"
   ],
   "Alimentation et charge": [
@@ -7024,8 +7024,8 @@
     "Horloges",
     "Relojes",
     "Clock",
-    "Частоты",
-    "Takte",
+    "Тактовые частоты",
+    "Taktraten",
     "Relógios"
   ],
   "État de l'eMMC": [
@@ -7051,7 +7051,7 @@
     "Erreurs de stockage",
     "Errores de almacenamiento",
     "Errori di memoria",
-    "Ошибки накопителей",
+    "Ошибки хранилища",
     "Speicherfehler",
     "Erros de armazenamento"
   ],
@@ -20962,7 +20962,7 @@
   ],
   "Background": [
     "Background",
-    "Arrière-plan",
+    "Fond",
     "Fondo",
     "Sfondo",
     "Фон",
@@ -22369,8 +22369,8 @@
     "Chargeur",
     "Cargador",
     "Caricatore",
-    "Зарядный контроллер",
-    "Ladegerät",
+    "Зарядное устройство",
+    "Laderegler",
     "Carregador"
   ],
   "Boot integrity": [
@@ -31337,6 +31337,1050 @@
     "microSD",
     "microSD"
   ],
+  "Themes and colors": [
+    "Themes and colors",
+    "Thèmes et couleurs",
+    "Temas y colores",
+    "Temi e colori",
+    "Темы и цвета",
+    "Themen und Farben",
+    "Temas e cores"
+  ],
+  "Thèmes et couleurs": [
+    "Themes and colors",
+    "Thèmes et couleurs",
+    "Temas y colores",
+    "Temi e colori",
+    "Темы и цвета",
+    "Themen und Farben",
+    "Temas e cores"
+  ],
+  "Colors": [
+    "Colors",
+    "Couleurs",
+    "Colores",
+    "Colori",
+    "Цвета",
+    "Farben",
+    "Cores"
+  ],
+  "Couleurs": [
+    "Colors",
+    "Couleurs",
+    "Colores",
+    "Colori",
+    "Цвета",
+    "Farben",
+    "Cores"
+  ],
+  "Wallpaper and opacity": [
+    "Wallpaper and opacity",
+    "Fond et transparence",
+    "Fondo y transparencia",
+    "Sfondo e trasparenza",
+    "Фон и прозрачность",
+    "Hintergrund und Transparenz",
+    "Fundo e transparência"
+  ],
+  "Fond et transparence": [
+    "Wallpaper and opacity",
+    "Fond et transparence",
+    "Fondo y transparencia",
+    "Sfondo e trasparenza",
+    "Фон и прозрачность",
+    "Hintergrund und Transparenz",
+    "Fundo e transparência"
+  ],
+  "Fond": [
+    "Background",
+    "Fond",
+    "Fondo",
+    "Sfondo",
+    "Фон",
+    "Hintergrund",
+    "Fundo"
+  ],
+  "Text": [
+    "Text",
+    "Textes",
+    "Textos",
+    "Testi",
+    "Текст",
+    "Texte",
+    "Textos"
+  ],
+  "Textes": [
+    "Text",
+    "Textes",
+    "Textos",
+    "Testi",
+    "Текст",
+    "Texte",
+    "Textos"
+  ],
+  "Borders": [
+    "Borders",
+    "Contours",
+    "Bordes",
+    "Bordi",
+    "Контуры",
+    "Konturen",
+    "Contornos"
+  ],
+  "Contours": [
+    "Borders",
+    "Contours",
+    "Bordes",
+    "Bordi",
+    "Контуры",
+    "Konturen",
+    "Contornos"
+  ],
+  "Reflection": [
+    "Reflection",
+    "Reflet",
+    "Reflejo",
+    "Riflesso",
+    "Блик",
+    "Lichtreflex",
+    "Reflexo"
+  ],
+  "Reflet": [
+    "Reflection",
+    "Reflet",
+    "Reflejo",
+    "Riflesso",
+    "Блик",
+    "Lichtreflex",
+    "Reflexo"
+  ],
+  "Aperçu": [
+    "Preview",
+    "Aperçu",
+    "Vista previa",
+    "Anteprima",
+    "Предпросмотр",
+    "Vorschau",
+    "Pré-visualização"
+  ],
+  "Selection reflection": [
+    "Selection reflection",
+    "Reflet de sélection",
+    "Reflejo de selección",
+    "Riflesso di selezione",
+    "Блик выделения",
+    "Auswahlreflex",
+    "Reflexo de seleção"
+  ],
+  "Reflet de sélection": [
+    "Selection reflection",
+    "Reflet de sélection",
+    "Reflejo de selección",
+    "Riflesso di selezione",
+    "Блик выделения",
+    "Auswahlreflex",
+    "Reflexo de seleção"
+  ],
+  "Static wallpaper": [
+    "Static wallpaper",
+    "Fond d’écran fixe",
+    "Fondo de pantalla fijo",
+    "Sfondo fisso",
+    "Статичный фон",
+    "Statisches Hintergrundbild",
+    "Imagem de fundo fixa"
+  ],
+  "Fond d’écran fixe": [
+    "Static wallpaper",
+    "Fond d’écran fixe",
+    "Fondo de pantalla fijo",
+    "Sfondo fisso",
+    "Статичный фон",
+    "Statisches Hintergrundbild",
+    "Imagem de fundo fixa"
+  ],
+  "No wallpaper": [
+    "No wallpaper",
+    "Aucun fond d’écran",
+    "Sin fondo de pantalla",
+    "Nessuno sfondo",
+    "Без фонового изображения",
+    "Kein Hintergrundbild",
+    "Sem imagem de fundo"
+  ],
+  "Aucun fond d’écran": [
+    "No wallpaper",
+    "Aucun fond d’écran",
+    "Sin fondo de pantalla",
+    "Nessuno sfondo",
+    "Без фонового изображения",
+    "Kein Hintergrundbild",
+    "Sem imagem de fundo"
+  ],
+  "Menu backgrounds": [
+    "Menu backgrounds",
+    "Fond des menus",
+    "Fondo de los menús",
+    "Sfondo dei menu",
+    "Фон меню",
+    "Menühintergrund",
+    "Fundo dos menus"
+  ],
+  "Fond des menus": [
+    "Menu backgrounds",
+    "Fond des menus",
+    "Fondo de los menús",
+    "Sfondo dei menu",
+    "Фон меню",
+    "Menühintergrund",
+    "Fundo dos menus"
+  ],
+  "Icon backgrounds": [
+    "Icon backgrounds",
+    "Fond des icônes",
+    "Fondo de los iconos",
+    "Sfondo delle icone",
+    "Фон значков",
+    "Symbolhintergrund",
+    "Fundo dos ícones"
+  ],
+  "Fond des icônes": [
+    "Icon backgrounds",
+    "Fond des icônes",
+    "Fondo de los iconos",
+    "Sfondo delle icone",
+    "Фон значков",
+    "Symbolhintergrund",
+    "Fundo dos ícones"
+  ],
+  "Transparency": [
+    "Transparency",
+    "Transparence",
+    "Transparencia",
+    "Trasparenza",
+    "Прозрачность",
+    "Transparenz",
+    "Transparência"
+  ],
+  "Transparence": [
+    "Transparency",
+    "Transparence",
+    "Transparencia",
+    "Trasparenza",
+    "Прозрачность",
+    "Transparenz",
+    "Transparência"
+  ],
+  "Réinitialiser": [
+    "Reset",
+    "Réinitialiser",
+    "Restablecer",
+    "Ripristina",
+    "Сбросить",
+    "Zurücksetzen",
+    "Repor"
+  ],
+  "Copy BMP images into the wallpapers folder at the root of the SD card.": [
+    "Copy BMP images into the wallpapers folder at the root of the SD card.",
+    "Copiez vos images BMP dans le dossier wallpapers à la racine de la carte SD.",
+    "Copia imágenes BMP en la carpeta wallpapers de la raíz de la tarjeta SD.",
+    "Copia le immagini BMP nella cartella wallpapers alla radice della scheda SD.",
+    "Скопируйте изображения BMP в папку wallpapers в корне SD-карты.",
+    "BMP-Bilder in den Ordner wallpapers im Stammverzeichnis der SD-Karte kopieren.",
+    "Copie imagens BMP para a pasta wallpapers na raiz do cartão SD."
+  ],
+  "Copiez vos images BMP dans le dossier wallpapers à la racine de la carte SD.": [
+    "Copy BMP images into the wallpapers folder at the root of the SD card.",
+    "Copiez vos images BMP dans le dossier wallpapers à la racine de la carte SD.",
+    "Copia imágenes BMP en la carpeta wallpapers de la raíz de la tarjeta SD.",
+    "Copia le immagini BMP nella cartella wallpapers alla radice della scheda SD.",
+    "Скопируйте изображения BMP в папку wallpapers в корне SD-карты.",
+    "BMP-Bilder in den Ordner wallpapers im Stammverzeichnis der SD-Karte kopieren.",
+    "Copie imagens BMP para a pasta wallpapers na raiz do cartão SD."
+  ],
+  "24/32-bit BMP · up to 1920 × 1080 · automatic crop": [
+    "24/32-bit BMP · up to 1920 × 1080 · automatic crop",
+    "BMP 24/32 bits · 1920 × 1080 maximum · recadrage automatique",
+    "BMP de 24/32 bits · hasta 1920 × 1080 · recorte automático",
+    "BMP a 24/32 bit · fino a 1920 × 1080 · ritaglio automatico",
+    "BMP 24/32 бит · до 1920 × 1080 · автоматическая обрезка",
+    "24/32-Bit-BMP · bis 1920 × 1080 · automatischer Zuschnitt",
+    "BMP de 24/32 bits · até 1920 × 1080 · recorte automático"
+  ],
+  "BMP 24/32 bits · 1920 × 1080 maximum · recadrage automatique": [
+    "24/32-bit BMP · up to 1920 × 1080 · automatic crop",
+    "BMP 24/32 bits · 1920 × 1080 maximum · recadrage automatique",
+    "BMP de 24/32 bits · hasta 1920 × 1080 · recorte automático",
+    "BMP a 24/32 bit · fino a 1920 × 1080 · ritaglio automatico",
+    "BMP 24/32 бит · до 1920 × 1080 · автоматическая обрезка",
+    "24/32-Bit-BMP · bis 1920 × 1080 · automatischer Zuschnitt",
+    "BMP de 24/32 bits · até 1920 × 1080 · recorte automático"
+  ],
+  "0%: transparent · 100%: opaque. Text and symbols stay readable.": [
+    "0%: transparent · 100%: opaque. Text and symbols stay readable.",
+    "0% : transparent · 100% : opaque. Les textes et symboles restent lisibles.",
+    "0%: transparente · 100%: opaco. Los textos y símbolos siguen legibles.",
+    "0%: trasparente · 100%: opaco. Testi e simboli restano leggibili.",
+    "0%: прозрачно · 100%: непрозрачно. Текст и значки остаются читаемыми.",
+    "0%: transparent · 100%: deckend. Texte und Symbole bleiben lesbar.",
+    "0%: transparente · 100%: opaco. Textos e símbolos mantêm-se legíveis."
+  ],
+  "0% : transparent · 100% : opaque. Les textes et symboles restent lisibles.": [
+    "0%: transparent · 100%: opaque. Text and symbols stay readable.",
+    "0% : transparent · 100% : opaque. Les textes et symboles restent lisibles.",
+    "0%: transparente · 100%: opaco. Los textos y símbolos siguen legibles.",
+    "0%: trasparente · 100%: opaco. Testi e simboli restano leggibili.",
+    "0%: прозрачно · 100%: непрозрачно. Текст и значки остаются читаемыми.",
+    "0%: transparent · 100%: deckend. Texte und Symbole bleiben lesbar.",
+    "0%: transparente · 100%: opaco. Textos e símbolos mantêm-se legíveis."
+  ],
+  "Image missing or invalid. Choose an uncompressed BMP image.": [
+    "Image missing or invalid. Choose an uncompressed BMP image.",
+    "Image introuvable ou invalide. Choisissez une image BMP non compressée.",
+    "Imagen ausente o no válida. Elige una imagen BMP sin comprimir.",
+    "Immagine assente o non valida. Scegli un’immagine BMP non compressa.",
+    "Изображение отсутствует или повреждено. Выберите несжатый BMP.",
+    "Bild fehlt oder ist ungültig. Ein unkomprimiertes BMP-Bild auswählen.",
+    "Imagem ausente ou inválida. Escolha uma imagem BMP sem compressão."
+  ],
+  "Image introuvable ou invalide. Choisissez une image BMP non compressée.": [
+    "Image missing or invalid. Choose an uncompressed BMP image.",
+    "Image introuvable ou invalide. Choisissez une image BMP non compressée.",
+    "Imagen ausente o no válida. Elige una imagen BMP sin comprimir.",
+    "Immagine assente o non valida. Scegli un’immagine BMP non compressa.",
+    "Изображение отсутствует или повреждено. Выберите несжатый BMP.",
+    "Bild fehlt oder ist ungültig. Ein unkomprimiertes BMP-Bild auswählen.",
+    "Imagem ausente ou inválida. Escolha uma imagem BMP sem compressão."
+  ],
+  "Independent colors, wallpaper and transparency.": [
+    "Independent colors, wallpaper and transparency.",
+    "Couleurs indépendantes, fond d’écran et transparence.",
+    "Colores independientes, fondo de pantalla y transparencia.",
+    "Colori indipendenti, sfondo e trasparenza.",
+    "Независимые цвета, фон и прозрачность.",
+    "Unabhängige Farben, Hintergrundbild und Transparenz.",
+    "Cores independentes, imagem de fundo e transparência."
+  ],
+  "Couleurs indépendantes, fond d’écran et transparence.": [
+    "Independent colors, wallpaper and transparency.",
+    "Couleurs indépendantes, fond d’écran et transparence.",
+    "Colores independientes, fondo de pantalla y transparencia.",
+    "Colori indipendenti, sfondo e trasparenza.",
+    "Независимые цвета, фон и прозрачность.",
+    "Unabhängige Farben, Hintergrundbild und Transparenz.",
+    "Cores independentes, imagem de fundo e transparência."
+  ],
+  "Light reflection along selected borders.": [
+    "Light reflection along selected borders.",
+    "Reflet léger sur les contours actifs.",
+    "Reflejo ligero en los bordes seleccionados.",
+    "Riflesso leggero sui bordi selezionati.",
+    "Лёгкий блик вдоль выделенных контуров.",
+    "Dezenter Lichtreflex an ausgewählten Konturen.",
+    "Reflexo suave nos contornos selecionados."
+  ],
+  "Reflet léger sur les contours actifs.": [
+    "Light reflection along selected borders.",
+    "Reflet léger sur les contours actifs.",
+    "Reflejo ligero en los bordes seleccionados.",
+    "Riflesso leggero sui bordi selezionati.",
+    "Лёгкий блик вдоль выделенных контуров.",
+    "Dezenter Lichtreflex an ausgewählten Konturen.",
+    "Reflexo suave nos contornos selecionados."
+  ],
+  "Animated reflection": [
+    "Animated reflection",
+    "Reflet animé",
+    "Reflejo animado",
+    "Riflesso animato",
+    "Анимированный блик",
+    "Animierter Lichtreflex",
+    "Reflexo animado"
+  ],
+  "Reflet animé": [
+    "Animated reflection",
+    "Reflet animé",
+    "Reflejo animado",
+    "Riflesso animato",
+    "Анимированный блик",
+    "Animierter Lichtreflex",
+    "Reflexo animado"
+  ],
+  "Static border": [
+    "Static border",
+    "Contour fixe",
+    "Borde fijo",
+    "Bordo fisso",
+    "Статичный контур",
+    "Feste Kontur",
+    "Contorno fixo"
+  ],
+  "Contour fixe": [
+    "Static border",
+    "Contour fixe",
+    "Borde fijo",
+    "Bordo fisso",
+    "Статичный контур",
+    "Feste Kontur",
+    "Contorno fixo"
+  ],
+  "Selection": [
+    "Selection",
+    "Sélection",
+    "Selección",
+    "Selezione",
+    "Выделение",
+    "Auswahl",
+    "Seleção"
+  ],
+  "Sélection": [
+    "Selection",
+    "Sélection",
+    "Selección",
+    "Selezione",
+    "Выделение",
+    "Auswahl",
+    "Seleção"
+  ],
+  "Keep BOOT0/BOOT1 together with RAW GPP.": [
+    "Keep BOOT0/BOOT1 together with RAW GPP.",
+    "Partitions BOOT0/BOOT1, à conserver avec RAW GPP.",
+    "Conserva BOOT0/BOOT1 junto con RAW GPP.",
+    "Conserva BOOT0/BOOT1 insieme a RAW GPP.",
+    "Храните BOOT0/BOOT1 вместе с RAW GPP.",
+    "BOOT0/BOOT1 zusammen mit RAW GPP aufbewahren.",
+    "Guarde BOOT0/BOOT1 juntamente com RAW GPP."
+  ],
+  "Partitions BOOT0/BOOT1, à conserver avec RAW GPP.": [
+    "Keep BOOT0/BOOT1 together with RAW GPP.",
+    "Partitions BOOT0/BOOT1, à conserver avec RAW GPP.",
+    "Conserva BOOT0/BOOT1 junto con RAW GPP.",
+    "Conserva BOOT0/BOOT1 insieme a RAW GPP.",
+    "Храните BOOT0/BOOT1 вместе с RAW GPP.",
+    "BOOT0/BOOT1 zusammen mit RAW GPP aufbewahren.",
+    "Guarde BOOT0/BOOT1 juntamente com RAW GPP."
+  ],
+  "Full storage: CAL0, SYSTEM, USER and boot files.": [
+    "Full storage: CAL0, SYSTEM, USER and boot files.",
+    "Stockage complet : CAL0, SYSTEM, USER et fichiers de démarrage.",
+    "Almacenamiento completo: CAL0, SYSTEM, USER y archivos de arranque.",
+    "Memoria completa: CAL0, SYSTEM, USER e file di avvio.",
+    "Полное хранилище: CAL0, SYSTEM, USER и загрузочные файлы.",
+    "Gesamter Speicher: CAL0, SYSTEM, USER und Startdateien.",
+    "Armazenamento completo: CAL0, SYSTEM, USER e ficheiros de arranque."
+  ],
+  "Stockage complet : CAL0, SYSTEM, USER et fichiers de démarrage.": [
+    "Full storage: CAL0, SYSTEM, USER and boot files.",
+    "Stockage complet : CAL0, SYSTEM, USER et fichiers de démarrage.",
+    "Almacenamiento completo: CAL0, SYSTEM, USER y archivos de arranque.",
+    "Memoria completa: CAL0, SYSTEM, USER e file di avvio.",
+    "Полное хранилище: CAL0, SYSTEM, USER и загрузочные файлы.",
+    "Gesamter Speicher: CAL0, SYSTEM, USER und Startdateien.",
+    "Armazenamento completo: CAL0, SYSTEM, USER e ficheiros de arranque."
+  ],
+  "System partitions in RAW GPP.": [
+    "System partitions in RAW GPP.",
+    "Partitions système de RAW GPP.",
+    "Particiones del sistema en RAW GPP.",
+    "Partizioni di sistema in RAW GPP.",
+    "Системные разделы RAW GPP.",
+    "Systempartitionen von RAW GPP.",
+    "Partições do sistema em RAW GPP."
+  ],
+  "Partitions système de RAW GPP.": [
+    "System partitions in RAW GPP.",
+    "Partitions système de RAW GPP.",
+    "Particiones del sistema en RAW GPP.",
+    "Partizioni di sistema in RAW GPP.",
+    "Системные разделы RAW GPP.",
+    "Systempartitionen von RAW GPP.",
+    "Partições do sistema em RAW GPP."
+  ],
+  "USER partition. This copy alone is incomplete.": [
+    "USER partition. This copy alone is incomplete.",
+    "Partition USER. Cette copie seule est incomplète.",
+    "Partición USER. Esta copia por sí sola está incompleta.",
+    "Partizione USER. Questa copia da sola è incompleta.",
+    "Раздел USER. Только эта копия не является полной.",
+    "USER-Partition. Diese Kopie allein ist unvollständig.",
+    "Partição USER. Esta cópia por si só está incompleta."
+  ],
+  "Partition USER. Cette copie seule est incomplète.": [
+    "USER partition. This copy alone is incomplete.",
+    "Partition USER. Cette copie seule est incomplète.",
+    "Partición USER. Esta copia por sí sola está incompleta.",
+    "Partizione USER. Questa copia da sola è incompleta.",
+    "Раздел USER. Только эта копия не является полной.",
+    "USER-Partition. Diese Kopie allein ist unvollständig.",
+    "Partição USER. Esta cópia por si só está incompleta."
+  ],
+  "Use SD emuMMC instead of the physical eMMC.": [
+    "Use SD emuMMC instead of the physical eMMC.",
+    "Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.",
+    "Usar emuMMC en la tarjeta SD en lugar de la eMMC física.",
+    "Usa emuMMC sulla scheda SD al posto dell’eMMC fisica.",
+    "Использовать emuMMC на SD-карте вместо физической eMMC.",
+    "emuMMC auf der SD-Karte statt der physischen eMMC verwenden.",
+    "Usar emuMMC no cartão SD em vez da eMMC física."
+  ],
+  "Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.": [
+    "Use SD emuMMC instead of the physical eMMC.",
+    "Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.",
+    "Usar emuMMC en la tarjeta SD en lugar de la eMMC física.",
+    "Usa emuMMC sulla scheda SD al posto dell’eMMC fisica.",
+    "Использовать emuMMC на SD-карте вместо физической eMMC.",
+    "emuMMC auf der SD-Karte statt der physischen eMMC verwenden.",
+    "Usar emuMMC no cartão SD em vez da eMMC física."
+  ],
+  "eMMC / emuMMC: protected read-only access by default.": [
+    "eMMC / emuMMC: protected read-only access by default.",
+    "eMMC / emuMMC : accès protégé en lecture seule par défaut.",
+    "eMMC / emuMMC: acceso protegido de solo lectura por defecto.",
+    "eMMC / emuMMC: accesso protetto in sola lettura predefinito.",
+    "eMMC / emuMMC: по умолчанию защищённый доступ только для чтения.",
+    "eMMC / emuMMC: standardmäßig geschützter Lesezugriff.",
+    "eMMC / emuMMC: acesso protegido só de leitura por predefinição."
+  ],
+  "eMMC / emuMMC : accès protégé en lecture seule par défaut.": [
+    "eMMC / emuMMC: protected read-only access by default.",
+    "eMMC / emuMMC : accès protégé en lecture seule par défaut.",
+    "eMMC / emuMMC: acceso protegido de solo lectura por defecto.",
+    "eMMC / emuMMC: accesso protetto in sola lettura predefinito.",
+    "eMMC / emuMMC: по умолчанию защищённый доступ только для чтения.",
+    "eMMC / emuMMC: standardmäßig geschützter Lesezugriff.",
+    "eMMC / emuMMC: acesso protegido só de leitura por predefinição."
+  ],
+  "PC or phone connection: read and write.": [
+    "PC or phone connection: read and write.",
+    "Connexion au PC ou téléphone : lecture et écriture.",
+    "Conexión a PC o teléfono: lectura y escritura.",
+    "Collegamento a PC o telefono: lettura e scrittura.",
+    "Подключение к ПК или телефону: чтение и запись.",
+    "Verbindung mit PC oder Telefon: Lesen und Schreiben.",
+    "Ligação ao PC ou telefone: leitura e escrita."
+  ],
+  "Connexion au PC ou téléphone : lecture et écriture.": [
+    "PC or phone connection: read and write.",
+    "Connexion au PC ou téléphone : lecture et écriture.",
+    "Conexión a PC o teléfono: lectura y escritura.",
+    "Collegamento a PC o telefono: lettura e scrittura.",
+    "Подключение к ПК или телефону: чтение и запись.",
+    "Verbindung mit PC oder Telefon: Lesen und Schreiben.",
+    "Ligação ao PC ou telefone: leitura e escrita."
+  ],
+  "Connect both Joy-Con to use the console as a USB gamepad.": [
+    "Connect both Joy-Con to use the console as a USB gamepad.",
+    "Connectez les deux Joy-Con pour utiliser la console comme manette USB.",
+    "Conecta ambos Joy-Con para usar la consola como mando USB.",
+    "Collega entrambi i Joy-Con per usare la console come controller USB.",
+    "Подключите оба Joy-Con для использования консоли как USB-геймпада.",
+    "Beide Joy-Con verbinden, um die Konsole als USB-Gamepad zu nutzen.",
+    "Ligue ambos os Joy-Con para usar a consola como comando USB."
+  ],
+  "Connectez les deux Joy-Con pour utiliser la console comme manette USB.": [
+    "Connect both Joy-Con to use the console as a USB gamepad.",
+    "Connectez les deux Joy-Con pour utiliser la console comme manette USB.",
+    "Conecta ambos Joy-Con para usar la consola como mando USB.",
+    "Collega entrambi i Joy-Con per usare la console come controller USB.",
+    "Подключите оба Joy-Con для использования консоли как USB-геймпада.",
+    "Beide Joy-Con verbinden, um die Konsole als USB-Gamepad zu nutzen.",
+    "Ligue ambos os Joy-Con para usar a consola como comando USB."
+  ],
+  "Mount this partition over USB.": [
+    "Mount this partition over USB.",
+    "Monter cette partition par USB.",
+    "Montar esta partición por USB.",
+    "Monta questa partizione tramite USB.",
+    "Подключить этот раздел по USB.",
+    "Diese Partition über USB einbinden.",
+    "Montar esta partição por USB."
+  ],
+  "Monter cette partition par USB.": [
+    "Mount this partition over USB.",
+    "Monter cette partition par USB.",
+    "Montar esta partición por USB.",
+    "Monta questa partizione tramite USB.",
+    "Подключить этот раздел по USB.",
+    "Diese Partition über USB einbinden.",
+    "Montar esta partição por USB."
+  ],
+  "Type: SD partition\nSector: 0x%08X\nNintendo folder: %s": [
+    "Type: SD partition\nSector: 0x%08X\nNintendo folder: %s",
+    "Type : partition SD\nSecteur : 0x%08X\nDossier Nintendo : %s",
+    "Tipo: partición SD\nSector: 0x%08X\nCarpeta Nintendo: %s",
+    "Tipo: partizione SD\nSettore: 0x%08X\nCartella Nintendo: %s",
+    "Тип: раздел SD\nСектор: 0x%08X\nПапка Nintendo: %s",
+    "Typ: SD-Partition\nSektor: 0x%08X\nNintendo-Ordner: %s",
+    "Tipo: partição SD\nSetor: 0x%08X\nPasta Nintendo: %s"
+  ],
+  "Type : partition SD\nSecteur : 0x%08X\nDossier Nintendo : %s": [
+    "Type: SD partition\nSector: 0x%08X\nNintendo folder: %s",
+    "Type : partition SD\nSecteur : 0x%08X\nDossier Nintendo : %s",
+    "Tipo: partición SD\nSector: 0x%08X\nCarpeta Nintendo: %s",
+    "Tipo: partizione SD\nSettore: 0x%08X\nCartella Nintendo: %s",
+    "Тип: раздел SD\nСектор: 0x%08X\nПапка Nintendo: %s",
+    "Typ: SD-Partition\nSektor: 0x%08X\nNintendo-Ordner: %s",
+    "Tipo: partição SD\nSetor: 0x%08X\nPasta Nintendo: %s"
+  ],
+  "Type: SD files\nFolder: %s\nNintendo folder: %s": [
+    "Type: SD files\nFolder: %s\nNintendo folder: %s",
+    "Type : fichiers SD\nDossier : %s\nDossier Nintendo : %s",
+    "Tipo: archivos SD\nCarpeta: %s\nCarpeta Nintendo: %s",
+    "Tipo: file SD\nCartella: %s\nCartella Nintendo: %s",
+    "Тип: файлы SD\nПапка: %s\nПапка Nintendo: %s",
+    "Typ: SD-Dateien\nOrdner: %s\nNintendo-Ordner: %s",
+    "Tipo: ficheiros SD\nPasta: %s\nPasta Nintendo: %s"
+  ],
+  "Type : fichiers SD\nDossier : %s\nDossier Nintendo : %s": [
+    "Type: SD files\nFolder: %s\nNintendo folder: %s",
+    "Type : fichiers SD\nDossier : %s\nDossier Nintendo : %s",
+    "Tipo: archivos SD\nCarpeta: %s\nCarpeta Nintendo: %s",
+    "Tipo: file SD\nCartella: %s\nCartella Nintendo: %s",
+    "Тип: файлы SD\nПапка: %s\nПапка Nintendo: %s",
+    "Typ: SD-Dateien\nOrdner: %s\nNintendo-Ordner: %s",
+    "Tipo: ficheiros SD\nPasta: %s\nPasta Nintendo: %s"
+  ],
+  "Choose an emuMMC image on the SD card.": [
+    "Choose an emuMMC image on the SD card.",
+    "Choisir une image emuMMC sur la carte SD.",
+    "Elegir una imagen emuMMC en la tarjeta SD.",
+    "Scegli un’immagine emuMMC sulla scheda SD.",
+    "Выбрать образ emuMMC на SD-карте.",
+    "Ein emuMMC-Abbild auf der SD-Karte wählen.",
+    "Escolher uma imagem emuMMC no cartão SD."
+  ],
+  "Choisir une image emuMMC sur la carte SD.": [
+    "Choose an emuMMC image on the SD card.",
+    "Choisir une image emuMMC sur la carte SD.",
+    "Elegir una imagen emuMMC en la tarjeta SD.",
+    "Scegli un’immagine emuMMC sulla scheda SD.",
+    "Выбрать образ emuMMC на SD-карте.",
+    "Ein emuMMC-Abbild auf der SD-Karte wählen.",
+    "Escolher uma imagem emuMMC no cartão SD."
+  ],
+  "Create a copy as files or in an SD partition.": [
+    "Create a copy as files or in an SD partition.",
+    "Créer une copie sous forme de fichiers ou dans une partition SD.",
+    "Crear una copia como archivos o en una partición SD.",
+    "Crea una copia come file o in una partizione SD.",
+    "Создать копию в файлах или разделе SD.",
+    "Eine Kopie als Dateien oder in einer SD-Partition erstellen.",
+    "Criar uma cópia em ficheiros ou numa partição SD."
+  ],
+  "Créer une copie sous forme de fichiers ou dans une partition SD.": [
+    "Create a copy as files or in an SD partition.",
+    "Créer une copie sous forme de fichiers ou dans une partition SD.",
+    "Crear una copia como archivos o en una partición SD.",
+    "Crea una copia come file o in una partizione SD.",
+    "Создать копию в файлах или разделе SD.",
+    "Eine Kopie als Dateien oder in einer SD-Partition erstellen.",
+    "Criar uma cópia em ficheiros ou numa partição SD."
+  ],
+  "Migrate a backup or repair an existing emuMMC partition.": [
+    "Migrate a backup or repair an existing emuMMC partition.",
+    "Migrer une sauvegarde ou réparer une partition emuMMC existante.",
+    "Migrar una copia de seguridad o reparar una partición emuMMC existente.",
+    "Migra un backup o ripara una partizione emuMMC esistente.",
+    "Перенести резервную копию или восстановить раздел emuMMC.",
+    "Ein Backup übertragen oder eine vorhandene emuMMC-Partition reparieren.",
+    "Migrar uma cópia de segurança ou reparar uma partição emuMMC existente."
+  ],
+  "Migrer une sauvegarde ou réparer une partition emuMMC existante.": [
+    "Migrate a backup or repair an existing emuMMC partition.",
+    "Migrer une sauvegarde ou réparer une partition emuMMC existante.",
+    "Migrar una copia de seguridad o reparar una partición emuMMC existente.",
+    "Migra un backup o ripara una partizione emuMMC esistente.",
+    "Перенести резервную копию или восстановить раздел emuMMC.",
+    "Ein Backup übertragen oder eine vorhandene emuMMC-Partition reparieren.",
+    "Migrar uma cópia de segurança ou reparar uma partição emuMMC existente."
+  ],
+  "General assessment": [
+    "General assessment",
+    "Bilan général",
+    "Evaluación general",
+    "Valutazione generale",
+    "Общая оценка",
+    "Gesamtprüfung",
+    "Avaliação geral"
+  ],
+  "Bilan général": [
+    "General assessment",
+    "Bilan général",
+    "Evaluación general",
+    "Valutazione generale",
+    "Общая оценка",
+    "Gesamtprüfung",
+    "Avaliação geral"
+  ],
+  "CPU regulator": [
+    "CPU regulator",
+    "Régulateur CPU",
+    "Regulador de CPU",
+    "Regolatore CPU",
+    "Регулятор CPU",
+    "CPU-Spannungsregler",
+    "Regulador da CPU"
+  ],
+  "Régulateur CPU": [
+    "CPU regulator",
+    "Régulateur CPU",
+    "Regulador de CPU",
+    "Regolatore CPU",
+    "Регулятор CPU",
+    "CPU-Spannungsregler",
+    "Regulador da CPU"
+  ],
+  "PMIC inputs/outputs": [
+    "PMIC inputs/outputs",
+    "Entrées/sorties PMIC",
+    "Entradas/salidas PMIC",
+    "Ingressi/uscite PMIC",
+    "Входы/выходы PMIC",
+    "PMIC-Ein-/Ausgänge",
+    "Entradas/saídas PMIC"
+  ],
+  "Entrées/sorties PMIC": [
+    "PMIC inputs/outputs",
+    "Entrées/sorties PMIC",
+    "Entradas/salidas PMIC",
+    "Ingressi/uscite PMIC",
+    "Входы/выходы PMIC",
+    "PMIC-Ein-/Ausgänge",
+    "Entradas/saídas PMIC"
+  ],
+  "Power supplies": [
+    "Power supplies",
+    "Alimentations",
+    "Fuentes de alimentación",
+    "Alimentazioni",
+    "Источники питания",
+    "Spannungsversorgung",
+    "Fontes de alimentação"
+  ],
+  "Alimentations": [
+    "Power supplies",
+    "Alimentations",
+    "Fuentes de alimentación",
+    "Alimentazioni",
+    "Источники питания",
+    "Spannungsversorgung",
+    "Fontes de alimentação"
+  ],
+  "5 V supply": [
+    "5 V supply",
+    "Tension 5 V",
+    "Tensión de 5 V",
+    "Tensione 5 V",
+    "Питание 5 В",
+    "5-V-Versorgung",
+    "Tensão de 5 V"
+  ],
+  "Tension 5 V": [
+    "5 V supply",
+    "Tension 5 V",
+    "Tensión de 5 V",
+    "Tensione 5 V",
+    "Питание 5 В",
+    "5-V-Versorgung",
+    "Tensão de 5 V"
+  ],
+  "Chargeur": [
+    "Charger",
+    "Chargeur",
+    "Cargador",
+    "Caricatore",
+    "Зарядное устройство",
+    "Laderegler",
+    "Carregador"
+  ],
+  "Temperatures": [
+    "Temperatures",
+    "Températures",
+    "Temperaturas",
+    "Temperature",
+    "Температуры",
+    "Temperaturen",
+    "Temperaturas"
+  ],
+  "Températures": [
+    "Temperatures",
+    "Températures",
+    "Temperaturas",
+    "Temperature",
+    "Температуры",
+    "Temperaturen",
+    "Temperaturas"
+  ],
+  "Serial numbers": [
+    "Serial numbers",
+    "Numéros de série",
+    "Números de serie",
+    "Numeri di serie",
+    "Серийные номера",
+    "Seriennummern",
+    "Números de série"
+  ],
+  "Numéros de série": [
+    "Serial numbers",
+    "Numéros de série",
+    "Números de serie",
+    "Numeri di serie",
+    "Серийные номера",
+    "Seriennummern",
+    "Números de série"
+  ],
+  "Santé eMMC": [
+    "eMMC health",
+    "Santé eMMC",
+    "Estado de eMMC",
+    "Stato eMMC",
+    "Состояние eMMC",
+    "eMMC-Zustand",
+    "Estado da eMMC"
+  ],
+  "GPT table": [
+    "GPT table",
+    "Table GPT",
+    "Tabla GPT",
+    "Tabella GPT",
+    "Таблица GPT",
+    "GPT-Tabelle",
+    "Tabela GPT"
+  ],
+  "Table GPT": [
+    "GPT table",
+    "Table GPT",
+    "Tabla GPT",
+    "Tabella GPT",
+    "Таблица GPT",
+    "GPT-Tabelle",
+    "Tabela GPT"
+  ],
+  "BOOT0 startup": [
+    "BOOT0 startup",
+    "Démarrage BOOT0",
+    "Arranque de BOOT0",
+    "Avvio BOOT0",
+    "Загрузка BOOT0",
+    "BOOT0-Start",
+    "Arranque de BOOT0"
+  ],
+  "Démarrage BOOT0": [
+    "BOOT0 startup",
+    "Démarrage BOOT0",
+    "Arranque de BOOT0",
+    "Avvio BOOT0",
+    "Загрузка BOOT0",
+    "BOOT0-Start",
+    "Arranque de BOOT0"
+  ],
+  "SD card contents": [
+    "SD card contents",
+    "Contenu de la carte SD",
+    "Contenido de la tarjeta SD",
+    "Contenuto della scheda SD",
+    "Содержимое SD-карты",
+    "Inhalt der SD-Karte",
+    "Conteúdo do cartão SD"
+  ],
+  "Contenu de la carte SD": [
+    "SD card contents",
+    "Contenu de la carte SD",
+    "Contenido de la tarjeta SD",
+    "Contenuto della scheda SD",
+    "Содержимое SD-карты",
+    "Inhalt der SD-Karte",
+    "Conteúdo do cartão SD"
+  ],
+  "Game-card reader": [
+    "Game-card reader",
+    "Lecteur de jeux",
+    "Lector de juegos",
+    "Lettore di giochi",
+    "Считыватель картриджей",
+    "Spielkartenleser",
+    "Leitor de jogos"
+  ],
+  "Lecteur de jeux": [
+    "Game-card reader",
+    "Lecteur de jeux",
+    "Lector de juegos",
+    "Lettore di giochi",
+    "Считыватель картриджей",
+    "Spielkartenleser",
+    "Leitor de jogos"
+  ],
+  "Wi-Fi connection": [
+    "Wi-Fi connection",
+    "Connexion Wi-Fi",
+    "Conexión Wi-Fi",
+    "Connessione Wi-Fi",
+    "Подключение Wi-Fi",
+    "WLAN-Verbindung",
+    "Ligação Wi-Fi"
+  ],
+  "Connexion Wi-Fi": [
+    "Wi-Fi connection",
+    "Connexion Wi-Fi",
+    "Conexión Wi-Fi",
+    "Connessione Wi-Fi",
+    "Подключение Wi-Fi",
+    "WLAN-Verbindung",
+    "Ligação Wi-Fi"
+  ],
+  "Audio codec": [
+    "Audio codec",
+    "Codec audio",
+    "Códec de audio",
+    "Codec audio",
+    "Аудиокодек",
+    "Audio-Codec",
+    "Codec de áudio"
+  ],
+  "Codec audio": [
+    "Audio codec",
+    "Codec audio",
+    "Códec de audio",
+    "Codec audio",
+    "Аудиокодек",
+    "Audio-Codec",
+    "Codec de áudio"
+  ],
+  "Audio clocks": [
+    "Audio clocks",
+    "Horloges audio",
+    "Relojes de audio",
+    "Clock audio",
+    "Тактовые частоты аудио",
+    "Audiotaktraten",
+    "Relógios de áudio"
+  ],
+  "Horloges audio": [
+    "Audio clocks",
+    "Horloges audio",
+    "Relojes de audio",
+    "Clock audio",
+    "Тактовые частоты аудио",
+    "Audiotaktraten",
+    "Relógios de áudio"
+  ],
+  "Display panel": [
+    "Display panel",
+    "Dalle écran",
+    "Panel de pantalla",
+    "Pannello schermo",
+    "Панель дисплея",
+    "Displaypanel",
+    "Painel do ecrã"
+  ],
+  "Dalle écran": [
+    "Display panel",
+    "Dalle écran",
+    "Panel de pantalla",
+    "Pannello schermo",
+    "Панель дисплея",
+    "Displaypanel",
+    "Painel do ecrã"
+  ],
+  "Capteur de luminosité": [
+    "Light sensor",
+    "Capteur de luminosité",
+    "Sensor de luz",
+    "Sensore di luminosità",
+    "Датчик освещённости",
+    "Helligkeitssensor",
+    "Sensor de luminosidade"
+  ],
+  "Reset state": [
+    "Reset state",
+    "État de réinitialisation",
+    "Estado de reinicio",
+    "Stato di riavvio",
+    "Состояние сброса",
+    "Reset-Zustand",
+    "Estado de reinicialização"
+  ],
+  "État de réinitialisation": [
+    "Reset state",
+    "État de réinitialisation",
+    "Estado de reinicio",
+    "Stato di riavvio",
+    "Состояние сброса",
+    "Reset-Zustand",
+    "Estado de reinicialização"
+  ],
+  "PMC registers": [
+    "PMC registers",
+    "Registres PMC",
+    "Registros PMC",
+    "Registri PMC",
+    "Регистры PMC",
+    "PMC-Register",
+    "Registos PMC"
+  ],
+  "Registres PMC": [
+    "PMC registers",
+    "Registres PMC",
+    "Registros PMC",
+    "Registri PMC",
+    "Регистры PMC",
+    "PMC-Register",
+    "Registos PMC"
+  ],
+  "Creators": [
+    "Creators",
+    "Créateurs",
+    "Creadores",
+    "Autori",
+    "Создатели",
+    "Entwickler",
+    "Criadores"
+  ],
+  "Créateurs": [
+    "Creators",
+    "Créateurs",
+    "Creadores",
+    "Autori",
+    "Создатели",
+    "Entwickler",
+    "Criadores"
+  ],
+  "Acknowledgements": [
+    "Acknowledgements",
+    "Remerciements",
+    "Agradecimientos",
+    "Ringraziamenti",
+    "Благодарности",
+    "Danksagungen",
+    "Agradecimentos"
+  ],
+  "Remerciements": [
+    "Acknowledgements",
+    "Remerciements",
+    "Agradecimientos",
+    "Ringraziamenti",
+    "Благодарности",
+    "Danksagungen",
+    "Agradecimentos"
+  ],
+  "Free software": [
+    "Free software",
+    "Logiciels libres",
+    "Software libre",
+    "Software libero",
+    "Свободные программы",
+    "Freie Software",
+    "Software livre"
+  ],
+  "Logiciels libres": [
+    "Free software",
+    "Logiciels libres",
+    "Software libre",
+    "Software libero",
+    "Свободные программы",
+    "Freie Software",
+    "Software livre"
+  ],
   "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n": [
     "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n",
     "\n#FF0000 Écriture du fichier d'empreinte impossible (erreur %d) !#\n#FF0000 Annulation…#\n",
@@ -32255,24 +33299,6 @@
     "Kacheln\nKarussell",
     "Mosaicos\nCarrossel"
   ],
-  "None\nWaves\nParticles\nAurora": [
-    "None\nWaves\nParticles\nAurora",
-    "Aucun\nVagues\nParticules\nAurore",
-    "Ninguno\nOndas\nPartículas\nAurora",
-    "Nessuno\nOnde\nParticelle\nAurora",
-    "Нет\nВолны\nЧастицы\nСияние",
-    "Keiner\nWellen\nPartikel\nPolarlicht",
-    "Nenhum\nOndas\nPartículas\nAurora"
-  ],
-  "Slow\nNormal\nFast": [
-    "Slow\nNormal\nFast",
-    "Lent\nNormal\nRapide",
-    "Lento\nNormal\nRápido",
-    "Lento\nNormale\nVeloce",
-    "Медленно\nОбычно\nБыстро",
-    "Langsam\nNormal\nSchnell",
-    "Lento\nNormal\nRápido"
-  ],
   "  Restore ": [
     "  Restore ",
     "  Restauration ",
@@ -32291,15 +33317,6 @@
     "  Sicherung ",
     "  Cópia de segurança "
   ],
-  " Backup": [
-    " Backup",
-    " Sauvegarde",
-    " Copia de seguridad",
-    " Backup",
-    " Резервная копия",
-    " Sicherung",
-    " Cópia de segurança"
-  ],
   " Restore": [
     " Restore",
     " Restauration",
@@ -32309,77 +33326,14 @@
     " Wiederherstellen",
     " Restaurar"
   ],
-  "Allows you to backup the BOOT physical partitions.\nThey contain the BCT, keys and various package1.\n#FF8000 These are paired with the RAW GPP backup.#": [
-    "Allows you to backup the BOOT physical partitions.\nThey contain the BCT, keys and various package1.\n#FF8000 These are paired with the RAW GPP backup.#",
-    "Sauvegarder les partitions physiques BOOT.\nElles contiennent le BCT, les clés et divers package1.\n#FF8000 À associer à la sauvegarde RAW GPP.#",
-    "Copia las particiones físicas BOOT.\nContienen BCT, claves y varios package1.\n#FF8000 Deben combinarse con la copia RAW GPP.#",
-    "Salva le partizioni fisiche BOOT.\nContengono BCT, chiavi e vari package1.\n#FF8000 Da abbinare al backup RAW GPP.#",
-    "Копирование физических разделов BOOT.\nСодержат BCT, ключи и различные package1.\n#FF8000 Используется вместе с копией RAW GPP.#",
-    "Physische BOOT-Partitionen sichern.\nEnthalten BCT, Schlüssel und verschiedene package1.\n#FF8000 Gehören zur RAW-GPP-Sicherung.#",
-    "Copia as partições físicas BOOT.\nContêm BCT, chaves e vários package1.\n#FF8000 Usar com a cópia RAW GPP.#"
-  ],
-  "Allows you to restore the BOOT physical partitions.\nThey contain the BCT, keys and various package1.\n#FF8000 These are paired with the RAW GPP restore.#": [
-    "Allows you to restore the BOOT physical partitions.\nThey contain the BCT, keys and various package1.\n#FF8000 These are paired with the RAW GPP restore.#",
-    "Restaurer les partitions physiques BOOT.\nElles contiennent le BCT, les clés et divers package1.\n#FF8000 À associer à la restauration RAW GPP.#",
-    "Restaura las particiones físicas BOOT.\nContienen BCT, claves y varios package1.\n#FF8000 Deben combinarse con el restauro RAW GPP.#",
-    "Ripristina le partizioni fisiche BOOT.\nContengono BCT, chiavi e vari package1.\n#FF8000 Da abbinare al ripristino RAW GPP.#",
-    "Восстановление физических разделов BOOT.\nСодержат BCT, ключи и различные package1.\n#FF8000 Используется вместе с восстановлением RAW GPP.#",
-    "Physische BOOT-Partitionen wiederherstellen.\nEnthalten BCT, Schlüssel und verschiedene package1.\n#FF8000 Gehören zur RAW-GPP-Wiederherstellung.#",
-    "Restaura as partições físicas BOOT.\nContêm BCT, chaves e vários package1.\n#FF8000 Usar com o restauro RAW GPP.#"
-  ],
-  "Allows you to backup the GPP physical partition.\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n#FF8000 This is paired with the BOOT0/1 backups.#": [
-    "Allows you to backup the GPP physical partition.\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n#FF8000 This is paired with the BOOT0/1 backups.#",
-    "Sauvegarder la partition physique GPP.\nElle contient CAL0, divers package2, SYSTEM, USER, etc.\n#FF8000 À associer aux sauvegardes BOOT0/1.#",
-    "Copia la partición física GPP.\nContiene CAL0, varios package2, SYSTEM, USER, etc.\n#FF8000 Debe combinarse con las copias BOOT0/1.#",
-    "Salva la partizione fisica GPP.\nContiene CAL0, vari package2, SYSTEM, USER, ecc.\n#FF8000 Da abbinare ai backup BOOT0/1.#",
-    "Копирование физического раздела GPP.\nСодержит CAL0, различные package2, SYSTEM, USER и другие.\n#FF8000 Используется вместе с копиями BOOT0/1.#",
-    "Physische GPP-Partition sichern.\nEnthält CAL0, verschiedene package2, SYSTEM, USER usw.\n#FF8000 Gehört zu den BOOT0/1-Sicherungen.#",
-    "Copia a partição física GPP.\nContém CAL0, vários package2, SYSTEM, USER, etc.\n#FF8000 Usar com as cópias BOOT0/1.#"
-  ],
-  "Allows you to restore the GPP physical partition.\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n#FF8000 This is paired with the BOOT0/1 restore.#": [
-    "Allows you to restore the GPP physical partition.\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n#FF8000 This is paired with the BOOT0/1 restore.#",
-    "Restaurer la partition physique GPP.\nElle contient CAL0, divers package2, SYSTEM, USER, etc.\n#FF8000 À associer à la restauration BOOT0/1.#",
-    "Restaura la partición física GPP.\nContiene CAL0, varios package2, SYSTEM, USER, etc.\n#FF8000 Debe combinarse con el restauro BOOT0/1.#",
-    "Ripristina la partizione fisica GPP.\nContiene CAL0, vari package2, SYSTEM, USER, ecc.\n#FF8000 Da abbinare al ripristino BOOT0/1.#",
-    "Восстановление физического раздела GPP.\nСодержит CAL0, различные package2, SYSTEM, USER и другие.\n#FF8000 Используется вместе с восстановлением BOOT0/1.#",
-    "Physische GPP-Partition wiederherstellen.\nEnthält CAL0, verschiedene package2, SYSTEM, USER usw.\n#FF8000 Gehört zur BOOT0/1-Wiederherstellung.#",
-    "Restaura a partição física GPP.\nContém CAL0, vários package2, SYSTEM, USER, etc.\n#FF8000 Usar com o restauro BOOT0/1.#"
-  ],
-  "Allows you to backup the partitions from RAW GPP except\nUSER. It contains, CAL0, various package2, SYSTEM, etc.\n#FF8000 This is an incomplete backup.#": [
-    "Allows you to backup the partitions from RAW GPP except\nUSER. It contains, CAL0, various package2, SYSTEM, etc.\n#FF8000 This is an incomplete backup.#",
-    "Sauvegarder les partitions RAW GPP sauf\nUSER. Contient CAL0, divers package2, SYSTEM, etc.\n#FF8000 Cette sauvegarde est incomplète.#",
-    "Copia las particiones RAW GPP salvo\nUSER. Contiene CAL0, varios package2, SYSTEM, etc.\n#FF8000 Esta copia está incompleta.#",
-    "Salva le partizioni RAW GPP eccetto\nUSER. Contiene CAL0, vari package2, SYSTEM, ecc.\n#FF8000 Questo backup è incompleto.#",
-    "Копирование разделов RAW GPP, кроме\nUSER. Содержит CAL0, различные package2, SYSTEM и другие.\n#FF8000 Эта резервная копия неполная.#",
-    "RAW-GPP-Partitionen sichern, außer\nUSER. Enthält CAL0, verschiedene package2, SYSTEM usw.\n#FF8000 Diese Sicherung ist unvollständig.#",
-    "Copia as partições RAW GPP exceto\nUSER. Contém CAL0, vários package2, SYSTEM, etc.\n#FF8000 Esta cópia está incompleta.#"
-  ],
-  "Allows you to restore ALL partitions from RAW GPP\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n": [
-    "Allows you to restore ALL partitions from RAW GPP\nIt contains, CAL0, various package2, SYSTEM, USER, etc.\n",
-    "Restaurer TOUTES les partitions RAW GPP\nElle contient CAL0, divers package2, SYSTEM, USER, etc.\n",
-    "Restaura TODAS las particiones RAW GPP\nContiene CAL0, varios package2, SYSTEM, USER, etc.\n",
-    "Ripristina TUTTE le partizioni RAW GPP\nContiene CAL0, vari package2, SYSTEM, USER, ecc.\n",
-    "Восстановление ВСЕХ разделов RAW GPP\nСодержит CAL0, различные package2, SYSTEM, USER и другие.\n",
-    "ALLE RAW-GPP-Partitionen wiederherstellen\nEnthält CAL0, verschiedene package2, SYSTEM, USER usw.\n",
-    "Restaura TODAS as partições RAW GPP\nContém CAL0, vários package2, SYSTEM, USER, etc.\n"
-  ],
-  "Allows you to backup the USER partition from RAW GPP.\n#FF8000 This is an incomplete backup.#\n": [
-    "Allows you to backup the USER partition from RAW GPP.\n#FF8000 This is an incomplete backup.#\n",
-    "Sauvegarder la partition USER du RAW GPP.\n#FF8000 Cette sauvegarde est incomplète.#\n",
-    "Copia la partición USER de RAW GPP.\n#FF8000 Esta copia está incompleta.#\n",
-    "Salva la partizione USER di RAW GPP.\n#FF8000 Questo backup è incompleto.#\n",
-    "Копирование раздела USER из RAW GPP.\n#FF8000 Эта резервная копия неполная.#\n",
-    "USER-Partition aus RAW GPP sichern.\n#FF8000 Diese Sicherung ist unvollständig.#\n",
-    "Copia a partição USER de RAW GPP.\n#FF8000 Esta cópia está incompleta.#\n"
-  ],
-  " SD emuMMC Raw Partition": [
-    " SD emuMMC Raw Partition",
-    " Partition SD emuMMC brute",
-    " Partición SD emuMMC sin formato",
-    " Partizione SD emuMMC raw",
-    " Raw-раздел SD emuMMC",
-    " SD-emuMMC-Raw-Partition",
-    " Partição SD emuMMC raw"
+  " Backup": [
+    " Backup",
+    " Sauvegarde",
+    " Copia de seguridad",
+    " Backup",
+    " Резервная копия",
+    " Sicherung",
+    " Cópia de segurança"
   ],
   "  Create SD File emuMMC": [
     "  Create SD File emuMMC",
@@ -32525,104 +33479,14 @@
     "Startsektor: 0x%08X\nOrdner: %s",
     "Setor inicial: 0x%08X\nPasta: %s"
   ],
-  "  emuMMC Manage": [
-    "  emuMMC Manage",
-    "  Gestion emuMMC",
-    "  Gestionar emuMMC",
-    "  Gestione emuMMC",
-    "  Управление emuMMC",
-    "  emuMMC verwalten",
-    "  Gerir emuMMC"
-  ],
-  "  Enabled!#": [
-    "  Enabled!#",
-    "  Activé !#",
-    "  ¡Activado!#",
-    "  Attivato!#",
-    "  Включено!#",
-    "  Aktiviert!#",
-    "  Ativado!#"
-  ],
-  "  Disabled!#": [
-    "  Disabled!#",
-    "  Désactivé !#",
-    "  ¡Desactivado!#",
-    "  Disattivato!#",
-    "  Отключено!#",
-    "  Deaktiviert!#",
-    "  Desativado!#"
-  ],
-  "#00DDFF Type:# SD Raw Partition\n#00DDFF Sector:# 0x%08X\n#00DDFF Nintendo folder:# %s\n": [
-    "#00DDFF Type:# SD Raw Partition\n#00DDFF Sector:# 0x%08X\n#00DDFF Nintendo folder:# %s\n",
-    "#00DDFF Type :# partition SD brute\n#00DDFF Secteur :# 0x%08X\n#00DDFF Dossier Nintendo :# %s\n",
-    "#00DDFF Tipo:# partición SD sin procesar\n#00DDFF Sector:# 0x%08X\n#00DDFF Carpeta Nintendo:# %s\n",
-    "#00DDFF Tipo:# partizione SD grezza\n#00DDFF Settore:# 0x%08X\n#00DDFF Cartella Nintendo:# %s\n",
-    "#00DDFF Тип:# сырой раздел SD\n#00DDFF Сектор:# 0x%08X\n#00DDFF Папка Nintendo:# %s\n",
-    "#00DDFF Typ:# SD-Rohpartition\n#00DDFF Sektor:# 0x%08X\n#00DDFF Nintendo-Ordner:# %s\n",
-    "#00DDFF Tipo:# partição SD bruta\n#00DDFF Setor:# 0x%08X\n#00DDFF Pasta Nintendo:# %s\n"
-  ],
-  "#00DDFF Type:# SD File\n#00DDFF Base folder:# %s\n#00DDFF Nintendo folder:# %s\n": [
-    "#00DDFF Type:# SD File\n#00DDFF Base folder:# %s\n#00DDFF Nintendo folder:# %s\n",
-    "#00DDFF Type :# fichiers SD\n#00DDFF Dossier de base :# %s\n#00DDFF Dossier Nintendo :# %s\n",
-    "#00DDFF Tipo:# archivos SD\n#00DDFF Carpeta base:# %s\n#00DDFF Carpeta Nintendo:# %s\n",
-    "#00DDFF Tipo:# file SD\n#00DDFF Cartella di base:# %s\n#00DDFF Cartella Nintendo:# %s\n",
-    "#00DDFF Тип:# файлы SD\n#00DDFF Основная папка:# %s\n#00DDFF Папка Nintendo:# %s\n",
-    "#00DDFF Typ:# SD-Datei\n#00DDFF Basisordner:# %s\n#00DDFF Nintendo-Ordner:# %s\n",
-    "#00DDFF Tipo:# ficheiros SD\n#00DDFF Pasta base:# %s\n#00DDFF Pasta Nintendo:# %s\n"
-  ],
-  "emuMMC is disabled and eMMC will be used for boot.\n\n\n": [
-    "emuMMC is disabled and eMMC will be used for boot.\n\n\n",
-    "L'emuMMC est désactivée ; le démarrage utilisera l'eMMC.\n\n\n",
-    "emuMMC está desactivada; el inicio usará eMMC.\n\n\n",
-    "emuMMC è disattivata; verrà avviata eMMC.\n\n\n",
-    "emuMMC отключена; загрузка будет с eMMC.\n\n\n",
-    "emuMMC ist deaktiviert; zum Start wird eMMC verwendet.\n\n\n",
-    "emuMMC desativada; o arranque usará eMMC.\n\n\n"
-  ],
-  "Choose between images created in the emuMMC folder\nor in SD card partitions. You can have at most 3 partition\nbased and countless file based.": [
-    "Choose between images created in the emuMMC folder\nor in SD card partitions. You can have at most 3 partition\nbased and countless file based.",
-    "Choisir une image créée dans le dossier emuMMC\nou dans les partitions SD. Maximum : 3 installations\nsur partition et un nombre illimité sur fichiers.",
-    "Elige entre imágenes de la carpeta emuMMC\no en particiones SD. Puedes tener hasta 3 instalaciones\nen partición e ilimitadas en archivos.",
-    "Scegliere un'immagine nella cartella emuMMC\no nelle partizioni SD. Massimo 3 installazioni\nsu partizione e illimitate su file.",
-    "Выберите образ в папке emuMMC\nили в разделах SD. Доступно до 3 установок\nна разделах и неограниченно в файлах.",
-    "Zwischen Abbildern im emuMMC-Ordner wählen\noder in SD-Partitionen. Maximal 3 installations\nauf Partitionen und beliebig viele dateibasiert.",
-    "Escolhe imagens criadas na pasta emuMMC\nou em partições SD. Podes ter até 3 instalações\nem partição e ilimitadas em ficheiros."
-  ],
-  "  Create emuMMC": [
-    "  Create emuMMC",
-    "  Créer une emuMMC",
-    "  Crear emuMMC",
-    "  Crea emuMMC",
-    "  Создать emuMMC",
-    "  emuMMC erstellen",
-    "  Criar emuMMC"
-  ],
-  "Allows you to create a new #C7EA46 SD File# or #C7EA46 SD Raw Partition#\nemuMMC. You can create it from eMMC or a eMMC Backup.\n": [
-    "Allows you to create a new #C7EA46 SD File# or #C7EA46 SD Raw Partition#\nemuMMC. You can create it from eMMC or a eMMC Backup.\n",
-    "Créer une emuMMC sur fichiers SD ou partition brute SD\nà partir de l'eMMC ou de sa sauvegarde.\n",
-    "Crea una emuMMC en archivos SD o partición SD sin procesar\na partir de eMMC o su copia.\n",
-    "Crea emuMMC su file SD o partizione SD grezza\nda eMMC o dal suo backup.\n",
-    "Создание emuMMC в файлах SD или сыром разделе SD\nиз eMMC или её резервной копии.\n",
-    "emuMMC als #C7EA46 SD-Datei# oder #C7EA46 SD-Rohpartition# erstellen\naus eMMC oder einer eMMC-Sicherung.\n",
-    "Cria emuMMC em ficheiros SD ou partição SD bruta\na partir de eMMC ou da sua cópia.\n"
-  ],
-  "  Migrate emuMMC": [
-    "  Migrate emuMMC",
-    "  Migrer une emuMMC",
-    "  Migrar emuMMC",
-    "  Migra emuMMC",
-    "  Перенести emuMMC",
-    "  emuMMC migrieren",
-    "  Migrar emuMMC"
-  ],
-  "Migrate a backup to a #C7EA46 SD File emuMMC# or repair an existing\n#C7EA46 SD Raw Partition emuMMC#.\n": [
-    "Migrate a backup to a #C7EA46 SD File emuMMC# or repair an existing\n#C7EA46 SD Raw Partition emuMMC#.\n",
-    "Migrer une sauvegarde vers emuMMC sur fichiers ou réparer une\nemuMMC sur partition SD brute.\n",
-    "Migra una copia a emuMMC en archivos o repara una\nemuMMC en partición SD sin procesar.\n",
-    "Migra un backup a emuMMC su file o ripara una\nemuMMC su partizione SD grezza.\n",
-    "Перенос копии в файловую emuMMC или исправление существующей\nemuMMC на сыром разделе SD.\n",
-    "Sicherung zu Datei-emuMMC migrieren oder bestehende\nemuMMC-SD-Rohpartition reparieren.\n",
-    "Migra uma cópia para emuMMC em ficheiros ou repara uma\nemuMMC em partição SD bruta.\n"
+  " emuMMC Manage": [
+    " emuMMC Manage",
+    " Gestion emuMMC",
+    " Gestionar emuMMC",
+    " Gestione emuMMC",
+    " Управление emuMMC",
+    " emuMMC verwalten",
+    " Gerir emuMMC"
   ],
   "Dumping to SD card finished!\nFiles: #C7EA46 backup/%s/dumps/#\n%s": [
     "Dumping to SD card finished!\nFiles: #C7EA46 backup/%s/dumps/#\n%s",
@@ -33128,6 +33992,15 @@
     "  Akku",
     "  Bateria"
   ],
+  "Fond\nTextes\nContours\nReflet": [
+    "Background\nText\nBorders\nReflection",
+    "Fond\nTextes\nContours\nReflet",
+    "Fondo\nTextos\nBordes\nReflejo",
+    "Sfondo\nTesti\nBordi\nRiflesso",
+    "Фон\nТекст\nКонтуры\nБлик",
+    "Hintergrund\nTexte\nKonturen\nLichtreflex",
+    "Fundo\nTextos\nContornos\nReflexo"
+  ],
   " Auto Boot": [
     " Auto Boot",
     " Démarrage automatique",
@@ -33163,51 +34036,6 @@
     "#FF8000 Конфигурация Nyx#\n\n#FFDD00 Не удалось сохранить конфигурацию#\n#FFDD00 на SD-карту!#",
     "#FF8000 Nyx-Konfiguration#\n\n#FFDD00 Konfiguration konnte nicht gespeichert werden#\n#FFDD00 auf die SD-Karte!#",
     "#FF8000 Configuração do Nyx#\n\n#FFDD00 Não foi possível guardar a configuração#\n#FFDD00 no cartão SD!#"
-  ],
-  " Nyx Color Theme": [
-    " Nyx Color Theme",
-    " Thème de couleurs Nyx",
-    " Tema de colores de Nyx",
-    " Tema colori Nyx",
-    " Цветовая тема Nyx",
-    " Nyx-Farbschema",
-    " Tema de cores do Nyx"
-  ],
-  " Save & Reload": [
-    " Save & Reload",
-    " Enregistrer et recharger",
-    " Guardar y recargar",
-    " Salva e ricarica",
-    " Сохранить и перезагрузить",
-    " Speichern und neu laden",
-    " Guardar e recarregar"
-  ],
-  " Grey": [
-    " Grey",
-    " Gris",
-    " Gris",
-    " Grigio",
-    " Серый",
-    " Grau",
-    " Cinzento"
-  ],
-  " Black": [
-    " Black",
-    " Noir",
-    " Negro",
-    " Nero",
-    " Чёрный",
-    " Schwarz",
-    " Preto"
-  ],
-  " Custom Color": [
-    " Custom Color",
-    " Couleur personnalisée",
-    " Color personalizado",
-    " Colore personalizzato",
-    " Свой цвет",
-    " Eigene Farbe",
-    " Cor personalizada"
   ],
   "Enter #C7EA46 Date# and #C7EA46 Time# for Nyx\nUsed in all file operations and menu.\nThis doesn't alter the actual HW clock!": [
     "Enter #C7EA46 Date# and #C7EA46 Time# for Nyx\nUsed in all file operations and menu.\nThis doesn't alter the actual HW clock!",
@@ -33415,15 +34243,6 @@
     " Цветовая тема",
     " Farbschema",
     " Tema de cores"
-  ],
-  "Customize #C7EA46 Theme# and #C7EA46 Accent# colors in Nyx.": [
-    "Customize #C7EA46 Theme# and #C7EA46 Accent# colors in Nyx.",
-    "Personnaliser les couleurs de fond et d'accent de Nyx.",
-    "Personaliza los colores de fondo y acento de Nyx.",
-    "Personalizza i colori di sfondo e accento di Nyx.",
-    "Настройте фон и цветовой акцент Nyx.",
-    "Hintergrund- und Akzentfarben von Nyx anpassen.",
-    "Personaliza as cores de fundo e destaque do Nyx."
   ],
   " Home Screen": [
     " Home Screen",
@@ -33667,60 +34486,6 @@
     " Инструменты USB",
     " USB-Werkzeuge",
     " Ferramentas USB"
-  ],
-  "  SD Card": [
-    "  SD Card",
-    "  Carte SD",
-    "  Tarjeta SD",
-    "  Scheda SD",
-    "  Карта SD",
-    "  SD-Karte",
-    "  Cartão SD"
-  ],
-  "Allows you to mount the SD Card to a PC/Phone.\n#C7EA46 All operating systems are supported. Access is# #FF8000 Read/Write.#": [
-    "Allows you to mount the SD Card to a PC/Phone.\n#C7EA46 All operating systems are supported. Access is# #FF8000 Read/Write.#",
-    "Monter la carte SD sur un ordinateur ou téléphone.\nTous les systèmes sont pris en charge. Accès en lecture/écriture.",
-    "Monta la SD en un ordenador o teléfono.\nCompatible con todos los sistemas. Acceso de lectura/escritura.",
-    "Monta la SD su un computer o telefono.\nTutti i sistemi sono supportati. Accesso in lettura/scrittura.",
-    "Подключение SD к компьютеру или телефону.\nПоддерживаются все ОС. Доступ для чтения и записи.",
-    "SD-Karte an PC oder Telefon einbinden.\nAlle Betriebssysteme unterstützt. Lese-/Schreibzugriff.",
-    "Monta o SD num computador ou telefone.\nTodos os sistemas são suportados. Acesso de leitura/escrita."
-  ],
-  "Allows you to mount the eMMC/emuMMC.\n#C7EA46 Default access is# #FF8000 read-only.#": [
-    "Allows you to mount the eMMC/emuMMC.\n#C7EA46 Default access is# #FF8000 read-only.#",
-    "Monter l'eMMC ou l'emuMMC.\nAccès en lecture seule par défaut.",
-    "Monta eMMC o emuMMC.\nAcceso de solo lectura por defecto.",
-    "Monta eMMC o emuMMC.\nAccesso predefinito in sola lettura.",
-    "Подключение eMMC или emuMMC.\nПо умолчанию доступ только для чтения.",
-    "eMMC oder emuMMC einbinden.\nStandardzugriff ist schreibgeschützt.",
-    "Monta eMMC ou emuMMC.\nAcesso só de leitura por predefinição."
-  ],
-  " Read-Only": [
-    " Read-Only",
-    " Lecture seule",
-    " Solo lectura",
-    " Sola lettura",
-    " Только чтение",
-    " Schreibgeschützt",
-    " Só de leitura"
-  ],
-  "  Gamepad": [
-    "  Gamepad",
-    "  Manette",
-    "  Mando",
-    "  Gamepad",
-    "  Геймпад",
-    "  Gamepad",
-    "  Comando"
-  ],
-  "Plug-in the Joy-Con and convert the device\ninto a gamepad for PC or Phone.\n#C7EA46 Needs both Joy-Con in order to function.#": [
-    "Plug-in the Joy-Con and convert the device\ninto a gamepad for PC or Phone.\n#C7EA46 Needs both Joy-Con in order to function.#",
-    "Connecter les Joy-Con pour transformer la console\nen manette pour ordinateur ou téléphone.\n#C7EA46 Nécessite les deux Joy-Con.#",
-    "Conecta los Joy-Con para convertir la consola\nen un mando para PC o teléfono.\n#C7EA46 Necesita ambos Joy-Con.#",
-    "Collega i Joy-Con per trasformare la console\nin un gamepad per PC o telefono.\n#C7EA46 Richiede entrambi i Joy-Con.#",
-    "Подключите Joy-Con, чтобы превратить консоль\nв геймпад для ПК или телефона.\n#C7EA46 Требуются оба Joy-Con.#",
-    "Joy-Con anschließen und die Konsole\nals Gamepad für PC oder Telefon nutzen.\n#C7EA46 Benötigt beide Joy-Con.#",
-    "Ligue os Joy-Con para transformar a consola\nnum comando para PC ou telemóvel.\n#C7EA46 Requer ambos os Joy-Con.#"
   ],
   " Fix Archive Bit (All folders)": [
     " Fix Archive Bit (All folders)",
@@ -34456,8 +35221,8 @@
     "Chargeur       ",
     "Cargador       ",
     "Caricatore       ",
-    "Зарядный контроллер       ",
-    "Ladegerät       ",
+    "Зарядное устройство       ",
+    "Laderegler       ",
     "Carregador       "
   ],
   "Battery       ": [
@@ -34482,8 +35247,8 @@
     "Storage       ",
     "Stockage       ",
     "Almacenamiento       ",
-    "Memoria di massa       ",
-    "Накопители       ",
+    "Memoria       ",
+    "Хранилище       ",
     "Speicher       ",
     "Armazenamento       "
   ],

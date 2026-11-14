@@ -63,6 +63,12 @@ void set_nyx_default_configuration()
 	n_cfg.background_speed = 2;
 	n_cfg.background_opacity = 20;
 	n_cfg.nova_halo = 1;
+	n_cfg.nova_text_color = 0xF2F5FA;
+	n_cfg.nova_border_color = 0x334050;
+	n_cfg.nova_reflection_color = 0x55C9F1;
+	n_cfg.nova_menu_opacity = 100;
+	n_cfg.nova_icon_opacity = 100;
+	n_cfg.wallpaper_file[0] = 0;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -84,8 +90,24 @@ static bool valid_font_basename(const char *value)
 		(value[length - 2] | 32) == 'x' && (value[length - 1] | 32) == 'f');
 }
 
+static bool valid_wallpaper_basename(const char *value)
+{
+	u32 length = strlen(value);
+	if (!length) return true;
+	if (length >= sizeof(n_cfg.wallpaper_file) || length < 5 || value[0] == '.' || strstr(value, "..")) return false;
+	for (u32 i = 0; i < length; ++i) {
+		char c = value[i];
+		if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') || c == '_' || c == '-' || c == '.' || c == ' ')) return false;
+	}
+	return value[length - 4] == '.' && (value[length - 3] | 32) == 'b' &&
+		(value[length - 2] | 32) == 'm' && (value[length - 1] | 32) == 'p';
+}
+
 void nyx_sanitize_appearance(void)
 {
+	if(n_cfg.theme_bg>0xFFFFFF)n_cfg.theme_bg=0x141A19;
+	if(n_cfg.theme_color>360)n_cfg.theme_color=0;
 	/* Ensure corrupted configuration cannot leave an unterminated path. */
 	n_cfg.font_file[sizeof(n_cfg.font_file) - 1] = 0;
 	if (!valid_font_basename(n_cfg.font_file)) n_cfg.font_file[0] = 0;
@@ -94,6 +116,13 @@ void nyx_sanitize_appearance(void)
 	if (n_cfg.background_speed < 1 || n_cfg.background_speed > 3) n_cfg.background_speed = 2;
 	if (n_cfg.background_opacity < 10 || n_cfg.background_opacity > 50) n_cfg.background_opacity = 20;
 	if (n_cfg.nova_halo > 1) n_cfg.nova_halo = 1;
+	if (n_cfg.nova_text_color > 0xFFFFFF) n_cfg.nova_text_color = 0xF2F5FA;
+	if (n_cfg.nova_border_color > 0xFFFFFF) n_cfg.nova_border_color = 0x334050;
+	if (n_cfg.nova_reflection_color > 0xFFFFFF) n_cfg.nova_reflection_color = 0x55C9F1;
+	if (n_cfg.nova_menu_opacity > 100) n_cfg.nova_menu_opacity = 100;
+	if (n_cfg.nova_icon_opacity > 100) n_cfg.nova_icon_opacity = 100;
+	n_cfg.wallpaper_file[sizeof(n_cfg.wallpaper_file) - 1] = 0;
+	if (!valid_wallpaper_basename(n_cfg.wallpaper_file)) n_cfg.wallpaper_file[0] = 0;
 }
 
 static u32 appearance_number(const char *value, u32 fallback)
@@ -106,6 +135,24 @@ static u32 appearance_number(const char *value, u32 fallback)
 	return length ? result : fallback;
 }
 
+static u32 appearance_rgb(const char *value, u32 fallback)
+{
+	u32 color = 0;
+	if (strlen(value) != 6) return fallback;
+	for (u32 i = 0; i < 6; ++i) {
+		char c = value[i] | 32;
+		if (c >= '0' && c <= '9') color = (color << 4) | (c - '0');
+		else if (c >= 'a' && c <= 'f') color = (color << 4) | (c - 'a' + 10);
+		else return fallback;
+	}
+	return color;
+}
+
+static u32 appearance_percent(const char *value)
+{
+	return !strcmp(value,"100") ? 100 : appearance_number(value,100);
+}
+
 bool nyx_appearance_key(const char *key, const char *value)
 {
 	if (!strcmp(key, "font_file")) {
@@ -116,6 +163,15 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "background_speed")) n_cfg.background_speed = appearance_number(value, 2);
 	else if (!strcmp(key, "background_opacity")) n_cfg.background_opacity = appearance_number(value, 20);
 	else if (!strcmp(key, "nova_halo")) n_cfg.nova_halo = appearance_number(value, 1);
+	else if (!strcmp(key, "nova_text_color")) n_cfg.nova_text_color = appearance_rgb(value, 0xF2F5FA);
+	else if (!strcmp(key, "nova_border_color")) n_cfg.nova_border_color = appearance_rgb(value, 0x334050);
+	else if (!strcmp(key, "nova_reflection_color")) n_cfg.nova_reflection_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "nova_menu_opacity")) n_cfg.nova_menu_opacity = appearance_percent(value);
+	else if (!strcmp(key, "nova_icon_opacity")) n_cfg.nova_icon_opacity = appearance_percent(value);
+	else if (!strcmp(key, "wallpaper_file")) {
+		n_cfg.wallpaper_file[0] = 0;
+		if (valid_wallpaper_basename(value)) strcpy(n_cfg.wallpaper_file, value);
+	}
 	else return false;
 	nyx_sanitize_appearance();
 	return true;
@@ -363,6 +419,22 @@ int create_nyx_config_entry(bool force_unmount)
 	if (f_puts("\nnova_halo=", &fp) < 0) goto out;
 	itoa(n_cfg.nova_halo, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_text_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_text_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_border_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_border_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_reflection_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_reflection_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_menu_opacity=", &fp) < 0) goto out;
+	itoa(n_cfg.nova_menu_opacity, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_icon_opacity=", &fp) < 0) goto out;
+	itoa(n_cfg.nova_icon_opacity, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nwallpaper_file=", &fp) < 0 || f_puts(n_cfg.wallpaper_file, &fp) < 0) goto out;
 
 	if (f_puts("\n", &fp) < 0)
 		goto out;

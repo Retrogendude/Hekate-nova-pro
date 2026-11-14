@@ -100,8 +100,8 @@ lv_obj_t * lv_win_create(lv_obj_t * par, const lv_obj_t * copy)
         /*Move back the header because it is automatically moved to the scrollable */
         lv_obj_set_protect(ext->header, LV_PROTECT_PARENT);
         lv_obj_set_parent(ext->header, new_win);
-		lv_obj_set_width(ext->header, LV_HOR_RES - 62);////
-		ext->btn_size = lv_obj_get_height(ext->header) - 3;////
+		lv_obj_set_width(ext->header, LV_HOR_RES);
+		ext->btn_size = 52;
 
         /*Create a title on the header*/
         ext->title = lv_label_create(ext->header, NULL);
@@ -303,6 +303,7 @@ void lv_win_set_style(lv_obj_t * win, lv_win_style_t type, lv_style_t * style)
             lv_page_set_style(ext->page, LV_PAGE_STYLE_SB, style);
             break;
         case LV_WIN_STYLE_HEADER:
+            ext->style_header = style;
             lv_obj_set_style(ext->header, style);
             lv_win_realign(win);
             break;
@@ -558,7 +559,7 @@ static void lv_win_realign(lv_obj_t * win)
     if(ext->page == NULL || ext->header == NULL || ext->title == NULL) return;
 
     lv_style_t * header_style = lv_win_get_style(win, LV_WIN_STYLE_HEADER);
-    lv_obj_set_size(ext->header, lv_obj_get_width(win) - 62, ext->btn_size + 2 * header_style->body.padding.ver);
+    lv_obj_set_size(ext->header, lv_obj_get_width(win), ext->btn_size + 2 * header_style->body.padding.ver);
 
     bool first_btn = true;
     lv_obj_t * btn;
@@ -586,14 +587,15 @@ static void lv_win_realign(lv_obj_t * win)
     if (btn_prev) title_right = lv_obj_get_x(btn_prev) - header_style->body.padding.inner;
     lv_coord_t title_width = title_right - title_left;
     if (title_width < 24) title_width = 24;
-    lv_label_set_long_mode(ext->title, LV_LABEL_LONG_ROLL);
+    lv_label_set_long_mode(ext->title, LV_LABEL_LONG_DOT);
+    lv_obj_set_height(ext->title, lv_font_get_height(header_style->text.font));
     lv_obj_set_width(ext->title, title_width);
     lv_obj_align(ext->title, NULL, LV_ALIGN_IN_LEFT_MID, title_left, 0);
 
-    lv_obj_set_pos(ext->header, 31, 0);
+    lv_obj_set_pos(ext->header, 0, 0);
 
     lv_obj_set_size(ext->page, lv_obj_get_width(win), lv_obj_get_height(win) - lv_obj_get_height(ext->header));
-    lv_obj_align(ext->page, ext->header, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+    lv_obj_set_pos(ext->page, 0, lv_obj_get_height(ext->header));
 }
 
 #endif

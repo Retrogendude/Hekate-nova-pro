@@ -22,6 +22,7 @@
 #include <bdk.h>
 
 #include "config.h"
+#include <display/nova_splash.h>
 #include "localization.h"
 #include "hos/hos.h"
 #include <ianos/ianos.h>
@@ -415,6 +416,7 @@ static void nyx_load_bg_icons()
 
 	// Load background resource if any.
 	hekate_bg = bmp_to_lvimg_obj("bootloader/res/background.bmp");
+	nyx_nova_wallpaper_load();
 }
 
 #define EXCP_EN_ADDR   0x4003FF1C
@@ -555,6 +557,7 @@ void nyx_init_load_res()
 	// Load hekate/Nyx configuration.
 	_load_saved_configuration();
 
+	nova_splash_progress((u32 *)IPL_FB_ADDRESS,20,65);
 	// Load Nyx resources.
 	if (nyx_load_resources())
 	{
@@ -597,6 +600,7 @@ void nyx_init_load_res()
 		break;
 	}
 
+	nova_splash_progress((u32 *)IPL_FB_ADDRESS,28,80);
 	// Load default launch icons and background if it exists.
 	nyx_load_bg_icons();
 

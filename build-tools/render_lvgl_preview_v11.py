@@ -15,7 +15,7 @@ from PIL import Image
 
 work=Path(__file__).resolve().parent
 project=work/'hekate-6.5.4'
-directory=work/'lvgl-preview-v10';directory.mkdir(exist_ok=True)
+directory=work/'lvgl-preview-v11';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -56,7 +56,7 @@ static lv_img_dsc_t *hekate_bg;
 static char font_root[1024];
 typedef unsigned int UINT;
 typedef struct{FILE*fp;u32 size;}FIL;
-typedef struct{u32 index;}DIR;
+typedef struct{u32 index,wallpaper;}DIR;
 typedef struct{char fname[256];u8 fattrib;}FILINFO;
 #define FR_OK 0
 #define FA_READ 1
@@ -67,13 +67,13 @@ static bool mounted;
 static bool sd_get_card_mounted(void){return mounted;}
 static int sd_mount(void){mounted=true;return 0;}
 static void sd_unmount(void){mounted=false;}
-static int f_open(FIL*f,const char*path,int mode){(void)mode;char full[1200];snprintf(full,sizeof(full),"%s/%s",font_root,strrchr(path,'/')?strrchr(path,'/')+1:path);f->fp=fopen(full,"rb");if(!f->fp)return 1;fseek(f->fp,0,SEEK_END);f->size=ftell(f->fp);rewind(f->fp);return 0;}
+static int f_open(FIL*f,const char*path,int mode){(void)mode;char full[1200];snprintf(full,sizeof(full),strstr(path,"wallpapers/")==path?"%s/../../../../wallpapers/%s":"%s/%s",font_root,strrchr(path,'/')?strrchr(path,'/')+1:path);f->fp=fopen(full,"rb");if(!f->fp)return 1;fseek(f->fp,0,SEEK_END);f->size=ftell(f->fp);rewind(f->fp);return 0;}
 static int f_close(FIL*f){return fclose(f->fp);}
 static int f_lseek(FIL*f,u32 off){return fseek(f->fp,off,SEEK_SET);}
 static int f_read(FIL*f,void*p,u32 length,UINT*actual){*actual=fread(p,1,length,f->fp);return ferror(f->fp)?1:0;}
 static int f_stat(const char*p,void*x){(void)p;(void)x;return 0;}
-static int f_opendir(DIR*d,const char*p){(void)p;d->index=0;return 0;}
-static int f_readdir(DIR*d,FILINFO*f){static const char*names[]={"Lecture.nyxf","Lecture-renforcee.nyxf","Lecture-fixe.nyxf",""};strcpy(f->fname,names[d->index<3?d->index++:3]);f->fattrib=0;return 0;}
+static int f_opendir(DIR*d,const char*p){d->index=0;d->wallpaper=!strcmp(p,"wallpapers");return 0;}
+static int f_readdir(DIR*d,FILINFO*f){static const char*names[]={"Lecture.nyxf","Lecture-renforcee.nyxf","Lecture-fixe.nyxf",""};strcpy(f->fname,d->wallpaper?(d->index++?"":"Nova-Carbon.bmp"):names[d->index<3?d->index++:3]);f->fattrib=0;return 0;}
 static int f_closedir(DIR*d){(void)d;return 0;}
 static int create_nyx_config_entry(bool b){(void)b;return 0;}
 static int create_config_entry(void){return 0;}
@@ -99,7 +99,7 @@ nova=(nyx/'frontend/gui_nova.c').read_text(encoding='utf-8')
 nova=nova.replace('lv_obj_t *label = lv_label_create(parent, NULL);','if(getenv("NYX_TRACE"))fprintf(stderr,"NOVA TEXT: %s\\n",text);\n    lv_obj_t *label = lv_label_create(parent, NULL);')
 for asset in ['nova_reference.inc','nova_icons.inc']:
     nova=nova.replace('#include "nova_assets/'+asset+'"',(nyx/'frontend/nova_assets'/asset).read_text(encoding='utf-8'))
-body+=re.sub(r'^#include[^\n]*\n','',nova,flags=re.M)+stripped(nyx/'frontend/gui_readability.c')+stripped(nyx/'frontend/gui_choices.c')+stripped(nyx/'frontend/gui_layout.c')+stripped(nyx/'frontend/gui_appearance.c')
+body+=stripped(nyx/'frontend/gui_nova_reflection.c')+re.sub(r'^#include[^\n]*\n','',nova,flags=re.M)+stripped(nyx/'frontend/gui_readability.c')+stripped(nyx/'frontend/gui_choices.c')+stripped(nyx/'frontend/gui_layout.c')+stripped(nyx/'frontend/gui_appearance.c')
 for filename,name in [('gui_tools.c','create_tab_tools'),('gui_info.c','create_tab_info')]:
     s=(nyx/'frontend'/filename).read_text();body+=s[s.index('void '+name+'('):]
 gui=(nyx/'frontend/gui.c').read_text();start=gui.index('lv_obj_t *nyx_create_standard_window(');end=gui.index('\nstatic bool launch_logs_enable',start)
@@ -111,6 +111,17 @@ def function(source,name):
     end=re.search(r'^\}',source[at.end():],re.M)
     return source[at.start():at.end()+end.end()]+'\n'
 body+=function(gui,'nyx_generic_onoff_toggle')
+body+=r'''
+typedef struct{u32 hour,min;}rtc_time_t;
+enum{BQ24193_ChargeStatus,MAX17050_RepSOC,MAX17050_VCELL,MAX17050_Current};
+static u32 preview_battery_percent=82;
+static void max77620_rtc_get_time_adjusted(rtc_time_t*t){t->hour=18;t->min=42;}
+static u16 tmp451_get_soc_temp(bool b){(void)b;return 28<<8;}
+static void bq24193_get_property(int p,int*v){(void)p;*v=0;}
+static void max17050_get_property(int p,int*v){*v=p==MAX17050_RepSOC?preview_battery_percent<<8:p==MAX17050_VCELL?4000:0;}
+static void fan_set_from_temp(u32 t){assert(t==28);}
+'''
+body+=function(gui,'_update_status_bar')
 opts=(nyx/'frontend/gui_options.c').read_text(encoding='utf-8')
 body+=r"""
 ACTION(_action_win_nyx_options_close) ACTION(_joycon_info_dump_action) ACTION(_create_mbox_clock_edit)
@@ -121,10 +132,50 @@ for name in ['_autoboot_delay_action','_data_verification_action','_home_screen_
 body+=function(opts,'nyx_options_appearance_active')
 body+=opts[opts.index('static const u16 theme_colors[18]'):opts.index('typedef struct _time_edit_obj_t')]
 body+=opts[opts.index('/* Compact pages keep controls'):]
+body+=stripped(nyx/'frontend/gui_nova_theme.c')
+emmc=(nyx/'frontend/gui_emmc_tools.c').read_text(encoding='utf-8')
+body+=emmc[emmc.index('typedef struct _emmc_backup_buttons_t'):emmc.index('static void _create_window_backup_restore')]
+body+='\nACTION(_emmc_backup_buttons_decider)\n'
+body+=function(emmc,'_emmc_backup_buttons_raw_toggle')
+body+=function(emmc,'create_window_backup_restore_tool').replace('create_window_backup_restore_tool(', 'preview_backup_restore(')
+tools=(nyx/'frontend/gui_tools.c').read_text(encoding='utf-8')
+body+='\nstatic int usb_msc_emmc_read_only;\nACTION(action_ums_sd) ACTION(_action_ums_emmc_gpp) ACTION(_action_ums_emmc_boot0) ACTION(_action_ums_emmc_boot1) ACTION(_action_ums_emuemmc_gpp) ACTION(_action_ums_emuemmc_boot0) ACTION(_action_ums_emuemmc_boot1) ACTION(_action_hid_jc)\n'
+body+=function(tools,'_emmc_read_only_toggle')
+body+=function(tools,'_create_window_usb_tools').replace('_create_window_usb_tools(', 'preview_usb_tools(')
+body+=r"""
+typedef struct{u32 enabled,sector;char*path,*nintendo_path;}emummc_cfg_t;
+static lv_obj_t*emummc_manage_window;static lv_res_t(*emummc_tools)(lv_obj_t*);
+static void load_emummc_cfg(emummc_cfg_t*c){c->enabled=1;c->sector=0x100000;c->path=strdup("emuMMC/RAW1");c->nintendo_path=strdup("emuMMC/RAW1/Nintendo");}
+ACTION(_create_change_emummc_window) ACTION(_create_mbox_emummc_create) ACTION(_create_mbox_emummc_migrate)
+static lv_res_t create_win_emummc_tools(lv_obj_t*);
+"""
+body+=function((nyx/'frontend/gui_emummc_tools.c').read_text(encoding='utf-8'),'create_win_emummc_tools').replace('create_win_emummc_tools(', 'preview_emummc_tools(')
+
 diag=(nyx/'frontend/gui_diagnostics.c').read_text(encoding='utf-8')
 groups=diag[diag.index('static const struct {'):diag.index('static lv_obj_t *text(')]
-body+=re.sub(r'NYX_DIAG_G_\w+','0',groups)
+body+=stripped(nyx/'diagnostics/nyx_diagnostics.h')+stripped(nyx/'diagnostics/ram_handoff.h')+'\n'+groups
 body+=function(diag,'text')+function(diag,'button')+'\nACTION(show_group)\n'
+
+# Real report/group card layouts with captured fixture probe metadata.
+registry=(nyx/'diagnostics/hwtest_pages.c').read_text()
+entries=re.findall(r'\{\s*(probe_\w+)\s*,\s*"([^"]+)"\s*\}',registry)
+group_values=re.findall(r'\b(?:PROBE_G_\w+|0)\b',registry.split('const u32 g_page_groups[] = {')[1].split('};')[0])
+assert len(entries)==len(group_values)==42
+body+='\nstatic nyx_diag_probe_t preview_probes[]={\n'
+for i,((fn,name),group) in enumerate(zip(entries,group_values)):
+    body+='{'+f'"{name}","{fn}",{group.replace("PROBE_G_","NYX_DIAG_G_")},{2+i%4},0,0'+'},\n'
+body+='};\nconst nyx_diag_probe_t*nyx_diag_probe(u32 i){return i<42?&preview_probes[i]:NULL;}\n'
+body+='\n#define ONE_PROBE (1u<<30)\nstatic lv_obj_t*results_window,*diagnostic_last_holder;static nyx_ram_handoff_t last_ram;static bool last_ram_valid;\nACTION(run_selection) ACTION(show_report) ACTION(export_report) ACTION(launch_ram)\nbool nyx_diag_truncated(void){return false;}static bool gui_diagnostics_inputs_ready(void){return true;}\n'
+body+=function(diag,'notice')
+state=diag[diag.index('static const char *state_name'):diag.index('static void render_report_page')]
+body+=state+function(diag,'close_results')
+tiles=diag[diag.index('/* Stable pages of native Nova cards'):diag.index('static void show_results')]
+tiles=tiles.replace('lv_obj_t *holder=lv_cont_create(win,NULL);','lv_obj_t *holder=lv_cont_create(win,NULL);diagnostic_last_holder=holder;')
+body+=tiles+function(diag,'show_results')
+ram=diag[diag.index('static const char *ram_state'):diag.index('static lv_res_t launch_ram')]
+body+=ram+function(diag,'show_ram_service')
+body+=function(diag,'show_group').replace('show_group(', 'preview_show_group(')
+
 constructor=diag[diag.index('void create_tab_diagnostics('):diag.index('    nyx_ram_handoff_t *saved')]
 body+=constructor+'}\n'
 body+='\nACTION(_create_window_home_launch) ACTION(_create_mbox_payloads) ACTION(create_win_emummc_tools) ACTION(_create_mbox_reload) ACTION(_create_mbox_reboot) ACTION(_create_mbox_poweroff)\n'
@@ -161,6 +212,7 @@ static lv_obj_t*find_choice(lv_obj_t*object,u32 group,u32 value){
 static unsigned glyph_pixel_checks;
 static void verify_glyph_pixels(lv_obj_t*object,lv_area_t clip){
  if(lv_obj_get_hidden(object))return;
+ lv_area_t observed;if(!reflection_visible(object,&observed))return;
  lv_area_t area,visible;lv_obj_get_coords(object,&area);if(!lv_area_intersect(&visible,&area,&clip))return;
  if(type_is(object,"lv_img")&&area.x1>=clip.x1&&area.y1>=clip.y1&&area.x2<=clip.x2&&area.y2<=clip.y2){
   const lv_img_dsc_t*asset=lv_img_get_src(object);
@@ -171,7 +223,8 @@ static void verify_glyph_pixels(lv_obj_t*object,lv_area_t clip){
    lv_color_t background=screen_pixels[area.y1*LV_HOR_RES+area.x1];
    lv_color_t actual=screen_pixels[(area.y1+strongest/asset->header.w)*LV_HOR_RES+area.x1+strongest%asset->header.w];
    lv_color_t expected=lv_color_mix(style->image.color,background,asset->data[strongest]);
-   if(abs((int)actual.red-expected.red)>4||abs((int)actual.green-expected.green)>4||abs((int)actual.blue-expected.blue)>4){fprintf(stderr,"Icon pixel mismatch at %d,%d alpha=%d actual=%06x expected=%06x\n",area.x1,area.y1,asset->data[strongest],actual.full&0xFFFFFF,expected.full&0xFFFFFF);abort();}
+   int tolerance=nova_wallpaper?20:4;
+   if(abs((int)actual.red-expected.red)>tolerance||abs((int)actual.green-expected.green)>tolerance||abs((int)actual.blue-expected.blue)>tolerance){fprintf(stderr,"Icon pixel mismatch at %d,%d alpha=%d actual=%06x expected=%06x\n",area.x1,area.y1,asset->data[strongest],actual.full&0xFFFFFF,expected.full&0xFFFFFF);abort();}
    ++glyph_pixel_checks;
   }
  }
@@ -185,9 +238,14 @@ static void verify_nova_bindings(lv_obj_t*page){
   lv_obj_t*b=grid->buttons[i];lv_action_t expected=grid->kind==NOVA_TOOLS?tools[i]:grid->kind==NOVA_INFO?info[i]:show_group;assert(grid->actions[i]==expected);
   if(grid->kind==NOVA_TOOLS)assert(lv_obj_get_free_num(b)==(i==1?1:0));
   if(grid->kind==NOVA_DIAGNOSTICS)assert(lv_obj_get_free_num(b)==i);
-  unsigned before=action_invocations;lv_btn_get_action(b,LV_BTN_ACTION_CLICK)(b);assert(action_invocations==before);
-  if(lv_obj_get_click(b)){assert(grid->selected==i);nyx_nova_grid_open(grid->open);assert(action_invocations==before+1&&last_action==expected);}
-  else{unsigned old=grid->selected;grid->selected=i;nyx_nova_grid_open(grid->open);assert(action_invocations==before);grid->selected=old;}
+  grid->armed=false;unsigned before=action_invocations;
+  lv_btn_get_action(b,LV_BTN_ACTION_CLICK)(b);assert(action_invocations==before);
+  if(lv_obj_get_click(b)){
+   assert(grid->selected==i&&grid->armed);lv_btn_get_action(b,LV_BTN_ACTION_CLICK)(b);
+   assert(action_invocations==before+1&&last_action==expected&&!grid->armed);
+  } else {lv_btn_get_action(b,LV_BTN_ACTION_CLICK)(b);assert(action_invocations==before);}
+  assert(!grid->open);
+
  }
  if(grid->kind==NOVA_TOOLS){assert(grid->holds[2]==create_window_emmc_partition_manager);nova_card_hold(grid->buttons[2]);assert(last_action==create_window_emmc_partition_manager);}
  grid->diagnostics_opened=false;nova_grid_select(page,0);action_invocations=0;last_action=NULL;
@@ -197,14 +255,33 @@ SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX);
 _set_error_mode(_OUT_TO_STDERR);
 assert(argc==7);strcpy(font_root,argv[1]);
 FILE*f=fopen(argv[2],"rb");assert(f);fseek(f,0,SEEK_END);u32 bytes=ftell(f);rewind(f);void*res=VirtualAlloc((void*)0xEE000000,bytes,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);assert(res==(void*)0xEE000000);assert(fread(res,1,bytes,f)==bytes);fclose(f);
-n_cfg.font_size=atoi(argv[5]);strcpy(n_cfg.font_file,getenv("NYX_PREVIEW_FONT")?getenv("NYX_PREVIEW_FONT"):"Lecture.nyxf");n_cfg.language=atoi(argv[4]);n_cfg.background_effect=0;n_cfg.background_speed=2;n_cfg.background_opacity=20;n_cfg.nova_halo=1;n_cfg.verification=1;h_cfg.autonogc=1;h_cfg.backlight=130;
+n_cfg.theme_bg=0x141A19;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=100;n_cfg.nova_icon_opacity=100;n_cfg.font_size=atoi(argv[5]);strcpy(n_cfg.font_file,getenv("NYX_PREVIEW_FONT")?getenv("NYX_PREVIEW_FONT"):"Lecture.nyxf");n_cfg.language=atoi(argv[4]);n_cfg.background_effect=0;n_cfg.background_speed=2;n_cfg.background_opacity=20;n_cfg.nova_halo=1;n_cfg.verification=1;h_cfg.autonogc=1;h_cfg.backlight=130;
 h_cfg.rcm_patched=getenv("NYX_PREVIEW_PATCHED")!=NULL;
+if(getenv("NYX_RGB_BACKGROUND"))n_cfg.theme_bg=strtoul(getenv("NYX_RGB_BACKGROUND"),NULL,16);
+if(getenv("NYX_RGB_TEXT"))n_cfg.nova_text_color=strtoul(getenv("NYX_RGB_TEXT"),NULL,16);
+if(getenv("NYX_RGB_BORDER"))n_cfg.nova_border_color=strtoul(getenv("NYX_RGB_BORDER"),NULL,16);
+if(getenv("NYX_RGB_REFLECTION"))n_cfg.nova_reflection_color=strtoul(getenv("NYX_RGB_REFLECTION"),NULL,16);
+
+if(getenv("NYX_PREVIEW_WALLPAPER")){strcpy(n_cfg.wallpaper_file,getenv("NYX_PREVIEW_WALLPAPER"));nyx_nova_wallpaper_load();assert(nova_wallpaper);}
+if(getenv("NYX_PREVIEW_MENU_OPACITY"))n_cfg.nova_menu_opacity=atoi(getenv("NYX_PREVIEW_MENU_OPACITY"));
+if(getenv("NYX_PREVIEW_ICON_OPACITY"))n_cfg.nova_icon_opacity=atoi(getenv("NYX_PREVIEW_ICON_OPACITY"));
 lv_init();nyx_localization_init();nyx_font_manager_init();lv_disp_drv_t driver;lv_disp_drv_init(&driver);driver.disp_flush=flush;lv_disp_drv_register(&driver);
-lv_theme_t*theme=lv_theme_hekate_init(0x141A19,0,(lv_font_t*)nyx_font_regular());lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);
-static lv_style_t screen_style;lv_style_copy(&screen_style,&lv_style_plain);screen_style.body.main_color=screen_style.body.grad_color=LV_COLOR_HEX(0x10151D);lv_obj_set_style(lv_scr_act(),&screen_style);nyx_background_create(lv_scr_act());
+lv_theme_hekate_set_colors(n_cfg.nova_text_color,n_cfg.nova_border_color,n_cfg.nova_reflection_color,n_cfg.nova_menu_opacity);lv_theme_t*theme=lv_theme_hekate_init(n_cfg.theme_bg,n_cfg.theme_color,(lv_font_t*)nyx_font_ui(20));lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);
+static lv_style_t screen_style;lv_style_copy(&screen_style,&lv_style_plain);screen_style.body.main_color=screen_style.body.grad_color=nyx_nova_color(NOVA_COLOR_BACKGROUND);lv_obj_set_style(lv_scr_act(),&screen_style);nyx_background_create(lv_scr_act());
 nyx_nova_footer(lv_layer_top(),nyx_options_save_all);lv_label_set_text(status_bar.time_temp,"18:42 · 28 °C");lv_label_set_text(status_bar.battery,"82 %");
 lv_obj_t*root=NULL;
-if(!strcmp(argv[3],"appearance"))nyx_create_appearance_window(NULL);
+if(strcmp(argv[3],"about")&&strcmp(argv[3],"home")&&strcmp(argv[3],"carousel")&&strcmp(argv[3],"tools")&&strcmp(argv[3],"info")&&strcmp(argv[3],"options")&&strcmp(argv[3],"diagnostics")){
+ lv_obj_t*tabs=nyx_nova_tabview(lv_scr_act());lv_obj_t*home=NULL;for(u32 i=0;i<6;i++){lv_obj_t*p=lv_tabview_add_tab(tabs,"");if(i==1)home=p;}
+ home_tabview=tabs;_create_tab_home(theme,home);lv_tabview_set_tab_act(tabs,1,false);
+ nyx_nova_navigation(lv_scr_act(),tabs,"hekate 6.5.4",_create_nova_quick_actions);lv_action_t quick[]={create_win_nyx_options,_create_mbox_reload,_create_mbox_reboot,_create_mbox_poweroff};nyx_nova_quick_actions(quick);
+}
+if(!strcmp(argv[3],"backup")||!strcmp(argv[3],"restore")){lv_obj_t b;memset(&b,0,sizeof b);lv_obj_set_free_num(&b,!strcmp(argv[3],"restore"));preview_backup_restore(&b);}
+else if(!strcmp(argv[3],"usb"))preview_usb_tools(NULL);
+else if(!strcmp(argv[3],"emummc"))preview_emummc_tools(NULL);
+else if(!strcmp(argv[3],"diagnostic-group")){lv_obj_t b;memset(&b,0,sizeof b);lv_obj_set_free_num(&b,atoi(argv[6]));preview_show_group(&b);}
+else if(!strcmp(argv[3],"diagnostic-results"))show_results(0);
+else if(!strcmp(argv[3],"ram-service"))show_ram_service(NULL);
+else if(!strcmp(argv[3],"appearance"))nyx_create_appearance_window(NULL);
 else if(!strcmp(argv[3],"nyx"))create_win_nyx_options(NULL);
 else if(!strcmp(argv[3],"colors"))_create_window_nyx_colors(NULL);
 else if(!strcmp(argv[3],"boot-options"))_nova_boot_options(NULL);
@@ -214,9 +291,9 @@ else {
  if(nyx_font_size()>30){static lv_style_t st[4];int kinds[]={LV_TABVIEW_STYLE_BTN_REL,LV_TABVIEW_STYLE_BTN_PR,LV_TABVIEW_STYLE_BTN_TGL_REL,LV_TABVIEW_STYLE_BTN_TGL_PR};for(int j=0;j<4;j++){lv_style_copy(&st[j],lv_tabview_get_style(tabs,kinds[j]));st[j].text.font=nyx_font_small();lv_tabview_set_style(tabs,kinds[j],&st[j]);}}
  const char*names[]={"hekate 6.5.4",SYMBOL_HOME" Home",SYMBOL_TOOLS" Tools",SYMBOL_INFO" Console Info",SYMBOL_SETTINGS" Options",SYMBOL_CHIP" Diagnostic"};lv_obj_t*pages[6];
  for(int i=0;i<6;i++)pages[i]=lv_tabview_add_tab(tabs,names[i]);
- nyx_nova_navigation(lv_scr_act(),tabs,"hekate 6.5.4",_create_nova_quick_actions);
- int active=(!strcmp(argv[3],"home")||!strcmp(argv[3],"carousel"))?1:!strcmp(argv[3],"tools")?2:!strcmp(argv[3],"info")?3:!strcmp(argv[3],"options")?4:5;
- root=pages[active];if(active==1){home_tabview=tabs;n_cfg.home_layout=!strcmp(argv[3],"carousel");_create_tab_home(theme,root);}else if(active==2)create_tab_tools(theme,root);else if(active==3)create_tab_info(theme,root);else if(active==4)create_tab_options(theme,root);else create_tab_diagnostics(theme,root);
+ nyx_nova_navigation(lv_scr_act(),tabs,"hekate 6.5.4",_create_nova_quick_actions);lv_action_t quick[]={create_win_nyx_options,_create_mbox_reload,_create_mbox_reboot,_create_mbox_poweroff};nyx_nova_quick_actions(quick);
+ int active=!strcmp(argv[3],"about")?0:(!strcmp(argv[3],"home")||!strcmp(argv[3],"carousel"))?1:!strcmp(argv[3],"tools")?2:!strcmp(argv[3],"info")?3:!strcmp(argv[3],"options")?4:5;
+ root=pages[active];if(active==0)nyx_nova_about(root);else if(active==1){home_tabview=tabs;n_cfg.home_layout=!strcmp(argv[3],"carousel");_create_tab_home(theme,root);}else if(active==2)create_tab_tools(theme,root);else if(active==3)create_tab_info(theme,root);else if(active==4)create_tab_options(theme,root);else create_tab_diagnostics(theme,root);
  lv_tabview_set_tab_act(tabs,active,false);
  for(u32 i=1;i<6;i++){nova_navigate(nova_nav_buttons[i]);assert(lv_tabview_get_tab_act(tabs)==i);}
  lv_tabview_set_tab_act(tabs,active,false);nyx_nova_navigation_select(active);
@@ -225,9 +302,12 @@ else {
  if(active==2||active==3||active==5)verify_nova_bindings(root);
 
 }
-if(!root){lv_obj_t*window=lv_win_get_from_btn(close_btn);lv_win_ext_t*ext=lv_obj_get_ext_attr(window);root=ext->page;
- if(strcmp(argv[3],"colors")&&strcmp(argv[3],"boot-options")&&strcmp(argv[3],"quick-actions")){lv_obj_t*tabs=lv_obj_get_child(lv_page_get_scrl(root),NULL);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);}}
+if(!strcmp(argv[3],"colors"))lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);
+if(!root){assert(nova_navigation_locks);for(u32 i=1;i<6;i++)assert(!lv_obj_get_click(nova_nav_buttons[i]));lv_obj_t*window=lv_win_get_from_btn(close_btn);lv_win_ext_t*ext=lv_obj_get_ext_attr(window);root=ext->page;
+ if(!strcmp(argv[3],"appearance")||!strcmp(argv[3],"nyx")){lv_obj_t*tabs=lv_obj_get_child(lv_page_get_scrl(root),NULL);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);}}
 nyx_readability_refresh(lv_scr_act());for(int i=0;i<4;i++){lv_tick_inc(40);lv_task_handler();}lv_refr_now();
+for(u32 percent=0;percent<=100;percent++){preview_battery_percent=percent;_update_status_bar(NULL);assert(lv_obj_get_x(status_bar.battery)==1174&&lv_obj_get_y(status_bar.battery)==24);}
+preview_battery_percent=82;_update_status_bar(NULL);lv_refr_now();
 lv_area_t bounds;lv_obj_get_coords(root,&bounds);assert(bounds.y1>=0&&bounds.y2<656);
 verify_visible(root,bounds);
 lv_area_t screen_bounds={0,0,1279,719};verify_glyph_pixels(lv_scr_act(),screen_bounds);verify_glyph_pixels(lv_layer_top(),screen_bounds);
@@ -250,19 +330,33 @@ if(!strcmp(argv[3],"appearance")){
  char before[64];strcpy(before,appearance_pending.font_file);lv_obj_t step;memset(&step,0,sizeof step);lv_obj_set_free_num(&step,1);appearance_font_step(&step);lv_obj_set_free_num(&step,0);appearance_font_step(&step);assert(!strcmp(before,appearance_pending.font_file));
 }
 if(!strcmp(argv[3],"colors")){
- unsigned count=0;for(lv_obj_t*swatch=lv_obj_get_child(color_test.header1,NULL);swatch;swatch=lv_obj_get_child(color_test.header1,swatch))if(type_is(swatch,"lv_btn")){
-  lv_area_t coords;lv_obj_get_coords(swatch,&coords);u32 pixel=screen_pixels[((coords.y1+coords.y2)/2)*1280+(coords.x1+coords.x2)/2].full&0xFFFFFF;
-  u32 expected=lv_btn_get_style(swatch,LV_BTN_STYLE_REL)->body.main_color.full&0xFFFFFF;assert(pixel==expected);++count;
- }assert(count==18);
+ nyx_config before=n_cfg;u32 original[4]={nova_theme.pending.theme_bg,nova_theme.pending.nova_text_color,nova_theme.pending.nova_border_color,nova_theme.pending.nova_reflection_color};
+ for(u32 target=0;target<4;++target){nova_theme.target=target;theme_controls_refresh();*theme_target_color()=0xAABBCC;
+  u32 actual[4]={nova_theme.pending.theme_bg,nova_theme.pending.nova_text_color,nova_theme.pending.nova_border_color,nova_theme.pending.nova_reflection_color};
+  for(u32 i=0;i<4;++i)assert(actual[i]==(i==target?0xAABBCC:original[i]));*theme_target_color()=original[target];}
+ assert(!memcmp(&before,&n_cfg,sizeof n_cfg));nova_theme.target=0;theme_controls_refresh();
+ theme_reset(NULL);assert(nova_theme.pending.nova_menu_opacity==100&&nova_theme.pending.nova_icon_opacity==100&&!nova_theme.pending.wallpaper_file[0]);assert(!memcmp(&before,&n_cfg,sizeof n_cfg));
 }
+
+if(diagnostic_last_holder){diag_tiles_ext*ext=lv_obj_get_ext_attr(diagnostic_last_holder);u32 total=ext->count;unsigned visits=0;
+ for(u32 page=0;page<(total+8)/9;++page){ext->page=page;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();verify_visible(root,bounds);for(lv_obj_t*c=lv_obj_get_child(ext->tiles,NULL);c;c=lv_obj_get_child(ext->tiles,c))for(lv_obj_t*b=lv_obj_get_child(c,NULL);b;b=lv_obj_get_child(c,b))if(type_is(b,"lv_btn")){u32 id=lv_obj_get_free_num(b);assert((id&~ONE_PROBE)<42);lv_action_t action=lv_btn_get_action(b,LV_BTN_ACTION_CLICK);assert(action==(ext->results?show_report:run_selection));++visits;}}
+ assert(visits==total);ext->page=0;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();
+}
+
 if(!getenv("NYX_PREVIEW_NO_DUMP"))dump("preview.ppm");
+if(getenv("NYX_CAPTURE_REFLECTION")){
+ FILE*frames=fopen("reflection.bgrx","wb");assert(frames&&sizeof(lv_color_t)==4);
+ for(u32 frame=0;frame<72;++frame){lv_tick_inc(80);lv_task_handler();lv_refr_now();assert(fwrite(screen_pixels,sizeof(lv_color_t),LV_HOR_RES*LV_VER_RES,frames)==LV_HOR_RES*LV_VER_RES);}
+ fclose(frames);
+}
 if(!strcmp(argv[3],"tools")&&!strcmp(argv[4],"0")&&!strcmp(argv[5],"30")){
  nyx_background_pause(true);for(int i=0;i<20;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();
- nova_grid_ext*grid=lv_obj_get_ext_attr(root);
- rendered_pixels=0;nyx_nova_icon_select(grid->icons[0],false);lv_refr_now();unsigned long off_pixels=rendered_pixels;assert(off_pixels>0&&off_pixels<=10000);
- rendered_pixels=0;nyx_nova_icon_select(grid->icons[0],true);lv_refr_now();unsigned long on_pixels=rendered_pixels;assert(on_pixels>0&&on_pixels<=10000);
- rendered_pixels=0;for(int i=0;i<100;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
- printf("PASS: Nova halo redraw off=%lu on=%lu idle=%lu pixels over 5000ms\n",off_pixels,on_pixels,rendered_pixels);
+ rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(80);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
+ nyx_background_pause(false);rendered_pixels=0;unsigned long maximum=0,total=0;
+ for(int i=0;i<72;i++){unsigned long before=rendered_pixels;lv_tick_inc(80);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
+ assert(total>0&&maximum<70000);
+ printf("PASS: Nova reflection max=%lu total=%lu pixels over 5760ms; pause=0\n",maximum,total);
+ nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(80);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
 
 }
 printf("PASS UI %s language=%s size=%s tab=%s controls=%u\n",argv[3],argv[4],argv[5],argv[6],geometry_checks);return 0;}
@@ -278,10 +372,12 @@ def compile_one(p):
     return obj
 with ThreadPoolExecutor(max_workers=6)as pool:objects=list(pool.map(compile_one,sources))
 exe=directory/'preview.exe';subprocess.run([str(cc),*[str(o)for o in objects],'-o',str(exe)],check=True)
-jobs=[('tools',1,20,0),('tools',4,36,0),('info',1,20,0),('options',1,20,0),('options',4,36,0),('diagnostics',4,36,0),('appearance',1,30,0),('appearance',1,30,1),('appearance',1,30,3),('nyx',4,36,0),('nyx',4,36,1),('colors',1,30,0)]
+jobs=[('tools',1,20,0),('tools',4,36,0),('info',1,20,0),('options',1,20,0),('options',4,36,0),('diagnostics',4,36,0),('appearance',1,30,0),('appearance',1,30,1),('appearance',1,30,2),('nyx',4,36,0),('nyx',4,36,1),('colors',1,30,0)]
 jobs.extend([('home',1,30,0),('carousel',4,36,0),('tools',1,30,0),('info',1,30,0),('options',1,30,0),('diagnostics',1,30,0),('boot-options',1,30,0),('quick-actions',1,30,0)])
+jobs.extend([('about',1,30,0),('backup',1,30,0),('restore',1,30,0),('usb',1,30,0),('emummc',1,30,0),('diagnostic-group',1,30,2),('diagnostic-results',1,30,0),('ram-service',1,30,0),('colors',1,30,1)])
 if '--check-all' in sys.argv:
-    modes=[('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('appearance',3),('nyx',0),('nyx',1),('colors',0),('boot-options',0),('quick-actions',0)]
+    modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0)]
+    modes.extend([('backup',0),('restore',0),('usb',0),('emummc',0),('diagnostic-results',0),('ram-service',0)]+[('diagnostic-group',i)for i in range(1,11)])
     jobs=[(screen,language,size,tab) for screen,tab in modes for language in range(7) for size in range(20,38,2)]
 if '--case' in sys.argv:
     at=sys.argv.index('--case');jobs=[(sys.argv[at+1],int(sys.argv[at+2]),int(sys.argv[at+3]),int(sys.argv[at+4]))]
@@ -296,13 +392,13 @@ for screen,language,size,tab in jobs:
         if isinstance(partial,bytes):partial=partial.decode('utf-8',errors='replace')
         raise RuntimeError(f'{screen} {language} {size} {tab} timed out. Last trace:\n'+partial[-6000:]) from error
     if run.returncode:raise RuntimeError(f'{screen} {language} {size} {tab}: '+run.stdout+run.stderr)
-    performance=re.search(r'Nova halo redraw off=(\d+) on=(\d+) idle=(\d+)',run.stdout)
+    performance=re.search(r'Nova reflection max=(\d+) total=(\d+)',run.stdout)
     if performance:
-        result={'halo_radius_px':18,'off_redraw_pixels':int(performance[1]),'on_redraw_pixels':int(performance[2]),'idle_redraw_pixels_over_5000ms':int(performance[3]),'platform':'host LVGL, not console FPS'}
+        result={'reflection_period_ms':80,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_5760ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
         (directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
-        print('PASS: Nova halo is input-driven; '+performance[0],flush=True)
+        print('PASS: bounded border reflection; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-v10-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-v11-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
-print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; all 18 color swatches have their actual fill.',flush=True)
+print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

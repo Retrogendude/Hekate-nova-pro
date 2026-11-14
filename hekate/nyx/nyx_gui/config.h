@@ -67,6 +67,12 @@ typedef struct _nyx_config
 	u32 background_speed; // 1 slow, 2 normal, 3 fast.
 	u32 background_opacity; // 10..50 percent.
 	u32 nova_halo; // Nova icon selection halo, 0 off / 1 on.
+	u32 nova_text_color; // Independent 24-bit RGB colors, appended for compatibility.
+	u32 nova_border_color;
+	u32 nova_reflection_color;
+	u32 nova_menu_opacity; // 0..100, panel background only; text stays opaque.
+	u32 nova_icon_opacity; // 0..100, icon background only; glyph stays opaque.
+	char wallpaper_file[64]; // Safe BMP basename under /wallpapers; empty = none.
 } nyx_config;
 
 extern hekate_config h_cfg;

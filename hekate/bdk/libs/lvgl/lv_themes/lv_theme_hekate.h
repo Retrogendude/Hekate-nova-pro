@@ -56,6 +56,7 @@ extern "C" {
  **********************/
 
 extern uint32_t theme_bg_color;
+void lv_theme_hekate_set_colors(uint32_t text, uint32_t border, uint32_t reflection, uint32_t opacity);
 
 /**
  * Initialize the material theme

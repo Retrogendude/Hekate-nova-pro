@@ -1,3 +1,10 @@
+# Traductions — version 11
+
+Le catalogue courant contient 3922 clés exactes en anglais, français, espagnol, italien, russe, allemand et portugais. Les nouveaux réglages, textes de personnalisation et noms lisibles des diagnostics disposent de traductions rédigées pour les sept langues. Les noms propres, identifiants techniques et chemins sont préservés. Les notices techniques traduites hors ligne et le texte de récupération d'origine conservent les limites de révision décrites ci-dessous.
+
+---
+## Historique et provenance des traductions
+
 # État des traductions — Nova, version 10
 
 Le catalogue comporte sept valeurs par clé : anglais, français, espagnol,

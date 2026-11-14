@@ -122,7 +122,7 @@ lv_obj_t *create_window_autoboot(const char *win_title)
 	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
 	lv_win_set_title(win, win_title);
 	lv_win_set_style(win, LV_WIN_STYLE_BG, &win_bg_style);
-	lv_obj_set_size(win, LV_HOR_RES, LV_VER_RES);
+	nyx_nova_window(win);
 
 	close_btn = lv_win_add_btn(win, NULL, SYMBOL_CLOSE" Close", _win_autoboot_close_action);
 
@@ -391,7 +391,7 @@ void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 	u32 index = 0;
 	for (u32 i = 0; i < ARRAY_SIZE(theme_colors); ++i)
 		if (theme_colors[i] == color_idx) { index = i; break; }
-	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0x55C9F1);
+	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : nyx_nova_color(NOVA_COLOR_REFLECTION);
 	lv_style_t *btn_onoff_rel_hos_style = &palette_rel[index];
 	lv_style_t *btn_onoff_pr_hos_style  = &palette_pr[index];
 	lv_style_copy(btn_onoff_rel_hos_style, lv_theme_get_current()->btn.rel);
@@ -435,490 +435,9 @@ void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 		lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, action);
 }
 
-typedef struct _color_test_ctxt
+static lv_res_t _create_window_nyx_colors(lv_obj_t *button)
 {
-	u32 bg;
-	u16 hue;
-	u8 r;
-	u8 g;
-	u8 b;
-
-	lv_obj_t *window;
-	lv_obj_t *header1;
-	lv_obj_t *header2;
-	lv_obj_t *label;
-	lv_obj_t *icons;
-	lv_obj_t *slider;
-	lv_obj_t *button;
-	lv_obj_t *hue_slider;
-	lv_obj_t *hue_label;
-
-	lv_obj_t *r_slider;
-	lv_obj_t *r_label;
-	lv_obj_t *g_slider;
-	lv_obj_t *g_label;
-	lv_obj_t *b_slider;
-	lv_obj_t *b_label;
-
-	lv_style_t box_style;
-	lv_obj_t *box;
-
-	lv_obj_t *btn_reset;
-	lv_obj_t *btn_apply;
-	lv_obj_t *btn_black;
-} color_test_ctxt;
-
-color_test_ctxt color_test;
-
-static lv_res_t _action_win_nyx_colors_save(lv_obj_t *btn)
-{
-	n_cfg.theme_bg    = color_test.bg;
-	n_cfg.theme_color = color_test.hue;
-
-	// Save nyx config.
-	create_nyx_config_entry(true);
-
-	reload_nyx(NULL, false);
-
-	return LV_RES_OK;
-}
-
-static void _show_new_nyx_color(bool update_bg)
-{
-	u32 bg = color_test.bg;
-	u16 hue = color_test.hue;
-
-	lv_color_t bgc       = LV_COLOR_HEX(bg == 0x141A19 ? 0x10151D : bg);
-	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x19212D);
-	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x202C3B);
-	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x334050);
-	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0x55C9F1);
-
-	static lv_style_t btn_tgl_pr_test;
-	lv_style_copy(&btn_tgl_pr_test, lv_btn_get_style(color_test.button, LV_BTN_STATE_TGL_PR));
-	btn_tgl_pr_test.body.main_color = bgc_press;
-	btn_tgl_pr_test.body.grad_color = btn_tgl_pr_test.body.main_color;
-	btn_tgl_pr_test.body.border.color = color;
-	btn_tgl_pr_test.text.color = color;
-
-	if (update_bg)
-	{
-		static lv_style_t win_bg_test;
-		lv_style_copy(&win_bg_test, lv_win_get_style(color_test.window, LV_WIN_STYLE_BG));
-		win_bg_test.body.main_color = bgc;
-		win_bg_test.body.grad_color = win_bg_test.body.main_color;
-		lv_win_set_style(color_test.window, LV_WIN_STYLE_BG, &win_bg_test);
-
-		static lv_style_t win_hdr_test;
-		lv_style_copy(&win_hdr_test, lv_win_get_style(color_test.window, LV_WIN_STYLE_HEADER));
-		win_hdr_test.body.main_color = bgc;
-		win_hdr_test.body.grad_color = win_hdr_test.body.main_color;
-		lv_win_set_style(color_test.window, LV_WIN_STYLE_HEADER, &win_hdr_test);
-
-		static lv_style_t hdr1_bg_test;
-		lv_style_copy(&hdr1_bg_test, lv_cont_get_style(color_test.header1));
-		hdr1_bg_test.body.main_color = bgc;
-		hdr1_bg_test.body.grad_color = hdr1_bg_test.body.main_color;
-		lv_cont_set_style(color_test.header1, &hdr1_bg_test);
-
-		static lv_style_t hdr2_bg_test;
-		lv_style_copy(&hdr2_bg_test, lv_cont_get_style(color_test.header2));
-		hdr2_bg_test.body.main_color = bgc;
-		hdr2_bg_test.body.grad_color = hdr2_bg_test.body.main_color;
-		lv_cont_set_style(color_test.header2, &hdr2_bg_test);
-
-		static lv_style_t btn_tgl_rel_test;
-		lv_style_copy(&btn_tgl_rel_test, lv_btn_get_style(color_test.btn_reset, LV_BTN_STATE_REL));
-		btn_tgl_rel_test.body.main_color = bgc_light;
-		btn_tgl_rel_test.body.grad_color = btn_tgl_rel_test.body.main_color;
-		lv_btn_set_style(color_test.btn_reset, LV_BTN_STATE_REL, &btn_tgl_rel_test);
-		lv_btn_set_style(color_test.btn_reset, LV_BTN_STATE_PR, &btn_tgl_pr_test);
-		lv_btn_set_style(color_test.btn_apply, LV_BTN_STATE_REL, &btn_tgl_rel_test);
-		lv_btn_set_style(color_test.btn_apply, LV_BTN_STATE_PR, &btn_tgl_pr_test);
-		lv_btn_set_style(color_test.btn_black, LV_BTN_STATE_REL, &btn_tgl_rel_test);
-		lv_btn_set_style(color_test.btn_black, LV_BTN_STATE_PR, &btn_tgl_pr_test);
-
-		static lv_style_t slider_bg;
-		lv_style_copy(&slider_bg, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_BG));
-		slider_bg.body.main_color = bg_border;
-		slider_bg.body.grad_color = slider_bg.body.main_color;
-		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_BG, &slider_bg);
-		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_BG, &slider_bg);
-		lv_slider_set_style(color_test.r_slider,   LV_SLIDER_STYLE_BG, &slider_bg);
-		lv_slider_set_style(color_test.g_slider,   LV_SLIDER_STYLE_BG, &slider_bg);
-		lv_slider_set_style(color_test.b_slider,   LV_SLIDER_STYLE_BG, &slider_bg);
-	}
-	else
-	{
-		static lv_style_t txt_test;
-		lv_style_copy(&txt_test, lv_label_get_style(color_test.label));
-		txt_test.text.color = color;
-		lv_obj_set_style(color_test.label, &txt_test);
-		lv_obj_set_style(color_test.icons, &txt_test);
-
-		static lv_style_t slider_knb;
-		lv_style_copy(&slider_knb, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_KNOB));
-		slider_knb.body.main_color = color;
-		slider_knb.body.grad_color = slider_knb.body.main_color;
-		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_KNOB, &slider_knb);
-		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_KNOB, &slider_knb);
-		lv_slider_set_style(color_test.r_slider,   LV_SLIDER_STYLE_KNOB, &slider_knb);
-		lv_slider_set_style(color_test.g_slider,   LV_SLIDER_STYLE_KNOB, &slider_knb);
-		lv_slider_set_style(color_test.b_slider,   LV_SLIDER_STYLE_KNOB, &slider_knb);
-
-		static lv_style_t slider_ind;
-		lv_style_copy(&slider_ind, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_INDIC));
-		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x429DBD);
-		slider_ind.body.grad_color = slider_ind.body.main_color;
-		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_INDIC, &slider_ind);
-		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_INDIC, &slider_ind);
-		lv_slider_set_style(color_test.r_slider,   LV_SLIDER_STYLE_INDIC, &slider_ind);
-		lv_slider_set_style(color_test.g_slider,   LV_SLIDER_STYLE_INDIC, &slider_ind);
-		lv_slider_set_style(color_test.b_slider,   LV_SLIDER_STYLE_INDIC, &slider_ind);
-	}
-
-	lv_btn_set_style(color_test.button, LV_BTN_STATE_TGL_PR, &btn_tgl_pr_test);
-}
-
-static lv_res_t _slider_hue_action(lv_obj_t *slider)
-{
-	if (color_test.hue != lv_slider_get_value(slider))
-	{
-		color_test.hue = lv_slider_get_value(slider);
-
-		_show_new_nyx_color(false);
-
-		char hue[8];
-		s_printf(hue, "%03d", color_test.hue);
-		lv_label_set_text(color_test.hue_label, hue);
-	}
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _slider_r_action(lv_obj_t *slider)
-{
-	if (color_test.r != lv_slider_get_value(slider))
-	{
-		color_test.r = lv_slider_get_value(slider);
-		color_test.box_style.body.main_color = LV_COLOR_HEX((color_test.r << 16) | (color_test.g << 8) | color_test.b);
-		color_test.box_style.body.grad_color = color_test.box_style.body.main_color;
-		lv_obj_set_style(color_test.box, &color_test.box_style);
-
-		char shade[8];
-		s_printf(shade, "%03d", color_test.r);
-		lv_label_set_text(color_test.r_label, shade);
-	}
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _slider_g_action(lv_obj_t *slider)
-{
-	if (color_test.g != lv_slider_get_value(slider))
-	{
-		color_test.g = lv_slider_get_value(slider);
-		color_test.box_style.body.main_color = LV_COLOR_HEX((color_test.r << 16) | (color_test.g << 8) | color_test.b);
-		color_test.box_style.body.grad_color = color_test.box_style.body.main_color;
-		lv_obj_set_style(color_test.box, &color_test.box_style);
-
-		char shade[8];
-		s_printf(shade, "%03d", color_test.g);
-		lv_label_set_text(color_test.g_label, shade);
-	}
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _slider_b_action(lv_obj_t *slider)
-{
-	if (color_test.b != lv_slider_get_value(slider))
-	{
-		color_test.b = lv_slider_get_value(slider);
-		color_test.box_style.body.main_color = LV_COLOR_HEX((color_test.r << 16) | (color_test.g << 8) | color_test.b);
-		color_test.box_style.body.grad_color = color_test.box_style.body.main_color;
-		lv_obj_set_style(color_test.box, &color_test.box_style);
-
-		char shade[8];
-		s_printf(shade, "%03d", color_test.b);
-		lv_label_set_text(color_test.b_label, shade);
-	}
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _preset_bg_apply(lv_obj_t *btn)
-{
-	color_test.bg = (color_test.r << 16) | (color_test.g << 8) | color_test.b;
-
-	_show_new_nyx_color(true);
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _preset_bg_black(lv_obj_t *btn)
-{
-	color_test.bg = 0;
-
-	_show_new_nyx_color(true);
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _preset_bg_reset(lv_obj_t *btn)
-{
-	color_test.r = 0x14;
-	color_test.g = 0x1A;
-	color_test.b = 0x19;
-	color_test.bg = 0x141A19;
-
-	color_test.box_style.body.main_color = LV_COLOR_HEX(color_test.bg);
-	color_test.box_style.body.grad_color = color_test.box_style.body.main_color;
-	lv_obj_set_style(color_test.box, &color_test.box_style);
-
-	lv_bar_set_value(color_test.r_slider, color_test.r);
-	lv_bar_set_value(color_test.g_slider, color_test.g);
-	lv_bar_set_value(color_test.b_slider, color_test.b);
-
-	char shade[8];
-	s_printf(shade, "%03d", color_test.r);
-	lv_label_set_text(color_test.r_label, shade);
-	s_printf(shade, "%03d", color_test.g);
-	lv_label_set_text(color_test.g_label, shade);
-	s_printf(shade, "%03d", color_test.b);
-	lv_label_set_text(color_test.b_label, shade);
-
-	_show_new_nyx_color(true);
-
-	return LV_RES_OK;
-}
-
-static lv_res_t _preset_hue_action(lv_obj_t *btn)
-{
-	lv_btn_ext_t *ext = lv_obj_get_ext_attr(btn);
-
-	if (color_test.hue != ext->idx)
-	{
-		color_test.hue = ext->idx;
-
-		char hue[8];
-		s_printf(hue, "%03d", color_test.hue);
-		lv_label_set_text(color_test.hue_label, hue);
-		lv_bar_set_value(color_test.hue_slider, color_test.hue);
-
-		_show_new_nyx_color(false);
-	}
-
-	return LV_RES_OK;
-}
-
-lv_res_t _action_win_nyx_colors_close(lv_obj_t * btn)
-{
-	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
-	lv_obj_set_click(status_bar.mid, true);
-
-	return nyx_win_close_action(btn);
-}
-
-static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
-{
-	lv_obj_t *win = nyx_create_standard_window(SYMBOL_COPY" Nyx Color Theme", _action_win_nyx_colors_close);
-	lv_win_add_btn(win, NULL, SYMBOL_SAVE" Save & Reload", _action_win_nyx_colors_save);
-	color_test.window = win;
-
-	// Set current theme colors.
-	color_test.bg  = n_cfg.theme_bg;
-	color_test.hue = n_cfg.theme_color;
-	u32 bg = n_cfg.theme_bg;
-	color_test.r = (bg >> 16) & 0xFF;
-	color_test.g = (bg >>  8) & 0xFF;
-	color_test.b = (bg >>  0) & 0xFF;
-
-	lv_style_copy(&color_test.box_style, &lv_style_plain_color);
-	color_test.box_style.body.main_color = LV_COLOR_HEX(color_test.bg);
-	color_test.box_style.body.grad_color = color_test.box_style.body.main_color;
-	color_test.box_style.body.border.color = LV_COLOR_HEX(0xFFFFFF);
-	color_test.box_style.body.border.opa   = LV_OPA_20;
-	color_test.box_style.body.border.width = 2;
-
-	// Create container to keep content inside.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_obj_set_size(h1, LV_DPI * 299 / 25, lv_font_get_height(lv_theme_get_current()->label.prim->text.font) + 72);
-	color_test.header1 = h1;
-
-	lv_obj_t *acc_label = lv_label_create(h1, NULL);
-	lv_label_set_static_text(acc_label, "Accent color:");
-
-	// Create color preset buttons.
-	lv_obj_t *color_btn = lv_btn_create(h1, NULL);
-	lv_btn_ext_t *ext = lv_obj_get_ext_attr(color_btn);
-	ext->idx = theme_colors[0];
-	create_flat_button(color_btn, ext->idx, _preset_hue_action);
-	lv_obj_align(color_btn, acc_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
-	lv_obj_t *color_btn2;
-
-	for (u32 i = 1; i < ARRAY_SIZE(theme_colors); i++)
-	{
-		color_btn2 = lv_btn_create(h1, NULL);
-		ext = lv_obj_get_ext_attr(color_btn2);
-		ext->idx = theme_colors[i];
-		create_flat_button(color_btn2, ext->idx, _preset_hue_action);
-		lv_obj_align(color_btn2, color_btn, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-		color_btn = color_btn2;
-	}
-
-	lv_obj_align(h1, NULL, LV_ALIGN_IN_TOP_MID, 0, 12);
-
-	// Create hue slider.
-	lv_obj_t *h_slider = lv_slider_create(win, NULL);
-	lv_obj_set_width(h_slider, LV_DPI * 213 / 20);
-	lv_obj_set_height(h_slider, 32);
-	lv_bar_set_range(h_slider, 0, 359);
-	lv_bar_set_value(h_slider, color_test.hue);
-	lv_slider_set_action(h_slider, _slider_hue_action);
-	lv_obj_align(h_slider, h1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-	color_test.hue_slider = h_slider;
-
-	// Create hue label.
-	lv_obj_t *hue_text_label = lv_label_create(win, NULL);
-	lv_obj_align(hue_text_label, h_slider, LV_ALIGN_OUT_RIGHT_MID, LV_DPI * 24 / 100, 0);
-	char txt[8];
-	s_printf(txt, "%03d", color_test.hue);
-	lv_label_set_text(hue_text_label, txt);
-	color_test.hue_label = hue_text_label;
-
-	lv_obj_t *bg_label = lv_label_create(win, NULL);
-	lv_label_set_static_text(bg_label, "Theme color:");
-	lv_obj_align(bg_label, h_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 16);
-
-	// Create red slider.
-	lv_obj_t *r_slider = lv_slider_create(win, NULL);
-	lv_obj_set_width(r_slider, LV_DPI * 85 / 16);
-	lv_obj_set_height(r_slider, 32);
-	lv_bar_set_range(r_slider, 11, 100);
-	lv_bar_set_value(r_slider, color_test.r);
-	lv_slider_set_action(r_slider, _slider_r_action);
-	lv_obj_align(r_slider, bg_label, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 6);
-	color_test.r_slider = r_slider;
-
-	// Create red label.
-	lv_obj_t *r_text_label = lv_label_create(win, NULL);
-	lv_obj_align(r_text_label, r_slider, LV_ALIGN_OUT_RIGHT_MID, LV_DPI * 24 / 100, 0);
-	s_printf(txt, "%03d", color_test.r);
-	lv_label_set_text(r_text_label, txt);
-	color_test.r_label = r_text_label;
-
-	// Create green slider.
-	lv_obj_t *g_slider = lv_slider_create(win, r_slider);
-	lv_bar_set_value(g_slider, color_test.g);
-	lv_slider_set_action(g_slider, _slider_g_action);
-	lv_obj_align(g_slider, r_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
-	color_test.g_slider = g_slider;
-
-	// Create green label.
-	lv_obj_t *g_text_label = lv_label_create(win, NULL);
-	lv_obj_align(g_text_label, g_slider, LV_ALIGN_OUT_RIGHT_MID, LV_DPI * 24 / 100, 0);
-	s_printf(txt, "%03d", color_test.g);
-	lv_label_set_text(g_text_label, txt);
-	color_test.g_label = g_text_label;
-
-	// Create blue slider.
-	lv_obj_t *b_slider = lv_slider_create(win, r_slider);
-	lv_bar_set_value(b_slider, color_test.b);
-	lv_slider_set_action(b_slider, _slider_b_action);
-	lv_obj_align(b_slider, g_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
-	color_test.b_slider = b_slider;
-
-	// Create blue label.
-	lv_obj_t *b_text_label = lv_label_create(win, NULL);
-	lv_obj_align(b_text_label, b_slider, LV_ALIGN_OUT_RIGHT_MID, LV_DPI * 24 / 100, 0);
-	s_printf(txt, "%03d", color_test.b);
-	lv_label_set_text(b_text_label, txt);
-	color_test.b_label = b_text_label;
-
-	// Create theme color box.
-	lv_obj_t * bg_box = lv_obj_create(win, NULL);
-	lv_obj_set_size(bg_box, LV_DPI * 10 / 7, LV_DPI * 18 / 13);
-	lv_obj_align(bg_box, r_text_label, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI / 4, 0);
-	lv_obj_set_style(bg_box, &color_test.box_style);
-	color_test.box = bg_box;
-
-	// Create theme color buttons.
-	lv_obj_t *btn_reset = lv_btn_create(win, NULL);
-	lv_obj_t *label_btn = lv_label_create(btn_reset, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_REFRESH" Grey");
-	lv_btn_set_fit(btn_reset, false, true);
-	lv_obj_set_width(btn_reset, LV_DPI * 5 / 3);
-	lv_btn_set_action(btn_reset, LV_BTN_ACTION_CLICK, _preset_bg_reset);
-	lv_obj_align(btn_reset, bg_box, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI / 5, 0);
-	color_test.btn_reset = btn_reset;
-
-	lv_obj_t *btn_black = lv_btn_create(win, btn_reset);
-	label_btn = lv_label_create(btn_black, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_BRIGHTNESS" Black");
-	lv_btn_set_action(btn_black, LV_BTN_ACTION_CLICK, _preset_bg_black);
-	lv_obj_align(btn_black, btn_reset, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI / 5, 0);
-	color_test.btn_black = btn_black;
-
-	lv_obj_t *btn_apply = lv_btn_create(win, btn_reset);
-	label_btn = lv_label_create(btn_apply, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_LIST" Custom Color");
-	lv_obj_set_width(btn_apply, LV_DPI * 10 / 3 + LV_DPI / 5);
-	lv_btn_set_action(btn_apply, LV_BTN_ACTION_CLICK, _preset_bg_apply);
-	lv_obj_align(btn_apply, btn_reset, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
-	color_test.btn_apply = btn_apply;
-
-	// Create sample text.
-	lv_obj_t *h2 = lv_cont_create(win, NULL);
-	lv_obj_set_size(h2, LV_DPI * 12, LV_DPI * 18 / 10);
-	lv_obj_align(h2, b_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 16);
-	lv_win_ext_t *window_content = lv_obj_get_ext_attr(win);
-	lv_obj_set_height(h2, lv_obj_get_height(window_content->page) - lv_obj_get_y(h2) - 12);
-	color_test.header2 = h2;
-
-	lv_obj_t *lbl_sample = lv_label_create(h2, NULL);
-	lv_label_set_static_text(lbl_sample, "Accent sample:");
-
-	lv_obj_t *lbl_test = lv_label_create(h2, NULL);
-	lv_label_set_long_mode(lbl_test, LV_LABEL_LONG_BREAK);
-	lv_label_set_static_text(lbl_test,
-		"Lorem ipsum dolor sit amet, consectetur adipisicing elit, "
-		"sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-	lv_obj_set_width(lbl_test, LV_DPI * 261 / 23);
-	lv_obj_align(lbl_test, lbl_sample, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 34);
-	color_test.label = lbl_test;
-
-	// Create sample icons.
-	lv_obj_t *lbl_icons = lv_label_create(h2, NULL);
-	lv_label_set_static_text(lbl_icons,
-		SYMBOL_BRIGHTNESS SYMBOL_CHARGE SYMBOL_FILE SYMBOL_DRIVE SYMBOL_FILE_CODE
-		SYMBOL_EDIT SYMBOL_HINT SYMBOL_DRIVE SYMBOL_KEYBOARD SYMBOL_POWER);
-	lv_obj_align(lbl_icons, lbl_test, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 12);
-	color_test.icons = lbl_icons;
-
-	// Create sample slider.
-	lv_obj_t *slider_test = lv_slider_create(h2, NULL);
-	lv_obj_align(slider_test, lbl_test, LV_ALIGN_OUT_BOTTOM_MID, 0, 12);
-	lv_obj_set_click(slider_test, false);
-	lv_bar_set_value(slider_test, 60);
-	color_test.slider = slider_test;
-
-	// Create sample button.
-	lv_obj_t *btn_test = lv_btn_create(h2, NULL);
-	lv_btn_set_state(btn_test, LV_BTN_STATE_TGL_PR);
-	lv_label_create(btn_test, NULL);
-	lv_btn_set_fit(btn_test, false, true);
-	lv_obj_set_width(btn_test, LV_DPI * 5 / 3);
-	lv_obj_align(btn_test, lbl_test, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI / 20);
-	lv_obj_set_click(btn_test, false);
-	color_test.button = btn_test;
-
-	_show_new_nyx_color(false);
-
-	lv_obj_set_opa_scale(status_bar.mid, LV_OPA_0);
-	lv_obj_set_click(status_bar.mid, false);
-
-	return LV_RES_OK;
+    return nyx_nova_theme_window(button);
 }
 
 typedef struct _time_edit_obj_t
@@ -1742,10 +1261,8 @@ static void _settings_help(lv_obj_t *card, const char *help)
 
 static lv_obj_t *_settings_heading(lv_obj_t *card, const char *title)
 {
-    lv_obj_t *label = lv_label_create(card, NULL);
-    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(label, lv_obj_get_width(card) - 80);
-    lv_label_set_text(label, title); lv_obj_set_pos(label, 16, 12);
+    lv_obj_t *label = nyx_nova_text(card,nyx_nova_caption(title),16,12,lv_obj_get_width(card)-80,NOVA_TITLE);
+    nyx_nova_fit_text(label,48);
     return label;
 }
 
@@ -1766,18 +1283,21 @@ static lv_obj_t *_settings_choices(lv_obj_t *card, const char *title,
 static lv_obj_t *_settings_button(lv_obj_t *card, const char *title, lv_action_t action)
 {
     lv_obj_t *button = lv_btn_create(card, NULL);
-    lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_CENTER);
+    lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    static lv_style_t clear;lv_style_copy(&clear,&lv_style_transp_tight);
+    lv_btn_set_style(button,LV_BTN_STYLE_REL,&clear);lv_btn_set_style(button,LV_BTN_STYLE_PR,&clear);
     lv_obj_set_size(button, lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
     lv_obj_set_pos(button, 14, 14); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
-    lv_obj_t *label = lv_label_create(button, NULL);
-    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK); lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-    lv_obj_set_width(label, lv_obj_get_width(button) - 24); lv_label_set_text(label, title);
+    const char *icon=(strstr(title,"Color")||strstr(title,"couleurs"))?"paintbrush":strstr(title,"Clock")?"clock-3":strstr(title,"Joy-Con")?"gamepad-2":"settings-2";
+    nyx_nova_icon_box(button,icon,10,(lv_obj_get_height(button)-44)/2,44,false);
+    lv_obj_t *label=nyx_nova_text(button,nyx_nova_caption(title),76,0,lv_obj_get_width(button)-92,NOVA_TITLE);
+    nyx_nova_fit_text(label,lv_obj_get_height(button)-24);lv_obj_set_y(label,(lv_obj_get_height(button)-lv_obj_get_height(label))/2);
     return button;
 }
 
 static lv_obj_t *_settings_toggle(lv_obj_t *card, const char *title, lv_action_t action, bool enabled)
 {
-    lv_obj_t *button = nyx_nova_toggle(card, title, action, enabled,
+    lv_obj_t *button = nyx_nova_toggle(card, nyx_nova_caption(title), action, enabled,
         lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
     if (button) lv_obj_set_pos(button, 14, 14);
     return button;
@@ -1799,8 +1319,8 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     _settings_button(card, SYMBOL_EDIT" Appearance & language", nyx_create_appearance_window);
     _settings_help(card, "Choose your language, reading comfort and background in one place.");
     card = _settings_card(interface_page, 1, 2);
-    _settings_button(card, SYMBOL_COPY" Color Theme", _create_window_nyx_colors);
-    _settings_help(card, "Customize #C7EA46 Theme# and #C7EA46 Accent# colors in Nyx.");
+    _settings_button(card, SYMBOL_COPY" Thèmes et couleurs", _create_window_nyx_colors);
+    _settings_help(card, "Couleurs indépendantes, fond d’écran et transparence.");
     card = _settings_card(interface_page, 2, 2);
     _settings_choices(card, SYMBOL_HOME" Home Screen", "Main menu\nAll Configs\nLaunch\nMore Configs", n_cfg.home_screen, 2, _home_screen_action, false);
     _settings_help(card, "Select what screen to show on Nyx boot.\nAll Configs combines extra configurations into the launch screen.");
@@ -1887,7 +1407,7 @@ static lv_res_t _nova_halo_toggle(lv_obj_t *button)
     n_cfg.nova_halo = !n_cfg.nova_halo; nyx_changes_made = true;
     lv_btn_set_state(button, n_cfg.nova_halo ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
     nyx_generic_onoff_toggle(button); nyx_nova_refresh_halos();
-    if (nova_contour_value) lv_label_set_text(nova_contour_value, n_cfg.nova_halo ? "Halo" : "Liseré");
+    if (nova_contour_value) lv_label_set_text(nova_contour_value, n_cfg.nova_halo ? "Reflet animé" : "Contour fixe");
     return LV_RES_OK;
 }
 static lv_res_t _nova_language_action(lv_obj_t *button)
@@ -1924,8 +1444,8 @@ static lv_obj_t *_nova_setting_line(lv_obj_t *panel, const char *title, const ch
 {
     static lv_style_t transparent, accent, line;
     lv_style_copy(&transparent, &lv_style_transp_tight);
-    lv_style_copy(&accent, nyx_nova_text_style(NOVA_SMALL)); accent.text.color = LV_COLOR_HEX(0x55C9F1);
-    lv_style_copy(&line, &lv_style_plain); line.body.main_color = line.body.grad_color = LV_COLOR_HEX(0x334050); line.body.border.width = 0;
+    lv_style_copy(&accent, nyx_nova_text_style(NOVA_SMALL)); accent.text.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
+    lv_style_copy(&line, &lv_style_plain); line.body.main_color = line.body.grad_color = nyx_nova_color(NOVA_COLOR_BORDER); line.body.border.width = 0;
     int width = lv_obj_get_width(panel) - 48;
     lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
     lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, &transparent);
@@ -1942,11 +1462,11 @@ static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int
 {
     static lv_style_t normal, active, label_active;
     lv_style_copy(&normal, lv_theme_get_current()->btn.rel);
-    normal.body.empty = 0; normal.body.main_color = normal.body.grad_color = LV_COLOR_HEX(0x10151D);
-    normal.body.radius = 5; normal.body.border.width = 1; normal.body.border.color = LV_COLOR_HEX(0x334050);
+    normal.body.empty = 0; normal.body.main_color = normal.body.grad_color = nyx_nova_color(NOVA_COLOR_BACKGROUND);
+    normal.body.radius = 5; normal.body.border.width = 1; normal.body.border.color = nyx_nova_color(NOVA_COLOR_BORDER);
     normal.body.padding.hor = normal.body.padding.ver = 0;
-    lv_style_copy(&active, &normal); active.body.border.color = LV_COLOR_HEX(0x55C9F1);
-    lv_style_copy(&label_active, nyx_nova_text_style(NOVA_SMALL)); label_active.text.color = LV_COLOR_HEX(0x55C9F1);
+    lv_style_copy(&active, &normal); active.body.border.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
+    lv_style_copy(&label_active, nyx_nova_text_style(NOVA_SMALL)); label_active.text.color = nyx_nova_color(NOVA_COLOR_REFLECTION);
     lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
     lv_btn_set_style(button, LV_BTN_STYLE_REL, selected ? &active : &normal); lv_btn_set_style(button, LV_BTN_STYLE_PR, &active);
     lv_obj_set_size(button, width, 36); lv_obj_set_pos(button, x, y); lv_obj_set_free_num(button, id); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
@@ -1969,7 +1489,7 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height);
     nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height);
     nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height);
-    nyx_nova_switch_row(system, "Effets de sélection", "Souligner l’icône active.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
+    nyx_nova_switch_row(system, "Effets de sélection", "Reflet léger sur les contours actifs.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
     const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português"};
     _nova_setting_line(reading, "Language", language_names[n_cfg.language < 7 ? n_cfg.language : 0], 64, _nova_language_menu);
     const u32 order[] = {1,0,2,3,4,5,6}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT"};
@@ -1980,5 +1500,5 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     _nova_setting_line(reading, "Text size", size, 226, _nova_font_action);
     const u32 sizes[] = {24,28,32};
     for (u32 i = 0; i < 3; ++i) { char number[12]; s_printf(number, "%d", sizes[i]); _nova_chip(reading, number, 24 + i * 66, 280, 58, n_cfg.font_size == sizes[i], _nova_size_action, sizes[i]); }
-    nova_contour_value = _nova_setting_line(reading, "Contour des icônes", n_cfg.nova_halo ? "Halo" : "Liseré", 334, NULL);
+    nova_contour_value = _nova_setting_line(reading, "Sélection", n_cfg.nova_halo ? "Reflet animé" : "Contour fixe", 334, NULL);
 }
