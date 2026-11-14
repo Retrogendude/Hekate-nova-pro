@@ -1,9 +1,10 @@
-Hekate Nova Pro22 : make -j4 -r avec devkitARM, GNU make et Python.
+Hekate Nova Pro23 : make -j4 -r avec devkitARM, GNU make et Python.
 Les outils Windows documentent les chemins du workspace de developpement.
-Lire LIRE-MOI-V22.md et les licences, dont la licence propre de BTstack.
+Lire LIRE-MOI-V23.md et les licences, dont la licence propre de BTstack.
 Le lien Nyx refuse un en-tete deplace ; ne pas retirer cette assertion.
 Les tests PC substituent la radio et ne prouvent pas le fonctionnement RF.
 La suite de regression demande la v21, l archive officielle 6.5.4 pour
 son res.pak identique a6.5.5 et les polices de test decrites dans les scripts.
 Le coeur porte les correctifs officiels jusqu a8e1392df4569ac501a115867056b13c361429e9e.
 Le compagnon RAM et ses ressources sources sont inclus comme dans la v18.
+classic/hid_host.c comporte le portage connu Joy-Con sans SDP, documente par la difference jointe.

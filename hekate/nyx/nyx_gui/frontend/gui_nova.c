@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v22 · Compatibility and input fixes\nHekate 6.5.5 / Nyx 1.9.5.\nNyx header and wireless navigation corrected.",
+                "v23 · Joy-Con connection\nDirect authenticated HID channels.\nSession report saved with Stop Bluetooth.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."

@@ -950,6 +950,15 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
                         log_info("L2CAP connection %s failed: 0x%02xn", bd_addr_to_str(address), status);
                         hid_emit_connected_event(connection, status);
                         if (hid_host_get_connection_for_hid_cid(hid_cid) == connection) {
+#ifdef NOVA_HID_KNOWN_PSMS
+                            /* An interrupt-open failure must also close the already
+                             * established control channel before another attempt.
+                             * The failing interrupt channel is freed by L2CAP. */
+                            if (l2cap_event_channel_opened_get_psm(packet) == BLUETOOTH_PSM_HID_INTERRUPT && connection->control_cid){
+                                connection->interrupt_cid = 0;
+                                hid_host_disconnect(hid_cid);
+                            } else
+#endif
                             hid_host_finalize_connection(connection);
                         }
                         break;
@@ -977,11 +986,19 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
                                         log_info("Incoming interrupt connection opened: set boot mode");
                                         break;
                                     default:
+#ifdef NOVA_HID_KNOWN_PSMS
+                                        /* Nova extension: paired Joy-Con use the known
+                                         * HID channels; the application decodes reports.
+                                         * No SDP query or SET_PROTOCOL is needed here. */
+                                        connection->protocol_mode = HID_PROTOCOL_MODE_REPORT;
+                                        hid_emit_descriptor_available_event(connection);
+#else
                                         // SDP query
                                         log_info("Incoming interrupt connection opened: start SDP query");
                                         connection->state = HID_HOST_W2_SEND_SDP_QUERY;
                                         hid_host_handle_sdp_client_query_request.callback = &hid_host_handle_start_sdp_client_query;
                                         (void) sdp_client_register_query_callback(&hid_host_handle_sdp_client_query_request);
+#endif
                                         break;
                                 }
                                 break;
@@ -1011,6 +1028,9 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
                                     if (status){
                                         log_info("Connecting to HID Interrupt failed: 0x%02x", status);
                                         hid_emit_connected_event(connection, status);
+#ifdef NOVA_HID_KNOWN_PSMS
+                                        hid_host_disconnect(connection->hid_cid);
+#endif
                                         break;
                                     }
                                     connection->protocol_mode = connection->requested_protocol_mode;
@@ -1291,9 +1311,23 @@ uint8_t hid_host_connect(bd_addr_t remote_addr, hid_protocol_mode_t protocol_mod
             status = l2cap_create_channel(hid_host_packet_handler, connection->remote_addr, BLUETOOTH_PSM_HID_CONTROL, 0xffff, &connection->control_cid);
             break;
         default:
+#ifdef NOVA_HID_KNOWN_PSMS
+            /* Nova extension: standard Classic HID control then interrupt.
+             * Security still goes through the normal L2CAP authentication. */
+            connection->control_psm = BLUETOOTH_PSM_HID_CONTROL;
+            connection->interrupt_psm = BLUETOOTH_PSM_HID_INTERRUPT;
+            connection->state = HID_HOST_W4_CONTROL_CONNECTION_ESTABLISHED;
+            status = l2cap_create_channel(hid_host_packet_handler, connection->remote_addr,
+                connection->control_psm, 0xffff, &connection->control_cid);
+            if (status){
+                hid_host_finalize_connection(connection);
+                *hid_cid = 0;
+            }
+#else
             hid_host_handle_sdp_client_query_request.callback = &hid_host_handle_start_sdp_client_query;
             // ignore ERROR_CODE_COMMAND_DISALLOWED because in that case, we already have requested an SDP callback
             (void) sdp_client_register_query_callback(&hid_host_handle_sdp_client_query_request);
+#endif
             break;
     }
     return status;

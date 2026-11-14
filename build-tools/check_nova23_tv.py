@@ -7,8 +7,8 @@ from pathlib import Path
 import subprocess, hashlib, json
 
 work = Path(__file__).resolve().parent
-tests = work / 'nova22-tv-tests'
-project = work / 'hekate-nova-pro-v22'
+tests = work / 'nova23-tv-tests'
+project = work / 'hekate-nova-pro-v23'
 source = project / 'nyx/nyx_gui/frontend/gui_tv.c'
 code = 'static void gui_bluetooth_shutdown(void){}\n' + source.read_text()
 for header in ('gui_tv.h', 'gui_bluetooth.h', 'gui_nova.h', '../localization.h', '../config.h'):
@@ -25,7 +25,7 @@ command = [str(work / 'toolchains/w64devkit/bin/gcc.exe'),
 subprocess.run(command, check=True)
 result = subprocess.run([str(tests / 'lifecycle.exe')], check=True, text=True, capture_output=True)
 print(result.stdout.strip())
-(work / 'nova22-tv-lifecycle-check.json').write_text(json.dumps({
+(work / 'nova23-tv-lifecycle-check.json').write_text(json.dumps({
     'result': result.stdout.strip(),
     'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
     'hardware_validation': False,

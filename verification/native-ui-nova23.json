@@ -15,11 +15,11 @@
   "elapsed_seconds": 5.3,
   "hardware_io": "substituted; no console or SD operations performed",
   "source_sha256": {
-    "nyx/nyx_gui/frontend/gui_nova.c": "cc407e83b3027288bb01625c410e628426f79adeeaeb319d18fc8cac61accdf3",
+    "nyx/nyx_gui/frontend/gui_nova.c": "ec810d769d7b2104f1c76f7cdd28c926a224ab6e326e0ccf140729a0d872fe34",
     "nyx/nyx_gui/frontend/gui_tools.c": "ca2aeab5fa5337ade13d49cae7d66b43df542a01bbf9c37009ae6875f18a187b",
     "nyx/nyx_gui/frontend/gui_options.c": "3d124d74c12d2f495e07be8ae83c3efea4a73396458ee2f8ba9cd602132bf4c6",
-    "nyx/nyx_gui/frontend/gui_bluetooth.c": "a038415574b254ad5a7a1008523afb1380532d90d5025ee6b3f36fef5ce4fb09",
+    "nyx/nyx_gui/frontend/gui_bluetooth.c": "67e6eb0251a89061a24ed1aca113eba328a614b1309efb97c3335717b4a76b8d",
     "nyx/nyx_gui/frontend/nova_assets/nova_icons.inc": "f088a75c9483d9a31f05232a847f2751c515e7a3da220b32031a399b44bf3443",
-    "nyx/nyx_gui/localization_catalog.inc": "f0734d05c40a6890ae3679a0ad3d8a5bac30db2dcbb05cfb7c01c31c751a6b98"
+    "nyx/nyx_gui/localization_catalog.inc": "dd4354886cfb93bbbecb0ab1d3d2f732b2ebd336403ab71efbcc4cb5a917aeb9"
   }
 }

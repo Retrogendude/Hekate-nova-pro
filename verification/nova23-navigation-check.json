@@ -1,0 +1,14 @@
+{
+  "passed_scenes": 28,
+  "regressions_fail_on_v21": [
+    "Assertion failed: jc_drv_ctx.calibration_step==JC_CAL_MAX_STEPS, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova23-tests\\old_navigation.c, line 8376",
+    "Assertion failed: !jc_drv_ctx.cursor_hidden, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova23-tests\\old_navigation.c, line 8380"
+  ],
+  "real_code": "decoder, merge, pointer callback and LVGL widgets; radio substituted",
+  "source_sha256": {
+    "frontend/gui.c": "4b43fc129655704f1e16a426201858d8bcfe25875668948dc78198a3a1d01ed0",
+    "frontend/gui_bluetooth.c": "67e6eb0251a89061a24ed1aca113eba328a614b1309efb97c3335717b4a76b8d",
+    "bluetooth/nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
+    "bluetooth/nova_bt.h": "a74e56b0abf9db520420ef75bf98b02ead46683b9e9be42ec7c52d31461e63e9"
+  }
+}

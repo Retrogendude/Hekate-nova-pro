@@ -1,3 +1,5 @@
 https://github.com/bluekitchen/btstack
 Revision 9edb5d82ea6ec4466a393415d65030929330acdf
-Unmodified selected sources and headers. Personal experimental build.
+Selected sources and headers; Nova-specific modifications are documented below. Personal experimental build.
+
+Nova23 modification: classic/hid_host.c optionally opens known HID PSM17/19 without SDP (NOVA_HID_KNOWN_PSMS), skips incoming descriptor query, and cleans up immediate channel failures and a failed interrupt channel while control is open. Generic behavior is unchanged when the macro is absent. License retained.

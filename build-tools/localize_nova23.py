@@ -1,6 +1,6 @@
 from pathlib import Path
 import json,re
-root=Path(__file__).resolve().parent/'hekate-nova-pro-v22/nyx/nyx_gui'
+root=Path(__file__).resolve().parent/'hekate-nova-pro-v23/nyx/nyx_gui'
 phrases={}
 def add(en,fr,es,it,ru,de,pt):phrases[en]=[en,fr,es,it,ru,de,pt]
 add('Wireless Joy-Con','Joy-Con sans fil','Joy-Con inalámbricos','Joy-Con wireless','Беспроводные Joy-Con','Kabellose Joy-Con','Joy-Con sem fios')
@@ -86,6 +86,19 @@ add('v22 · Compatibility and input fixes\nHekate 6.5.5 / Nyx 1.9.5.\nNyx header
     'v22 · Совместимость и управление\nHekate 6.5.5 / Nyx 1.9.5.\nИсправлены заголовок Nyx и беспроводное управление.',
     'v22 · Kompatibilität und Eingaben\nHekate 6.5.5 / Nyx 1.9.5.\nNyx-Header und kabellose Navigation korrigiert.',
     'v22 · Compatibilidade e comandos\nHekate 6.5.5 / Nyx 1.9.5.\nCabeçalho Nyx e navegação sem fios corrigidos.')
+add('Radio ready - waiting for Joy-Con','Radio prête : connexion des Joy-Con en attente','Radio lista: esperando Joy-Con','Radio pronta: attesa dei Joy-Con','Радио готово: ожидание Joy-Con','Funk bereit: Warte auf Joy-Con','Rádio pronto: à espera dos Joy-Con')
+add('Joy-Con input active','Commandes Joy-Con actives','Controles Joy-Con activos','Comandi Joy-Con attivi','Команды Joy-Con активны','Joy-Con-Eingaben aktiv','Comandos Joy-Con ativos')
+add('Bluetooth report saved: bootloader/bluetooth/last-session.txt','Rapport enregistré : bootloader/bluetooth/last-session.txt','Informe guardado: bootloader/bluetooth/last-session.txt','Rapporto salvato: bootloader/bluetooth/last-session.txt','Отчёт сохранён: bootloader/bluetooth/last-session.txt','Bericht gespeichert: bootloader/bluetooth/last-session.txt','Relatório guardado: bootloader/bluetooth/last-session.txt')
+add('Bluetooth stopped. Report could not be saved.','Bluetooth arrêté. Impossible de sauvegarder le rapport.','Bluetooth detenido. No se pudo guardar el informe.','Bluetooth arrestato. Impossibile salvare il rapporto.','Bluetooth выключен. Не удалось сохранить отчёт.','Bluetooth gestoppt. Bericht konnte nicht gespeichert werden.','Bluetooth parado. Não foi possível guardar o relatório.')
+add('Attach Joy-Con, read pairing, detach them, then start Bluetooth. Press a button to wake them.','Attacher les Joy-Con, lire les appairages, puis les détacher et activer Bluetooth. Appuyer sur un bouton pour les réveiller.','Acopla los Joy-Con, lee los emparejamientos, retíralos y activa Bluetooth. Pulsa un botón para despertarlos.','Aggancia i Joy-Con, leggi gli abbinamenti, staccali e attiva Bluetooth. Premi un pulsante per riattivarli.','Прикрепите Joy-Con, прочитайте сопряжения, отсоедините их и включите Bluetooth. Нажмите кнопку для пробуждения.','Joy-Con anstecken, Kopplungen lesen, abnehmen und Bluetooth starten. Eine Taste zum Aufwecken drücken.','Encaixa os Joy-Con, lê os emparelhamentos, retira-os e ativa Bluetooth. Prime um botão para os despertar.')
+add('Stop Bluetooth saves a session report to SD. The radio service remains experimental.','Arrêter Bluetooth enregistre un rapport sur la SD. Le service radio reste expérimental.','Detener Bluetooth guarda un informe en la SD. El servicio de radio sigue siendo experimental.','Ferma Bluetooth salva un rapporto sulla SD. Il servizio radio resta sperimentale.','Выключение Bluetooth сохраняет отчёт на SD. Радиослужба остаётся экспериментальной.','Bluetooth stoppen speichert einen Bericht auf SD. Der Funkdienst bleibt experimentell.','Parar Bluetooth guarda um relatório no SD. O serviço de rádio continua experimental.')
+add('v23 · Joy-Con connection\nDirect authenticated HID channels.\nSession report saved with Stop Bluetooth.',
+ 'v23 · Connexion des Joy-Con\nCanaux manette directs et authentifiés.\nRapport enregistré avec Arrêter Bluetooth.',
+ 'v23 · Conexión de Joy-Con\nCanales HID directos y autenticados.\nInforme guardado al detener Bluetooth.',
+ 'v23 · Connessione Joy-Con\nCanali HID diretti e autenticati.\nRapporto salvato fermando Bluetooth.',
+ 'v23 · Подключение Joy-Con\nПрямые защищённые каналы HID.\nОтчёт сохраняется при выключении Bluetooth.',
+ 'v23 · Joy-Con-Verbindung\nDirekte authentifizierte HID-Kanäle.\nBericht beim Stoppen von Bluetooth.',
+ 'v23 · Ligação dos Joy-Con\nCanais HID diretos e autenticados.\nRelatório guardado ao parar Bluetooth.')
 # Preserve the existing catalog and regenerate its pattern indices after sorting.
 catalog=root/'localization_catalog.inc';lines={}
 for line in catalog.read_text(encoding='utf-8').splitlines():
@@ -100,5 +113,5 @@ tail+='static const uint16_t locale_pattern_start[257] = {'+', '.join(str(sum(ch
 catalog.write_text('/* Nova catalog: en fr es it ru de pt. */\nstatic const locale_entry locale_catalog[] = {\n'+'\n'.join(lines[k]for k in keys)+'\n};\n'+tail,encoding='utf-8')
 data=json.loads((root/'localization_catalog.json').read_text(encoding='utf-8'));data.update(phrases)
 (root/'localization_catalog.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
-(root/'localization_nova22.json').write_text(json.dumps(phrases,ensure_ascii=False,indent=2),encoding='utf-8')
+(root/'localization_nova23.json').write_text(json.dumps(phrases,ensure_ascii=False,indent=2),encoding='utf-8')
 print(f'PASS: {len(phrases)} Bluetooth/changelog phrases in seven languages.')

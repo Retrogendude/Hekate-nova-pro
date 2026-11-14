@@ -11,13 +11,22 @@ typedef struct {
     uint8_t connected, battery;
     uint8_t report_id, mode_ack, hid_open, last_error;
     uint32_t reports;
+    uint16_t last_psm;
+    uint8_t stage;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
     int state, error;
     uint32_t rx_packets, tx_packets;
+    uint32_t rx_acl, tx_acl;
     nova_bt_pad pad[2];
 } nova_bt_status;
+typedef struct {uint32_t ms;uint16_t kind,a,b,c;} nova_bt_trace;
+unsigned nova_bt_trace_count(void);
+int nova_bt_trace_get(unsigned index,nova_bt_trace *record);
+/* Metadata only: never put addresses, link keys or packet payloads here. */
+void nova_bt_trace_reset(void);
+void nova_bt_trace_add(uint16_t kind,uint16_t a,uint16_t b,uint16_t c);
 int nova_bt_start(const nova_bt_peer peers[2]);
 void nova_bt_stop(void);
 void nova_bt_poll(void);

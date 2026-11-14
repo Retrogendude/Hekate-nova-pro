@@ -4,8 +4,8 @@ The radio is substituted. This verifies software, not a physical RF link.
 from pathlib import Path
 import subprocess, json, hashlib
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v22/nyx/nyx_gui'
-d=w/'nova22-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v23/nyx/nyx_gui'
+d=w/'nova23-tests';d.mkdir(exist_ok=True)
 test=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -71,6 +71,14 @@ int main(void)
     parser_reset();const uint8_t acl[]={2,1,0x20,0,4};feed(acl,sizeof acl);for(unsigned n=0;n<1024;n++)input_byte(n);assert(delivered==1&&got_size==1028&&!failure);
     parser_reset();const uint8_t too_large[]={2,1,0x20,0xff,0xff};feed(too_large,sizeof too_large);assert(failure==5&&!delivered);
     parser_reset();input_byte(0x81);assert(failure==5);
+    /* Trace records contain protocol metadata, never link-key arguments. */
+    nova_bt_trace_reset();uint8_t private_command[25]={0x0b,4,22};memset(private_command+3,0xa5,22);
+    trace_frame(1,HCI_COMMAND_DATA_PACKET,private_command,sizeof private_command);
+    nova_bt_trace tr;assert(nova_bt_trace_count()==1&&nova_bt_trace_get(0,&tr));
+    assert(tr.kind==1&&tr.a==0x040b&&tr.b==22&&tr.c==0);
+    nova_bt_trace_reset();for(unsigned n=0;n<160;n++)nova_bt_trace_add(99,n,0,0);
+    assert(nova_bt_trace_count()==128&&nova_bt_trace_get(0,&tr)&&tr.a==32);
+    assert(nova_bt_trace_get(127,&tr)&&tr.a==159&&!nova_bt_trace_get(128,&tr));
     /* Real stack initialization through the asynchronous port. The virtual
      * controller sends standard Command Complete responses only. */
     failure=0;unsigned boot_commands=0;
@@ -131,12 +139,12 @@ cc=w/'toolchains/w64devkit/bin/gcc.exe'
 lib=p/'libs/btstack'
 sources=[str(f) for f in lib.rglob('*.c')]
 args=[str(cc),'-std=gnu11','-O1','-g','-Wall','-Wextra','-ffunction-sections','-fdata-sections','-Wl,--gc-sections',
-      '-I'+str(p/'bluetooth'),'-I'+str(lib),str(d/'test.c'),str(p/'bluetooth/nova_bt_protocol.c'),*sources,'-o',str(d/'test.exe')]
+      '-I'+str(p/'bluetooth'),'-I'+str(lib),str(d/'test.c'),str(p/'bluetooth/nova_bt_protocol.c'),str(p/'bluetooth/nova_bt_trace.c'),*sources,'-o',str(d/'test.exe')]
 r=subprocess.run(args,capture_output=True,text=True)
 if r.returncode:raise RuntimeError(r.stderr[-12000:])
 r=subprocess.run([str(d/'test.exe')],capture_output=True,text=True,timeout=20)
 print(r.stdout,r.stderr)
 assert r.returncode==0,r.returncode
 files=list((p/'bluetooth').glob('*.[ch]'))
-(w/'nova22-bt-check.json').write_text(json.dumps({'passed':True,'physical_radio':False,'output':r.stdout,
+(w/'nova23-bt-check.json').write_text(json.dumps({'passed':True,'physical_radio':False,'output':r.stdout,
     'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2))

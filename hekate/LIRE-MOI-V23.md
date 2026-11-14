@@ -1,0 +1,100 @@
+# Hekate Nova Pro 23 — essai de connexion Joy-Con
+
+Base conservée : Hekate 6.5.5 / Nyx 1.9.5. Interface Nova, réglages, dock et
+diagnostics conservés. La connexion radio de cette version reste à valider sur
+la console : les tests PC décrits ci-dessous ne remplacent pas un essai physique.
+
+## Ce que montre ta capture v22
+
+Appairages importés 2/2, aucun rapport, HID 0/0 et ERR 69/00. La radio répond,
+mais aucune connexion manette ne transmet de commandes. Le code hexadécimal 69
+est un délai dépassé pendant une négociation L2CAP ; il ne désigne pas un bouton
+en panne. Les seules statistiques HCI ne prouvent pas une connexion des Joy-Con.
+
+La v22 commençait par une recherche de descripteur de service SDP avant d’ouvrir
+les canaux manette. Cette v23 utilise directement les canaux HID standard connus
+des Joy-Con : commande 0x0011 puis entrées 0x0013. L’authentification avec les clés
+importées reste obligatoire. Le décodeur propre à Nova n’a pas besoin d’un
+descripteur téléchargé pour reconnaître les rapports des Joy-Con Nintendo.
+
+Le changement évite le préalable SDP. Il ne prouve pas que ce préalable soit
+l’unique cause du blocage sur ta console. Le rapport de session permet de
+localiser un éventuel échec sur le nouveau chemin.
+
+## Installer et essayer
+
+1. Garde une copie de ton dossier bootloader actuel.
+2. Copie le dossier bootloader fourni sur la SD, en acceptant le remplacement
+   des fichiers. Ne supprime pas tes configurations. Vérifie **23** dans les crédits.
+3. Ouvre Réglages Nyx → TV / Dock → Joy-Con sans fil.
+4. Attache les Joy-Con déjà appairés à cette console et choisis Lire les appairages.
+5. Détache-les, choisis Activer Bluetooth, puis appuie sur un bouton pour les réveiller.
+6. Vérifie que HID passe à1 et que Rapports augmente, puis essaie le stick et A / ZL / ZR.
+7. Choisis **Arrêter Bluetooth** après l’essai : le rapport est enregistré ici :
+   `bootloader/bluetooth/last-session.txt`.
+
+Si les commandes ne fonctionnent toujours pas, conserve ce fichier et la capture
+de l’état affiché. Le rapport contient les étapes et codes de protocole ; il ne
+contient ni adresses Bluetooth, ni clés d’appairage, ni contenu brut des paquets.
+Un message confirme si l’enregistrement a réussi. Aucun rapport n’est écrit
+automatiquement pendant le lancement d’un autre système ou un diagnostic.
+
+Le payload fourni est `hekate_nova_pro_6.5.5_v23.bin`. Le payload Hekate reste
+fonctionnellement identique à celui de v22 ; les modifications sont dans Nyx.
+Copier seulement le payload sans remplacer le dossier bootloader ne met pas
+le service à jour. Les fichiers nyx.ini et hekate_ipl.ini ne sont pas fournis.
+
+## Changements de connexion
+
+- Ouverture directe et authentifiée des canaux HID, sans requête SDP obligatoire.
+- Même chemin sans SDP lorsque la manette initie la connexion.
+- Commande de passage en mode complet envoyée dans un rapport de taille complète.
+- Fermeture du canal de commande si l’ouverture du canal d’entrées échoue,
+  afin de libérer la connexion avant une nouvelle tentative.
+- État initial explicite : « Radio prête : connexion des Joy-Con en attente ».
+  « Commandes Joy-Con actives » apparaît seulement après un rapport décodé récent.
+- Ajout du canal demandé PSM et de l’étape STEP aux informations affichées.
+- Rapport de session borné à128 entrées de métadonnées, exporté avec Arrêter Bluetooth.
+
+Les corrections v22 de navigation, d’en-tête Nyx et de support HOS 23.5 sont
+conservées. Le service reste désactivé au démarrage et les clés restent en RAM.
+Les appairages des Joy-Con ne sont pas réécrits et aucun micrologiciel Bluetooth
+propriétaire n’est fourni. L’import par rails ne concerne pas la Switch Lite.
+
+## Lecture du rapport
+
+PSM 0011 correspond au canal de commande ; 0013 au canal d’entrées. ERR 69 indique
+un délai dépassé ; un autre code peut signaler une erreur distincte d’authentification
+ou d’ouverture. STEP distingue la tentative de connexion, la liaison, l’authentification,
+les canaux et la réception de rapports. Le détail de la trace sert à analyser l’essai.
+
+Les enregistrements de type1 ne conservent que l’opcode d’une commande HCI et sa
+longueur, jamais ses paramètres. Types2/3 : fin ou état d’une commande ; 4 : événement
+de liaison ; 5/6 : signalisation L2CAP émise/reçue ; 7 : émission HID ; 10 : résultat
+d’ouverture HID ; 11 : premier rapport. Les rapports de boutons périodiques ne
+remplissent pas la trace : seuls leurs compteurs et le premier événement sont conservés.
+
+## Vérifications effectuées
+
+Un correspondant virtuel échange de vraies trames H4 avec la pile BTstack de Nova.
+Les deux manettes sont authentifiées avec leurs clés, les canaux commande/entrées
+sont configurés, la commande complète est reçue, puis l’ACK, les boutons et les
+sticks traversent toute la pile. Une déconnexion relâche les commandes concernées.
+Ce test ne fabrique pas directement un événement « HID ouvert » pour le service.
+
+Trois scénarios négatifs sont aussi couverts : recherche SDP sans réponse donnant
+69 sur l’ancien chemin, canal commande sans réponse donnant69 avec PSM0011, et
+canal d’entrées sans réponse entraînant la fermeture du canal commande.
+Le correspondant virtuel ne démontre pas le comportement radio du Joy-Con réel.
+
+L’export est vérifié avec les erreurs de carte, dossier, ouverture, écriture courte
+et fermeture ; un échec ne doit pas être annoncé comme un rapport sauvegardé.
+Les contrôles d’interface et de navigation de Nova restent exécutés sur PC.
+
+## Sources et licences
+
+BTstack conserve sa licence BlueKitchen personnelle et non commerciale, jointe
+au paquet. Le fichier classic/hid_host.c comporte une petite adaptation Nova
+conditionnée par NOVA_HID_KNOWN_PSMS ; ses autres chemins restent ceux de l’amont.
+La modification et la révision d’origine sont décrites dans BTSTACK-UPSTREAM.txt.
+Les autres crédits et licences sont conservés. Lire aussi LIRE-MOI-V22.md.

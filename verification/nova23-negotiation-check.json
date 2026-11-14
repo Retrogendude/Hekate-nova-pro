@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "logs": [
+    "PASS: HID control timeout is recorded as 0x69 with channel 0x0011",
+    "PASS: interrupt timeout closes the established control channel before retry",
+    "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack",
+    "PASS: descriptor-query path reproduces 0x69 when the SDP channel does not answer"
+  ],
+  "physical_radio": false,
+  "source_sha256": {
+    "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
+    "bluetooth/nova_bt.h": "a74e56b0abf9db520420ef75bf98b02ead46683b9e9be42ec7c52d31461e63e9",
+    "bluetooth/nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
+    "bluetooth/nova_bt_radio.c": "bee7821707cac692c85317a4c8bfa87316ec3ef79a2f92f2aa2ed19e66c578a2",
+    "bluetooth/nova_bt_stack.c": "5254de1670aaccde04b040de750d0f3141ad8624b35278c0f812e9a931f99ebf",
+    "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
+  },
+  "hid_host_sha256": "50699e1dc20a82797ed0aac125678448d1b9d4656158bf578a47c553008d029f"
+}

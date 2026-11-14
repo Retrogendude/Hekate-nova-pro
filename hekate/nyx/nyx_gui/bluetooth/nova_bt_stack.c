@@ -21,7 +21,38 @@ static uint8_t rx_type;
 static void (*receive_packet)(uint8_t,uint8_t *,uint16_t);
 static btstack_packet_callback_registration_t event_registration;
 static uint8_t descriptors[1024];
-static struct {uint16_t cid;uint8_t retries, sequence, mode_tries, output[11];uint32_t next, mode_next;} link[2];
+static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, output[48];uint32_t next, mode_next;} link[2];
+static int side_for(const uint8_t *addr);
+static int side_handle(uint16_t handle)
+{
+    hci_connection_t *conn=hci_connection_for_handle(handle);
+    if(conn)return side_for(conn->address);
+    for(unsigned i=0;i<2;i++)if(link[i].handle==handle)return i;
+    return -1;
+}
+static void trace_frame(int outgoing,uint8_t type,const uint8_t *p,unsigned size)
+{
+    if(type==HCI_COMMAND_DATA_PACKET&&outgoing&&size>=3){
+        nova_bt_trace_add(1,little_endian_read_16(p,0),p[2],0);return;
+    }
+    if(type==HCI_EVENT_PACKET&&!outgoing&&size>=2){
+        if(p[0]==HCI_EVENT_COMMAND_COMPLETE&&size>=6)nova_bt_trace_add(2,little_endian_read_16(p,3),p[5],0);
+        else if(p[0]==HCI_EVENT_COMMAND_STATUS&&size>=6)nova_bt_trace_add(3,little_endian_read_16(p,4),p[2],0);
+        else if(p[0]==HCI_EVENT_CONNECTION_COMPLETE||p[0]==HCI_EVENT_DISCONNECTION_COMPLETE||
+                p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE||p[0]==HCI_EVENT_ENCRYPTION_CHANGE||p[0]==HCI_EVENT_HARDWARE_ERROR)
+            nova_bt_trace_add(4,p[0],p[0]==HCI_EVENT_DISCONNECTION_COMPLETE&&size>=6?p[5]:size>=3?p[2]:0,size>=5?little_endian_read_16(p,3):0);
+        return;
+    }
+    if(type!=HCI_ACL_DATA_PACKET||size<8)return;
+    if((little_endian_read_16(p,0)&0x3000)==0x1000)return; /* continuation has no L2CAP header */
+    uint16_t handle=little_endian_read_16(p,0)&0xfff;
+    if(little_endian_read_16(p,6)==1&&size>=12){
+        uint8_t code=p[8];uint16_t value=size>=14?little_endian_read_16(p,12):0;
+        if((code==3||code==5)&&size>=18)value=little_endian_read_16(p,16);
+        nova_bt_trace_add(outgoing?5:6,handle,(code<<8)|p[9],value);
+        if(outgoing&&code==2&&size>=16){int i=side_handle(handle);if(i>=0){status.pad[i].last_psm=value;status.pad[i].stage=value==0x11?4:value==0x13?5:2;}}
+    }else if(outgoing&&size>=10)nova_bt_trace_add(7,handle,p[9],size);
+}
 
 static void timer_set(btstack_timer_source_t *t,uint32_t ms){t->timeout=nova_bt_now()+ms+1;}
 static void noop(void){}
@@ -79,6 +110,18 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
     (void)channel;if(type!=HCI_EVENT_PACKET||size<2)return;
     bd_addr_t addr;int i;uint16_t cid;
     switch(hci_event_packet_get_type(p)){
+    case HCI_EVENT_CONNECTION_COMPLETE:
+        if(size<13)break;
+        hci_event_connection_complete_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
+        status.pad[i].last_error=hci_event_connection_complete_get_status(p);
+        if(status.pad[i].last_error)status.pad[i].stage=7;
+        else{link[i].handle=hci_event_connection_complete_get_connection_handle(p);status.pad[i].stage=2;}
+        break;
+    case HCI_EVENT_AUTHENTICATION_COMPLETE:
+    case HCI_EVENT_ENCRYPTION_CHANGE:
+        if(size<5)break;
+        i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+        status.pad[i].last_error=p[2];status.pad[i].stage=p[2]?7:3;break;
     case BTSTACK_EVENT_STATE:
         if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){status.state=NOVA_BT_READY;}
         break;
@@ -103,19 +146,23 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
             hid_subevent_connection_opened_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
             if(hid_subevent_connection_opened_get_status(p)){
                 status.pad[i].last_error=hid_subevent_connection_opened_get_status(p);status.pad[i].hid_open=0;
+                status.pad[i].stage=7;nova_bt_trace_add(10,i,status.pad[i].last_error,status.pad[i].last_psm);
                 link[i].cid=0;link[i].next=nova_bt_now()+5000;clear_pad(i);
             }else{
                 status.pad[i].hid_open=1;status.pad[i].last_error=0;status.pad[i].mode_ack=0;
+                status.pad[i].stage=5;nova_bt_trace_add(10,i,0,status.pad[i].last_psm);
                 link[i].cid=hid_subevent_connection_opened_get_hid_cid(p);
                 link[i].mode_tries=0;link[i].mode_next=nova_bt_now()+150;
             }break;
         case HID_SUBEVENT_REPORT:
             i=side_cid(hid_subevent_report_get_hid_cid(p));if(i<0)break;
+            if(!status.pad[i].reports)nova_bt_trace_add(11,i,hid_subevent_report_get_report_len(p),0);
             nova_bt_decode(&status.pad[i],i,hid_subevent_report_get_report(p),hid_subevent_report_get_report_len(p),nova_bt_now());
+            if(status.pad[i].connected)status.pad[i].stage=6;
             break;
         case HID_SUBEVENT_CONNECTION_CLOSED:
             i=side_cid(hid_subevent_connection_closed_get_hid_cid(p));if(i<0)break;
-            clear_pad(i);status.pad[i].hid_open=0;link[i].cid=0;link[i].next=nova_bt_now()+5000;break;
+            clear_pad(i);status.pad[i].hid_open=0;status.pad[i].stage=0;link[i].cid=0;link[i].handle=HCI_CON_HANDLE_INVALID;link[i].next=nova_bt_now()+5000;break;
         default:break;
         }break;
     default:break;
@@ -139,7 +186,7 @@ static void input_byte(uint8_t value)
     }
     if(rx_len==rx_need){
         uint8_t type=rx_type;unsigned len=rx_len;rx_type=0;rx_len=rx_need=0;
-        if(type==2||type==4){status.rx_packets++;receive_packet(type,rx,len);}
+        if(type==2||type==4){status.rx_packets++;if(type==2)status.rx_acl++;trace_frame(0,type,rx,len);receive_packet(type,rx,len);}
     }
 }
 const nova_bt_status *nova_bt_get_status(void){return &status;}
@@ -155,7 +202,8 @@ void nova_bt_stop(void)
 }
 int nova_bt_start(const nova_bt_peer p[2])
 {
-    nova_bt_stop();memset(&status,0,sizeof(status));
+    nova_bt_stop();memset(&status,0,sizeof(status));nova_bt_trace_reset();
+    for(unsigned i=0;i<2;i++)link[i].handle=HCI_CON_HANDLE_INVALID;
     if(!nova_bt_validate_peers(p)){status.state=NOVA_BT_ERROR;status.error=1;return 0;}
     if(!nova_bt_radio_open()){status.state=NOVA_BT_ERROR;status.error=2;return 0;}
     memcpy(peers,p,sizeof(peers));failure=0;started=nova_bt_now();
@@ -177,6 +225,7 @@ void nova_bt_poll(void)
     if(!failure&&tx_len){
         for(unsigned n=0;n<32&&tx_pos<tx_len;n++)if(nova_bt_radio_write(tx[tx_pos]))tx_pos++;else break;
         if(tx_pos==tx_len){
+            trace_frame(1,tx[0],tx+1,tx_len-1);if(tx[0]==HCI_ACL_DATA_PACKET)status.tx_acl++;
             tx_len=0;status.tx_packets++;uint8_t sent[]={HCI_EVENT_TRANSPORT_PACKET_SENT,0};
             receive_packet(HCI_EVENT_PACKET,sent,sizeof(sent));
         }else if((uint32_t)(nova_bt_now()-tx_started)>2000)failure=6;
@@ -192,7 +241,9 @@ void nova_bt_poll(void)
         if(status.pad[i].connected&&(uint32_t)(now-status.pad[i].updated)>500)clear_pad(i);
         if(peers[i].valid&&!link[i].cid&&link[i].retries<3&&(int32_t)(now-link[i].next)>=0){
             link[i].retries++;link[i].next=now+5000;
-            if(hid_host_connect(peers[i].mac,HID_PROTOCOL_MODE_REPORT,&link[i].cid))link[i].cid=0;
+            status.pad[i].stage=1;
+            uint8_t result=hid_host_connect(peers[i].mac,HID_PROTOCOL_MODE_REPORT,&link[i].cid);
+            if(result){link[i].cid=0;status.pad[i].last_error=result;status.pad[i].stage=7;nova_bt_trace_add(10,i,result,0);}
         }
         if(link[i].cid&&link[i].mode_next&&!status.pad[i].mode_ack&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
             /* Keep the output storage alive until BTstack sends it. No rumble. */
@@ -201,7 +252,7 @@ void nova_bt_poll(void)
                 link[i].output[0]=link[i].sequence&15;memcpy(link[i].output+1,neutral,8);
                 link[i].output[9]=3;link[i].output[10]=0x30;
             }
-            if(!hid_host_send_report(link[i].cid,1,link[i].output,11))link[i].mode_tries++;
+            if(!hid_host_send_report(link[i].cid,1,link[i].output,sizeof(link[i].output)))link[i].mode_tries++;
             link[i].mode_next=now+1000;
         }
     }
