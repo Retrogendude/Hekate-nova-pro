@@ -10,8 +10,8 @@ project = work/'hekate-6.5.4'
 companion = work/'HWTest-RCM-0.15'
 output = project/'output'
 deliveries = workspace/'outputs'
-source_zip = deliveries/'hekate-6.5.4-studio-v9-sources.zip'
-bundle_zip = deliveries/'hekate-6.5.4-studio-v9.zip'
+source_zip = deliveries/'hekate-6.5.4-nova-v10-sources.zip'
+bundle_zip = deliveries/'hekate-6.5.4-nova-v10.zip'
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 
@@ -33,9 +33,9 @@ with ZipFile(source_zip,'w',ZIP_DEFLATED) as z:
                  'check_language_config.py', 'check_language_actions.py',
                  'check_localization.py', 'check_unicode_fonts.py',
                  'check_appearance_config.py', 'check_appearance_actions.py',
-                 'check_font_manager.py', 'check_gui_readability.py', 'check_action_grid.py',
+                 'check_font_manager.py', 'check_gui_readability.py', 'check_nova_reference.py', 'check_nova_save.py', 'check_nova_guards.py',
                  'check_display_present.py', 'check_background_performance.py',
-                 'render_lvgl_preview_v9.py', 'check_alternate_fonts.py', 'package_studio_v9.py', 'export_studio_previews.py',
+                 'render_lvgl_preview_v10.py', 'check_alternate_fonts.py', 'package_nova_v10.py', 'export_nova_previews.py', 'add_nova_catalog.py', 'build_nova_icons.cjs', 'build_nova_reference.cjs',
                  'check_diag_format.py', 'check_probe_translations.py', 'check_ram_locale.py', 'check_report_paging.py',
                  'create_localization_catalog.py', 'extend_localization_catalog.py',
                  'build_legacy_extra.py', 'audit_localization_coverage.py',
@@ -43,6 +43,9 @@ with ZipFile(source_zip,'w',ZIP_DEFLATED) as z:
                  'complete_probe_translations.py', 'polish_probe_translations.py',
                  'sanitize_probe_translations.py', 'build_probe_review.py'):
         z.write(work/name,'build-tools/'+name)
+    z.write(work/'nova-reference.json','design/nova-reference.json')
+    design=json.loads((work/'nova-reference.json').read_text(encoding='utf-8'))
+    if Path(design['source']).is_file():z.write(Path(design['source']),'design/hekate-directions-pro.html')
     for path in sorted((work/'ram-ui').glob('ram-ui-*.bin')):
         z.write(path,'resources/bootloader/sys/'+path.name)
     z.write(work/'ram-ui/manifest.json','resources/RAM-UI.json')
@@ -52,6 +55,8 @@ with ZipFile(source_zip,'w',ZIP_DEFLATED) as z:
         'Construire ensuite HWTest-RCM-0.15/ramtest avec make -j4 (devkitARM, Python3, Git).\n'
         'Les scripts build-tools sont les references de construction et verification\n'
         'du workspace Windows utilise ici ; ils attendent sa disposition work/.\n'
+        'Les icones Nova sont deja compilees dans nova_icons.inc : Node.js est\n'
+        'uniquement utile pour les regenerer, avec Lucide 1.8.0 et Sharp.\n'
         'Ne pas utiliser les sorties intermediaires *_unc.bin comme payloads.\n')
 
 meta = json.loads((work/'official-release.json').read_text(encoding='utf-8'))
@@ -103,6 +108,7 @@ pause
 '''.replace('\n','\r\n').encode('utf-8')
 files['LICENSE']=(project/'LICENSE').read_bytes()
 files['licenses/NotoSans-OFL.txt']=(project/'nyx/nyx_gui/fonts/source/OFL.txt').read_bytes()
+files['licenses/Lucide-ISC.txt']=(project/'nyx/nyx_gui/frontend/nova_assets/LUCIDE-LICENSE.txt').read_bytes()
 files['sources/'+source_zip.name]=source_zip.read_bytes()
 for name, destination in [('hekate-build.log','verification/compilation-hekate-nyx.log'),
                           ('hwtest-ram-build.log','verification/compilation-ram.log'),
@@ -116,16 +122,17 @@ files['documentation/POLICES.md']=(font_root/'FONTS.md').read_bytes()
 files['verification/couverture-traductions.json']=(work/'localization-coverage.json').read_bytes()
 files['verification/provenance-traductions-techniques.json']=(project/'nyx/nyx_gui/localization_probe_provenance.json').read_bytes()
 files['verification/performance-fonds.json']=(work/'background-performance-check/results.json').read_bytes()
-files['verification/performance-halo-studio.json']=(work/'lvgl-preview-v9/studio-performance.json').read_bytes()
+files['verification/performance-halo-nova.json']=(work/'lvgl-preview-v10/nova-performance.json').read_bytes()
+files['verification/reference-nova.json']=(work/'nova-reference-check.json').read_bytes()
 files['verification/ressources-ram.json']=(work/'ram-ui/manifest.json').read_bytes()
-for path in sorted(work.glob('preview-v9-*.png')):
+for path in sorted(work.glob('preview-v10-*.png')):
     files['documentation/apercus/'+path.name]=path.read_bytes()
 
-files['LIRE-MOI.txt']=(project/'LIRE-MOI-V9.txt').read_bytes()
+files['LIRE-MOI.txt']=(project/'LIRE-MOI-V10.txt').read_bytes()
 verification=json.loads((work/'verification-full.json').read_text(encoding='utf-8'))
 manifest={
-    'project':'Hekate 6.5.4 / Nyx 1.9.4 custom Studio prototype 9',
-    'build_date_local':'2026-11-05 Europe/Paris',
+    'project':'Hekate 6.5.4 / Nyx 1.9.4 custom Nova prototype 10',
+    'build_date_local':'2026-11-06 Europe/Paris',
     'build_exit_code':0,
     'toolchain_arm':'devkitARM GCC 16.1.0',
     'toolchain_a64':'devkitA64 GCC 16.1.0',
@@ -145,6 +152,7 @@ files['BUILD-INFO.json']=json.dumps(manifest,indent=2,ensure_ascii=False).encode
 assert files['bootloader/update.bin']==files[payload_name]
 assert len(files[payload_name])<=126296
 assert len(files['bootloader/sys/hwtest_ram.bin'])<=130392
+assert len(files['bootloader/sys/nyx.bin'])<=16*1024*1024
 assert (output/'hekate_unc.bin').stat().st_size<=140288
 assert len([p for p in files if p.startswith('fonts/') and p.endswith('.nyxf')])==3
 assert len([p for p in files if p.startswith('bootloader/sys/ram-ui-') and p.endswith('.bin')])==7

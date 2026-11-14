@@ -3121,25 +3121,10 @@ out:
 void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
 {
     nyx_action_grid grid;
-    nyx_action_grid_init(&grid, th, parent);
-    nyx_action_grid_add(&grid, SYMBOL_CHIP"  Bootrom",
-        "Inspect Ipatches and dump patched or unpatched BootROM.",
-        _create_window_bootrom_info_status, NULL, 0);
-    bool lockpick_found = _lockpick_exists_check();
-    lv_obj_t *lockpick = nyx_action_grid_add(&grid, SYMBOL_KEY"  Lockpick",
-        lockpick_found ? "Launch Lockpick_RCM from the payloads folder." :
-            "bootloader/payloads/Lockpick_RCM.bin is missing or outdated.",
-        _create_mbox_lockpick, NULL, 0);
-    if (!lockpick_found) {
-        lv_btn_set_state(lockpick, LV_BTN_STATE_INA);
-        lv_obj_set_click(lockpick, false);
-    }
+    nyx_action_grid_init(&grid, th, parent, NOVA_INFO);
     nyx_action_grid_add(&grid, SYMBOL_CIRCUIT"  HW & Fuses",
         "View hardware identity, cached fuses, DRAM, display and touch-panel information.",
         _create_window_hw_info_status, NULL, 0);
-    nyx_action_grid_add(&grid, SYMBOL_SHUFFLE"  KFuses",
-        "Dump cached KFuses containing HDCP key data.",
-        _kfuse_dump_window_action, NULL, 0);
     nyx_action_grid_add(&grid, SYMBOL_CHIP"  eMMC",
         "View eMMC identification, partitions and read-speed benchmarks.",
         _create_window_emmc_info_status, NULL, 0);
@@ -3149,5 +3134,20 @@ void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
     nyx_action_grid_add(&grid, SYMBOL_BATTERY_FULL"  Battery",
         "View battery, charger and USB-PD information, or dump charger registers.",
         _create_window_battery_status, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_CHIP"  Bootrom",
+        "Inspect Ipatches and dump patched or unpatched BootROM.",
+        _create_window_bootrom_info_status, NULL, 0);
+    nyx_action_grid_add(&grid, SYMBOL_SHUFFLE"  KFuses",
+        "Dump cached KFuses containing HDCP key data.",
+        _kfuse_dump_window_action, NULL, 0);
+    bool lockpick_found = _lockpick_exists_check();
+    lv_obj_t *lockpick = nyx_action_grid_add(&grid, SYMBOL_KEY"  Lockpick",
+        lockpick_found ? "Launch Lockpick_RCM from the payloads folder." :
+            "bootloader/payloads/Lockpick_RCM.bin is missing or outdated.",
+        _create_mbox_lockpick, NULL, 0);
+    if (!lockpick_found) {
+        lv_btn_set_state(lockpick, LV_BTN_STATE_INA);
+        lv_obj_set_click(lockpick, false);
+    }
     nyx_action_grid_finish(&grid);
 }

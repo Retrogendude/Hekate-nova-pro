@@ -12,13 +12,13 @@ logs = []
 scripts = ['check_nyx_config_writer.py', 'check_language_config.py',
            'check_language_actions.py', 'check_appearance_config.py', 'check_appearance_actions.py',
            'check_localization.py', 'check_diag_format.py', 'check_probe_translations.py', 'check_unicode_fonts.py',
-           'check_font_manager.py', 'check_gui_readability.py', 'check_action_grid.py',
-           'check_display_present.py', 'check_background_performance.py', 'render_lvgl_preview_v9.py', 'check_alternate_fonts.py',
+           'check_font_manager.py', 'check_gui_readability.py', 'check_nova_save.py', 'check_nova_reference.py',
+           'check_display_present.py', 'check_background_performance.py', 'render_lvgl_preview_v10.py', 'check_alternate_fonts.py', 'check_nova_guards.py',
            'check_ram_locale.py', 'check_report_paging.py', 'check_payload_reader.py',
            'test_native_backend_host.py', 'test_native_verdict_host.py',
            'check_ram_handoff.py', 'check_ram_payload.py']
 for script in scripts:
-    arguments = ['--check-all'] if script == 'render_lvgl_preview_v9.py' else []
+    arguments = ['--check-all'] if script == 'render_lvgl_preview_v10.py' else []
     result = subprocess.run([sys.executable, str(work / script), *arguments], capture_output=True, text=True)
     logs.append(script + '\n' + result.stdout + result.stderr)
     if result.returncode:
@@ -41,6 +41,9 @@ original = re.findall(r'\{\s*(probe_\w+)\s*,', (work/'HWTest-RCM-0.15/core.c').r
 assert probes == original and len(probes) == 42
 symbols = subprocess.check_output([str(arm/'arm-none-eabi-nm.exe'), str(project/'build/nyx/nyx.elf')], text=True)
 assert all(re.search(r'\bT '+probe+r'$', symbols, re.M) for probe in probes)
+card_signal=re.search(r'^(\w+) [tT] nova_card_signal$',symbols,re.M)
+toggle_signal=re.search(r'^(\w+) [tT] nova_toggle_signal$',symbols,re.M)
+assert card_signal and toggle_signal and card_signal[1]!=toggle_signal[1]
 stub_symbol = re.search(r'^(\w+) [DR] cpu_stub_bin$', symbols, re.M)
 assert stub_symbol
 stub = (project/'build/nyx/cpu_stub.bin').read_bytes()
@@ -58,21 +61,23 @@ summary = {
     'ram_service_bytes': ram.stat().st_size,
     'hardware_validation': 'not performed',
     'languages': ['English', 'Français', 'Español', 'Italiano', 'Русский', 'Deutsch', 'Português'],
-    'ui_chrome': 'Studio: 224px sidebar, 64px header, 1056x592px main viewport above the fixed status bar; charcoal/violet palette, 6px corners, native icon frames and input-driven 28px halo; actual state switches and inline choices',
-    'studio_halo_performance': json.loads((work/'lvgl-preview-v9/studio-performance.json').read_text(encoding='utf-8')),
+    'ui_chrome': 'Nova: top navigation, 1280x580px main viewport, 8px filled charcoal/blue cards, the reference Lucide SVG paths, 4-column action grids, selected-item detail bar and input-driven 18px icon halo',
+    'nova_halo_performance': json.loads((work/'lvgl-preview-v10/nova-performance.json').read_text(encoding='utf-8')),
+    'nova_reference': json.loads((work/'nova-reference-check.json').read_text(encoding='utf-8')),
     'display_batching': 'one VIC presentation per LVGL refresh',
     'background_performance': json.loads((work/'background-performance-check/results.json').read_text(encoding='utf-8')),
-    'ui_geometry_matrix': '1365 real-LVGL scenes: 819 across 13 views, 7 languages and 9 sizes with Lecture; 546 with the fixed/reinforced faces at 20/30/36px; actual selector and palette fill assertions',
+    'ui_geometry_matrix': '1890 real-LVGL scenes: 945 across 15 views, 7 languages and 9 sizes with Lecture; 945 with fixed/reinforced/embedded faces at 20/30/36px. Actual selector actions, native callback guards, glyph alpha pixels and palette fill checked; twelve additional hardware-availability scenes.',
     'font_sizes': list(range(20, 38, 2)),
     'sd_fonts': [p.name for p in sorted((project/'nyx/nyx_gui/fonts/sd').glob('*.nyxf'))],
     'catalog_keys': len(json.loads((project/'nyx/nyx_gui/localization_catalog.json').read_text(encoding='utf-8'))),
     'probe_translation_provenance': json.loads((project/'nyx/nyx_gui/localization_probe_provenance.json').read_text(encoding='utf-8')),
     'ram_ui_packs': json.loads((work/'ram-ui/manifest.json').read_text(encoding='utf-8')),
     'test_summaries': [line for log in logs for line in log.splitlines() if line.startswith('PASS:')],
-    'tests': {'config_writer_cases': 96, 'language_config_cases': 21,
+    'tests': {'config_writer_cases': 100, 'language_config_cases': 21,
               'language_action_cases': 49, 'translation_runtime_cases': 97,
-              'appearance_configuration_cases': 2331, 'appearance_actions_and_effects_cases': 499,
-              'font_loader_assertions': 562, 'readability_assertions': 28, 'action_grid_assertions': 1794,
+              'appearance_configuration_cases': 2443, 'appearance_actions_and_effects_cases': 499,
+              'font_loader_assertions': 674, 'readability_assertions': 28, 'nova_save_assertions': 31,
+              'nova_card_actions': '27 native grid callbacks checked through actual LVGL, backup/restore IDs, SD long press, disabled Lockpick/AutoRCM and explicit-open guards',
               'ram_locale_assertions': 55332,
               'unicode_fonts': '707 glyphs at 20 and 30px; catalog coverage, offsets, shared chains',
               'payload_reader_assertions': 108,

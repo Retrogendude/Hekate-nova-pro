@@ -3,6 +3,7 @@
 #include "gui.h"
 #include "gui_appearance.h"
 #include "gui_choices.h"
+#include "gui_options.h"
 #include <utils/sprintf.h>
 #include "../config.h"
 #include "../fonts/font_manager.h"
@@ -163,6 +164,7 @@ void nyx_background_interaction(void)
 static nyx_config appearance_pending;
 static lv_obj_t *appearance_parent_close;
 static bool appearance_open;
+static lv_obj_t *appearance_tabs, *appearance_language_choice, *appearance_size_choice;
 
 enum { AP_LANGUAGE, AP_FONT, AP_SIZE, AP_LAYOUT, AP_EFFECT, AP_SPEED, AP_OPACITY };
 
@@ -231,6 +233,10 @@ static lv_res_t appearance_save(lv_obj_t *button)
         appearance_notice("The selected font is missing or invalid. Choose another font."); return LV_RES_OK;
     }
     nyx_config previous = n_cfg;
+    if (!nyx_options_commit_boot()) {
+        if (!mounted_before) sd_unmount();
+        appearance_notice("Could not save settings. Check the SD card and retry."); return LV_RES_OK;
+    }
     appearance_apply(&appearance_pending);
     if (create_nyx_config_entry(true)) {
         appearance_apply(&previous);
@@ -315,6 +321,7 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     lv_win_add_btn(win, NULL, SYMBOL_SAVE" Save & reload", appearance_save);
     lv_win_ext_t *ext = lv_obj_get_ext_attr(win); appearance_page(ext->page);
     lv_obj_t *tabs = lv_tabview_create(ext->page, NULL);
+    appearance_tabs = tabs;
     lv_obj_set_size(tabs, lv_obj_get_width(ext->page), lv_obj_get_height(ext->page));
     lv_obj_set_pos(tabs, 0, 0); lv_tabview_set_sliding(tabs, false);
     lv_obj_t *language = lv_tabview_add_tab(tabs, "Language"); appearance_page(language);
@@ -322,7 +329,7 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     lv_obj_t *layout = lv_tabview_add_tab(tabs, "Layout"); appearance_page(layout);
     lv_obj_t *effect = lv_tabview_add_tab(tabs, "Effect"); appearance_page(effect);
     appearance_text(language, "Interface language", 32, 18, 1150, false);
-    appearance_choices(language, "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",
+    appearance_language_choice = appearance_choices(language, "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",
         bounded(n_cfg.language, 0, I18N_LANGUAGE_COUNT - 1, I18N_EN), 3, 32, 86, 1216, 104, AP_LANGUAGE, true);
     appearance_text(language, "Save & reload applies all choices. Closing cancels the pending changes.", 32, 438, 1216, true);
     appearance_text(reading, "Font", 32, 18, 540, false);
@@ -336,7 +343,7 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     appearance_text(reading, "To add a font, copy a Nyx font file into /fonts on the SD card, then reload Nyx.", 32, 350, 540, true);
     appearance_text(reading, "Text size", 640, 18, 580, false);
     u32 size = bounded(n_cfg.font_size, 20, 36, 30);
-    appearance_choices(reading, "20\n22\n24\n26\n28\n30\n32\n34\n36", (size - 20) / 2, 3, 640, 86, 608, 88, AP_SIZE, true);
+    appearance_size_choice = appearance_choices(reading, "20\n22\n24\n26\n28\n30\n32\n34\n36", (size - 20) / 2, 3, 640, 86, 608, 88, AP_SIZE, true);
     appearance_text(layout, "Home layout", 32, 18, 1150, false);
     appearance_choices(layout, "Tiles\nCarousel", n_cfg.home_layout == HOME_LAYOUT_CAROUSEL ? 1 : 0,
         2, 32, 104, 1216, 132, AP_LAYOUT, false);
@@ -353,4 +360,25 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     appearance_text(effect, "Effects pause while navigating and during diagnostics.", 32, 472, 1216, true);
     nyx_options_appearance_active(true, false);
     return LV_RES_OK;
+}
+
+void nyx_appearance_open_language(u32 language)
+{
+    nyx_create_appearance_window(NULL);
+    appearance_set_selection(AP_LANGUAGE, language);
+    nyx_choices_set_selected(appearance_language_choice, appearance_pending.language);
+    lv_tabview_set_tab_act(appearance_tabs, 0, false);
+}
+
+void nyx_appearance_open_font(void)
+{
+    nyx_create_appearance_window(NULL); lv_tabview_set_tab_act(appearance_tabs, 1, false);
+}
+
+void nyx_appearance_open_size(u32 pixels)
+{
+    nyx_create_appearance_window(NULL);
+    u32 index = pixels >= 20 && pixels <= 36 && !(pixels & 1) ? (pixels - 20) / 2 : 5;
+    appearance_set_selection(AP_SIZE, index); nyx_choices_set_selected(appearance_size_choice, index);
+    lv_tabview_set_tab_act(appearance_tabs, 1, false);
 }

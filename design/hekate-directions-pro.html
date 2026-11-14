@@ -1,0 +1,274 @@
+<style>
+#hekate-pro-concepts .hx{--hx-bg:#10151d;--hx-panel:#19212d;--hx-raised:#202c3b;--hx-line:#334050;--hx-text:#f2f5fa;--hx-dim:#9baabd;--hx-accent:#55c9f1;--hx-ink:#0c1721;--hx-radius:8px;--hx-halo:18px;color:var(--hx-text);background:var(--hx-bg);font:400 14px/1.45 Inter,"Segoe UI",Arial,sans-serif;min-height:600px;display:flex;flex-direction:column;overflow:hidden;isolation:isolate;color-scheme:dark}
+#hekate-pro-concepts .hx *{box-sizing:border-box}
+#hekate-pro-concepts .hx button,#hekate-pro-concepts .hx input{font:inherit}
+#hekate-pro-concepts .hx button{color:inherit}
+#hekate-pro-concepts .hx button{appearance:none;border:0;background:none;padding:0;text-align:left}
+#hekate-pro-concepts .hx i[data-lucide],#hekate-pro-concepts .hx svg{width:20px;height:20px;flex-shrink:0;vertical-align:middle;stroke-width:1.7}
+#hekate-pro-concepts .hx h2,#hekate-pro-concepts .hx h3,#hekate-pro-concepts .hx p{margin:0}
+#hekate-pro-concepts .hx h2{font-size:29px;line-height:1.15;font-weight:500;letter-spacing:-.8px}
+#hekate-pro-concepts .hx h3{font-size:16px;font-weight:500;letter-spacing:-.2px}
+#hekate-pro-concepts .hx .hx-dim{color:var(--hx-dim)}
+#hekate-pro-concepts .hx .hx-kicker{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--hx-dim);font-weight:500}
+#hekate-pro-concepts .hx .hx-brand{display:flex;align-items:center;gap:11px;font-size:18px;letter-spacing:3px;font-weight:500;white-space:nowrap}
+#hekate-pro-concepts .hx .hx-brand-mark{display:grid;grid-template-columns:repeat(2,5px);gap:3px;transform:rotate(-12deg)}
+#hekate-pro-concepts .hx .hx-brand-mark b{width:5px;height:10px;background:var(--hx-accent);border-radius:1px}
+#hekate-pro-concepts .hx .hx-version{font-size:11px;letter-spacing:.2px;color:var(--hx-dim);margin-top:3px}
+#hekate-pro-concepts .hx .hx-top{min-height:68px;padding:0 28px;display:flex;align-items:center;gap:32px;border-bottom:1px solid var(--hx-line)}
+#hekate-pro-concepts .hx .hx-top nav{display:flex;align-self:stretch;align-items:center;gap:22px;margin-left:auto}
+#hekate-pro-concepts .hx .hx-nav{display:flex;align-items:center;gap:7px;position:relative;font-size:13px;color:var(--hx-dim);min-height:44px;white-space:nowrap}
+#hekate-pro-concepts .hx .hx-nav svg{width:16px;height:16px}
+#hekate-pro-concepts .hx .hx-nav[aria-current=page]{color:var(--hx-text)}
+#hekate-pro-concepts .hx .hx-top .hx-nav[aria-current=page]:after{content:"";height:2px;background:var(--hx-accent);position:absolute;left:0;right:0;bottom:-12px}
+#hekate-pro-concepts .hx .hx-frame{display:flex;flex:1;min-width:0}
+#hekate-pro-concepts .hx .hx-content{flex:1;padding:25px 28px;display:flex;flex-direction:column;gap:22px;min-width:0}
+#hekate-pro-concepts .hx .hx-pagehead{display:flex;align-items:center;justify-content:space-between;gap:20px}
+#hekate-pro-concepts .hx .hx-pagehead .hx-sub{margin-top:7px;color:var(--hx-dim);font-size:13px}
+#hekate-pro-concepts .hx .hx-pagehead .hx-tag{font-size:11px;padding:6px 10px;letter-spacing:.5px;border-radius:4px;color:var(--hx-accent);background:color-mix(in srgb,var(--hx-accent) 9%,var(--hx-bg));white-space:nowrap}
+#hekate-pro-concepts .hx .hx-foot{padding:0 28px;min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--hx-line);color:var(--hx-dim);font-size:12px}
+#hekate-pro-concepts .hx .hx-foot span{display:flex;align-items:center;gap:9px}
+#hekate-pro-concepts .hx .hx-foot svg{width:15px;height:15px}
+#hekate-pro-concepts .hx .hx-ico{width:46px;height:46px;display:grid;place-items:center;border-radius:calc(var(--hx-radius) + 3px);background:color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 9%,var(--hx-panel));color:var(--hx-tone,var(--hx-accent));border:1px solid color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 25%,var(--hx-panel));position:relative;flex-shrink:0}
+#hekate-pro-concepts .hx .hx-ico svg{width:24px;height:24px}
+#hekate-pro-concepts .hx [aria-pressed=true] .hx-ico{border-color:var(--hx-tone,var(--hx-accent));box-shadow:0 0 0 2px color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 12%,transparent)}
+#hekate-pro-concepts .hx[data-edge=Halo] [aria-pressed=true] .hx-ico{box-shadow:0 0 var(--hx-halo) color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 24%,transparent),inset 0 0 12px color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 8%,transparent)}
+#hekate-pro-concepts .hx[data-edge=Double] [aria-pressed=true] .hx-ico:after{content:"";position:absolute;inset:-5px;border:1px solid color-mix(in srgb,var(--hx-tone,var(--hx-accent)) 40%,transparent);border-radius:calc(var(--hx-radius) + 7px)}
+#hekate-pro-concepts .hx .hx-tile{background:var(--hx-panel);border:1px solid var(--hx-line);border-radius:var(--hx-radius);padding:18px;display:flex;flex-direction:column;gap:13px;min-width:0;position:relative}
+#hekate-pro-concepts .hx .hx-tile[aria-pressed=true]{background:color-mix(in srgb,var(--hx-accent) 5%,var(--hx-panel));border-color:color-mix(in srgb,var(--hx-accent) 68%,var(--hx-line))}
+#hekate-pro-concepts .hx .hx-tile:before{content:"";position:absolute;top:16px;right:16px;width:5px;height:5px;border-radius:50%;background:var(--hx-line)}
+#hekate-pro-concepts .hx .hx-tile[aria-pressed=true]:before{background:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-tile p{font-size:12px;color:var(--hx-dim);max-width:32ch}
+#hekate-pro-concepts .hx .hx-home{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;flex:1}
+#hekate-pro-concepts .hx .hx-hero{padding:26px;justify-content:space-between;border-color:color-mix(in srgb,var(--hx-accent) 45%,var(--hx-line));background:linear-gradient(140deg,color-mix(in srgb,var(--hx-accent) 9%,var(--hx-panel)),var(--hx-panel) 75%);min-height:295px}
+#hekate-pro-concepts .hx .hx-hero .hx-ico{width:66px;height:66px}
+#hekate-pro-concepts .hx .hx-hero .hx-ico svg{width:33px;height:33px}
+#hekate-pro-concepts .hx .hx-hero h3{font-size:30px;line-height:1.15;letter-spacing:-.8px;margin-bottom:9px}
+#hekate-pro-concepts .hx .hx-hero p{font-size:14px;max-width:28ch}
+#hekate-pro-concepts .hx .hx-primary{padding:11px 16px;border-radius:calc(var(--hx-radius) - 2px);background:var(--hx-accent);color:var(--hx-ink);display:inline-flex;align-items:center;justify-content:space-between;gap:24px;font-weight:500;width:max-content;max-width:100%;font-size:13px}
+#hekate-pro-concepts .hx .hx-hero .hx-primary{margin-top:20px}
+#hekate-pro-concepts .hx .hx-smallgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#hekate-pro-concepts .hx .hx-smallgrid .hx-tile{gap:10px}
+#hekate-pro-concepts .hx .hx-smallgrid .hx-ico{width:36px;height:36px;border-radius:var(--hx-radius)}
+#hekate-pro-concepts .hx .hx-smallgrid .hx-ico svg{width:20px;height:20px}
+#hekate-pro-concepts .hx .hx-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;flex:1}
+#hekate-pro-concepts .hx .hx-grid .hx-tile{padding:16px;gap:10px;min-height:115px}
+#hekate-pro-concepts .hx .hx-grid .hx-tile h3{font-size:14px}
+#hekate-pro-concepts .hx .hx-grid .hx-tile .hx-ico{width:34px;height:34px}
+#hekate-pro-concepts .hx .hx-grid .hx-tile .hx-ico svg{width:20px;height:20px}
+#hekate-pro-concepts .hx .hx-grid.hx-diagnostics{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#hekate-pro-concepts .hx .hx-grid.hx-diagnostics .hx-tile{min-height:90px;display:grid;grid-template-columns:32px 1fr;align-items:center;gap:10px;padding:13px}
+#hekate-pro-concepts .hx .hx-grid.hx-diagnostics .hx-tile p{grid-column:1/-1;font-size:11px}
+#hekate-pro-concepts .hx .hx-detail{padding:14px 18px;background:var(--hx-panel);border-radius:var(--hx-radius);display:flex;justify-content:space-between;gap:18px;align-items:center;border-left:3px solid var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-detail strong{font-size:13px;font-weight:500;display:block}
+#hekate-pro-concepts .hx .hx-detail p{font-size:12px;color:var(--hx-dim);margin-top:3px}
+#hekate-pro-concepts .hx .hx-detail>svg{color:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-settings{display:grid;grid-template-columns:1.13fr 1fr;gap:18px;flex:1}
+#hekate-pro-concepts .hx .hx-settingpanel{padding:20px;background:var(--hx-panel);border:1px solid var(--hx-line);border-radius:var(--hx-radius)}
+#hekate-pro-concepts .hx .hx-settingpanel h3{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+#hekate-pro-concepts .hx .hx-option{display:flex;gap:14px;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--hx-line)}
+#hekate-pro-concepts .hx .hx-option:last-child{border-bottom:0}
+#hekate-pro-concepts .hx .hx-option-title{font-size:13px;font-weight:500}
+#hekate-pro-concepts .hx .hx-option-copy{display:flex;gap:10px;align-items:flex-start}
+#hekate-pro-concepts .hx .hx-option-copy>svg{width:17px;height:17px;margin-top:2px;color:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-option-copy{min-width:0}
+#hekate-pro-concepts .hx .hx-option small{display:block;color:var(--hx-dim);font-size:11px;margin-top:4px;max-width:25ch}
+#hekate-pro-concepts .hx .hx-switch{display:flex;align-items:center;gap:10px;position:relative;flex-shrink:0;min-height:34px}
+#hekate-pro-concepts .hx .hx-switch input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;z-index:2}
+#hekate-pro-concepts .hx .hx-switch input:focus-visible+.hx-track{outline:2px solid var(--hx-text);outline-offset:4px}
+#hekate-pro-concepts .hx .hx-track{width:48px;height:27px;display:block;position:relative;background:var(--hx-line);border-radius:20px;transition:background-color .15s}
+#hekate-pro-concepts .hx .hx-track:before{content:"";position:absolute;left:4px;top:4px;width:19px;height:19px;background:var(--hx-dim);border-radius:50%;transition:transform .15s,background-color .15s}
+#hekate-pro-concepts .hx .hx-switch input:checked+.hx-track{background:color-mix(in srgb,#64d6a0 32%,var(--hx-panel))}
+#hekate-pro-concepts .hx .hx-switch input:checked+.hx-track:before{transform:translateX(21px);background:#8ae6b6}
+#hekate-pro-concepts .hx .hx-switch-status{min-width:40px;font-size:11px;color:var(--hx-dim)}
+#hekate-pro-concepts .hx .hx-language{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
+#hekate-pro-concepts .hx .hx-chip{border:1px solid var(--hx-line);border-radius:5px;padding:8px 10px;font-size:12px;background:var(--hx-bg)}
+#hekate-pro-concepts .hx .hx-chip[aria-pressed=true]{border-color:var(--hx-accent);color:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-line-setting{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--hx-line);font-size:13px}
+#hekate-pro-concepts .hx .hx-line-setting span:last-child{color:var(--hx-accent);font-size:12px}
+#hekate-pro-concepts .hx .hx-inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+#hekate-pro-concepts .hx .hx-inline-buttons button{padding:8px 12px;border-radius:5px;border:1px solid var(--hx-line);font-size:12px}
+#hekate-pro-concepts .hx .hx-inline-buttons button[aria-pressed=true]{border-color:var(--hx-accent);color:var(--hx-accent);background:color-mix(in srgb,var(--hx-accent) 7%,var(--hx-bg))}
+#hekate-pro-concepts .hx .hx-side{width:174px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--hx-line);padding:24px 14px;gap:28px;background:color-mix(in srgb,var(--hx-bg) 70%,var(--hx-panel))}
+#hekate-pro-concepts .hx .hx-side .hx-brand{padding:0 8px;font-size:17px}
+#hekate-pro-concepts .hx .hx-side nav{display:flex;flex-direction:column;gap:7px}
+#hekate-pro-concepts .hx .hx-side .hx-nav{padding:11px 12px;border-radius:6px;gap:11px}
+#hekate-pro-concepts .hx .hx-side .hx-nav[aria-current=page]{background:color-mix(in srgb,var(--hx-accent) 11%,var(--hx-panel));color:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-side-note{margin-top:auto;padding:0 10px;font-size:11px;color:var(--hx-dim)}
+#hekate-pro-concepts .hx.hx-studio{--hx-bg:#111219;--hx-panel:#1b1d28;--hx-raised:#252735;--hx-line:#343746;--hx-dim:#a4a7b9;--hx-accent:#a6a4fb;--hx-ink:#131324}
+#hekate-pro-concepts .hx-studio .hx-content{padding:27px 24px;gap:20px}
+#hekate-pro-concepts .hx-studio .hx-top{min-height:50px;justify-content:space-between;font-size:12px;color:var(--hx-dim)}
+#hekate-pro-concepts .hx-studio .hx-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#hekate-pro-concepts .hx-studio .hx-grid .hx-tile{min-height:103px}
+#hekate-pro-concepts .hx-studio .hx-home{grid-template-columns:1fr}
+#hekate-pro-concepts .hx-studio .hx-hero{min-height:160px;display:grid;grid-template-columns:58px 1fr;gap:20px;align-items:center}
+#hekate-pro-concepts .hx-studio .hx-hero .hx-primary{display:none}
+#hekate-pro-concepts .hx-studio .hx-hero h3{font-size:25px}
+#hekate-pro-concepts .hx-studio .hx-smallgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#hekate-pro-concepts .hx-studio .hx-settings{grid-template-columns:1fr 1fr;gap:12px}
+#hekate-pro-concepts .hx-studio .hx-settingpanel{padding:15px}
+#hekate-pro-concepts .hx-studio .hx-switch-status{display:none}
+#hekate-pro-concepts .hx-studio .hx-track{border-radius:5px;height:25px}
+#hekate-pro-concepts .hx-studio .hx-track:before{border-radius:3px;height:17px;width:18px}
+#hekate-pro-concepts .hx.hx-orbit{--hx-bg:#141416;--hx-panel:#202022;--hx-raised:#2c2c2f;--hx-line:#414043;--hx-dim:#b6b1ab;--hx-accent:#e1bd86;--hx-ink:#241b0e}
+#hekate-pro-concepts .hx-orbit .hx-top{border:0;min-height:64px}
+#hekate-pro-concepts .hx-orbit .hx-top .hx-time{margin-left:auto;font-size:12px;color:var(--hx-dim)}
+#hekate-pro-concepts .hx-orbit .hx-content{padding-top:8px;gap:18px}
+#hekate-pro-concepts .hx-orbit .hx-pagehead h2{font-size:31px}
+#hekate-pro-concepts .hx-orbit .hx-home{display:flex;flex-direction:column;gap:16px}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero{background:linear-gradient(120deg,color-mix(in srgb,var(--hx-accent) 9%,var(--hx-panel)),var(--hx-panel) 75%);display:flex;align-items:center;gap:24px;flex:1;min-height:164px;padding:24px 30px;border-radius:var(--hx-radius);border:1px solid color-mix(in srgb,var(--hx-accent) 27%,var(--hx-line))}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero .hx-ico{width:72px;height:72px;flex-shrink:0;border-radius:16px}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero .hx-ico svg{width:32px;height:32px}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero h3{font-size:28px;letter-spacing:-.6px;margin-top:6px}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero p{margin-top:7px;color:var(--hx-dim);font-size:13px}
+#hekate-pro-concepts .hx-orbit .hx-orbit-hero .hx-primary{margin-left:auto;flex-shrink:0}
+#hekate-pro-concepts .hx-orbit .hx-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+#hekate-pro-concepts .hx-orbit .hx-rail .hx-tile{min-height:107px;padding:15px;gap:10px}
+#hekate-pro-concepts .hx-orbit .hx-rail .hx-tile h3{font-size:13px}
+#hekate-pro-concepts .hx-orbit .hx-rail .hx-ico{width:30px;height:30px}
+#hekate-pro-concepts .hx-orbit .hx-rail .hx-ico svg{width:18px;height:18px}
+#hekate-pro-concepts .hx-orbit .hx-dock{display:flex;align-items:center;justify-content:center;gap:34px;padding:8px 20px;border-top:1px solid var(--hx-line);background:var(--hx-panel)}
+#hekate-pro-concepts .hx-orbit .hx-dock .hx-nav{flex-direction:column;gap:5px;font-size:11px;min-width:65px}
+#hekate-pro-concepts .hx-orbit .hx-dock .hx-nav[aria-current=page]{color:var(--hx-accent)}
+#hekate-pro-concepts .hx-orbit .hx-dock .hx-nav svg{width:20px;height:20px}
+#hekate-pro-concepts .hx-orbit .hx-foot{min-height:29px;border:0;font-size:11px}
+#hekate-pro-concepts .hx-orbit .hx-track{border-radius:5px;background:var(--hx-bg);border:1px solid var(--hx-line);height:29px;width:54px}
+#hekate-pro-concepts .hx-orbit .hx-track:before{border-radius:3px;top:3px;left:3px;width:23px;height:21px}
+#hekate-pro-concepts .hx-orbit .hx-switch input:checked+.hx-track:before{transform:translateX(24px);background:var(--hx-accent)}
+#hekate-pro-concepts .hx-orbit .hx-switch input:checked+.hx-track{background:var(--hx-bg)}
+#hekate-pro-concepts .hx.hx-onyx{--hx-bg:#15191a;--hx-panel:#1e2425;--hx-raised:#293133;--hx-line:#3c484a;--hx-dim:#a1b2b4;--hx-accent:#93d9c7;--hx-ink:#10231e}
+#hekate-pro-concepts .hx-onyx .hx-top{min-height:64px}
+#hekate-pro-concepts .hx-onyx .hx-top .hx-nav[aria-current=page]:after{bottom:-10px}
+#hekate-pro-concepts .hx-onyx .hx-split{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;flex:1}
+#hekate-pro-concepts .hx-onyx .hx-action-list{display:flex;flex-direction:column;gap:8px}
+#hekate-pro-concepts .hx-onyx .hx-list-item{display:flex;align-items:center;gap:15px;padding:13px 16px;border-radius:var(--hx-radius);background:var(--hx-panel);border:1px solid transparent;min-height:59px}
+#hekate-pro-concepts .hx-onyx .hx-list-item[aria-pressed=true]{border-color:var(--hx-accent);background:color-mix(in srgb,var(--hx-accent) 6%,var(--hx-panel))}
+#hekate-pro-concepts .hx-onyx .hx-list-item>.hx-dim{margin-left:auto}
+#hekate-pro-concepts .hx-onyx .hx-list-item h3{font-size:14px}
+#hekate-pro-concepts .hx-onyx .hx-list-item .hx-ico{height:32px;width:32px;border-radius:5px}
+#hekate-pro-concepts .hx-onyx .hx-list-item .hx-ico svg{height:18px;width:18px}
+#hekate-pro-concepts .hx-onyx .hx-inspector{padding:27px;background:var(--hx-panel);border-top:2px solid var(--hx-accent);border-radius:0 0 var(--hx-radius) var(--hx-radius);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:19px}
+#hekate-pro-concepts .hx-onyx .hx-inspector .hx-ico{width:62px;height:62px}
+#hekate-pro-concepts .hx-onyx .hx-inspector h3{font-size:27px;letter-spacing:-.7px}
+#hekate-pro-concepts .hx-onyx .hx-inspector p{font-size:13px;color:var(--hx-dim);max-width:28ch}
+#hekate-pro-concepts .hx-onyx .hx-grid .hx-tile{border:0;border-left:2px solid var(--hx-line);border-radius:0;padding-left:17px}
+#hekate-pro-concepts .hx-onyx .hx-grid .hx-tile[aria-pressed=true]{border-color:var(--hx-accent)}
+#hekate-pro-concepts .hx-onyx .hx-option .hx-switch input:checked+.hx-track{background:color-mix(in srgb,var(--hx-accent) 32%,var(--hx-panel))}
+#hekate-pro-concepts .hx-onyx .hx-option .hx-switch input:checked+.hx-track:before{background:var(--hx-accent)}
+#hekate-pro-concepts .hx .hx-pulse .hx-ico{animation:hx-edge-pulse .65s ease-out}
+#hekate-pro-concepts .hx{min-height:660px}
+#hekate-pro-concepts .hx .hx-grid:not(.hx-diagnostics) .hx-tile{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:12px;padding:15px;min-height:106px}
+#hekate-pro-concepts .hx .hx-grid.hx-diagnostics .hx-tile{min-height:78px}
+#hekate-pro-concepts .hx .hx-grid.hx-diagnostics .hx-tile p{display:none}
+#hekate-pro-concepts .hx-studio .hx-grid:not(.hx-diagnostics) .hx-tile{padding:13px;min-height:96px}
+#hekate-pro-concepts .hx .hx-switch{min-height:44px}
+#hekate-pro-concepts .hx .hx-track>svg{position:absolute;z-index:1;left:7px;top:7px;width:13px;height:13px;color:var(--hx-bg);pointer-events:none;transition:transform .15s}
+#hekate-pro-concepts .hx .hx-switch input:checked+.hx-track>svg{transform:translateX(21px)}
+#hekate-pro-concepts .hx-orbit .hx-switch input:checked+.hx-track>svg{transform:translateX(24px)}
+@keyframes hx-edge-pulse{0%{box-shadow:0 0 0 0 transparent}40%{box-shadow:0 0 0 5px color-mix(in srgb,var(--hx-accent) 20%,transparent),0 0 24px color-mix(in srgb,var(--hx-accent) 35%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+@media(prefers-reduced-motion:reduce){#hekate-pro-concepts .hx *{animation:none!important;transition:none!important}}
+@media(max-width:780px){#hekate-pro-concepts .hx .hx-top{padding:0 18px;gap:18px}#hekate-pro-concepts .hx .hx-top nav{gap:13px}#hekate-pro-concepts .hx .hx-nav{font-size:12px}#hekate-pro-concepts .hx .hx-nav svg{display:none}#hekate-pro-concepts .hx .hx-content{padding:20px;gap:18px}#hekate-pro-concepts .hx .hx-side{width:150px;padding:22px 10px}#hekate-pro-concepts .hx .hx-side .hx-nav svg{display:block}#hekate-pro-concepts .hx-studio .hx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#hekate-pro-concepts .hx-studio .hx-grid .hx-tile{min-height:85px}#hekate-pro-concepts .hx .hx-grid.hx-diagnostics{grid-template-columns:repeat(3,minmax(0,1fr))}#hekate-pro-concepts .hx-studio .hx-grid.hx-diagnostics{grid-template-columns:repeat(2,minmax(0,1fr))}#hekate-pro-concepts .hx-studio .hx-settings{grid-template-columns:1fr}#hekate-pro-concepts .hx-studio .hx-smallgrid{grid-template-columns:repeat(2,minmax(0,1fr))}#hekate-pro-concepts .hx-orbit .hx-orbit-hero .hx-primary{display:none}#hekate-pro-concepts .hx-orbit .hx-dock .hx-nav svg{display:block}}
+@media(max-width:590px){#hekate-pro-concepts .hx{min-height:850px}#hekate-pro-concepts .hx .hx-top{padding:16px;align-items:flex-start;flex-wrap:wrap;gap:12px}#hekate-pro-concepts .hx .hx-top nav{width:100%;gap:0;justify-content:space-between}#hekate-pro-concepts .hx .hx-top .hx-nav[aria-current=page]:after{bottom:-4px}#hekate-pro-concepts .hx .hx-content{padding:20px 16px;gap:18px}#hekate-pro-concepts .hx h2{font-size:25px}#hekate-pro-concepts .hx .hx-home{grid-template-columns:1fr}#hekate-pro-concepts .hx .hx-hero{min-height:210px;padding:22px}#hekate-pro-concepts .hx .hx-hero .hx-ico{width:48px;height:48px}#hekate-pro-concepts .hx .hx-hero .hx-primary{margin-top:14px}#hekate-pro-concepts .hx .hx-hero h3{font-size:25px}#hekate-pro-concepts .hx .hx-smallgrid .hx-tile{min-height:118px;padding:15px}#hekate-pro-concepts .hx .hx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#hekate-pro-concepts .hx .hx-grid.hx-diagnostics{grid-template-columns:repeat(2,minmax(0,1fr))}#hekate-pro-concepts .hx .hx-settings{grid-template-columns:1fr}#hekate-pro-concepts .hx .hx-pagehead .hx-tag{display:none}#hekate-pro-concepts .hx .hx-foot{padding:0 16px}#hekate-pro-concepts .hx .hx-side{width:58px;padding:22px 8px}#hekate-pro-concepts .hx .hx-side .hx-brand{padding:4px;letter-spacing:0}#hekate-pro-concepts .hx .hx-side .hx-brand>span:last-child,#hekate-pro-concepts .hx .hx-side .hx-nav span,#hekate-pro-concepts .hx .hx-side-note{display:none}#hekate-pro-concepts .hx .hx-side .hx-nav{justify-content:center;padding:11px 8px}#hekate-pro-concepts .hx-studio .hx-content{padding:18px 12px}#hekate-pro-concepts .hx-studio .hx-grid{grid-template-columns:1fr 1fr;gap:8px}#hekate-pro-concepts .hx-studio .hx-grid .hx-tile{padding:12px;min-height:112px}#hekate-pro-concepts .hx-studio .hx-grid.hx-diagnostics{grid-template-columns:1fr}#hekate-pro-concepts .hx-studio .hx-hero{grid-template-columns:1fr}#hekate-pro-concepts .hx-studio .hx-smallgrid{grid-template-columns:1fr}#hekate-pro-concepts .hx-studio .hx-pagehead h2{font-size:23px}#hekate-pro-concepts .hx-studio .hx-switch-status{display:block}#hekate-pro-concepts .hx .hx-option{gap:8px}#hekate-pro-concepts .hx .hx-switch{gap:7px}#hekate-pro-concepts .hx .hx-switch-status{font-size:11px;min-width:32px}#hekate-pro-concepts .hx-orbit .hx-orbit-hero{padding:20px;gap:17px;min-height:230px;align-items:flex-start;flex-direction:column}#hekate-pro-concepts .hx-orbit .hx-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#hekate-pro-concepts .hx-orbit .hx-rail .hx-tile:first-child{grid-column:1/-1;min-height:75px;flex-direction:row;align-items:center}#hekate-pro-concepts .hx-orbit .hx-dock{gap:6px;padding:12px 6px;justify-content:space-around}#hekate-pro-concepts .hx-orbit .hx-dock .hx-nav{min-width:47px;font-size:11px}#hekate-pro-concepts .hx-onyx .hx-split{grid-template-columns:1fr}#hekate-pro-concepts .hx-onyx .hx-inspector{padding:22px;min-height:205px;gap:13px}#hekate-pro-concepts .hx-onyx .hx-inspector .hx-ico{width:44px;height:44px}#hekate-pro-concepts .hx .hx-detail{padding:13px;font-size:12px}#hekate-pro-concepts .hx .hx-detail>svg{display:none}}
+</style>
+<div id="hekate-pro-concepts" class="viz-carousel" aria-label="Quatre propositions Hekate Pro" data-previous-label="Précédente" data-next-label="Suivante">
+  <section data-variant="Nova — console" aria-label="Nova, console lumineuse">
+    <div id="hekate-nova" class="hx hx-nova" data-design="nova" data-edge="Halo" aria-label="Nova : accents et contours d’icônes"></div>
+  </section>
+  <section data-variant="Orbit — salon" aria-label="Orbit, navigation par dock" hidden>
+    <div id="hekate-orbit" class="hx hx-orbit" data-design="orbit" data-edge="Halo" aria-label="Orbit : accents et contours d’icônes"></div>
+  </section>
+  <section data-variant="Studio — atelier" aria-label="Studio, outils et pages structurées" hidden>
+    <div id="hekate-studio" class="hx hx-studio" data-design="studio" data-edge="Halo" aria-label="Studio : accents et contours d’icônes"></div>
+  </section>
+  <section data-variant="Onyx — essentiel" aria-label="Onyx, actions et aperçu contextuel" hidden>
+    <div id="hekate-onyx" class="hx hx-onyx" data-design="onyx" data-edge="Halo" aria-label="Onyx : accents et contours d’icônes"></div>
+  </section>
+</div>
+<script>
+(() => {
+ const root=document.getElementById('hekate-pro-concepts');
+ const icon=name=>`<i data-lucide="${name}" aria-hidden="true"></i>`;
+ const brand=`<div class="hx-brand"><span class="hx-brand-mark" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span>HEKATE</span></div>`;
+ const navItems=[['home','Accueil','layout-grid'],['tools','Outils','wrench'],['info','Infos','info'],['diagnostics','Diagnostic','activity'],['settings','Réglages','settings-2']];
+ const items={
+  home:[['launch','Démarrer','Choisir le système à lancer sur la console.','play'],['profiles','Configurations','Retrouver les autres profils de démarrage.','layers-2'],['payloads','Payloads','Ouvrir un outil depuis la carte microSD.','folder-open'],['emummc','emuMMC','Gérer la copie du système sur la carte SD.','database'],['diag','Diagnostic','Explorer les contrôles matériels.','activity']],
+  tools:[['backup','Sauvegarde eMMC','Créer une sauvegarde du stockage.','hard-drive-download'],['restore','Restauration eMMC','Restaurer une sauvegarde existante.','hard-drive-upload'],['partition','Partitions SD','Préparer les partitions de la carte SD.','columns-3'],['usb','Outils USB','Accéder aux fonctions de stockage USB.','usb'],['archive','Bit d’archive','Réparer les attributs des fichiers.','folder-check'],['touch','Écran tactile','Ajuster la calibration du tactile.','scan-line'],['rcm','AutoRCM','Consulter et modifier le mode AutoRCM.','power'],['package','Package1 / 2','Extraire les éléments du système.','boxes']],
+  info:[['hardware','Matériel et fusibles','Identité de la console et mémoire.','circuit-board'],['emmcinfo','eMMC','Informations sur le stockage interne.','hard-drive'],['sdinfo','microSD','Informations sur la carte mémoire.','card-sim'],['batteryinfo','Batterie','Charge, températures et alimentation.','battery-charging'],['bootrom','BootROM','Informations et extraction.','cpu'],['kfuse','KFuses','Données des clés HDCP.','key-round'],['lockpick','Lockpick','Outil présent sur la carte SD.','lock-keyhole']],
+  diagnostics:[['overview','Bilan HWTest','Vue d’ensemble des groupes.','clipboard-list'],['identity','Identité','SoC, fusibles et KFUSE.','fingerprint'],['power','Alimentation','Batterie, charge et températures.','battery-charging'],['memory','Mémoire','DRAM et horloges.','memory-stick'],['storage','Stockage','SD, eMMC et lecteur.','hard-drive'],['wireless','Sans fil','Bluetooth et Wi-Fi.','wifi'],['audio','Audio','Codec et horloges audio.','audio-lines'],['sound','Test sonore','Haut-parleurs et prise casque.','volume-2'],['screen','Écran','Dalle et rétroéclairage.','monitor'],['input','Commandes','Tactile, Joy-Con et boutons.','gamepad-2'],['raw','Bas niveau','GPIO, UART et démarrage.','circuit-board'],['ram','Test RAM isolé','Test séparé, retour à Hekate.','cpu']]
+ };
+ const titles={home:['Votre console, simplement.','Démarrer, gérer et vérifier.'],tools:['Outils et maintenance.','Stockage, maintenance et connexions.'],info:['Informations console.','Matériel, stockage et alimentation.'],diagnostics:['Diagnostic matériel.','42 contrôles natifs et un service RAM isolé.'],settings:['Apparence et options.','Lecture, options et effets de sélection.']};
+ const defaults={nova:{page:'home',selected:'launch',accent:'#55c9f1',radius:8,halo:18,edge:'Halo'},orbit:{page:'home',selected:'profiles',accent:'#e1bd86',radius:10,halo:20,edge:'Halo'},studio:{page:'tools',selected:'backup',accent:'#a6a4fb',radius:6,halo:12,edge:'Double'},onyx:{page:'settings',selected:'launch',accent:'#93d9c7',radius:5,halo:13,edge:'Halo'}};
+ const settings=[['nogc','Auto NoGC','Protection du lecteur de cartes.',true],['poweroff','Extinction HOS','Arrêt automatique après HOS.',false],['verify','Vérification des sauvegardes','Contrôler les données écrites.',true],['edges','Effets de sélection','Souligner l’icône active.',true]];
+ const states={};
+ const saved=window.openai?.widgetState;
+ const restored=saved?.privateContent?.designs||{};
+ for(const name of Object.keys(defaults))states[name]={...defaults[name],...restored[name],toggles:{nogc:true,poweroff:false,verify:true,edges:true,...restored[name]?.toggles}};
+ function persist(name){
+  if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{proposition:name,page:states[name].page,accent:states[name].accent,contour:states[name].edge,arrondi:states[name].radius},privateContent:{designs:states}}).catch(()=>{});
+ }
+ function nav(page){return navItems.map(([id,label,symbol])=>`<button type="button" class="hx-nav cursor-interaction" data-page="${id}" aria-label="${label}" ${page===id?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></button>`).join('');}
+ function tile(item,state,extra=''){
+  const [id,title,description,symbol]=item;
+  return `<button type="button" class="hx-tile cursor-interaction ${extra}" data-item="${id}" aria-pressed="${state.selected===id}"><span class="hx-ico">${icon(symbol)}</span><div><h3>${title}</h3>${extra==='hx-hero'?`<p>${description}</p><span class="hx-primary">Choisir un système ${icon('arrow-up-right')}</span>`:`<p>${description}</p>`}</div></button>`;
+ }
+ function home(name,state){
+  const selected=items.home.find(i=>i[0]===state.selected)||items.home[0];
+  if(name==='orbit')return `<div class="hx-home"><div class="hx-orbit-hero" aria-pressed="true"><span class="hx-ico">${icon(selected[3])}</span><div><div class="hx-kicker">Votre sélection</div><h3>${selected[1]}</h3><p>${selected[2]}</p></div><button type="button" class="hx-primary cursor-interaction" data-page="${selected[0]==='diag'?'diagnostics':'tools'}">Explorer ${icon('arrow-up-right')}</button></div><div class="hx-rail">${items.home.map(i=>`<button type="button" class="hx-tile cursor-interaction" data-item="${i[0]}" aria-pressed="${i[0]===selected[0]}"><span class="hx-ico">${icon(i[3])}</span><h3>${i[1]}</h3></button>`).join('')}</div></div>`;
+  if(name==='onyx')return `<div class="hx-split"><div class="hx-action-list">${items.home.map(i=>`<button type="button" class="hx-list-item cursor-interaction" data-item="${i[0]}" aria-pressed="${i[0]===selected[0]}"><span class="hx-ico">${icon(i[3])}</span><h3>${i[1]}</h3><span class="hx-dim">${icon('chevron-right')}</span></button>`).join('')}</div><div class="hx-inspector" aria-pressed="true"><span class="hx-ico">${icon(selected[3])}</span><div><div class="hx-kicker">Action sélectionnée</div><h3>${selected[1]}</h3></div><p>${selected[2]}</p><button type="button" class="hx-primary cursor-interaction" data-page="${selected[0]==='diag'?'diagnostics':'tools'}">Explorer ${icon('arrow-up-right')}</button></div></div>`;
+  return `<div class="hx-home">${tile(items.home[0],state,'hx-hero')}<div class="hx-smallgrid">${items.home.slice(1).map(i=>tile(i,state)).join('')}</div></div>`;
+ }
+ function options(state){
+  return `<div class="hx-settings"><div class="hx-settingpanel"><h3>${icon('toggle-right')} Options système</h3>${settings.map(([id,title,description])=>`<div class="hx-option"><div><div class="hx-option-title">${title}</div><small>${description}</small></div><label class="hx-switch cursor-interaction"><input type="checkbox" role="switch" data-toggle="${id}" aria-label="${title}" ${state.toggles[id]?'checked':''}><span class="hx-track" aria-hidden="true"></span><span class="hx-switch-status">${state.toggles[id]?'Actif':'Inactif'}</span></label></div>`).join('')}</div><div class="hx-settingpanel"><h3>${icon('paintbrush')} Apparence et lecture</h3><div class="hx-line-setting"><span>Langue</span><span>Français</span></div><div class="hx-language"><button type="button" class="hx-chip cursor-interaction" data-lang="FR" aria-pressed="true">FR</button><button type="button" class="hx-chip cursor-interaction" data-lang="EN" aria-pressed="false">EN</button><button type="button" class="hx-chip cursor-interaction" data-lang="ES" aria-pressed="false">ES</button><button type="button" class="hx-chip cursor-interaction" data-lang="IT" aria-pressed="false">IT</button><button type="button" class="hx-chip cursor-interaction" data-lang="RU" aria-pressed="false">RU</button></div><div class="hx-line-setting"><span>Police</span><span>Lecture</span></div><div class="hx-line-setting"><span>Taille du texte</span><span data-size-value>${state.size||28} px</span></div><div class="hx-inline-buttons">${[24,28,32].map(size=>`<button type="button" class="cursor-interaction" data-size="${size}" aria-pressed="${(state.size||28)===size}">${size}</button>`).join('')}</div><div class="hx-line-setting"><span>Contour des icônes</span><span>${state.edge}</span></div></div></div>`;
+ }
+ function page(name,state){
+  if(state.page==='home')return home(name,state);
+  if(state.page==='settings')return options(state);
+  const collection=items[state.page],selected=collection.find(i=>i[0]===state.selected)||collection[0];
+  return `<div class="hx-grid ${state.page==='diagnostics'?'hx-diagnostics':''}">${collection.map(i=>tile(i,state)).join('')}</div><div class="hx-detail" aria-live="polite"><div><strong>${selected[1]}</strong><p>${selected[2]}${state.page==='diagnostics'?' Aucun test lancé.':''}</p></div>${icon('arrow-up-right')}</div>`;
+ }
+ function apply(name){
+  const win=document.getElementById(`hekate-${name}`),state=states[name];
+  win.style.setProperty('--hx-accent',state.accent);win.style.setProperty('--hx-radius',`${state.radius}px`);win.style.setProperty('--hx-halo',`${state.halo}px`);win.dataset.edge=state.toggles.edges?state.edge:'Liseré';
+ }
+ function render(name){
+  const win=document.getElementById(`hekate-${name}`),state=states[name],title=titles[state.page];
+  const selectedInfo=state.page==='diagnostics'?'42 contrôles':state.page==='tools'?'8 outils':state.page==='settings'?'Confort et clarté':'Nyx 1.9.4';
+  const content=`<main class="hx-content"><div class="hx-pagehead"><div><div class="hx-kicker">${state.page==='home'?'Bienvenue dans Hekate':navItems.find(i=>i[0]===state.page)[1]}</div><h2>${title[0]}</h2><p class="hx-sub">${title[1]}</p></div><span class="hx-tag">${selectedInfo}</span></div>${page(name,state)}</main>`;
+  const foot=`<footer class="hx-foot"><span>${icon('clock-3')}18:42 <span>·</span>28 °C</span><span>hekate 6.5.4 ${icon('battery-full')}82 %</span></footer>`;
+  if(name==='studio')win.innerHTML=`<div class="hx-frame"><aside class="hx-side">${brand}<nav aria-label="Navigation Hekate">${nav(state.page)}</nav><div class="hx-side-note">hekate 6.5.4<br>Nyx 1.9.4</div></aside><div style="min-width:0;flex:1;display:flex;flex-direction:column"><header class="hx-top"><span>CONSOLE / ${navItems.find(i=>i[0]===state.page)[1].toUpperCase()}</span>${icon('command')}</header>${content}</div></div>${foot}`;
+  else if(name==='orbit')win.innerHTML=`<header class="hx-top">${brand}<span class="hx-time">Nyx 1.9.4</span></header>${content}<nav class="hx-dock" aria-label="Navigation Hekate">${nav(state.page)}</nav>${foot}`;
+  else win.innerHTML=`<header class="hx-top"><div>${brand}<div class="hx-version">6.5.4 / Nyx</div></div><nav aria-label="Navigation Hekate">${nav(state.page)}</nav></header>${content}${foot}`;
+  win.querySelectorAll('.hx-track').forEach(track=>track.innerHTML=icon('power'));
+  win.querySelectorAll('.hx-option').forEach(row=>{
+   const type=row.querySelector('input').dataset.toggle,copy=row.firstElementChild;
+   copy.classList.add('hx-option-copy');
+   const text=document.createElement('div');while(copy.firstChild)text.appendChild(copy.firstChild);
+   copy.appendChild(text);copy.insertAdjacentHTML('afterbegin',icon({nogc:'shield-check',poweroff:'power',verify:'badge-check',edges:'sparkles'}[type]));
+  });
+  const languages=win.querySelector('.hx-language');
+  if(languages){
+   languages.insertAdjacentHTML('beforeend','<button type="button" class="hx-chip cursor-interaction" data-lang="DE" aria-pressed="false">DE</button><button type="button" class="hx-chip cursor-interaction" data-lang="PT" aria-pressed="false">PT</button>');
+   win.querySelectorAll('[data-lang]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.lang===(state.language||'FR'))));
+   languages.previousElementSibling.lastElementChild.textContent={FR:'Français',EN:'English',ES:'Español',IT:'Italiano',RU:'Русский',DE:'Deutsch',PT:'Português'}[state.language||'FR'];
+  }
+  apply(name);if(globalThis.lucide)lucide.createIcons({attrs:{width:20,height:20}});
+ }
+ for(const name of Object.keys(states))render(name);
+ root.addEventListener('click',event=>{
+  const win=event.target.closest('.hx');if(!win)return;const name=win.dataset.design,state=states[name];
+  const route=event.target.closest('[data-page]'),item=event.target.closest('[data-item]'),size=event.target.closest('[data-size]'),language=event.target.closest('[data-lang]');
+  if(route){state.page=route.dataset.page;state.selected=(items[state.page]||items.home)[0][0];render(name);persist(name);return;}
+  if(item){state.selected=item.dataset.item;render(name);if(state.edge==='Impulsion'&&state.toggles.edges){const target=win.querySelector(`[data-item="${state.selected}"]`);if(target){target.classList.add('hx-pulse');setTimeout(()=>target.classList.remove('hx-pulse'),700);}}persist(name);return;}
+  if(size){state.size=Number(size.dataset.size);render(name);persist(name);return;}
+  if(language){state.language=language.dataset.lang;render(name);persist(name);}
+ });
+ root.addEventListener('change',event=>{const input=event.target.closest('[data-toggle]');if(!input)return;const win=input.closest('.hx'),name=win.dataset.design;states[name].toggles[input.dataset.toggle]=input.checked;input.parentElement.querySelector('.hx-switch-status').textContent=input.checked?'Actif':'Inactif';apply(name);persist(name);});
+ window.addEventListener('openai:set_globals',event=>{const restored=event.detail?.globals?.widgetState?.privateContent?.designs;if(!restored)return;for(const name of Object.keys(defaults))if(restored[name]){Object.assign(states[name],restored[name]);render(name);}});
+ if(globalThis.Tweak)for(const name of Object.keys(states)){
+  const win=document.getElementById(`hekate-${name}`),state=states[name],tweak=new Tweak({container:win,onChange:()=>render(name)});
+  tweak.addColorPicker(state,'accent',{label:'Couleur d’accent',reference:'--hx-accent'});
+  tweak.addSlider(state,'radius',{label:'Angles des cartes',min:2,max:16,step:1,unit:'px',reference:'--hx-radius'});
+  tweak.addSelect(state,'edge',{label:'Contour des icônes',options:['Liseré','Halo','Double','Impulsion']});
+  tweak.addSlider(state,'halo',{label:'Rayonnement du halo',min:0,max:28,step:1,unit:'px',reference:'--hx-halo'});
+ }
+})();
+</script>

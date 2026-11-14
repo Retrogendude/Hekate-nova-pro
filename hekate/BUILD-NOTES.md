@@ -1,4 +1,31 @@
-# Studio — prototype 9
+# Nova — prototype 10, 6 novembre 2026
+
+La présentation Nova est implémentée dans les composants LVGL natifs :
+navigation haute, cartes pleines, bandeau de détail, interrupteurs avec état
+écrit et icônes Lucide 1.8.0 identiques aux chemins SVG de la maquette.
+Les 32 cartes reprennent leurs textes français, avec un catalogue de sept
+langues. La palette, le rayon 8 pixels et le halo fixe de 18 pixels viennent
+de cette référence. Le contenu occupe 1 280 × 580 pixels, sous un en-tête
+de 76 pixels et au-dessus de la barre d'état à 656 pixels.
+
+Les masques alpha des icônes sont précalculés en trois tailles ; leur décodage
+LVGL est activé. Les rôles typographiques sont mis en cache depuis les fichiers
+NYXF ou la police intégrée. Les callbacks de cartes conservent leurs identifiants
+et leurs gardes ; la sélection est distincte de l'ouverture de l'action.
+Les options de démarrage, les commandes rapides et l'interface Apparence
+restent accessibles depuis les titres de Réglages et le logo HEKATE.
+
+Les contrôles natifs sur ordinateur couvrent 1 890 scènes et douze cas
+supplémentaires de disponibilité. Ils vérifient aussi les pixels des glyphes
+Lucide, les états des interrupteurs, l'annulation des choix et les erreurs
+d'enregistrement. Le halo invalide au plus sa zone locale et n'entretient
+aucun rafraîchissement au repos. Ce résultat ne mesure pas les FPS matériels.
+Voir verification/reference-nova.json et verification/performance-halo-nova.json.
+
+Les notes suivantes décrivent les versions précédentes. BUILD-INFO.json
+donne les tailles, empreintes et résultats de la construction courante.
+
+# Studio — prototype 9 (historique)
 
 La version actuelle ajoute une navigation latérale native de 224 pixels,
 un en-tête de 64 pixels et une zone principale de 1 056 × 592 pixels.

@@ -19,6 +19,7 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include "gui_options.h"
 #include "gui_info.h"
 #include "gui_appearance.h"
 #include "gui_choices.h"
@@ -390,7 +391,7 @@ void create_flat_button(lv_obj_t *btn, int color_idx, lv_action_t action)
 	u32 index = 0;
 	for (u32 i = 0; i < ARRAY_SIZE(theme_colors); ++i)
 		if (theme_colors[i] == color_idx) { index = i; break; }
-	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0xA6A4FB);
+	lv_color_t color = color_idx ? lv_color_hsv_to_rgb(color_idx, 100, 100) : LV_COLOR_HEX(0x55C9F1);
 	lv_style_t *btn_onoff_rel_hos_style = &palette_rel[index];
 	lv_style_t *btn_onoff_pr_hos_style  = &palette_pr[index];
 	lv_style_copy(btn_onoff_rel_hos_style, lv_theme_get_current()->btn.rel);
@@ -487,11 +488,11 @@ static void _show_new_nyx_color(bool update_bg)
 	u32 bg = color_test.bg;
 	u16 hue = color_test.hue;
 
-	lv_color_t bgc       = LV_COLOR_HEX(bg == 0x141A19 ? 0x111219 : bg); // Preserve explicit black.
-	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x1B1D28);
-	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x303040);
-	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x343746);
-	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0xA6A4FB);
+	lv_color_t bgc       = LV_COLOR_HEX(bg == 0x141A19 ? 0x10151D : bg);
+	lv_color_t bgc_light = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x101010) : 0x19212D);
+	lv_color_t bgc_press = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x232323) : 0x202C3B);
+	lv_color_t bg_border = LV_COLOR_HEX(bg && bg != 0x141A19 ? (bg + 0x202020) : 0x334050);
+	lv_color_t color     = hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0x55C9F1);
 
 	static lv_style_t btn_tgl_pr_test;
 	lv_style_copy(&btn_tgl_pr_test, lv_btn_get_style(color_test.button, LV_BTN_STATE_TGL_PR));
@@ -567,7 +568,7 @@ static void _show_new_nyx_color(bool update_bg)
 
 		static lv_style_t slider_ind;
 		lv_style_copy(&slider_ind, lv_slider_get_style(color_test.slider, LV_SLIDER_STYLE_INDIC));
-		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x8581CE);
+		slider_ind.body.main_color = hue ? lv_color_hsv_to_rgb(hue, 100, 72) : LV_COLOR_HEX(0x429DBD);
 		slider_ind.body.grad_color = slider_ind.body.main_color;
 		lv_slider_set_style(color_test.hue_slider, LV_SLIDER_STYLE_INDIC, &slider_ind);
 		lv_slider_set_style(color_test.slider,     LV_SLIDER_STYLE_INDIC, &slider_ind);
@@ -1687,9 +1688,10 @@ void nyx_options_appearance_active(bool active, bool saved)
 		lv_obj_set_opa_scale(status_bar.mid, LV_OPA_TRANSP);
 		lv_obj_set_click(status_bar.mid, false);
 	} else {
-		lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, _save_nyx_options_action);
-		lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER);
-		lv_obj_set_click(status_bar.mid, true);
+		lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, nyx_options_save_all);
+		bool visible = close_btn != NULL || nyx_options_has_changes();
+		lv_obj_set_opa_scale(status_bar.mid, visible ? LV_OPA_COVER : LV_OPA_TRANSP);
+		lv_obj_set_click(status_bar.mid, visible);
 	}
 }
 
@@ -1775,7 +1777,7 @@ static lv_obj_t *_settings_button(lv_obj_t *card, const char *title, lv_action_t
 
 static lv_obj_t *_settings_toggle(lv_obj_t *card, const char *title, lv_action_t action, bool enabled)
 {
-    lv_obj_t *button = nyx_studio_toggle(card, title, action, enabled,
+    lv_obj_t *button = nyx_nova_toggle(card, title, action, enabled,
         lv_obj_get_width(card) - 74, lv_obj_get_height(card) - 28);
     if (button) lv_obj_set_pos(button, 14, 14);
     return button;
@@ -1819,7 +1821,7 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     return LV_RES_OK;
 }
 
-void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
+void create_tab_boot_options(lv_theme_t *theme, lv_obj_t *parent)
 {
     (void)theme; settings_page(parent);
     lv_obj_t *card = _settings_card(parent, 0, 3);
@@ -1846,4 +1848,137 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     card = _settings_card(parent, 5, 3);
     _settings_toggle(card, SYMBOL_REFRESH" Update Reboot 2 Payload", _update_r2p_action, h_cfg.updater2p);
     _settings_help(card, "When FSS0 is used, check and update the reboot-to-payload image to Hekate.");
+}
+
+bool nyx_options_has_changes(void) { return ini_changes_made || nyx_changes_made; }
+
+bool nyx_options_commit_boot(void)
+{
+    if (!ini_changes_made) return true;
+    if (create_config_entry()) return false;
+    ini_changes_made = false; return true;
+}
+
+lv_res_t nyx_options_save_all(lv_obj_t *button)
+{
+    (void)button;
+    if (sd_mount()) { nyx_show_help("SD card unavailable. Nothing was saved."); return LV_RES_OK; }
+    bool boot_saved = !create_config_entry();
+    if (boot_saved) ini_changes_made = false;
+    bool nyx_saved = boot_saved && !create_nyx_config_entry(true);
+    if (!boot_saved) sd_unmount();
+    if (boot_saved && nyx_saved) {
+        nyx_changes_made = false;
+        if (status_bar.mid) { lv_obj_set_opa_scale(status_bar.mid, LV_OPA_TRANSP); lv_obj_set_click(status_bar.mid, false); }
+        nyx_show_help("Settings saved.");
+    } else nyx_show_help(boot_saved ? "Boot options were saved. Nyx settings could not be saved. Check the SD card and retry." : "Could not save settings. Check the SD card and retry.");
+    return LV_RES_OK;
+}
+
+static lv_obj_t *nova_contour_value;
+static lv_res_t _nova_verification_toggle(lv_obj_t *button)
+{
+    n_cfg.verification = n_cfg.verification ? 0 : 2; nyx_changes_made = true;
+    lv_btn_set_state(button, n_cfg.verification ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
+    nyx_generic_onoff_toggle(button); return LV_RES_OK;
+}
+static lv_res_t _nova_halo_toggle(lv_obj_t *button)
+{
+    n_cfg.nova_halo = !n_cfg.nova_halo; nyx_changes_made = true;
+    lv_btn_set_state(button, n_cfg.nova_halo ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
+    nyx_generic_onoff_toggle(button); nyx_nova_refresh_halos();
+    if (nova_contour_value) lv_label_set_text(nova_contour_value, n_cfg.nova_halo ? "Halo" : "Liseré");
+    return LV_RES_OK;
+}
+static lv_res_t _nova_language_action(lv_obj_t *button)
+{ nyx_appearance_open_language(lv_obj_get_free_num(button)); return LV_RES_OK; }
+static lv_res_t _nova_size_action(lv_obj_t *button)
+{ nyx_appearance_open_size(lv_obj_get_free_num(button)); return LV_RES_OK; }
+static lv_res_t _nova_font_action(lv_obj_t *button)
+{ (void)button; nyx_appearance_open_font(); return LV_RES_OK; }
+static lv_res_t _nova_language_menu(lv_obj_t *button)
+{ (void)button; nyx_appearance_open_language(n_cfg.language); return LV_RES_OK; }
+static lv_res_t _nova_boot_options(lv_obj_t *button)
+{
+    (void)button; lv_obj_t *win = nyx_create_standard_window("Options système", NULL);
+    lv_win_ext_t *ext = lv_obj_get_ext_attr(win); create_tab_boot_options(lv_theme_get_current(), ext->page);
+    if (status_bar.mid) {
+        lv_btn_set_action(status_bar.mid, LV_BTN_ACTION_CLICK, nyx_options_save_all);
+        lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER); lv_obj_set_click(status_bar.mid, true);
+    }
+    return LV_RES_OK;
+}
+
+static lv_obj_t *_nova_heading_button(lv_obj_t *panel, const char *title, const char *icon, lv_action_t action)
+{
+    static lv_style_t transparent; lv_style_copy(&transparent, &lv_style_transp_tight);
+    lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, &transparent);
+    lv_obj_set_size(button, lv_obj_get_width(panel) - 48, 42); lv_obj_set_pos(button, 24, 16);
+    lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action); nyx_nova_glyph(button, icon, 0, 8, 24);
+    lv_obj_t *label = nyx_nova_text(button, title, 38, 8, lv_obj_get_width(button) - 40, NOVA_TITLE); nyx_nova_fit_text(label, 30);
+    return button;
+}
+
+static lv_obj_t *_nova_setting_line(lv_obj_t *panel, const char *title, const char *value, int y, lv_action_t action)
+{
+    static lv_style_t transparent, accent, line;
+    lv_style_copy(&transparent, &lv_style_transp_tight);
+    lv_style_copy(&accent, nyx_nova_text_style(NOVA_SMALL)); accent.text.color = LV_COLOR_HEX(0x55C9F1);
+    lv_style_copy(&line, &lv_style_plain); line.body.main_color = line.body.grad_color = LV_COLOR_HEX(0x334050); line.body.border.width = 0;
+    int width = lv_obj_get_width(panel) - 48;
+    lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, &transparent); lv_btn_set_style(button, LV_BTN_STYLE_PR, &transparent);
+    lv_obj_set_size(button, width, 44); lv_obj_set_pos(button, 24, y); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
+    lv_obj_t *title_label = nyx_nova_text(button, title, 0, 12, width / 2 - 10, NOVA_BODY); nyx_nova_fit_text(title_label, 28);
+    lv_obj_t *value_label = nyx_nova_text(button, value, width / 2, 12, width / 2, NOVA_SMALL);
+    lv_label_set_style(value_label, &accent); lv_label_set_align(value_label, LV_LABEL_ALIGN_RIGHT); nyx_nova_fit_text(value_label, 28);
+    lv_obj_t *separator = lv_cont_create(panel, NULL); lv_cont_set_style(separator, &line); lv_cont_set_fit(separator, false, false);
+    lv_obj_set_size(separator, width, 1); lv_obj_set_pos(separator, 24, y + 43); lv_obj_set_click(separator, false);
+    return value_label;
+}
+
+static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int width, bool selected, lv_action_t action, u32 id)
+{
+    static lv_style_t normal, active, label_active;
+    lv_style_copy(&normal, lv_theme_get_current()->btn.rel);
+    normal.body.empty = 0; normal.body.main_color = normal.body.grad_color = LV_COLOR_HEX(0x10151D);
+    normal.body.radius = 5; normal.body.border.width = 1; normal.body.border.color = LV_COLOR_HEX(0x334050);
+    normal.body.padding.hor = normal.body.padding.ver = 0;
+    lv_style_copy(&active, &normal); active.body.border.color = LV_COLOR_HEX(0x55C9F1);
+    lv_style_copy(&label_active, nyx_nova_text_style(NOVA_SMALL)); label_active.text.color = LV_COLOR_HEX(0x55C9F1);
+    lv_obj_t *button = lv_btn_create(panel, NULL); lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, selected ? &active : &normal); lv_btn_set_style(button, LV_BTN_STYLE_PR, &active);
+    lv_obj_set_size(button, width, 36); lv_obj_set_pos(button, x, y); lv_obj_set_free_num(button, id); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
+    lv_obj_t *label = nyx_nova_text(button, text, 4, 9, width - 8, NOVA_SMALL);
+    if (selected) lv_label_set_style(label, &label_active);
+    lv_label_set_align(label, LV_LABEL_ALIGN_CENTER); nyx_nova_fit_text(label, 24); return button;
+}
+
+void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
+{
+    (void)theme; nyx_nova_page(parent, 4);
+    int height = lv_obj_get_height(parent) - 168;
+    int left_width = (LV_HOR_RES - 68 - 22) * 113 / 213;
+    int right_width = LV_HOR_RES - 68 - 22 - left_width;
+    lv_obj_t *system = nyx_nova_panel(parent, 34, 140, left_width, height);
+    lv_obj_t *reading = nyx_nova_panel(parent, 34 + left_width + 22, 140, right_width, height);
+    _nova_heading_button(system, "Options système", "toggle-right", _nova_boot_options);
+    _nova_heading_button(reading, "Apparence et lecture", "paintbrush", create_win_nyx_options);
+    int row_height = (height - 64 - 16) / 4;
+    nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height);
+    nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height);
+    nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height);
+    nyx_nova_switch_row(system, "Effets de sélection", "Souligner l’icône active.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
+    const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português"};
+    _nova_setting_line(reading, "Language", language_names[n_cfg.language < 7 ? n_cfg.language : 0], 64, _nova_language_menu);
+    const u32 order[] = {1,0,2,3,4,5,6}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT"};
+    for (u32 i = 0; i < 7; ++i) _nova_chip(reading, codes[order[i]], 24 + i * 50, 118, 42, n_cfg.language == order[i], _nova_language_action, order[i]);
+    char face[64]; strcpy(face, n_cfg.font_file[0] ? n_cfg.font_file : "Inter"); char *extension = strstr(face, ".nyxf"); if (extension) *extension = 0;
+    lv_obj_t *font_name = _nova_setting_line(reading, "Font", face, 170, _nova_font_action); (lv_label_set_text)(font_name, face);
+    char size[20]; s_printf(size, "%d px", n_cfg.font_size);
+    _nova_setting_line(reading, "Text size", size, 226, _nova_font_action);
+    const u32 sizes[] = {24,28,32};
+    for (u32 i = 0; i < 3; ++i) { char number[12]; s_printf(number, "%d", sizes[i]); _nova_chip(reading, number, 24 + i * 66, 280, 58, n_cfg.font_size == sizes[i], _nova_size_action, sizes[i]); }
+    nova_contour_value = _nova_setting_line(reading, "Contour des icônes", n_cfg.nova_halo ? "Halo" : "Liseré", 334, NULL);
 }

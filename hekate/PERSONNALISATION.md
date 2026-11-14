@@ -1,6 +1,9 @@
-# Apparence, langues et lecture — Studio, version 9
+# Apparence, langues et lecture — Nova, version 10
 
-Depuis l'accueil, ouvrir **Réglages Nyx → Apparence**. Le même écran regroupe
+Ouvrir **Réglages** dans la navigation haute. Les codes de langue, la ligne
+Police et les tailles proposées ouvrent directement le sélecteur concerné.
+Le titre **Apparence et lecture** ouvre les réglages Nyx détaillés ; choisir
+ensuite **Apparence** pour les autres choix. Le même écran regroupe
 la langue, la police, la taille du texte, la disposition de l'accueil et les
 animations de fond. **Enregistrer et recharger** applique les choix. Fermer
 la fenêtre annule les choix provisoires.
@@ -9,7 +12,10 @@ la fenêtre annule les choix provisoires.
 
 Neuf tailles principales sont proposées, de 20 à 36 pixels. Les légendes
 utilisent une taille proportionnée et les tableaux conservent une police
-à largeur fixe. Les titres trop longs défilent sans recouvrir les commandes. Les choix très
+à largeur fixe. Nova conserve des rôles distincts pour les titres, les commandes
+et les légendes, proportionnés à la taille choisie et chargés une seule fois.
+Les cartes utilisent un retour à la ligne ou des points de suspension ; le
+bandeau de détail et l'aide donnent le texte complet. Les choix très
 longs peuvent employer la taille de légende de la même police pour rester
 lisibles dans leur bouton.
 
@@ -26,13 +32,17 @@ Les instructions détaillées sont dans `documentation/POLICES.md`.
 
 ## Arrière-plans et fluidité
 
-Le fond est uniforme, anthracite. Studio ajoute des accents violets, des
-cadres d'icônes et des angles de 6 pixels. Le halo de 28 pixels reste fixe
+Le fond de référence est `#10151D`, les cartes `#19212D`, les contours
+`#334050` et l'accent `#55C9F1`. Nova reprend les icônes Lucide de la maquette,
+leurs traits fins, les cartes remplies et les angles de 8 pixels.
+Le halo de 18 pixels reste fixe
 autour de l'icône sélectionnée : aucun minuteur ne l'anime. Les cartes
-conservent des fonds transparents et des contours discrets. Le fond SD
+affichent des fonds pleins, avec des icônes détourées. Le fond SD
 personnalisé n'est plus dessiné dans cette présentation ; son fichier est
 conservé. Les pastilles de couleur ont un remplissage propre, distinct des
-menus transparents. La première pastille correspond à l'accent violet.
+cartes Nova. La première pastille correspond à l'accent bleu par défaut.
+**Effets de sélection** active ou désactive le halo ; enregistrer les options
+pour conserver ce choix.
 
 Les choix d'animation sont Désactivé, Vagues, Particules et Aurore, avec
 vitesse et intensité. Les effets sont concentrés dans une bande inférieure
@@ -44,14 +54,19 @@ et les traductions ont été optimisées sans modifier les mesures matérielles.
 
 ## Dispositions
 
-Les deux accueils Tuiles et Carrousel restent disponibles. Outils,
-Informations, Options et Diagnostic tiennent dans la zone entre la
-navigation latérale, l'en-tête et la barre d'état, sans défilement vertical des pages
-principales. Les aides longues sont accessibles par « ? ». Les titres
-peuvent revenir à la ligne et les contrôles gardent leurs identifiants.
+L'accueil Tuiles reprend la grande carte Démarrer et les quatre accès de la
+maquette. Le Carrousel reste disponible. Les pages principales utilisent la
+navigation haute et une zone de 1 280 × 580 pixels au-dessus de la barre d'état.
+Outils et Infos ont quatre colonnes sur deux rangées ; Diagnostic présente
+douze cartes sur trois rangées, sans défilement vertical.
+Toucher une carte sélectionne son détail. La flèche du bandeau inférieur ouvre
+la fonction ; toucher le texte du bandeau affiche l'aide complète.
 Les mots trop larges utilisent d'abord la taille de légende de la police
 choisie. Les options à deux états ont un interrupteur et un état écrit ;
-Auto Boot continue d'ouvrir le choix de l'entrée de démarrage.
+Auto Boot continue d'ouvrir le choix de l'entrée de démarrage. Il se trouve
+avec les autres options de démarrage derrière le titre **Options système**.
+Le logo HEKATE ouvre les commandes rapides et les réglages Nyx ; un appui long
+ouvre les crédits.
 
 Réglages Nyx comprend deux onglets internes, Interface et Système.
 Apparence comprend Langue, Police, Disposition et Effet. La police se
@@ -84,8 +99,10 @@ dossiers `bootloader/` et `fonts/` avec la carte SD existante.
 ## Vérification
 
 La compilation et les contrôles sur ordinateur sont fournis dans l'archive.
-Les vérifications graphiques couvrent 1 365 scènes LVGL : les sept langues,
-les neuf tailles principales et des contrôles des trois polices fournies.
+Les vérifications graphiques couvrent 1 890 scènes LVGL : les sept langues,
+les neuf tailles principales, les trois polices fournies et la police intégrée.
+Douze scènes supplémentaires vérifient les gardes selon la disponibilité du
+matériel ou d'un outil. Les pixels des icônes détourées sont contrôlés.
 Ils vérifient notamment la configuration, l'annulation, les erreurs de
 lecture, les formats de police, les textes UTF-8 et les commandes conservées.
 Ils ne remplacent pas l'essai sur console : vérifier la lecture à 20 et

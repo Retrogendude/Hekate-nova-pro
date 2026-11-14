@@ -62,6 +62,7 @@ void set_nyx_default_configuration()
 	n_cfg.background_effect = 0;
 	n_cfg.background_speed = 2;
 	n_cfg.background_opacity = 20;
+	n_cfg.nova_halo = 1;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -92,6 +93,7 @@ void nyx_sanitize_appearance(void)
 	if (n_cfg.background_effect > 3) n_cfg.background_effect = 0;
 	if (n_cfg.background_speed < 1 || n_cfg.background_speed > 3) n_cfg.background_speed = 2;
 	if (n_cfg.background_opacity < 10 || n_cfg.background_opacity > 50) n_cfg.background_opacity = 20;
+	if (n_cfg.nova_halo > 1) n_cfg.nova_halo = 1;
 }
 
 static u32 appearance_number(const char *value, u32 fallback)
@@ -113,6 +115,7 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "background_effect")) n_cfg.background_effect = appearance_number(value, 0);
 	else if (!strcmp(key, "background_speed")) n_cfg.background_speed = appearance_number(value, 2);
 	else if (!strcmp(key, "background_opacity")) n_cfg.background_opacity = appearance_number(value, 20);
+	else if (!strcmp(key, "nova_halo")) n_cfg.nova_halo = appearance_number(value, 1);
 	else return false;
 	nyx_sanitize_appearance();
 	return true;
@@ -356,6 +359,9 @@ int create_nyx_config_entry(bool force_unmount)
 	if (f_puts(lbuf, &fp) < 0) goto out;
 	if (f_puts("\nbackground_opacity=", &fp) < 0) goto out;
 	itoa(n_cfg.background_opacity, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_halo=", &fp) < 0) goto out;
+	itoa(n_cfg.nova_halo, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0) goto out;
 
 	if (f_puts("\n", &fp) < 0)

@@ -9,6 +9,9 @@ void nyx_font_manager_init(void);
 const lv_font_t *nyx_font_regular(void);
 const lv_font_t *nyx_font_small(void);
 const lv_font_t *nyx_font_mono(void);
+/* Cached typographic roles for Nova. Requested pixels are based on 30px UI
+ * preference, scaled once at screen creation, never during a paint. */
+const lv_font_t *nyx_font_ui(u32 pixels);
 const char *nyx_font_options(void);
 const char *nyx_font_filename(u32 index);
 u32 nyx_font_count(void);

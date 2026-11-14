@@ -45,7 +45,7 @@ extern "C" {
 #define COLOR_HOS_BG_LIGHT     LV_COLOR_HEX(0x202B27)
 #define COLOR_HOS_BG_LIGHTER   LV_COLOR_HEX(0x2B3A31)
 
-#define COLOR_HOS_TURQUOISE_EX(hue) (hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0xA6A4FB))
+#define COLOR_HOS_TURQUOISE_EX(hue) (hue ? lv_color_hsv_to_rgb(hue, 100, 100) : LV_COLOR_HEX(0x55C9F1))
 
 /**********************
  *      TYPEDEFS

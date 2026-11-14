@@ -84,6 +84,7 @@ static bool nyx_font_available_at_size(const char *p, u32 size) { assert(p[0]);a
 static int create_nyx_config_entry(bool force) {
     assert(force);++write_calls;saved_config=n_cfg;sd_unmount();return write_error;
 }
+static bool nyx_options_commit_boot(void) { return true; }
 static void appearance_notice(const char *s) { ++notice_calls;strcpy(notice,s); }
 static void nyx_options_appearance_active(bool active,bool saved) {
     ++options_calls;options_active=active;options_saved=saved;

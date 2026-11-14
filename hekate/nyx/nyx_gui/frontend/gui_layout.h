@@ -12,7 +12,7 @@ typedef struct {
     u32 count;
 } nyx_action_grid;
 
-void nyx_action_grid_init(nyx_action_grid *grid, lv_theme_t *theme, lv_obj_t *page);
+void nyx_action_grid_init(nyx_action_grid *grid, lv_theme_t *theme, lv_obj_t *page, u32 kind);
 /* Each button has exactly one label. Descriptions are non-clickable siblings,
  * preserving callbacks that use the button's first child as its title. */
 lv_obj_t *nyx_action_grid_add(nyx_action_grid *grid, const char *title,

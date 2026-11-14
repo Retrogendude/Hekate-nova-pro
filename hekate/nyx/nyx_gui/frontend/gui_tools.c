@@ -1499,7 +1499,7 @@ out_end:
 void create_tab_tools(lv_theme_t *th, lv_obj_t *parent)
 {
     nyx_action_grid grid;
-    nyx_action_grid_init(&grid, th, parent);
+    nyx_action_grid_init(&grid, th, parent, NOVA_TOOLS);
     nyx_action_grid_add(&grid, SYMBOL_UPLOAD"  Backup eMMC",
         "Back up eMMC or emuMMC partitions to the SD card, individually or as a raw image.",
         create_window_backup_restore_tool, NULL, 0);

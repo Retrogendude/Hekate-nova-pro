@@ -3,4 +3,6 @@ Construire Hekate a sa racine avec make -j4 (devkitARM, devkitA64, Python3, GCC 
 Construire ensuite HWTest-RCM-0.15/ramtest avec make -j4 (devkitARM, Python3, Git).
 Les scripts build-tools sont les references de construction et verification
 du workspace Windows utilise ici ; ils attendent sa disposition work/.
+Les icones Nova sont deja compilees dans nova_icons.inc : Node.js est
+uniquement utile pour les regenerer, avec Lucide 1.8.0 et Sharp.
 Ne pas utiliser les sorties intermediaires *_unc.bin comme payloads.

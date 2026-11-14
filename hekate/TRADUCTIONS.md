@@ -1,4 +1,4 @@
-# État des traductions — version 8
+# État des traductions — Nova, version 10
 
 Le catalogue comporte sept valeurs par clé : anglais, français, espagnol,
 italien, russe, allemand et portugais. Les menus principaux, réglages,
@@ -6,7 +6,10 @@ cartes Outils/Informations, confirmations répertoriées et l'écran Apparence
 utilisent ce catalogue. Le test RAM lancé depuis Nyx dispose de sept packs
 complets pour ses 108 chaînes source, y compris ses commandes et erreurs.
 
-Le catalogue contient 3 692 clés, avec les sept langues pour chaque clé.
+Le catalogue contient 3 837 clés, avec les sept langues pour chaque clé.
+Les nouveaux écrans Nova disposent de textes rédigés dans les sept langues ;
+leurs libellés français reproduisent ceux de la maquette. Le fichier
+`localization_nova.json` contient ces ajouts et leurs alias.
 Les 1 268 chaînes source répertoriées dans les 42 sondes natives sont
 couvertes, y compris leurs commentaires détaillés. Les compléments de
 rapports ont été traduits hors ligne avec Argos/CTranslate2, puis contrôlés

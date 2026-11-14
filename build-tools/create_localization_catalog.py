@@ -451,6 +451,9 @@ if final_extra.exists():
 probe_review = ROOT / 'localization_probe_review.json'
 if probe_review.exists():
     catalog.update(json.loads(probe_review.read_text(encoding='utf-8')))
+nova = ROOT / 'localization_nova.json'
+if nova.exists():
+    catalog.update(json.loads(nova.read_text(encoding='utf-8')))
 
 # Preserve literal formatting/color controls around fully authored phrases.
 from audit_localization_coverage import expand_catalog

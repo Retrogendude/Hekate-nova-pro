@@ -66,6 +66,7 @@ typedef struct _nyx_config
 	u32 background_effect; // 0 none, 1 waves, 2 particles, 3 aurora.
 	u32 background_speed; // 1 slow, 2 normal, 3 fast.
 	u32 background_opacity; // 10..50 percent.
+	u32 nova_halo; // Nova icon selection halo, 0 off / 1 on.
 } nyx_config;
 
 extern hekate_config h_cfg;

@@ -235,7 +235,7 @@
 #define USE_LV_IMG      1
 #if USE_LV_IMG != 0
 #  define LV_IMG_CF_INDEXED   0       /*Enable indexed (palette) images*/
-#  define LV_IMG_CF_ALPHA     0       /*Enable alpha indexed images*/
+#  define LV_IMG_CF_ALPHA     1       /*Nova's antialiased Lucide alpha masks*/
 #endif
 
 /*Line (dependencies: -*/

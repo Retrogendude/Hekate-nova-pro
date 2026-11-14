@@ -19,6 +19,7 @@ typedef struct {
     u8 *bitmap;
 } managed_font;
 static managed_font regular, small, mono, regular_icons, small_icons;
+static managed_font ui_faces[12];
 static const lv_font_t *regular_font = &interui_30, *small_font = &interui_20, *mono_font = &ubuntu_mono;
 static char font_files[FONT_LIMIT + 1][64];
 static char font_options[(FONT_LIMIT + 1) * 65];
@@ -280,6 +281,7 @@ static void scan_fonts(void)
 }
 void nyx_font_manager_init(void)
 {
+    for (u32 i = 0; i < ARRAY_SIZE(ui_faces); ++i) release_font(&ui_faces[i]);
     /* Only call while building a fresh screen; existing objects retain pointers. */
     release_font(&regular); release_font(&small); release_font(&mono); release_font(&regular_icons); release_font(&small_icons);
     regular_font = &interui_30; small_font = &interui_20; mono_font = &ubuntu_mono;
@@ -318,6 +320,27 @@ void nyx_font_manager_init(void)
 }
 const lv_font_t *nyx_font_regular(void) { return regular_font; }
 const lv_font_t *nyx_font_small(void) { return small_font; }
+const lv_font_t *nyx_font_ui(u32 pixels)
+{
+    if (pixels < 14) pixels = 14;
+    if (pixels > 36) pixels = 36;
+    u32 height = ((pixels * selected_size / 30) + 1) & ~1u;
+    if (height < 14) height = 14;
+    if (height > 36) height = 36;
+    if (height == regular_font->h_px) return regular_font;
+    if (height == small_font->h_px) return small_font;
+    managed_font *face = &ui_faces[(height - 14) / 2];
+    if (face->bitmap) return &face->font;
+    bool was_mounted = sd_get_card_mounted();
+    managed_font temporary = {0};
+    bool loaded = false;
+    if (n_cfg.font_file[0] && !sd_mount())
+        loaded = load_selected_into(n_cfg.font_file, height, height, face, &temporary);
+    release_font(&temporary);
+    if (!was_mounted && sd_get_card_mounted()) sd_unmount();
+    if (!loaded) loaded = scale_font(regular_font, height, face, false, false);
+    return loaded ? &face->font : small_font;
+}
 const lv_font_t *nyx_font_mono(void) { return mono_font; }
 u32 nyx_font_size(void) { return selected_size; }
 const char *nyx_font_status(void) { return status; }

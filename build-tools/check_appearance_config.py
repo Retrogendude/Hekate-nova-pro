@@ -65,6 +65,15 @@ int main(void) {
  expect_field("font_size","020",30);expect_field("background_effect","03",3);
  expect_field("background_speed","02",2);expect_field("background_opacity","09",20);
  for(u32 value=0;value<100;value++) {
+  char number[16];sprintf(number,"%u",value);reset();
+  require(n_cfg.nova_halo==1,"Nova halo defaults on");
+  require(nyx_appearance_key("nova_halo",number),"Nova halo key recognized");
+  require(n_cfg.nova_halo==(value<=1?value:1),"Nova halo range");++cases;
+ }
+ for(unsigned i=0;i<sizeof bad_numbers/sizeof *bad_numbers;i++) {
+  reset();require(nyx_appearance_key("nova_halo",bad_numbers[i])&&n_cfg.nova_halo==1,"malformed Nova halo value");++cases;
+ }
+ for(u32 value=0;value<100;value++) {
   reset();n_cfg.font_size=n_cfg.background_effect=n_cfg.background_speed=n_cfg.background_opacity=value;
   nyx_sanitize_appearance();
   require(n_cfg.font_size==((value>=20&&value<=36&&!(value&1))?value:30),"font size bounds");
@@ -108,11 +117,12 @@ int main(void) {
   for(u32 speed=1;speed<=3;speed++)for(u32 opacity=10;opacity<=50;opacity+=10) {
    reset();strcpy(n_cfg.font_file,roundtrip_names[font]);n_cfg.font_size=size;
    n_cfg.background_effect=effect;n_cfg.background_speed=speed;n_cfg.background_opacity=opacity;
+   u32 halo=(size/2+effect)&1;n_cfg.nova_halo=halo;
    n_cfg.language=I18N_RU;n_cfg.home_layout=HOME_LAYOUT_CAROUSEL;
-   require(create_nyx_config_entry(false)==0&&writes==37,"all appearance combinations write all fields");
+   require(create_nyx_config_entry(false)==0&&writes==39,"all appearance combinations write all fields");
    set_nyx_default_configuration();load_written();
    require(!strcmp(n_cfg.font_file,roundtrip_names[font])&&n_cfg.font_size==size&&
-    n_cfg.background_effect==effect&&n_cfg.background_speed==speed&&n_cfg.background_opacity==opacity,"actual INI appearance roundtrip");++cases;
+    n_cfg.background_effect==effect&&n_cfg.background_speed==speed&&n_cfg.background_opacity==opacity&&n_cfg.nova_halo==halo,"actual INI appearance roundtrip");++cases;
   }
  printf("PASS: %d actual-C appearance configuration cases; strict numeric ranges, filename parser agreement, traversal/injection limits, corrupted values and 1620 full INI roundtrips.\n",cases);
  return 0;

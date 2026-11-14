@@ -79,7 +79,7 @@ static unsigned checks;
 #define CHECK(c) do { checks++; if(!(c)){fprintf(stderr,"Failed at %d: %s\n",__LINE__,#c);abort();}}while(0)
 static void put32(u8 *p,u32 v){p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;}
 static u8 *pristine; static u32 pristine_size;
-static void cleanup(void){release_font(&regular);release_font(&small);release_font(&mono);release_font(&regular_icons);release_font(&small_icons);CHECK(!allocation_count);CHECK(!open_count);}
+static void cleanup(void){for(u32 i=0;i<ARRAY_SIZE(ui_faces);i++)release_font(&ui_faces[i]);release_font(&regular);release_font(&small);release_font(&mono);release_font(&regular_icons);release_font(&small_icons);CHECK(!allocation_count);CHECK(!open_count);}
 static void reset(void) {
     cleanup();memcpy(blob,pristine,pristine_size);blob_size=pristine_size;
     read_calls=0;fail_read=0;fail_close=false;fail_open=false;fail_allocation=0;allocation_calls=0;mounted=false;fail_mount=false;
@@ -160,7 +160,21 @@ int main(int argc,char**argv){
     reset();CHECK(!nyx_font_available_at_size("Lecture.nyxf",35));CHECK(!nyx_font_available_at_size("Lecture.nyxf",38));
     reset();u8 *bad_entry=entry_for(36);blob[read32(bad_entry+12)]^=1;CHECK(!nyx_font_available_at_size("Lecture.nyxf",36));cleanup();
     reset();bad_entry=entry_for(36);put32(bad_entry,39);rehash_table();CHECK(!nyx_font_available_at_size("Lecture.nyxf",36));cleanup();
-    free(pristine);free(blob);printf("PASS: %u actual-C font loader assertions; all sizes, corrupt/truncated files, I/O and allocation failures, 8bpp scaling and fallback\n",checks);return 0;
+    // Nova's type roles are loaded once. Painting/reusing a role performs no
+    // file read or allocation, and reinitializing releases the complete cache.
+    reset();n_cfg.font_size=30;strcpy(n_cfg.font_file,"Lecture.nyxf");nyx_font_manager_init();
+    for(u32 height=14;height<=36;height+=2){
+      const lv_font_t*face=nyx_font_ui(height);CHECK(face->h_px==height);CHECK(get_width(face,0x42F)>0);
+      u32 reads=read_calls,allocs=allocation_calls;CHECK(nyx_font_ui(height)==face);CHECK(read_calls==reads&&allocation_calls==allocs);CHECK(!mounted);
+    }
+    CHECK(nyx_font_ui(0)->h_px==14);CHECK(nyx_font_ui(UINT32_MAX)->h_px==36);cleanup();
+    reset();n_cfg.font_size=36;strcpy(n_cfg.font_file,"Lecture.nyxf");nyx_font_manager_init();
+    CHECK(nyx_font_ui(18)->h_px==22);CHECK(nyx_font_ui(36)->h_px==36);nyx_font_manager_init();cleanup();
+    for(u32 failure=1;failure<=8;failure++){
+      reset();n_cfg.font_size=30;strcpy(n_cfg.font_file,"Lecture.nyxf");nyx_font_manager_init();
+      allocation_calls=0;fail_allocation=failure;const lv_font_t*face=nyx_font_ui(18);CHECK(face&&face->h_px>=14&&face->h_px<=36);cleanup();
+    }
+    free(pristine);free(blob);printf("PASS: %u actual-C font loader assertions; all sizes, corrupt/truncated files, I/O and allocation failures, 8bpp scaling, fallback and cached Nova type roles\n",checks);return 0;
 }
 '''
 

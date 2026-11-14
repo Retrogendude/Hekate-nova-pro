@@ -1,4 +1,17 @@
-# Studio — version 9
+# Nova — version 10
+
+Nova utilise la navigation haute de la maquette, les mêmes icônes Lucide,
+la palette anthracite/bleu, des cartes remplies de rayon 8 pixels et un halo
+de sélection fixe de 18 pixels. L'accueil Tuiles reprend la grande carte
+Démarrer et les quatre accès secondaires. Outils et Infos sont en quatre
+colonnes ; Diagnostic a douze cartes et un bandeau de détail.
+
+Les textes et noms d'icônes des 32 cartes viennent directement de la maquette.
+Les données de batterie, les outils disponibles et la police appliquée sont
+celles de la console. Les aperçus sur ordinateur utilisent des données d'exemple.
+Voir LIRE-MOI-V10.txt pour les commandes et PERSONNALISATION.md pour les réglages.
+
+# Studio — version 9 (historique)
 
 Studio conserve Tuiles et Carrousel dans un thème anthracite/violet,
 avec navigation latérale, icônes encadrées, angles de 6 pixels et un halo
