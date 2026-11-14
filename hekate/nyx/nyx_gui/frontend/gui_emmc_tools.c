@@ -51,108 +51,14 @@ static void _create_window_backup_restore(emmcPartType_t type, const char* win_l
 
 	char win_label_full[80];
 
-	s_printf(win_label_full, "%s%s", emmc_btn_ctxt.restore ? SYMBOL_DOWNLOAD"  Restore " : SYMBOL_UPLOAD"  Backup ", nyx_nova_caption(win_label));
+	s_printf(win_label_full,nyx_tr(emmc_btn_ctxt.restore?"Restore %s":"Backup %s"),nyx_nova_caption(win_label));
 
 	lv_obj_t *win = nyx_create_standard_window(win_label_full, NULL);
 
 	//Disable buttons.
 	nyx_window_toggle_buttons(win, true);
 
-	// Create important info container.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 5);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_cont_get_style(h1));
-	h_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
-	h_style.body.grad_color = h_style.body.main_color;
-	h_style.body.opa = LV_OPA_COVER;
-
-	// Create log container.
-	lv_obj_t *h2 = lv_cont_create(win, h1);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, false);
-	lv_obj_set_size(h2, (LV_HOR_RES / 11) * 4, LV_DPI * 5);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, 0, LV_DPI / 5);
-
-	lv_obj_t *label_log = lv_label_create(h2, NULL);
-	lv_label_set_recolor(label_log, true);
-	lv_obj_set_style(label_log, &monospace_text);
-	lv_label_set_long_mode(label_log, LV_LABEL_LONG_BREAK);
-	lv_label_set_static_text(label_log, "");
-	lv_obj_set_width(label_log, lv_obj_get_width(h2));
-	lv_obj_align(label_log, h2, LV_ALIGN_IN_TOP_LEFT, LV_DPI / 10, LV_DPI / 10);
-	emmc_tool_gui_ctxt.label_log = label_log;
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	// Create info elements.
-	lv_obj_t *label_info = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_info, true);
-	lv_obj_set_width(label_info, lv_obj_get_width(h1));
-	lv_label_set_static_text(label_info, "\n\n\n\n\n\n\n\n\n");
-	lv_obj_set_style(label_info, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_info, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 10);
-	emmc_tool_gui_ctxt.label_info = label_info;
-
-	static lv_style_t bar_teal_bg, bar_teal_ind, bar_orange_bg, bar_orange_ind, bar_white_ind;
-
-	lv_style_copy(&bar_teal_bg, lv_theme_get_current()->bar.bg);
-	bar_teal_bg.body.main_color = LV_COLOR_HEX(0x005a47);
-	bar_teal_bg.body.grad_color = bar_teal_bg.body.main_color;
-
-	lv_style_copy(&bar_teal_ind, lv_theme_get_current()->bar.indic);
-	bar_teal_ind.body.main_color = LV_COLOR_HEX(0x00FFC9);
-	bar_teal_ind.body.grad_color = bar_teal_ind.body.main_color;
-
-	lv_style_copy(&bar_orange_bg, lv_theme_get_current()->bar.bg);
-	bar_orange_bg.body.main_color = LV_COLOR_HEX(0x755000);
-	bar_orange_bg.body.grad_color = bar_orange_bg.body.main_color;
-
-	lv_style_copy(&bar_orange_ind, lv_theme_get_current()->bar.indic);
-	bar_orange_ind.body.main_color = LV_COLOR_HEX(0xFFAE00);
-	bar_orange_ind.body.grad_color = bar_orange_ind.body.main_color;
-
-	lv_style_copy(&bar_white_ind, lv_theme_get_current()->bar.indic);
-	bar_white_ind.body.main_color = LV_COLOR_HEX(0xF0F0F0);
-	bar_white_ind.body.grad_color = bar_white_ind.body.main_color;
-
-	emmc_tool_gui_ctxt.bar_teal_bg = &bar_teal_bg;
-	emmc_tool_gui_ctxt.bar_teal_ind = &bar_teal_ind;
-	emmc_tool_gui_ctxt.bar_orange_bg = &bar_orange_bg;
-	emmc_tool_gui_ctxt.bar_orange_ind = &bar_orange_ind;
-	emmc_tool_gui_ctxt.bar_white_bg = lv_theme_get_current()->bar.bg;
-	emmc_tool_gui_ctxt.bar_white_ind = &bar_white_ind;
-
-	lv_obj_t *bar = lv_bar_create(h1, NULL);
-	lv_obj_set_size(bar, LV_DPI * 38 / 10, LV_DPI / 5);
-	lv_bar_set_range(bar, 0, 100);
-	lv_bar_set_value(bar, 0);
-	lv_obj_align(bar, label_info, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 8);
-	lv_obj_set_opa_scale(bar, LV_OPA_0);
-	lv_obj_set_opa_scale_enable(bar, true);
-	emmc_tool_gui_ctxt.bar = bar;
-
-	lv_obj_t *label_pct= lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_pct, true);
-	lv_label_set_static_text(label_pct, " "SYMBOL_DOT" 0%");
-	lv_obj_set_style(label_pct, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_pct, bar, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 20, 0);
-	lv_obj_set_opa_scale(label_pct, LV_OPA_0);
-	lv_obj_set_opa_scale_enable(label_pct, true);
-	emmc_tool_gui_ctxt.label_pct = label_pct;
-
-	lv_obj_t *label_finish = lv_label_create(h1, NULL);
-	lv_label_set_recolor(label_finish, true);
-	lv_label_set_static_text(label_finish, "");
-	lv_obj_set_style(label_finish, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_finish, bar, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 9 / 20);
-	emmc_tool_gui_ctxt.label_finish = label_finish;
+    nyx_nova_transfer(win,&emmc_tool_gui_ctxt);
 
 	if (!emmc_btn_ctxt.restore)
 		dump_emmc_selected(type, &emmc_tool_gui_ctxt);

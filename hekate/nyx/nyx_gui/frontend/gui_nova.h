@@ -51,4 +51,10 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button);
 const char *nyx_nova_caption(const char *text);
 lv_obj_t *nyx_nova_action(lv_obj_t *parent, const char *title, const char *description, const char *icon,
     lv_action_t action, u32 id, int x, int y, int width, int height);
+struct _emmc_tool_gui_t;
+void nyx_nova_fixed_page(lv_obj_t *page);
+lv_obj_t *nyx_nova_report(lv_obj_t *parent,const char *text,int x,int y,int width,int height);
+lv_obj_t *nyx_nova_emmc_summary(lv_obj_t *win,const char *values);
+void nyx_nova_transfer(lv_obj_t *win,struct _emmc_tool_gui_t *context);
+void nyx_nova_align(lv_obj_t *object,const lv_obj_t *base,lv_align_t alignment,lv_coord_t x,lv_coord_t y);
 #endif

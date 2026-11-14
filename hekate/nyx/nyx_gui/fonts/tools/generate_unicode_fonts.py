@@ -27,15 +27,35 @@ CODEPOINTS = tuple(sorted(set(range(0xA0, 0x250)) |
                           set(range(0x400, 0x500)) | set(EXTRAS)))
 
 
+def fit_font_to_cell(font: ImageFont.FreeTypeFont, height: int) -> ImageFont.FreeTypeFont:
+    """Reserve a real accent band for fonts with a taller cap-height than Noto.
+
+    Reduce the whole face, preserving its proportions and common baseline;
+    never fix an oversized cap by clipping its top or stretching a glyph.
+    Faces that already fit retain their original size and rasterization.
+    """
+    baseline = round(height * 0.8)
+    if baseline < 2 or baseline >= height:
+        raise ValueError(f"Unsupported fixed line height: {height}")
+    candidate = font
+    for size in range(int(font.size), 0, -1):
+        if size != int(font.size):
+            candidate = font.font_variant(size=size)
+        cap_height = -candidate.getbbox("H", anchor="ls")[1]
+        if 0 < cap_height < baseline:
+            return candidate
+    raise ValueError(f"Font cannot fit the {height}px line height with room for accents")
+
+
 def render_glyph(font: ImageFont.FreeTypeFont, char: str, height: int) -> Image.Image:
     """Rasterize to an LVGL fixed-height cell with no clipped diacritics."""
+    font = fit_font_to_cell(font, height)
     left, top, right, bottom = font.getbbox(char, anchor="ls")
     origin_x = -min(0, left)
     width = max(1, math.ceil(font.getlength(char)) + origin_x, right + origin_x)
     cap_height = -font.getbbox("H", anchor="ls")[1]
     baseline = round(height * 0.8)
     accent_height = baseline - cap_height
-    assert accent_height > 0
     raw_top = min(top, -cap_height)
     raw_bottom = max(bottom, 0)
     raw = Image.new("L", (width, raw_bottom - raw_top))

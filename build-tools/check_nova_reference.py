@@ -25,7 +25,7 @@ for rows in reference['items'].values():
 for row in reference['navigation']:assert row[2] in icons['icons']
 assert (root/'frontend/nova_assets/LUCIDE-LICENSE.txt').is_file()
 result={'reference_actions':32,'reference_navigation_entries':5,'columns':4,'tools_rows':2,'diagnostics_rows':3,
-        'colors':reference['colors'],'card_radius_px':8,'reflection_period_ms':50,'authorized_amendments':12,'authorized_corrections_v12':7,'icon_library':'Lucide 1.8.0; original Nova Pro brand mark',
+        'colors':reference['colors'],'card_radius_px':8,'reflection_period_ms':40,'reflection_sweep_ms':480,'authorized_corrections_v15':11,'authorized_amendments':12,'authorized_corrections_v12':7,'icon_library':'Lucide 1.8.0; original Nova Pro brand mark',
         'native_glyph_sizes':[18,24,40],'svg_stroke_width':1.7,
         'reference_data_sha256':hashlib.sha256((work/'nova-reference.json').read_bytes()).hexdigest(),
         'native_reference_include_sha256':hashlib.sha256(generated.encode()).hexdigest(),

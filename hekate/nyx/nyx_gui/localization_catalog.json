@@ -32498,6 +32498,114 @@
     "Dezenter weißer Schimmer auf der gewählten Kachel.",
     "Reflexo branco discreto no bloco selecionado."
   ],
+  "Sauvegarde %s": [
+    "Backup %s",
+    "Sauvegarde %s",
+    "Copia de seguridad %s",
+    "Backup %s",
+    "Резервная копия %s",
+    "Sicherung %s",
+    "Cópia de segurança %s"
+  ],
+  "Backup %s": [
+    "Backup %s",
+    "Sauvegarde %s",
+    "Copia de seguridad %s",
+    "Backup %s",
+    "Резервная копия %s",
+    "Sicherung %s",
+    "Cópia de segurança %s"
+  ],
+  "Restauration %s": [
+    "Restore %s",
+    "Restauration %s",
+    "Restauración %s",
+    "Ripristino %s",
+    "Восстановление %s",
+    "Wiederherstellung %s",
+    "Restauro %s"
+  ],
+  "Restore %s": [
+    "Restore %s",
+    "Restauration %s",
+    "Restauración %s",
+    "Ripristino %s",
+    "Восстановление %s",
+    "Wiederherstellung %s",
+    "Restauro %s"
+  ],
+  "#96FF00 Espace libre sur la SD :# %d MiB\n#96FF00 Taille de la sauvegarde :# %d MiB\n\n": [
+    "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n",
+    "#96FF00 Espace libre sur la SD :# %d MiB\n#96FF00 Taille de la sauvegarde :# %d MiB\n\n",
+    "#96FF00 Espacio libre en la SD:# %d MiB\n#96FF00 Tamaño de la copia:# %d MiB\n\n",
+    "#96FF00 Spazio libero sulla SD:# %d MiB\n#96FF00 Dimensione del backup:# %d MiB\n\n",
+    "#96FF00 Свободно на SD:# %d MiB\n#96FF00 Размер копии:# %d MiB\n\n",
+    "#96FF00 Freier SD-Speicher:# %d MiB\n#96FF00 Sicherungsgröße:# %d MiB\n\n",
+    "#96FF00 Espaço livre no SD:# %d MiB\n#96FF00 Tamanho da cópia:# %d MiB\n\n"
+  ],
+  "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n": [
+    "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n",
+    "#96FF00 Espace libre sur la SD :# %d MiB\n#96FF00 Taille de la sauvegarde :# %d MiB\n\n",
+    "#96FF00 Espacio libre en la SD:# %d MiB\n#96FF00 Tamaño de la copia:# %d MiB\n\n",
+    "#96FF00 Spazio libero sulla SD:# %d MiB\n#96FF00 Dimensione del backup:# %d MiB\n\n",
+    "#96FF00 Свободно на SD:# %d MiB\n#96FF00 Размер копии:# %d MiB\n\n",
+    "#96FF00 Freier SD-Speicher:# %d MiB\n#96FF00 Sicherungsgröße:# %d MiB\n\n",
+    "#96FF00 Espaço livre no SD:# %d MiB\n#96FF00 Tamanho da cópia:# %d MiB\n\n"
+  ],
+  "#96FF00 Dossier :#\n%s\n#96FF00 Fichier :# #FF8000 %s#": [
+    "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
+    "#96FF00 Dossier :#\n%s\n#96FF00 Fichier :# #FF8000 %s#",
+    "#96FF00 Ruta:#\n%s\n#96FF00 Archivo:# #FF8000 %s#",
+    "#96FF00 Percorso:#\n%s\n#96FF00 File:# #FF8000 %s#",
+    "#96FF00 Папка:#\n%s\n#96FF00 Файл:# #FF8000 %s#",
+    "#96FF00 Pfad:#\n%s\n#96FF00 Datei:# #FF8000 %s#",
+    "#96FF00 Pasta:#\n%s\n#96FF00 Ficheiro:# #FF8000 %s#"
+  ],
+  "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#": [
+    "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
+    "#96FF00 Dossier :#\n%s\n#96FF00 Fichier :# #FF8000 %s#",
+    "#96FF00 Ruta:#\n%s\n#96FF00 Archivo:# #FF8000 %s#",
+    "#96FF00 Percorso:#\n%s\n#96FF00 File:# #FF8000 %s#",
+    "#96FF00 Папка:#\n%s\n#96FF00 Файл:# #FF8000 %s#",
+    "#96FF00 Pfad:#\n%s\n#96FF00 Datei:# #FF8000 %s#",
+    "#96FF00 Pasta:#\n%s\n#96FF00 Ficheiro:# #FF8000 %s#"
+  ],
+  "Page %d": [
+    "Page %d",
+    "Page %d",
+    "Página %d",
+    "Pagina %d",
+    "Страница %d",
+    "Seite %d",
+    "Página %d"
+  ],
+  "Informations": [
+    "Informations",
+    "Informations",
+    "Información",
+    "Informazioni",
+    "Сведения",
+    "Informationen",
+    "Informações"
+  ],
+  "Aucune emuMMC trouvée.": [
+    "No emuMMC found.",
+    "Aucune emuMMC trouvée.",
+    "No se encontró ninguna emuMMC.",
+    "Nessuna emuMMC trovata.",
+    "emuMMC не найдена.",
+    "Keine emuMMC gefunden.",
+    "Nenhuma emuMMC encontrada."
+  ],
+  "No emuMMC found.": [
+    "No emuMMC found.",
+    "Aucune emuMMC trouvée.",
+    "No se encontró ninguna emuMMC.",
+    "Nessuna emuMMC trovata.",
+    "emuMMC не найдена.",
+    "Keine emuMMC gefunden.",
+    "Nenhuma emuMMC encontrada."
+  ],
   "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n": [
     "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n",
     "\n#FF0000 Écriture du fichier d'empreinte impossible (erreur %d) !#\n#FF0000 Annulation…#\n",
@@ -32561,15 +32669,6 @@
     "\n#FFDD00 Keine Partition gefunden…#\n",
     "\n#FFDD00 Nenhuma partição encontrada…#\n"
   ],
-  "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n": [
-    "#96FF00 SD Card free space:# %d MiB\n#96FF00 Total backup size:# %d MiB\n\n",
-    "#96FF00 Espace libre sur SD :# %d MiB\n#96FF00 Taille de la sauvegarde :# %d MiB\n\n",
-    "#96FF00 Espacio libre en SD:# %d MiB\n#96FF00 Tamaño de la copia:# %d MiB\n\n",
-    "#96FF00 Spazio libero SD:# %d MiB\n#96FF00 Dimensione backup:# %d MiB\n\n",
-    "#96FF00 Свободно на SD:# %d МиБ\n#96FF00 Размер копии:# %d МиБ\n\n",
-    "#96FF00 Freier SD-Speicher:# %d MiB\n#96FF00 Sicherungsgröße:# %d MiB\n\n",
-    "#96FF00 Espaço livre no SD:# %d MiB\n#96FF00 Tamanho da cópia:# %d MiB\n\n"
-  ],
   "\n#FFBA00 Free space is smaller than backup size.#\n": [
     "\n#FFBA00 Free space is smaller than backup size.#\n",
     "\n#FFBA00 L'espace libre est inférieur à la sauvegarde.#\n",
@@ -32623,15 +32722,6 @@
     "#FFDD00 Резервная копия уже существует!#\n\nНажмите #FF8000 POWER# для продолжения.\nНажмите #FF8000 VOL# для отмены.",
     "#FFDD00 Eine Sicherung ist bereits vorhanden!#\n\nZum Fortfahren #FF8000 POWER# drücken.\nZum Abbrechen #FF8000 VOL# drücken.",
     "#FFDD00 Já existe uma cópia de segurança!#\n\nPrima #FF8000 POWER# para continuar.\nPrima #FF8000 VOL# para cancelar."
-  ],
-  "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#": [
-    "#96FF00 Filepath:#\n%s\n#96FF00 Filename:# #FF8000 %s#",
-    "#96FF00 Chemin :#\n%s\nFichier : #FF8000 %s#",
-    "#96FF00 Ruta:#\n%s\nArchivo: #FF8000 %s#",
-    "#96FF00 Percorso:#\n%s\nFile: #FF8000 %s#",
-    "#96FF00 Путь:#\n%s\nФайл: #FF8000 %s#",
-    "#96FF00 Dateipfad:#\n%s\nDatei: #FF8000 %s#",
-    "#96FF00 Caminho:#\n%s\nFicheiro: #FF8000 %s#"
   ],
   "\n#FF0000 Error (%d) while creating#\n#FFDD00 %s#\n": [
     "\n#FF0000 Error (%d) while creating#\n#FFDD00 %s#\n",
@@ -33416,24 +33506,6 @@
     "Kacheln\nKarussell",
     "Mosaicos\nCarrossel"
   ],
-  "  Restore ": [
-    "  Restore ",
-    "  Restauration ",
-    "  Restaurar ",
-    "  Ripristino ",
-    "  Восстановление ",
-    "  Wiederherstellen ",
-    "  Restaurar "
-  ],
-  "  Backup ": [
-    "  Backup ",
-    "  Sauvegarde ",
-    "  Copia de seguridad ",
-    "  Backup ",
-    "  Резервная копия ",
-    "  Sicherung ",
-    "  Cópia de segurança "
-  ],
   " Restore": [
     " Restore",
     " Restauration",
@@ -33569,6 +33641,15 @@
     "#C7EA46 emuMMC# migrieren\n\nMigrationstyp wählen.\nSchaltflächen fehlender Elemente werden deaktiviert.",
     "Migração de #C7EA46 emuMMC#\n\nEscolhe o tipo de migração.\nOs botões dos elementos ausentes serão desativados."
   ],
+  "Sector start: 0x%08X\nFolder: %s": [
+    "Sector start: 0x%08X\nFolder: %s",
+    "Secteur de début : 0x%08X\nDossier : %s",
+    "Sector inicial: 0x%08X\nCarpeta: %s",
+    "Settore iniziale: 0x%08X\nCartella: %s",
+    "Начальный сектор: 0x%08X\nПапка: %s",
+    "Startsektor: 0x%08X\nOrdner: %s",
+    "Setor inicial: 0x%08X\nPasta: %s"
+  ],
   "  Change emuMMC": [
     "  Change emuMMC",
     "  Changer d'emuMMC",
@@ -33586,15 +33667,6 @@
     "  Отключить",
     "  Deaktivieren",
     "  Desativar"
-  ],
-  "Sector start: 0x%08X\nFolder: %s": [
-    "Sector start: 0x%08X\nFolder: %s",
-    "Secteur de début : 0x%08X\nDossier : %s",
-    "Sector inicial: 0x%08X\nCarpeta: %s",
-    "Settore iniziale: 0x%08X\nCartella: %s",
-    "Начальный сектор: 0x%08X\nПапка: %s",
-    "Startsektor: 0x%08X\nOrdner: %s",
-    "Setor inicial: 0x%08X\nPasta: %s"
   ],
   " emuMMC Manage": [
     " emuMMC Manage",
@@ -34108,6 +34180,15 @@
     "  Батарея",
     "  Akku",
     "  Bateria"
+  ],
+  "#00DDFF CID:#\nVendor ID:\nModel:\nProd Rev:\nS/N:\nMonth/Year:": [
+    "#00DDFF CID:#\nVendor ID:\nModel:\nProd Rev:\nS/N:\nMonth/Year:",
+    "#00DDFF CID:#\nIdentifiant fabricant :\nModèle :\nRévision produit :\nN° de série :\nMois/année :",
+    "#00DDFF CID:#\nIdentificador de fabricante:\nModelo:\nRevisión del producto:\nN.º de serie:\nMes/año:",
+    "#00DDFF CID:#\nIdentificativo produttore:\nModello:\nRevisione prodotto:\nN. di serie:\nMese/anno:",
+    "#00DDFF CID:#\nИдентификатор производителя:\nМодель:\nРевизия продукта:\nСерийный №:\nМесяц/год:",
+    "#00DDFF CID:#\nHerstellerkennung:\nModell:\nProduktrevision:\nSeriennr.:\nMonat/Jahr:",
+    "#00DDFF CID:#\nIdentificador do fabricante:\nModelo:\nRevisão do produto:\nN.º de série:\nMês/ano:"
   ],
   "Fond\nTextes\nContours\nLogo\nIcônes\nSélection": [
     "Background\nText\nBorders\nLogo\nIcons\nSelection",

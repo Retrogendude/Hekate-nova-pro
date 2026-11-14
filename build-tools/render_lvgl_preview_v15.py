@@ -15,7 +15,7 @@ from PIL import Image
 
 work=Path(__file__).resolve().parent
 project=work/'hekate-6.5.4'
-directory=work/'lvgl-preview-v14';directory.mkdir(exist_ok=True)
+directory=work/'lvgl-preview-v15';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -52,7 +52,25 @@ static lv_obj_t *autoboot_btn;
 static char *text_color="#FF0000";
 #define s_printf sprintf
 static lv_obj_t *close_btn,*autorcm_btn;
-static lv_style_t hint_small_style, hint_small_style_white,mbox_darken;
+static lv_style_t hint_small_style, hint_small_style_white,mbox_darken,monospace_text;
+typedef struct _emmc_tool_gui_t
+{
+	lv_obj_t *label_log;
+	lv_obj_t *label_info;
+	lv_obj_t *label_pct;
+	lv_obj_t *label_finish;
+	lv_obj_t *bar;
+	lv_style_t *bar_teal_bg;
+	lv_style_t *bar_teal_ind;
+	lv_style_t *bar_white_bg;
+	lv_style_t *bar_white_ind;
+	lv_style_t *bar_orange_bg;
+	lv_style_t *bar_orange_ind;
+	char *txt_buf;
+	char *base_path;
+	bool raw_emummc;
+} emmc_tool_gui_t;
+static void nyx_window_toggle_buttons(lv_obj_t*w,bool disable){(void)w;(void)disable;}
 static lv_res_t _create_mbox_clock_edit(lv_obj_t *button);
 static lv_res_t _action_win_nyx_options_close(lv_obj_t *button);
 static lv_img_dsc_t *hekate_bg;
@@ -96,6 +114,7 @@ static bool _lockpick_exists_check(void){return getenv("NYX_PREVIEW_LOCKPICK")!=
 '''
 headers='\n'.join(stripped(p)for p in [nyx/'fonts/font_manager.h',nyx/'localization.h',nyx/'fonts/unicode_fonts.h',nyx/'frontend/gui_nova.h',nyx/'frontend/gui_options.h',nyx/'frontend/gui_readability.h',nyx/'frontend/gui_layout.h',nyx/'frontend/gui_choices.h',nyx/'frontend/gui_appearance.h'])
 body=common+headers+stripped(nyx/'fonts/font_manager.c')+stripped(nyx/'localization.c',True)
+body+='static bool legacy_scale_font(const lv_font_t *source, u32 height, managed_font *target, bool icons, bool fixed)\n{\n    u32 codepoints[MAX_GLYPHS], count = make_codepoints(codepoints, icons), total = 0;\n    u32 widths[MAX_GLYPHS], source_height = source->h_px;\n    u32 fixed_width = (10u * height + source_height / 2) / source_height;\n    for (u32 i = 0; i < count; ++i) {\n        u32 source_width = lv_font_get_width(source, codepoints[i]);\n        widths[i] = fixed ? fixed_width : (source_width * height + source_height / 2) / source_height;\n        if (!widths[i]) widths[i] = height / 2;\n        if (widths[i] > 128) return false;\n        total += ((widths[i] + 1) / 2) * height;\n    }\n    if (!allocate_font(target, count, total, height)) return false;\n    memset(target->bitmap, 0, total);\n    u32 offset = 0;\n    for (u32 i = 0; i < count; ++i) {\n        u32 cp = codepoints[i], width = widths[i];\n        const u8 *source_bitmap = lv_font_get_bitmap(source, cp);\n        u32 source_width = lv_font_get_width(source, cp), source_bpp = lv_font_get_bpp(source, cp);\n        u32 source_stride = source_bpp == 8 ? source_width : (source_width + 1) / 2;\n        target->codepoints[i] = cp; target->glyphs[i].w_px = width; target->glyphs[i].glyph_index = offset;\n        if (source_bitmap && source_width && (source_bpp == 4 || source_bpp == 8)) {\n            for (u32 y = 0; y < height; ++y) {\n                u32 source_y = y * source_height / height;\n                for (u32 x = 0; x < width; ++x) {\n                    u32 source_x = x * source_width / width;\n                    u8 byte = source_bitmap[source_y * source_stride + (source_bpp == 8 ? source_x : source_x / 2)];\n                    u8 pixel = source_bpp == 8 ? (byte + 8) / 17 : (source_x & 1 ? byte & 15 : byte >> 4);\n                    target->bitmap[offset + y * ((width + 1) / 2) + x / 2] |= pixel << (x & 1 ? 0 : 4);\n                }\n            }\n        }\n        offset += ((width + 1) / 2) * height;\n    }\n    target->font.unicode_first = target->codepoints[0]; target->font.unicode_last = target->codepoints[count - 1];\n    if (fixed) target->font.monospace = fixed_width;\n    return true;\n}\n'
 guih=(nyx/'frontend/gui.h').read_text();macros='\n'.join(re.findall(r'^#define lv_.*$',guih,re.M))
 body+='\n'+macros+'\n'
 nova=(nyx/'frontend/gui_nova.c').read_text(encoding='utf-8')
@@ -141,7 +160,7 @@ body+='\nstatic void _check_nyx_changes(void){assert(!nyx_changes_made); }\n'+fu
 body+=function(opts,'nyx_options_appearance_active')
 body+=opts[opts.index('static const u16 theme_colors[18]'):opts.index('typedef struct _time_edit_obj_t')]
 body+=opts[opts.index('/* Compact pages keep controls'):]
-body+=stripped(nyx/'frontend/gui_nova_theme.c')
+body+=stripped(nyx/'frontend/gui_nova_theme.c')+stripped(nyx/'frontend/gui_nova_report.c')
 rtc=(project/'bdk/rtc/max77620-rtc.c').read_text()
 at=rtc.index('u32 max77620_rtc_date_to_epoch(');end=rtc.index('\n}',at)+2
 body+=rtc[at:end]+'\n'
@@ -151,6 +170,8 @@ body+=opts[opts.index('typedef struct _time_edit_obj_t'):opts.index('static lv_r
 
 emmc=(nyx/'frontend/gui_emmc_tools.c').read_text(encoding='utf-8')
 body+=emmc[emmc.index('typedef struct _emmc_backup_buttons_t'):emmc.index('static void _create_window_backup_restore')]
+body+='\ntypedef int emmcPartType_t;\n#define PART_BOOT 0\nstatic emmc_tool_gui_t preview_transfer;\nstatic void dump_emmc_selected(emmcPartType_t type,emmc_tool_gui_t *context){\n (void)type;preview_transfer=*context;char text[2048];\n s_printf(text,"01: BOOT1\\n%s: 0x00000000 - 0x00001FFF\\n\\n",nyx_tr("Range"));lv_label_set_text(context->label_info,text);\n s_printf(text,nyx_tr("#96FF00 SD Card free space:# %d MiB\\n#96FF00 Total backup size:# %d MiB\\n\\n"),803971,4);lv_label_ins_text(context->label_info,LV_LABEL_POS_LAST,text);\n s_printf(text,nyx_tr("#96FF00 Filepath:#\\n%s\\n#96FF00 Filename:# #FF8000 %s#"),"backup/1034b3fe/","BOOT1");lv_label_ins_text(context->label_info,LV_LABEL_POS_LAST,text);\n lv_bar_set_value(context->bar,100);lv_label_set_text(context->label_pct,"100%");lv_label_set_text(context->label_finish,"Finished and verified!");\n lv_label_set_text(context->label_log,"BOOT0: OK\\nBOOT1: OK\\nSHA-256: 0123456789ABCDEF\\nVérification · Проверка");\n}\nstatic void restore_emmc_selected(emmcPartType_t type,emmc_tool_gui_t *context){dump_emmc_selected(type,context);}\n'
+body+=function(emmc,'_create_window_backup_restore')
 body+='\nACTION(_emmc_backup_buttons_decider)\n'
 body+=function(emmc,'_emmc_backup_buttons_raw_toggle')
 body+=function(emmc,'create_window_backup_restore_tool').replace('create_window_backup_restore_tool(', 'preview_backup_restore(')
@@ -166,6 +187,10 @@ ACTION(_create_change_emummc_window) ACTION(_create_mbox_emummc_create) ACTION(_
 static lv_res_t create_win_emummc_tools(lv_obj_t*);
 """
 body+=function((nyx/'frontend/gui_emummc_tools.c').read_text(encoding='utf-8'),'create_win_emummc_tools').replace('create_win_emummc_tools(', 'preview_emummc_tools(')
+body+='\ntypedef struct{char *name[64];char data[64*256];}dirlist_t;\ntypedef struct _emummc_images_t\n{\n\tdirlist_t *dirlist;\n\tu32 part_sector[3];\n\tu32 part_type[3];\n\tu32 part_end[3];\n\tchar part_path[3 * 128];\n\tlv_obj_t *win;\n    lv_obj_t *file_items,*file_counter;\n    u32 file_count,file_page;\n} emummc_images_t;\nstatic emummc_images_t *emummc_img;\nstatic u32 preview_saved_emu_index,preview_saved_emu_sector;\nstatic char preview_saved_emu_path[512];\nstatic void save_emummc_cfg(u32 index,u32 sector,const char *path){preview_saved_emu_index=index;preview_saved_emu_sector=sector;strcpy(preview_saved_emu_path,path);}\nstatic void _create_emummc_saved_mbox(void){}\n'
+change=(nyx/'frontend/gui_emummc_tools.c').read_text()
+for name in ['_save_raw_emummc_cfg_action','_save_file_emummc_cfg_action','_fill_emummc_files','_step_emummc_files','_create_change_emummc_ui']:body+=function(change,name)
+
 
 diag=(nyx/'frontend/gui_diagnostics.c').read_text(encoding='utf-8')
 groups=diag[diag.index('static const struct {'):diag.index('static lv_obj_t *text(')]
@@ -196,6 +221,7 @@ constructor=diag[diag.index('void create_tab_diagnostics('):diag.index('    nyx_
 body+=constructor+'}\n'
 body+='\nACTION(_create_window_home_launch) ACTION(_create_mbox_payloads) ACTION(create_win_emummc_tools) ACTION(_create_mbox_reload) ACTION(_create_mbox_reboot) ACTION(_create_mbox_poweroff)\n'
 body+=gui[gui.index('/* Both native home layouts'):gui.index('static lv_res_t _save_options_action(')]
+body+='\nstatic lv_obj_t *preview_emmc_tabs,*preview_report_panel;\nstatic lv_obj_t *ancestor_type(lv_obj_t *object,const char *name){for(;object;object=lv_obj_get_parent(object)){lv_obj_type_t type;lv_obj_get_type(object,&type);if(type.type[0]&&!strcmp(type.type[0],name))return object;}return NULL;}\nstatic lv_res_t preview_emmc_info(void){\n lv_obj_t *win=nyx_create_standard_window("Internal eMMC Info",NULL);\n const char *values="\\nSK Hynix (90)\\nhC8aP> (4A)\\n1.0\\n1034B3FE\\n04/2021\\n\\n#00DDFF V1.2 (rev 1.8)#\\n8F5\\nHS400\\n400 MB/s (200 MHz)\\n29816 MiB\\n2 MiB\\n\\nOff: OK\\nA: -, B: 100%\\nNormal (< 80%)";\n lv_obj_t *partitions=nyx_nova_emmc_summary(win,values);preview_emmc_tabs=ancestor_type(partitions,"lv_tabview");assert(preview_emmc_tabs);\n char table[10000];strcpy(table,"#00DDFF eMMC Physical Partitions:#\\n1: #96FF00 BOOT0#  Size: 4096 KiB\\n2: #96FF00 BOOT1#  Size: 4096 KiB\\n3: #96FF00 RPMB#   Size: 4096 KiB\\n\\n#00DDFF GPP (eMMC USER) Partition Table:#\\n");\n for(u32 i=0;i<48;++i){char row[160];s_printf(row,"%02d: #96FF00 Partition-%02d#   %6d MiB   %08Xh   %08Xh\\n",i,i,1024+i,i*0x10000,0x10000);strcat(table,row);}\n preview_report_panel=nyx_nova_report(partitions,table,34,18,1212,lv_obj_get_height(partitions)-36);return LV_RES_OK;\n}\nstatic lv_res_t preview_change_close(lv_obj_t *button){free(emummc_img->dirlist);free(emummc_img);emummc_img=NULL;return nyx_win_close_action(button);}\nstatic lv_res_t preview_change_emu(u32 count){\n lv_obj_t *win=nyx_create_standard_window("Change emuMMC",preview_change_close);emummc_img=calloc(1,sizeof(*emummc_img));assert(emummc_img);emummc_img->win=win;\n emummc_img->dirlist=calloc(1,sizeof(dirlist_t));assert(emummc_img->dirlist);if(count>63)count=63;\n for(u32 i=0;i<count;++i){emummc_img->dirlist->name[i]=emummc_img->dirlist->data+i*256;s_printf(emummc_img->dirlist->name[i],"Image %02d - Español Русский",i);}\n for(u32 i=0;i<3;++i){emummc_img->part_sector[i]=0x100000*(i+1);emummc_img->part_type[i]=0xE0;s_printf(&emummc_img->part_path[128*i],"emuMMC/RAW%d",i+1);}\n if(getenv("NYX_RAW_DISABLED"))emummc_img->part_type[1]=0x83;\n _create_change_emummc_ui(win,count);return LV_RES_OK;\n}\nstatic lv_obj_t *preview_mbr_info(void){\n lv_obj_t *background=lv_obj_create(lv_scr_act(),NULL);lv_obj_set_size(background,1280,720);lv_obj_set_style(background,&mbox_darken);\n lv_obj_t *box=lv_mbox_create(background,NULL);lv_obj_set_width(box,852);lv_mbox_set_recolor_text(box,true);\n lv_mbox_set_text(box,"#FFDD00 The SD Card cannot be backed up automatically!#\\n#FFDD00 Any other partition will be also wiped!#\\n\\nYou will be asked to back up your files later via UMS.");\n lv_obj_t *holder=lv_cont_create(box,NULL);lv_cont_set_style(holder,&lv_style_transp_tight);lv_cont_set_fit(holder,false,true);lv_obj_set_width(holder,552);\n lv_obj_t *label=nyx_nova_text(holder,"Current MBR partition layout:",0,0,552,NOVA_BODY);lv_label_set_align(label,LV_LABEL_ALIGN_CENTER);\n lv_obj_t *bar=lv_bar_create(holder,NULL);lv_obj_set_size(bar,552,33);lv_obj_set_pos(bar,0,40);lv_bar_set_value(bar,100);\n label=lv_label_create(holder,NULL);lv_label_set_style(label,&monospace_text);lv_label_set_long_mode(label,LV_LABEL_LONG_BREAK);lv_obj_set_width(label,552);lv_obj_set_pos(label,0,100);\n lv_label_set_text(label,"Partition 0 - Type: 0c, Start: 00008000, Size: 74700000\\nPartition 1 - Type: e0, Start: 74708000, Size: 02000000\\nPartition 2 - Type: 83, Start: 76708000, Size: 00010000\\nPartition 3 - Type: ee, Start: 76718000, Size: 00010000");\n static const char *buttons[]={"\\251","\\222OK","\\251",""};lv_mbox_add_btns(box,buttons,nyx_mbox_action);lv_obj_align(box,NULL,LV_ALIGN_CENTER,0,0);return box;\n}\nstatic managed_font legacy_mono;\nstatic void verify_mono_pixels(void){\n managed_font normalized={0};assert(scale_font(&ubuntu_mono,20,&normalized,false,true));\n for(u32 cp=33;cp<127;++cp){u32 width=lv_font_get_real_width(&ubuntu_mono,cp),bpp=lv_font_get_bpp(&ubuntu_mono,cp),stride=bpp==8?width:(width+1)/2;const u8 *original=lv_font_get_bitmap(&ubuntu_mono,cp),*actual=get_bitmap(&normalized.font,cp);assert(width<=10&&actual&&original);\n  for(u32 y=0;y<20;++y)for(u32 x=0;x<10;++x){u32 expected=0;if(x>=(10-width)/2&&x<(10-width)/2+width){u32 sx=x-(10-width)/2;u8 value=original[y*stride+(bpp==8?sx:sx/2)];expected=bpp==8?(value+8)/17:(sx&1?value&15:value>>4);}\n   u8 packed=actual[y*5+x/2];u32 decoded=x&1?packed&15:packed>>4;assert(decoded==expected);}\n }\n for(u32 cp=0x410;cp<=0x44F;++cp){const u8 *bitmap=get_bitmap(&normalized.font,cp);assert(bitmap);bool nonzero=false;for(u32 i=0;i<100;++i)if(bitmap[i])nonzero=true;assert(nonzero);}\n release_font(&normalized);\n}\nstatic lv_res_t preview_font_comparison(void){\n verify_mono_pixels();lv_obj_t *win=nyx_create_standard_window("Police technique",NULL);lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);int height=lv_obj_get_height(page)-36;\n assert(legacy_scale_font(&ubuntu_mono,nyx_font_mono()->h_px,&legacy_mono,false,true));\n lv_obj_t *left=nyx_nova_panel(page,34,18,594,height),*right=nyx_nova_panel(page,652,18,594,height);\n nyx_nova_text(left,"Avant",24,24,546,NOVA_TITLE);nyx_nova_text(right,"Après",24,24,546,NOVA_TITLE);\n static lv_style_t legacy;lv_style_copy(&legacy,&monospace_text);legacy.text.font=&legacy_mono.font;\n const char *sample="eMMC Physical Partitions:\\nBOOT0  4096 KiB  0x00000000\\nBOOT1  4096 KiB  0x00002000\\nGPP Partition Table:\\n00: PRODINFO    0x00008000\\n01: PRODINFOF   0x00010000\\nSD backup: 0123456789ABCDEF\\nÉcriture vérifiée · Русский";\n lv_obj_t *a=lv_label_create(left,NULL),*b=lv_label_create(right,NULL);lv_label_set_style(a,&legacy);lv_label_set_style(b,&monospace_text);lv_label_set_long_mode(a,LV_LABEL_LONG_BREAK);lv_label_set_long_mode(b,LV_LABEL_LONG_BREAK);lv_obj_set_width(a,546);lv_obj_set_width(b,546);lv_obj_set_pos(a,24,94);lv_obj_set_pos(b,24,94);lv_label_set_text(a,sample);lv_label_set_text(b,sample);return LV_RES_OK;\n}\n'
 indev_source=(lvgl/'lv_core/lv_indev.c').read_text()
 at=indev_source.index('static lv_obj_t * indev_search_obj(const lv_indev_proc_t * proc, lv_obj_t * obj)\n{');end=indev_source.index('\n}',at)+2
 body+=indev_source[at:end].replace('indev_search_obj','preview_hit_search')
@@ -344,7 +370,7 @@ if(getenv("NYX_PREVIEW_WALLPAPER")){strcpy(n_cfg.wallpaper_file,getenv("NYX_PREV
 if(getenv("NYX_PREVIEW_MENU_OPACITY"))n_cfg.nova_menu_opacity=atoi(getenv("NYX_PREVIEW_MENU_OPACITY"));
 if(getenv("NYX_PREVIEW_ICON_OPACITY"))n_cfg.nova_icon_opacity=atoi(getenv("NYX_PREVIEW_ICON_OPACITY"));
 lv_init();nyx_localization_init();nyx_font_manager_init();lv_disp_drv_t driver;lv_disp_drv_init(&driver);driver.disp_flush=flush;lv_disp_drv_register(&driver);
-lv_theme_hekate_set_accents(n_cfg.nova_icon_color,n_cfg.nova_selection_color);lv_theme_hekate_set_colors(n_cfg.nova_text_color,n_cfg.nova_border_color,n_cfg.nova_reflection_color,n_cfg.nova_menu_opacity);lv_theme_t*theme=lv_theme_hekate_init(n_cfg.theme_bg,n_cfg.theme_color,(lv_font_t*)nyx_font_ui(20));lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);
+lv_theme_hekate_set_accents(n_cfg.nova_icon_color,n_cfg.nova_selection_color);lv_theme_hekate_set_colors(n_cfg.nova_text_color,n_cfg.nova_border_color,n_cfg.nova_reflection_color,n_cfg.nova_menu_opacity);lv_theme_t*theme=lv_theme_hekate_init(n_cfg.theme_bg,n_cfg.theme_color,(lv_font_t*)nyx_font_ui(20));lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);lv_style_copy(&monospace_text,&lv_style_plain);monospace_text.body.empty=1;monospace_text.body.opa=0;monospace_text.text.font=nyx_font_mono();monospace_text.text.color=nyx_nova_color(NOVA_COLOR_TEXT);monospace_text.text.letter_space=monospace_text.text.line_space=0;
 lv_obj_t *screen=lv_cont_create(NULL,NULL);lv_scr_load(screen);nyx_nova_screen(screen);
 nyx_nova_footer(lv_layer_top(),nyx_options_save_all);lv_label_set_text(status_bar.time_temp,"18:42 · 28 °C");lv_label_set_text(status_bar.battery,"82 %");
 lv_obj_t*root=NULL;
@@ -362,6 +388,11 @@ else if(!strcmp(argv[3],"ram-service"))show_ram_service(NULL);
 else if(!strcmp(argv[3],"setup")){first_time_clock_edit(NULL);root=lv_obj_get_child(lv_obj_get_child(lv_scr_act(),NULL),NULL);}
 else if(!strcmp(argv[3],"appearance"))nyx_create_appearance_window(NULL);
 else if(!strcmp(argv[3],"nyx"))create_win_nyx_options(NULL);
+else if(!strcmp(argv[3],"emmc-info"))preview_emmc_info();
+else if(!strcmp(argv[3],"emummc-change"))preview_change_emu(atoi(argv[6]));
+else if(!strcmp(argv[3],"backup-progress")){emmc_btn_ctxt.restore=false;_create_window_backup_restore(PART_BOOT,"eMMC BOOT0 & BOOT1");}
+else if(!strcmp(argv[3],"mbr-info"))root=preview_mbr_info();
+else if(!strcmp(argv[3],"font-comparison"))preview_font_comparison();
 else if(!strcmp(argv[3],"colors"))_create_window_nyx_colors(NULL);
 else if(!strcmp(argv[3],"boot-options"))_nova_boot_options(NULL);
 else if(!strcmp(argv[3],"quick-actions"))_create_nova_quick_actions(NULL);
@@ -382,6 +413,7 @@ else {
  if(active==2||active==3||active==5)verify_nova_bindings(root);
 
 }
+if(!strcmp(argv[3],"emmc-info"))lv_tabview_set_tab_act(preview_emmc_tabs,atoi(argv[6]),false);
 if(!strcmp(argv[3],"colors"))lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);
 if(!root){assert(nova_navigation_locks);for(u32 i=1;i<6;i++)assert(!lv_obj_get_click(nova_nav_buttons[i]));lv_obj_t*window=lv_win_get_from_btn(close_btn);lv_win_ext_t*ext=lv_obj_get_ext_attr(window);root=ext->page;
  if(!strcmp(argv[3],"appearance")||!strcmp(argv[3],"nyx")){lv_obj_t*tabs=lv_obj_get_child(lv_page_get_scrl(root),NULL);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);}}
@@ -391,7 +423,7 @@ preview_battery_percent=82;
 u32 temperatures[]={0,44,45,54,55,64,65,99};
 for(u32 i=0;i<8;++i){preview_temperature=temperatures[i];_update_status_bar(NULL);char rgb[16];sprintf(rgb,"#%06X ",nyx_nova_temperature_rgb(preview_temperature));assert(strstr(lv_label_get_text(status_bar.time_temp),rgb));assert(strstr(lv_label_get_text(status_bar.time_temp),"18:42"));}
 preview_temperature=getenv("NYX_PREVIEW_TEMPERATURE")?atoi(getenv("NYX_PREVIEW_TEMPERATURE")):28;_update_status_bar(NULL);lv_refr_now();
-lv_area_t bounds;lv_obj_get_coords(root,&bounds);assert(bounds.y1>=0&&bounds.y2<656);
+lv_area_t bounds;lv_obj_get_coords(root,&bounds);assert(bounds.y1>=76&&bounds.y2<656);
 verify_visible(root,bounds);verify_reachable(root,bounds);
 nyx_nova_reflection_pause(true);lv_refr_now();lv_area_t screen_bounds={0,0,1279,719};verify_glyph_pixels(lv_scr_act(),screen_bounds);verify_glyph_pixels(lv_layer_top(),screen_bounds);
 nyx_nova_reflection_pause(false);
@@ -425,6 +457,40 @@ if(!strcmp(argv[3],"colors")){
  theme_reset(NULL);assert(nova_theme.pending.nova_menu_opacity==100&&nova_theme.pending.nova_icon_opacity==100&&!nova_theme.pending.wallpaper_file[0]);assert(!memcmp(&before,&n_cfg,sizeof n_cfg));
 }
 
+
+if(!strcmp(argv[3],"colors")){
+ nyx_config saved=n_cfg,draft=nova_theme.pending;
+ nova_theme.pending.theme_bg=0x080C18;nova_theme.pending.nova_text_color=0xF0D0A0;nova_theme.pending.nova_border_color=0x8899AA;
+ nova_theme.pending.nova_logo_color=0xC080FF;nova_theme.pending.nova_icon_color=0x80E0C0;nova_theme.pending.nova_selection_color=0x334455;
+ nyx_config expected=nova_theme.pending;
+ for(u32 i=0;i<6;++i){lv_obj_t *choice=find_choice(nova_theme.window,THEME_TARGET,i);assert(choice);lv_btn_get_action(choice,LV_BTN_ACTION_CLICK)(choice);
+  assert(!memcmp(&nova_theme.pending,&expected,sizeof expected));assert(!memcmp(&n_cfg,&saved,sizeof saved));
+  assert((lv_img_get_style(nova_theme.sample_glyph)->image.color.full&0xFFFFFF)==0xC080FF);
+  assert((lv_img_get_style(nova_theme.sample_option_glyph)->image.color.full&0xFFFFFF)==0x80E0C0);
+  assert((lv_label_get_style(nova_theme.sample_text)->text.color.full&0xFFFFFF)==0xF0D0A0);
+  assert((lv_cont_get_style(nova_theme.sample)->body.main_color.full&0xFFFFFF)==0x334455);
+  assert((lv_cont_get_style(nova_theme.preview)->body.main_color.full&0xFFFFFF)==0x080C18);
+  lv_tabview_set_tab_act(nova_theme.tabs,1,false);lv_tabview_set_tab_act(nova_theme.tabs,0,false);assert(!memcmp(&nova_theme.pending,&expected,sizeof expected));
+ }
+ nova_theme.pending=draft;lv_obj_t *first_choice=find_choice(nova_theme.window,THEME_TARGET,0);assert(first_choice);lv_btn_get_action(first_choice,LV_BTN_ACTION_CLICK)(first_choice);lv_tabview_set_tab_act(nova_theme.tabs,atoi(argv[6]),false);lv_refr_now();
+}
+if(!strcmp(argv[3],"emmc-info")){
+ lv_tabview_set_tab_act(preview_emmc_tabs,1,false);report_ext *report=lv_obj_get_ext_attr(preview_report_panel);u32 pages=0,end=0;
+ do{assert(report->starts[report->page]==end);assert(report->next>end);assert(lv_obj_get_height(report->label)<=report->text_height);end=report->next;++pages;lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);
+  if(end==strlen(report->text))break;report_step(report->following);
+ }while(pages<128);
+ assert(end==strlen(report->text)&&pages>=3);while(report->page)report_step(report->previous);assert(report->starts[0]==0);
+ lv_tabview_set_tab_act(preview_emmc_tabs,atoi(argv[6]),false);lv_refr_now();
+}
+if(!strcmp(argv[3],"emummc-change")){
+ u32 count=emummc_img->file_count,pages=(count+3)/4;if(!pages)pages=1;u32 visited=0;
+ for(u32 page=0;page<pages;++page){emummc_img->file_page=page;_fill_emummc_files();lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);
+  for(lv_obj_t *button=lv_obj_get_child(emummc_img->file_items,NULL);button;button=lv_obj_get_child(emummc_img->file_items,button))if(type_is(button,"lv_btn")){
+   u32 index=lv_obj_get_free_num(button);assert(index<count&&index/4==page);lv_btn_get_action(button,LV_BTN_ACTION_CLICK)(button);char path[512];sprintf(path,"emuMMC/%s",emummc_img->dirlist->name[index]);assert(!strcmp(preview_saved_emu_path,path)&&!preview_saved_emu_index&&!preview_saved_emu_sector);++visited;
+  }
+ }assert(visited==count);emummc_img->file_page=0;_fill_emummc_files();lv_refr_now();
+}
+
 if(!strcmp(argv[3],"setup")){assert(clock_language==n_cfg.language&&clock_ctxt.year&&clock_ctxt.month&&clock_ctxt.day&&clock_ctxt.hour&&clock_ctxt.min);assert(type_is(root,"lv_mbox"));}
 if(diagnostic_last_holder){diag_tiles_ext*ext=lv_obj_get_ext_attr(diagnostic_last_holder);u32 total=ext->count;unsigned visits=0;
  for(u32 page=0;page<(total+8)/9;++page){ext->page=page;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);for(lv_obj_t*c=lv_obj_get_child(ext->tiles,NULL);c;c=lv_obj_get_child(ext->tiles,c))for(lv_obj_t*b=lv_obj_get_child(c,NULL);b;b=lv_obj_get_child(c,b))if(type_is(b,"lv_btn")){u32 id=lv_obj_get_free_num(b);assert((id&~ONE_PROBE)<42);lv_action_t action=lv_btn_get_action(b,LV_BTN_ACTION_CLICK);assert(action==(ext->results?show_report:run_selection));++visits;}}
@@ -453,7 +519,7 @@ if((!strcmp(argv[3],"tools")||!strcmp(argv[3],"home")||!strcmp(argv[3],"carousel
  nyx_background_pause(false);rendered_pixels=0;unsigned long maximum=0,total=0;
  for(int i=0;i<REFLECTION_CYCLE;i++){unsigned long before=rendered_pixels;lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
  assert(total>0&&maximum<100000);
- printf("PASS: Nova reflection max=%lu total=%lu pixels over 3200ms; pause=0\n",maximum,total);
+ printf("PASS: Nova reflection max=%lu total=%lu pixels over 2880ms; pause=0\n",maximum,total);
  nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(REFLECTION_PERIOD);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
 
 }
@@ -474,7 +540,7 @@ jobs=[('tools',1,20,0),('tools',4,36,0),('info',1,20,0),('options',1,20,0),('opt
 jobs.extend([('home',1,30,0),('carousel',4,36,0),('tools',1,30,0),('info',1,30,0),('options',1,30,0),('diagnostics',1,30,0),('boot-options',1,30,0),('quick-actions',1,30,0)])
 jobs.extend([('about',1,30,0),('backup',1,30,0),('restore',1,30,0),('usb',1,30,0),('emummc',1,30,0),('diagnostic-group',1,30,2),('diagnostic-results',1,30,0),('ram-service',1,30,0),('colors',1,30,1)])
 if '--check-all' in sys.argv:
-    modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0),('setup',0)]
+    modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0),('setup',0),('emmc-info',0),('emmc-info',1),('backup-progress',0),('mbr-info',0),('emummc-change',0),('emummc-change',9),('font-comparison',0)]
     modes.extend([('backup',0),('restore',0),('usb',0),('emummc',0),('diagnostic-results',0),('ram-service',0)]+[('diagnostic-group',i)for i in range(1,11)])
     jobs=[(screen,language,size,tab) for screen,tab in modes for language in range(7) for size in range(20,38,2)]
 if '--case' in sys.argv:
@@ -492,11 +558,11 @@ for screen,language,size,tab in jobs:
     if run.returncode:raise RuntimeError(f'{screen} {language} {size} {tab}: '+run.stdout+run.stderr)
     performance=re.search(r'Nova reflection max=(\d+) total=(\d+)',run.stdout)
     if performance:
-        result={'reflection_period_ms':40,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_3200ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
+        result={'reflection_period_ms':40,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_2880ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-v14-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-v15-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

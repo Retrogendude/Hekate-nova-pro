@@ -561,7 +561,7 @@ void nyx_init_load_res()
 	// Load hekate/Nyx configuration.
 	_load_saved_configuration();
 
-	nova_splash_progress((u32 *)IPL_FB_ADDRESS,20,65);
+	nova_splash_animate((u32 *)IPL_FB_ADDRESS,50,65,300);
 	// Load Nyx resources.
 	if (nyx_load_resources())
 	{
@@ -604,7 +604,7 @@ void nyx_init_load_res()
 		break;
 	}
 
-	nova_splash_progress((u32 *)IPL_FB_ADDRESS,28,80);
+	nova_splash_animate((u32 *)IPL_FB_ADDRESS,65,85,300);
 	// Load default launch icons and background if it exists.
 	nyx_load_bg_icons();
 

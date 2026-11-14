@@ -466,6 +466,10 @@ nova_v13 = ROOT / 'localization_nova_v13.json'
 if nova_v13.exists():
     catalog.update(json.loads(nova_v13.read_text(encoding='utf-8')))
 
+nova_v15 = ROOT / 'localization_nova_v15.json'
+if nova_v15.exists():
+    catalog.update(json.loads(nova_v15.read_text(encoding='utf-8')))
+
 # Preserve literal formatting/color controls around fully authored phrases.
 from audit_localization_coverage import expand_catalog
 composed_count = expand_catalog(catalog, ROOT.parents[1])

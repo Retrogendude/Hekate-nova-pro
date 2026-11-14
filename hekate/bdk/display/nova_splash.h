@@ -20,13 +20,14 @@ static inline void nova_splash_render(u32 *frame)
 static inline void nova_splash_progress(u32 *frame,u32 phase,u32 percent)
 {
     if(percent>100)percent=100;
-    u32 head=(phase*6)%276;
+    u32 filled=percent*240/100;
     for(u32 x=0;x<240;++x){
         u32 color=x<percent*240/100?0x55C9F1:0x273241;
-        if(head>=x&&head-x<36)color=head-x<8?0xF2F5FA:0x88D9F6;
+        if(percent<100&&filled>x&&filled-x<8)color=0x88D9F6;
         for(u32 y=0;y<3;++y)nova_splash_pixel(frame,520+x,446+y,color);
     }
     for(u32 dot=0;dot<3;++dot)for(int y=-2;y<=2;++y)for(int x=-2;x<=2;++x)
         if(x*x+y*y<=5)nova_splash_pixel(frame,630+dot*10+x,480+y,dot==(phase/8)%3?0x55C9F1:0x334050);
 }
+void nova_splash_animate(u32 *frame,u32 from,u32 to,u32 duration_ms);
 #endif

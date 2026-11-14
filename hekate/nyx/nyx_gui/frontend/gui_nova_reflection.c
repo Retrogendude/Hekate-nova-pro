@@ -6,9 +6,9 @@
 #include <string.h>
 #define REFLECTION_TARGETS 32
 #define REFLECTION_PERIOD 40
-#define REFLECTION_SWEEP 20
-#define REFLECTION_CYCLE 80
-#define REFLECTION_STRIPS 6
+#define REFLECTION_SWEEP 12
+#define REFLECTION_CYCLE 72
+#define REFLECTION_STRIPS 10
 #define REFLECTION_HALF 64
 typedef struct {
     lv_obj_t *target,*overlay;
@@ -85,7 +85,7 @@ static void reflection_bounds(reflection_target *target)
     lv_area_t coords;lv_obj_get_coords(target->target,&coords);
     int height=lv_obj_get_height(target->target),center=reflection_center(target);
     target->dirty_count=0;
-    /* Six bounded strips avoid a full-tile rectangle or overflowing LVGL's
+    /* Ten bounded strips avoid a full-tile rectangle or overflowing LVGL's
      * 32-entry invalidation queue. Only the old/new diagonal bands redraw. */
     for(u32 i=0;i<REFLECTION_STRIPS;++i){
         int top=i*height/REFLECTION_STRIPS,bottom=(i+1)*height/REFLECTION_STRIPS-1;

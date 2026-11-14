@@ -2107,7 +2107,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	lv_win_add_btn(win, NULL, SYMBOL_CHIP" Benchmark", _create_mbox_emmc_bench);
 
 	lv_obj_t *desc = lv_cont_create(win, NULL);
-	lv_obj_set_size(desc, LV_HOR_RES / 2 / 6 * 2, LV_VER_RES - (LV_DPI * 11 / 7) - 5);
+	lv_obj_set_size(desc,LV_HOR_RES-68,440);lv_obj_set_pos(desc,34,18);
 
 	lv_obj_t * lb_desc = lv_label_create(desc, NULL);
 	lv_label_set_long_mode(lb_desc, LV_LABEL_LONG_BREAK);
@@ -2259,40 +2259,8 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 		bkops,
 		life_a_txt, life_b_txt, rsvd_blocks);
 
-	lv_label_set_static_text(lb_desc,
-		"#00DDFF CID:#\n"
-		"Vendor ID:\n"
-		"Model:\n"
-		"Prod Rev:\n"
-		"S/N:\n"
-		"Month/Year:\n\n"
-		"#00DDFF Ext CSD:#\n"
-		"Cmd Classes:\n"
-		"Max Bus Rate:\n"
-		"Current Rate:\n"
-		"Enhanced Area:\n"
-		"Write Cache:\n\n"
-		"Maintenance:\n"
-		"Estimated Life:\n"
-		"Reserved Used:"
-	);
-	lv_obj_set_width(lb_desc, lv_obj_get_width(desc));
-
-	lv_obj_t *info = lv_cont_create(win, NULL);
-	lv_obj_set_size(info, LV_HOR_RES / 11 * 3, LV_VER_RES - (LV_DPI * 11 / 7) - 5);
-
-	lv_obj_t * lb_val = lv_label_create(info, lb_desc);
-
-	lv_label_set_text(lb_val, txt_buf);
-
-	lv_obj_set_width(lb_val, lv_obj_get_width(info));
-	lv_obj_align(info, desc, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-
-	lv_obj_t *desc2 = lv_cont_create(win, NULL);
-	lv_obj_set_size(desc2, LV_HOR_RES / 2 / 4 * 4, LV_VER_RES - (LV_DPI * 11 / 7) - 5);
-
-	lv_obj_t * lb_desc2 = lv_label_create(desc2, lb_desc);
-	lv_label_set_style(lb_desc2, &monospace_text);
+    lv_obj_del(desc);
+    lv_obj_t *partition_page=nyx_nova_emmc_summary(win,txt_buf);
 
 	u32 boot_size = emmc_storage.ext_csd.boot_mult << 17;
 	u32 rpmb_size = emmc_storage.ext_csd.rpmb_mult << 17;
@@ -2308,16 +2276,12 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	emmc_gpt_parse(&gpt);
 
 	u32 idx = 0;
-	int lines_left = 20;
+
 	s_printf(txt_buf + strlen(txt_buf), "#FFBA00 Idx Name                            Size     Offset    Sectors#\n");
 	LIST_FOREACH_ENTRY(emmc_part_t, part, &gpt, link)
 	{
-		int lines = strlen(part->name) > 25 ? 2 : 1;
-		if ((lines_left - lines) <= 0)
-		{
-			strcat(txt_buf, "#FFDD00 Table does not fit on screen...#");
-			break;
-		}
+        int lines=strlen(part->name)>25?2:1;
+        if(strlen(txt_buf)+strlen(part->name)+160>=SZ_16K){strcat(txt_buf,"#FFDD00 Table does not fit on screen...#");break;}
 
 		if (lines == 2)
 		{
@@ -2332,7 +2296,6 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 				part->lba_start, part->lba_end - part->lba_start + 1);
 		}
 
-		lines_left -= lines;
 		idx++;
 	}
 	if (!idx)
@@ -2340,9 +2303,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	emmc_gpt_free(&gpt);
 
-	lv_label_set_text(lb_desc2, txt_buf);
-	lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
-	lv_obj_align(desc2, info, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 6, 0);
+    nyx_nova_report(partition_page,txt_buf,34,18,LV_HOR_RES-68,lv_obj_get_height(partition_page)-36);
 
 	emmc_errors = emmc_get_error_count();
 	if (emmc_get_mode() < EMMC_MMC_HS400  ||

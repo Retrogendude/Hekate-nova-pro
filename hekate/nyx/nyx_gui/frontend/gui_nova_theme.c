@@ -126,6 +126,7 @@ void nyx_nova_window(lv_obj_t *win)
     lv_win_set_style(win,LV_WIN_STYLE_BG,&background);
     lv_obj_set_pos(win,0,NYX_NOVA_HEADER);lv_obj_set_size(win,LV_HOR_RES,NYX_NOVA_BOTTOM-NYX_NOVA_HEADER);
     lv_win_set_btn_size(win,52);
+    lv_page_set_scrl_layout(((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page,LV_LAYOUT_OFF);
     if(nova_wallpaper){
         nyx_nova_backdrop(win,-NYX_NOVA_HEADER);
         /* The shared background image hides underlying menu cards. */
@@ -139,8 +140,8 @@ static struct {
     bool open;
     nyx_config pending;
     lv_obj_t *window,*parent_close,*tabs,*target_choices,*menu_choices,*icon_choices,*sliders[3],*values[3],*hex,*file,*counter;
-    lv_obj_t *preview,*sample,*sample_text,*sample_icon,*sample_glyph,*preview_image,*preview_caption;
-    lv_style_t preview_style,sample_style,sample_text_style,sample_icon_style,reflection_style,glyph_style;
+    lv_obj_t *preview,*sample,*sample_text,*sample_icon,*sample_glyph,*sample_option_glyph,*preview_image,*preview_caption;
+    lv_style_t preview_style,sample_style,sample_text_style,sample_icon_style,reflection_style,glyph_style,option_style;
     lv_img_dsc_t *thumbnail;
     u32 target,wallpaper;
 } nova_theme;
@@ -172,9 +173,12 @@ static void theme_preview_refresh(void)
     nova_theme.sample_icon_style.body.opa=nova_theme.pending.nova_icon_opacity*255/100;
     lv_cont_set_style(nova_theme.sample_icon,&nova_theme.sample_icon_style);
     lv_style_copy(&nova_theme.glyph_style,&lv_style_plain);
-    nova_theme.glyph_style.image.color=LV_COLOR_HEX(nova_theme.target==NOVA_COLOR_LOGO?nova_theme.pending.nova_logo_color:nova_theme.pending.nova_icon_color);
+    nova_theme.glyph_style.image.color=LV_COLOR_HEX(nova_theme.pending.nova_logo_color);
     nova_theme.glyph_style.image.opa=LV_OPA_COVER;
     lv_img_set_style(nova_theme.sample_glyph,&nova_theme.glyph_style);
+    lv_style_copy(&nova_theme.option_style,&nova_theme.glyph_style);
+    nova_theme.option_style.image.color=LV_COLOR_HEX(nova_theme.pending.nova_icon_color);
+    lv_img_set_style(nova_theme.sample_option_glyph,&nova_theme.option_style);
     lv_style_copy(&nova_theme.sample_text_style,nyx_nova_text_style(NOVA_TITLE));
     nova_theme.sample_text_style.text.color=LV_COLOR_HEX(nova_theme.pending.nova_text_color);
     lv_label_set_style(nova_theme.sample_text,&nova_theme.sample_text_style);
@@ -316,6 +320,7 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button)
     nova_theme.sample=nyx_nova_panel(nova_theme.preview,28,94,460,218);
     nova_theme.sample_icon=nyx_nova_icon_box(nova_theme.sample,"brand-mark",24,24,56,false);
     nova_theme.sample_glyph=lv_obj_get_child(nova_theme.sample_icon,NULL);
+    nova_theme.sample_option_glyph=nyx_nova_glyph(nova_theme.sample,"settings-2",386,40,24);
     nova_theme.sample_text=nyx_nova_text(nova_theme.sample,"Hekate Nova Pro",24,106,410,NOVA_TITLE);nyx_nova_fit_text(nova_theme.sample_text,52);
     nova_theme.preview_caption=nyx_nova_text(nova_theme.sample,"Reflet blanc discret",24,174,410,NOVA_SMALL);
     nyx_nova_text(nova_theme.preview,"Aperçu",28,24,400,NOVA_TITLE);

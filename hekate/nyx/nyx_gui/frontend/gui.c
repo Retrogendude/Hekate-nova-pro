@@ -19,6 +19,7 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include <display/nova_splash.h>
 #include "gui_emummc_tools.h"
 #include "gui_tools.h"
 #include "gui_info.h"
@@ -2391,6 +2392,7 @@ void nyx_load_and_run()
 	lv_init();
 	nyx_localization_init();
 	nyx_font_manager_init();
+    nova_splash_animate((u32 *)IPL_FB_ADDRESS,85,100,500);
 	gfx_con.fillbg = 1;
 
 	// Initialize framebuffer drawing functions.

@@ -10,8 +10,8 @@ project = work/'hekate-6.5.4'
 companion = work/'HWTest-RCM-0.15'
 output = project/'output'
 deliveries = workspace/'outputs'
-source_zip = deliveries/'hekate-nova-pro-v14-sources.zip'
-bundle_zip = deliveries/'hekate-nova-pro-v14.zip'
+source_zip = deliveries/'hekate-nova-pro-v15-sources.zip'
+bundle_zip = deliveries/'hekate-nova-pro-v15.zip'
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 
@@ -27,23 +27,23 @@ with ZipFile(source_zip,'w',ZIP_DEFLATED) as z:
         for p in sorted(root.rglob('*')):
             if p.is_file() and source_file(p, root):
                 z.write(p, root.name+'/'+p.relative_to(root).as_posix())
-    for name in ('run_build.py', 'build_ram.py', 'verify_nova_v14.py', 'check_payload_reader.py',
+    for name in ('run_build.py', 'build_ram.py', 'verify_full_build_v15.py', 'check_payload_reader.py',
                  'check_nyx_config_writer.py', 'check_ram_handoff.py', 'check_ram_payload.py',
                  'test_native_backend_host.py', 'test_native_verdict_host.py',
                  'check_language_config.py', 'check_language_actions.py',
                  'check_localization.py', 'check_unicode_fonts.py',
-                 'check_appearance_config.py', 'check_appearance_actions_v13.py',
-                 'check_font_manager.py', 'check_gui_readability.py', 'check_nova_reference.py', 'check_nova_save.py', 'check_nova_guards_v13.py',
-                 'check_display_present.py', 'check_nova_pro_visuals_v13.py',
-                 'render_lvgl_preview_v14.py', 'check_alternate_fonts_v13.py', 'package_nova_pro_v14.py', 'export_nova_pro_previews_v14.py', 'add_nova_catalog.py', 'build_nova_icons.cjs', 'build_nova_reference.cjs',
+                 'check_appearance_config.py', 'check_appearance_actions_v15.py',
+                 'check_font_manager.py', 'check_gui_readability.py', 'check_nova_reference.py', 'check_nova_save.py', 'check_nova_guards_v15.py',
+                 'check_display_present.py', 'check_nova_pro_visuals_v15.py',
+                 'render_lvgl_preview_v15.py', 'check_alternate_fonts_v15.py', 'package_nova_pro_v15.py', 'export_nova_pro_previews_v15.py', 'add_nova_catalog.py', 'build_nova_icons.cjs', 'build_nova_reference.cjs',
                  'check_diag_format.py', 'check_probe_translations.py', 'check_ram_locale.py', 'check_report_paging.py',
                  'create_localization_catalog.py', 'extend_localization_catalog.py',
                  'build_legacy_extra.py', 'audit_localization_coverage.py',
                  'build_ram_translations.py', 'build_ram_ui_packs.py',
                  'complete_probe_translations.py', 'polish_probe_translations.py',
                  'sanitize_probe_translations.py', 'build_probe_review.py',
-                 'check_nova_v13.py', 'check_nova_v13_list.py', 'check_nova_v14_navigation.py', 'check_nova_pro_config.py', 'check_nova_theme_actions.py', 'check_nova_wallpaper.py',
-                 'check_nova_boot.py', 'check_packed_hekate.py',
+                 'check_nova_v13.py', 'check_nova_v13_list.py', 'check_nova_v15_navigation.py', 'check_nova_pro_config.py', 'check_nova_theme_actions.py', 'check_nova_wallpaper.py',
+                 'check_nova_boot_v15.py', 'check_nova_gradient_v15.py', 'check_font_converter_fix.py', 'check_nova_emummc_pages_v15.py', 'finalize_nova_v15_evidence.py', 'check_packed_hekate.py',
                  'add_nova_pro_catalog.py', 'add_nova_pro_submenu_catalog.py',
                  'build_nova_brand.cjs', 'build_nova_boot_art.py', 'build_nova_wallpaper.py'):
         z.write(work/name,'build-tools/'+name)
@@ -77,7 +77,7 @@ with ZipFile(official) as z:
     for entry in z.infolist():
         if not entry.is_dir() and entry.filename.startswith('bootloader/'):
             files[entry.filename]=(output/replacements[entry.filename]).read_bytes() if entry.filename in replacements else z.read(entry.filename)
-payload_name='hekate_nova_pro_6.5.4_v14.bin'
+payload_name='hekate_nova_pro_6.5.4_v15.bin'
 files[payload_name]=(output/'hekate.bin').read_bytes()
 files['bootloader/sys/hwtest_ram.bin']=(companion/'build-ram/hwtest_ram.bin').read_bytes()
 for path in sorted((work/'ram-ui').glob('ram-ui-*.bin')):
@@ -116,27 +116,28 @@ files['licenses/Lucide-ISC.txt']=(project/'nyx/nyx_gui/frontend/nova_assets/LUCI
 files['sources/'+source_zip.name]=source_zip.read_bytes()
 for name, destination in [('hekate-build.log','verification/compilation-hekate-nyx.log'),
                           ('hwtest-ram-build.log','verification/compilation-ram.log'),
-                          ('verification-v14.txt','verification/tests.txt')]:
+                          ('verification-v15.txt','verification/tests.txt')]:
     content=(work/name).read_text(encoding='utf-8',errors='replace')
     files[destination]=re.sub(r'\x1b\[[0-9;]*[A-Za-z]','',content).encode('utf-8')
-for name in ('INTERFACE-ACCUEIL.md','DIAGNOSTIC-INTEGRATION.md','BUILD-NOTES.md','PERSONNALISATION.md','TRADUCTIONS.md','CORRECTIONS-NOVA-PRO-V14.md','NOVA-PRO-V11.md','MODIFICATIONS-NOVA-PRO.md'):
+for name in ('INTERFACE-ACCUEIL.md','DIAGNOSTIC-INTEGRATION.md','BUILD-NOTES.md','PERSONNALISATION.md','TRADUCTIONS.md','CORRECTIONS-NOVA-PRO-V15.md','NOVA-PRO-V11.md','MODIFICATIONS-NOVA-PRO.md'):
     files['documentation/'+name]=(project/name).read_bytes()
 files['documentation/RETOUR-RAM.md']=(companion/'ramtest/NYX-RETURN.md').read_bytes()
 files['documentation/POLICES.md']=(font_root/'FONTS.md').read_bytes()
 files['verification/couverture-traductions.json']=(work/'localization-coverage.json').read_bytes()
 files['verification/provenance-traductions-techniques.json']=(project/'nyx/nyx_gui/localization_probe_provenance.json').read_bytes()
-files['verification/verification-v14.json']=(work/'verification-v14.json').read_bytes()
-files['verification/demarrage.json']=(work/'nova-boot-check.json').read_bytes()
+files['verification/verification-v15.json']=(work/'verification-v15.json').read_bytes()
+files['verification/demarrage.json']=(work/'nova-boot-check-v15.json').read_bytes()
 files['verification/payload-decompresse.json']=(work/'packed-hekate-check.json').read_bytes()
-files['verification/performance-reflet-nova.json']=(work/'lvgl-preview-v14/nova-performance.json').read_bytes()
-files['verification/navigation-fond-v14.json']=(work/'nova-v14-navigation.json').read_bytes()
-files['verification/baseline-v13/ordre-fenetres.json']=(work/'nova-v13-list.json').read_bytes()
-files['verification/baseline-v13/verification-complete.json']=(work/'verification-v13.json').read_bytes()
-files['verification/baseline-v13/horloge-sauvegarde.json']=(work/'nova-v13-check.json').read_bytes()
-files['verification/reflet-tuile-v14.json']=(work/'nova-v14-reflection-export.json').read_bytes()
+files['verification/performance-reflet-nova.json']=(work/'lvgl-preview-v15/nova-performance.json').read_bytes()
+files['verification/navigation-fond-v15.json']=(work/'nova-v15-navigation.json').read_bytes()
+files['verification/pages-emummc-v15.json']=(work/'nova-v15-emummc-pages.json').read_bytes()
+files['verification/regression-liste-fenetres.json']=(work/'nova-v13-list.json').read_bytes()
+files['verification/verification-complete.json']=(work/'verification-v15.json').read_bytes()
+files['verification/regression-horloge-sauvegarde.json']=(work/'nova-v13-check.json').read_bytes()
+files['verification/reflet-tuile-v15.json']=(work/'nova-v15-gradient.json').read_bytes()
 files['verification/reference-nova.json']=(work/'nova-reference-check.json').read_bytes()
 files['verification/ressources-ram.json']=(work/'ram-ui/manifest.json').read_bytes()
-for path in sorted((work/'nova-pro-preview-export-v14').glob('preview-v14-*.png')):
+for path in sorted((work/'nova-pro-preview-export-v15').glob('preview-v15-*.png')):
     files['documentation/apercus/'+path.name]=path.read_bytes()
 
 for path in sorted((project/'wallpapers').glob('*')):
@@ -164,12 +165,12 @@ if errorlevel 1 (
 echo Copier le fichier BMP cree dans wallpapers a la racine de la carte SD.
 pause
 '''.replace('\n','\r\n').encode('utf-8')
-for name in ('apercu-demarrage-nova-pro-v14.png','chargement-nova-pro-v14.gif','reflet-nova-pro-v14.gif'):
+for name in ('apercu-demarrage-nova-pro-v15.png','chargement-nova-pro-v15.gif','reflet-nova-pro-v15.gif'):
     files['documentation/apercus/'+name]=(deliveries/name).read_bytes()
 
-files['LIRE-MOI.txt']=(project/'LIRE-MOI-V14.txt').read_bytes()
-verification=json.loads((work/'verification-v14.json').read_text(encoding='utf-8'))
-assert verification['product']=='Hekate Nova Pro, version 14'
+files['LIRE-MOI.txt']=(project/'LIRE-MOI-V15.txt').read_bytes()
+verification=json.loads((work/'verification-v15.json').read_text(encoding='utf-8'))
+assert verification['product']=='Hekate Nova Pro, version 15'
 for filename, info in verification['binaries'].items():
     path=companion/'build-ram'/filename if filename=='hwtest_ram.bin' else output/filename
     assert sha(path.read_bytes())==info['sha256'], 'Binary changed after the verified build: '+filename
@@ -177,8 +178,8 @@ assert files['wallpapers/Nova-Carbon.bmp'][:2]==b'BM'
 assert 'wave' not in verification['background_animation'].lower()
 
 manifest={
-    'project':'Hekate 6.5.4 / Nyx 1.9.4 custom Nova Pro 14',
-    'build_date_local':'2026-11-06 Europe/Paris',
+    'project':'Hekate 6.5.4 / Nyx 1.9.4 custom Nova Pro 15',
+    'build_version':'15',
     'build_exit_code':0,
     'toolchain_arm':'devkitARM GCC 16.1.0',
     'toolchain_a64':'devkitA64 GCC 16.1.0',
@@ -191,7 +192,7 @@ manifest={
     'verification':verification,
     'official_resources':{'release':meta['url'],'archive':official.name,'sha256':sha(official.read_bytes())},
     'ram_dependencies':json.loads((companion/'ramtest/DEPENDENCIES.json').read_text(encoding='utf-8')),
-    'customization':{'requested_corrections_v14':1,'wallpaper':'static BMP under /wallpapers','opacity':'independent menu and icon backgrounds','reflection':'white diagonal band across the complete selected tile; fixed border, 40ms; 0.8s pass / 2.4s pause; 129px transparent cosine gradient','background_animations':'removed'},
+    'customization':{'requested_corrections_v15':11,'wallpaper':'static BMP under /wallpapers','opacity':'independent menu and icon backgrounds','reflection':'white diagonal band across the complete selected tile; fixed border, 40ms; 0.48s pass / 2.4s pause; 129px transparent cosine gradient','background_animations':'removed'},
     'compiled_replacements':list(replacements)+[payload_name,'bootloader/sys/hwtest_ram.bin'],
     'files':{name:{'bytes':len(data),'sha256':sha(data)} for name,data in sorted(files.items())}
 }

@@ -29,6 +29,10 @@ runtime = runtime.replace('#include "localization.h"', '#include "localization_s
 runtime = runtime.replace('#include "config.h"', '')
 runtime = runtime.replace('#include "fonts/unicode_fonts.h"', '')
 runtime = runtime.replace('#include "frontend/gui_readability.h"', '')
+transfer = (ROOT / "frontend/fe_emmc_tools.c").read_text(encoding="utf-8")
+match = re.search(r"static void _emmc_log_append\([^}]+\}", transfer)
+assert match
+runtime += "\n" + match[0] + "\n"
 (HOST / "localization_under_test.c").write_text(runtime, encoding="utf-8")
 
 stubs = r'''
@@ -73,6 +77,15 @@ static void lv_label_set_text(lv_obj_t *object, const char *text) {
     if (text) memcpy(copy, text, length + 1); else copy[0] = 0;
     free(object->owned_text);
     object->owned_text = copy; object->text = copy; ++object->copied;
+}
+#define LV_LABEL_POS_LAST 0xFFFFFFFFu
+static void lv_label_ins_text(lv_obj_t *object, u32 position, const char *text) {
+    if(position != LV_LABEL_POS_LAST) abort();
+    const char *before = object->text ? object->text : "";
+    char *joined = malloc(strlen(before) + strlen(text) + 1);
+    if(!joined) abort();
+    strcpy(joined,before);strcat(joined,text);
+    lv_label_set_text(object,joined);free(joined);
 }
 static void lv_label_set_static_text(lv_obj_t *object, const char *text) {
     free(object->owned_text); object->owned_text = NULL;
@@ -187,6 +200,21 @@ int main(void) {
     require(!strcmp(nyx_tr("Save Options"), "Enregistrer") && !strcmp(nyx_tr("Save options"), "Enregistrer") &&
             !strcmp(nyx_tr("Enregistrer les options"), "Enregistrer"), "short French save caption and aliases"); ++cases;
     lv_obj_t label = object();
+    const char *log_keys[] = {"Done!", "Failed!", "Retrying...", "The backup was cancelled!"};
+    for(u32 language=0;language<I18N_LANGUAGE_COUNT;++language){
+        n_cfg.language=language;
+        for(u32 i=0;i<ARRAY_SIZE(log_keys);++i){
+            char source[256],expected_log[1024];
+            snprintf(source,sizeof source,"#FFDD00 %s#\n",log_keys[i]);
+            snprintf(expected_log,sizeof expected_log,"BOOT0: #FFDD00 %s#\n",nyx_tr(log_keys[i]));
+            lv_label_set_text(&label,"BOOT0: ");_emmc_log_append(&label,source);text_is(&label,expected_log);
+        }
+        lv_label_set_text(&label,"");
+        _emmc_log_append(&label,"backup/1034B3FE/BOOT1.bin");text_is(&label,"backup/1034B3FE/BOOT1.bin");
+        char expected_log[512];
+        snprintf(expected_log,sizeof expected_log,nyx_tr("Error (%d) while creating"),17);
+        lv_label_set_text(&label,"");_emmc_log_append(&label,"Error (17) while creating");text_is(&label,expected_log);
+    }
     const char *page_expected[] = {"Page 12 / 345", "Page 12 / 345", "Página 12 / 345", "Pagina 12 / 345", "Страница 12 / 345", "Seite 12 / 345", "Página 12 / 345"};
     for (unsigned language = 0; language < I18N_LANGUAGE_COUNT; ++language) {
         n_cfg.language = language;

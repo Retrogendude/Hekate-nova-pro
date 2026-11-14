@@ -2626,6 +2626,7 @@ static void _create_mbox_check_files_total_size()
 
 	lv_obj_t *lbl_table = lv_label_create(h1, NULL);
 	lv_label_set_style(lbl_table, &monospace_text);
+    lv_label_set_long_mode(lbl_table,LV_LABEL_LONG_BREAK);lv_obj_set_width(lbl_table,lv_obj_get_width(h1));
 	lv_label_set_text(lbl_table, txt_buf);
 	lv_obj_align(lbl_table, h1, LV_ALIGN_IN_TOP_MID, 0, LV_DPI);
 

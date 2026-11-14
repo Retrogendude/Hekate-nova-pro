@@ -229,7 +229,7 @@ static bool scale_font(const lv_font_t *source, u32 height, managed_font *target
     u32 widths[MAX_GLYPHS], source_height = source->h_px;
     u32 fixed_width = (10u * height + source_height / 2) / source_height;
     for (u32 i = 0; i < count; ++i) {
-        u32 source_width = lv_font_get_width(source, codepoints[i]);
+        u32 source_width = lv_font_get_real_width(source, codepoints[i]);
         widths[i] = fixed ? fixed_width : (source_width * height + source_height / 2) / source_height;
         if (!widths[i]) widths[i] = height / 2;
         if (widths[i] > 128) return false;
@@ -241,17 +241,22 @@ static bool scale_font(const lv_font_t *source, u32 height, managed_font *target
     for (u32 i = 0; i < count; ++i) {
         u32 cp = codepoints[i], width = widths[i];
         const u8 *source_bitmap = lv_font_get_bitmap(source, cp);
-        u32 source_width = lv_font_get_width(source, cp), source_bpp = lv_font_get_bpp(source, cp);
+        u32 source_width = lv_font_get_real_width(source, cp), source_bpp = lv_font_get_bpp(source, cp);
         u32 source_stride = source_bpp == 8 ? source_width : (source_width + 1) / 2;
         target->codepoints[i] = cp; target->glyphs[i].w_px = width; target->glyphs[i].glyph_index = offset;
         if (source_bitmap && source_width && (source_bpp == 4 || source_bpp == 8)) {
+            u32 drawn_width = fixed ? (source_width * height + source_height / 2) / source_height : width;
+            if (!drawn_width) drawn_width = 1;
+            if (drawn_width > width) drawn_width = width;
+            u32 padding = (width - drawn_width) / 2;
             for (u32 y = 0; y < height; ++y) {
                 u32 source_y = y * source_height / height;
-                for (u32 x = 0; x < width; ++x) {
-                    u32 source_x = x * source_width / width;
+                for (u32 x = 0; x < drawn_width; ++x) {
+                    u32 source_x = x * source_width / drawn_width;
                     u8 byte = source_bitmap[source_y * source_stride + (source_bpp == 8 ? source_x : source_x / 2)];
                     u8 pixel = source_bpp == 8 ? (byte + 8) / 17 : (source_x & 1 ? byte & 15 : byte >> 4);
-                    target->bitmap[offset + y * ((width + 1) / 2) + x / 2] |= pixel << (x & 1 ? 0 : 4);
+                    u32 destination_x = padding + x;
+                    target->bitmap[offset + y * ((width + 1) / 2) + destination_x / 2] |= pixel << (destination_x & 1 ? 0 : 4);
                 }
             }
         }
@@ -316,7 +321,7 @@ void nyx_font_manager_init(void)
         regular_font = &interui_30; small_font = &interui_20; selected_size = 30; small_size = 20;
         status = "Not enough memory. Default font restored.";
     }
-    if (small_size != 20 && scale_font(&ubuntu_mono, small_size, &mono, false, true)) mono_font = &mono.font;
+    if (scale_font(&ubuntu_mono, small_size, &mono, false, true)) mono_font = &mono.font;
 }
 const lv_font_t *nyx_font_regular(void) { return regular_font; }
 const lv_font_t *nyx_font_small(void) { return small_font; }

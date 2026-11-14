@@ -42,9 +42,10 @@ static void *checked_calloc(size_t count,size_t width) {
     void *p=checked_malloc(count*width); if(p)memset(p,0,count*width);return p;
 }
 static const u8 fake_bitmap[8*48] = {[0 ... 8*48-1] = 255};
-lv_font_t interui_30={.h_px=30,.bpp=8}, interui_20={.h_px=20,.bpp=8},ubuntu_mono={.h_px=20,.bpp=8},hekate_symbol_30={.h_px=30,.bpp=8},hekate_symbol_20={.h_px=20,.bpp=8};
+lv_font_t interui_30={.h_px=30,.bpp=8}, interui_20={.h_px=20,.bpp=8},ubuntu_mono={.h_px=20,.bpp=8,.monospace=10},hekate_symbol_30={.h_px=30,.bpp=8},hekate_symbol_20={.h_px=20,.bpp=8};
 const u8 *lv_font_get_bitmap(const lv_font_t *font,u32 cp) {return font->get_bitmap?font->get_bitmap(font,cp):fake_bitmap;}
-uint8_t lv_font_get_width(const lv_font_t *font,u32 cp) {return font->get_width?font->get_width(font,cp):8;}
+uint8_t lv_font_get_real_width(const lv_font_t *font,u32 cp) {return font->get_width?font->get_width(font,cp):8;}
+uint8_t lv_font_get_width(const lv_font_t *font,u32 cp) {return font->monospace?font->monospace:lv_font_get_real_width(font,cp);}
 uint8_t lv_font_get_bpp(const lv_font_t *font,u32 cp) {(void)cp;return font->bpp;}
 static u8 *blob; static u32 blob_size; static u32 read_calls, fail_read, open_count; static bool fail_open,fail_close;
 typedef struct {u32 offset;} FIL;

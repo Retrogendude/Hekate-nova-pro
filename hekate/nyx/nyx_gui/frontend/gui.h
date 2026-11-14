@@ -32,6 +32,7 @@
 #define lv_win_set_title(...) nyx_win_set_title(__VA_ARGS__)
 #define lv_win_add_btn(...) nyx_win_add_btn(__VA_ARGS__)
 #define lv_tabview_add_tab(...) nyx_tabview_add_tab(__VA_ARGS__)
+#define lv_obj_align(...) nyx_nova_align(__VA_ARGS__)
 
 typedef struct _emmc_tool_gui_t
 {

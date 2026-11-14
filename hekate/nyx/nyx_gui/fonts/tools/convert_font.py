@@ -43,8 +43,10 @@ def glyph(font, fallback, codepoint, height, style):
 def build(source: Path, output: Path, style="regular"):
     sections = []
     for height in HEIGHTS:
-        font = ImageFont.truetype(str(source), height)
-        fallback = ImageFont.truetype(str(ROOT / "source/NotoSans-Regular.ttf"), height)
+        # Fit once per face/height; render_glyph also guards standalone calls.
+        font = unicode_generator.fit_font_to_cell(ImageFont.truetype(str(source), height), height)
+        fallback = unicode_generator.fit_font_to_cell(
+            ImageFont.truetype(str(ROOT / "source/NotoSans-Regular.ttf"), height), height)
         images = [glyph(font, fallback, cp, height, style) for cp in CODEPOINTS]
         if style == "fixed":
             # A true fixed cell for every glyph, including Cyrillic and accents.
@@ -93,7 +95,10 @@ def main():
         parser.error("Choose a short ASCII file name, e.g. Lecture.nyxf")
     if output.suffix.lower() != ".nyxf":
         parser.error("The output extension must be .nyxf")
-    build(args.font, output, args.style)
+    try:
+        build(args.font, output, args.style)
+    except (OSError, ValueError) as error:
+        parser.exit(1, f"Conversion failed: {error}\n")
 
 if __name__ == "__main__":
     main()
