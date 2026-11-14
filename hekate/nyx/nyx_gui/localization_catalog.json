@@ -37897,5 +37897,104 @@
     "Проверка разметки\n\nFAT32 / USER: %d ГБ\nemuMMC: %s\nLinux: %d ГБ\nAndroid: %d ГБ\nРезервы и выравнивание учтены.\n\nПодтверждение удаления появится на следующем шаге.",
     "Aufteilung prüfen\n\nFAT32 / USER: %d GB\nemuMMC: %s\nLinux: %d GB\nAndroid: %d GB\nReserven und Ausrichtung berücksichtigt.\n\nDie Löschbestätigung folgt im nächsten Schritt.",
     "Verificar disposição\n\nFAT32 / USER: %d GB\nemuMMC: %s\nLinux: %d GB\nAndroid: %d GB\nReservas e alinhamento incluídos.\n\nA confirmação de apagamento será apresentada a seguir."
+  ],
+  "v32 · Background and responsiveness\nAutomatic wireless start without attached Joy-Con.\nBounded redraws and brief button press retention.": [
+    "v32 · Background and responsiveness\nAutomatic wireless start without attached Joy-Con.\nBounded redraws and brief button press retention.",
+    "v32 · Arrière-plan et réactivité\nBluetooth automatique sans Joy-Con sur les rails.\nRedessin limité et prise en compte des appuis brefs.",
+    "v32 · Segundo plano y respuesta\nBluetooth automático sin Joy-Con acoplados.\nRedibujado limitado y recepción de pulsaciones breves.",
+    "v32 · Attività in background e risposta\nBluetooth automatico senza Joy-Con collegati.\nRidisegno limitato e gestione delle pressioni brevi.",
+    "v32 · Фоновая работа и отклик\nАвтозапуск Bluetooth без Joy-Con на направляющих.\nОграничение перерисовки и учёт коротких нажатий.",
+    "v32 · Hintergrund und Reaktionszeit\nBluetooth-Autostart ohne angesteckte Joy-Con.\nBegrenzte Neuzeichnung und Erfassung kurzer Tastendrücke.",
+    "v32 · Segundo plano e resposta\nBluetooth automático sem Joy-Con encaixados.\nRedesenho limitado e receção de toques breves."
+  ],
+  "v32 · Expert partitions and wireless\nFull-width controls and integer GB / Full sizes.\nBluetooth servicing during drawing and radio metrics.": [
+    "v32 · Expert partitions and wireless\nFull-width controls and integer GB / Full sizes.\nBluetooth servicing during drawing and radio metrics.",
+    "v32 · Partitions expertes et sans-fil\nRéglages pleine largeur et tailles entières en Go / Full.\nBluetooth pendant le dessin et mesures radio.",
+    "v32 · Particiones expertas y conexión inalámbrica\nControles amplios y tamaños enteros en GB / Full.\nBluetooth durante el dibujo y medidas de radio.",
+    "v32 · Partizioni esperte e wireless\nControlli ampi e dimensioni intere in GB / Full.\nBluetooth durante il disegno e misure radio.",
+    "v32 · Разделы и беспроводное управление\nШирокие регуляторы, целые ГБ / Full.\nОбслуживание Bluetooth при отрисовке и метрики радио.",
+    "v32 · Expertenpartitionen und Funk\nBreite Regler und ganze GB / Full.\nBluetooth bei der Darstellung und Funkmesswerte.",
+    "v32 · Partições avançadas e sem fios\nControlos largos e tamanhos inteiros em GB / Full.\nBluetooth durante o desenho e medidas de rádio."
+  ],
+  "Valide · réserves incluses": [
+    "Valid · reserves included",
+    "Valide · réserves incluses",
+    "Válido · reservas incluidas",
+    "Valido · riserve incluse",
+    "Верно · резервы учтены",
+    "Gültig · Reserven enthalten",
+    "Válido · reservas incluídas"
+  ],
+  "Espace insuffisant": [
+    "Insufficient space",
+    "Espace insuffisant",
+    "Espacio insuficiente",
+    "Spazio insufficiente",
+    "Недостаточно места",
+    "Nicht genug Speicher",
+    "Espaço insuficiente"
+  ],
+  "Modèle incompatible": [
+    "Incompatible model",
+    "Modèle incompatible",
+    "Modelo incompatible",
+    "Modello incompatibile",
+    "Несовместимая модель",
+    "Modell inkompatibel",
+    "Modelo incompatível"
+  ],
+  "eMMC indisponible": [
+    "eMMC unavailable",
+    "eMMC indisponible",
+    "eMMC no disponible",
+    "eMMC non disponibile",
+    "eMMC недоступна",
+    "eMMC nicht verfügbar",
+    "eMMC indisponível"
+  ],
+  "Mode expert requis": [
+    "Expert mode required",
+    "Mode expert requis",
+    "Requiere modo experto",
+    "Richiede modalità esperta",
+    "Нужен экспертный режим",
+    "Expertenmodus nötig",
+    "Requer modo avançado"
+  ],
+  "Linux trop petit": [
+    "Linux too small",
+    "Linux trop petit",
+    "Linux demasiado pequeño",
+    "Linux troppo piccolo",
+    "Linux слишком мал",
+    "Linux zu klein",
+    "Linux demasiado pequeno"
+  ],
+  "Android incomplet": [
+    "Android incomplete",
+    "Android incomplet",
+    "Android incompleto",
+    "Android incompleto",
+    "Android неполный",
+    "Android unvollständig",
+    "Android incompleto"
+  ],
+  "Tailles incompatibles": [
+    "Incompatible sizes",
+    "Tailles incompatibles",
+    "Tamaños incompatibles",
+    "Dimensioni incompatibili",
+    "Несовместимые размеры",
+    "Größen inkompatibel",
+    "Tamanhos incompatíveis"
+  ],
+  "v32 · Layout and wireless recovery\nAligned partition values and a single-line summary.\nAutomatic per-Joy-Con stream recovery.": [
+    "v32 · Layout and wireless recovery\nAligned partition values and a single-line summary.\nAutomatic per-Joy-Con stream recovery.",
+    "v32 · Disposition et reprise sans fil\nTailles alignées et récapitulatif sur une ligne.\nReprise automatique du flux de chaque Joy-Con.",
+    "v32 · Distribución y recuperación inalámbrica\nTamaños alineados y resumen en una línea.\nRecuperación automática de cada Joy-Con.",
+    "v32 · Disposizione e ripristino wireless\nDimensioni allineate e riepilogo su una riga.\nRipristino automatico del flusso di ogni Joy-Con.",
+    "v32 · Разметка и восстановление связи\nРазмеры справа, сводка в одну строку.\nАвтовосстановление потока каждого Joy-Con.",
+    "v32 · Anordnung und Funkwiederherstellung\nAusgerichtete Größen, Übersicht in einer Zeile.\nAutomatische Wiederherstellung je Joy-Con.",
+    "v32 · Disposição e recuperação sem fios\nTamanhos alinhados e resumo numa linha.\nRecuperação automática de cada Joy-Con."
   ]
 }

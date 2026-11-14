@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "physical_radio_or_card": false,
+  "boot_without_window": true,
+  "once_only": true,
+  "rail_masks_tested": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "source_sha256": {
+    "bdk/input/joycon.c": "471323abc3f1fce3a0637e4518b7e3d3b99410627196b412864d96721e2ab16d",
+    "bdk/input/joycon.h": "e87bb38c92028a1bbc208beb6a333e3f2163a9db9ff97a6d33f79cae9315e77a",
+    "nyx/nyx_gui/frontend/gui.c": "0a7c74d2b995373547d9d62c4a742a6c6e2e818426051058ce0645f630c9faac",
+    "nyx/nyx_gui/frontend/gui_bluetooth.c": "806eb570608b78cfa8634baaaac2fdc2e4d0c146cab4adb2a615911b60f9ff57",
+    "nyx/nyx_gui/frontend/gui_bluetooth.h": "44ec3ce0e7add5bead172cb4334baee502d9ad6eb70bb098e54b851a4b917e8d"
+  }
+}

@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v31 · Expert partitions and wireless\nFull-width controls and integer GB / Full sizes.\nBluetooth servicing during drawing and radio metrics.",
+                "v32 · Layout and wireless recovery\nAligned partition values and a single-line summary.\nAutomatic per-Joy-Con stream recovery.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."

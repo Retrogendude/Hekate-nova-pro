@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "output": "PASS real radio lifecycle: WL_ON co-processor state and exact restoration, exclusive ownership, masked GPIO restoration, FIFO bursts, CTS backpressure and UART faults\n",
+  "source_sha256": "b7e21a610b7bf1957266d910acc5a6e62a836795855f371ad8e9173895fbb307",
+  "hardware_io": "registers substituted",
+  "v31_regression": "Assertion failed: (GPIO(0x12c)&BIT(4))&&(GPIO(0x12c)&BIT(1)), file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova32-tests\\radio-before.c, line 159"
+}

@@ -1,0 +1,51 @@
+# Hekate Nova Pro — bêta v32
+
+Base : Hekate 6.5.5 / Nyx 1.9.5. Archive complète bootloader + payload correspondant.
+
+## Partitionnement expert
+
+- Récapitulatif compact sur une seule ligne : titre, allocations et état de validité.
+- Trois rangées plus espacées. Les tailles sont à droite des curseurs et des boutons.
+- Boutons −/+ redessinés, sans ombre qui déborde, avec marges distinctes du curseur et de sa poignée. La poignée reste entièrement dans la barre, y compris à zéro.
+- Réglage fin par −/+ conservé, avec répétition à l'appui maintenu. Linux/Android : pas de 1 Go après leur minimum. Paliers emuMMC Hekate conservés, dont 29 Go Full, 58 Go Full et les doubles emuMMC.
+- Go entiers à l'affichage ; tailles, réserves, alignements et confirmations d'effacement inchangés. Aucune opération de partitionnement n'est lancée par la mise à jour.
+- Thème Nova, fond d'écran et transparence conservés. Les libellés nouveaux sont traduits dans les sept langues.
+
+## Bluetooth : reprise d'un Joy-Con silencieux
+
+Quand un flux complet déjà établi reste silencieux pendant une seconde, Nova redemande le mode de rapports complets. Si le silence dure quatre secondes, Nova demande une déconnexion de ce seul Joy-Con et tente une nouvelle connexion avec les appairages existants, une seconde après la fermeture HID effective. Sans premier rapport complet, une marge de huit secondes laisse le temps à la configuration initiale.
+
+L'autre Joy-Con continue son traitement. La reprise ne redémarre pas la radio et ne modifie pas les clés. Elle attend la fin des données UART déjà en cours de lecture : un paquet partiel ou un budget de lecture atteint ne doit pas déclencher cette reprise. Le mode simple, qui envoie ses changements à la demande, n'est pas traité comme un flux périodique manquant. L'arrêt manuel et le démarrage automatique de v31 restent respectés.
+
+L'initialisation maintient aussi WL_REG_ON haut pendant la session Bluetooth, comme le fait la référence HWTest-RCM après sa remise à zéro commune. Le niveau précédent est restauré à l'arrêt, qu'il ait été haut ou bas. Aucun service réseau Wi-Fi n'est démarré. Cette modification rapproche la séquence de la référence ; son effet sur la portée est à vérifier sur la console.
+
+**L'objectif de 2–3 mètres reste un essai matériel à effectuer. Cette bêta ne garantit pas encore cette portée.** Le rapport v31 reçu indique des coupures de rapports allant jusqu'à 2,8 s, alors que le maximum de traitement côté hôte est d'environ 22 ms. Il présente aussi des RSSI relatifs négatifs et une baisse de la qualité de liaison fournisseur. Ces données orientent vers la liaison radio ; elles ne prouvent pas une cause matérielle précise ni un gain apporté par v32.
+
+Aucune augmentation forcée de puissance, modification EDR/UART ou charge de firmware HCD n'est appliquée. La radio reste en ROM. Les mesures HCI ajoutées dans v31 restent disponibles. Une reprise de connexion améliore la récupération après interruption ; elle n'augmente pas à elle seule la portée du signal.
+
+Le rapport v32 ajoute Radio_power_policy, ainsi que Stream report_restarts / reconnects par Joy-Con et les événements de reprise (kind=21). Ces compteurs distinguent les demandes de reprise des reconnexions effectivement terminées ; la présence de nouveaux rapports et HID=1 permet de confirmer le retour des commandes. Les compteurs sont conservés lors de l'export, jusqu'au prochain démarrage Bluetooth.
+
+## Installation et essai
+
+1. Console arrêtée, garder une copie de bootloader et des fichiers personnels.
+2. Fusionner le dossier bootloader de l'archive avec celui de la SD, en remplaçant les fichiers fournis. Conserver les fichiers de configuration et d'appairage personnels.
+3. Utiliser hekate_nova_pro_6.5.5_v32.bin si le démarrage utilise un payload externe. bootloader/update.bin est également fourni.
+4. Conserver bootloader/bluetooth/joycon-pairing.bin et sa sauvegarde .bak : format inchangé, aucune relecture ou suppression de clés nécessaire pour mettre à jour.
+
+Tester les sticks et A/B à proximité, puis à 2 m et 3 m en gardant la console à la même place. Un arrêt de commandes prolongé peut désormais provoquer une reconnexion automatique du Joy-Con concerné. Après chaque session, choisir « Arrêter Bluetooth » et conserver immédiatement last-session.txt sous un nom distinct. Indiquer si la console est dans le dock.
+
+Transmettre uniquement les rapports texte ; les fichiers .bin/.bak d'appairage contiennent des clés privées. L'archive ne contient aucune donnée privée d'appairage ni configuration personnelle.
+
+## Validation
+
+Compilation ARM réussie. 720 scènes de partitionnement avec les vrais callbacks, sept langues, trois polices, deux tailles de texte, fond d'écran et transparence, dont une capacité de 955 Go similaire à la capture reçue. Vérifications des coordonnées : récapitulatif centré sur une seule rangée, zones −/+/poignée/valeurs séparées et absence de défilement.
+
+882 scènes complémentaires et 28 essais de navigation sans fil vérifient le rendu existant. Les tests HCI/HID reproduisent un Joy-Con droit silencieux : v31 reste bloqué, v32 redemande les rapports puis se reconnecte avec les mêmes clés pendant que les rapports gauches continuent. Des contrôles supplémentaires couvrent les délais, les données en attente, le mode simple, le débordement d'horloge, l'arrêt et la restauration des GPIO.
+
+Les radios, périphériques vidéo et supports de stockage sont remplacés dans ces essais PC. Aucune mesure physique de portée et aucun partitionnement réel n'ont été exécutés. Les détails et empreintes se trouvent dans documentation/VERIFICATION-V32.json.
+
+## Références techniques
+
+- Séquence radio HWTest-RCM, référence figée : https://github.com/Creased/HWTest-RCM/blob/74b66aab2352ae35912744fcd5441b07a0146307/gui/gui_bt.c — _wl_reg_on_restore et _power_up.
+- API GAP de BlueKitchen / BTstack : https://github.com/bluekitchen/btstack/blob/master/src/gap.h — gap_disconnect.
+- Piste firmware, non intégrée : le dépôt Switchroot liste un patch BT issu du système Nintendo, distinct du fonctionnement ROM actuel : https://gitlab.com/switchroot/android/proprietary_vendor_firmware/-/blob/main/README.md. Cela ne prouve pas que son absence explique à elle seule le présent défaut de portée.

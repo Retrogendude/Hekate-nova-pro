@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "physical_validation": false,
+  "output": "PASS RF: signed/zero RSSI, vendor quality, TX range, unsigned counter, bounds/handle/generation, unsupported/timeout isolation; full-report gaps/wrap; bounded draw polling\n",
+  "source_sha256": {
+    "nova_bt.h": "9272410864ee34105499be2f6e3dee65d35bbf2b8eb7fcaa6b376bc0fc16df99",
+    "nova_bt_protocol.c": "9efe4b493e203dcc1c01557e6934a70fa34e5956d574c26d2d2faffd86ed7fed",
+    "nova_bt_stack.c": "b38de602a835d80d14aebb4188c9793aaab8b0cfad599858c70e14f044d6bd61"
+  }
+}

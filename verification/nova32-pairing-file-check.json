@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "corruption_cases": 576,
+  "independent_zlib_crc": true,
+  "synthetic_keys_only": true,
+  "source_sha256": {
+    "nova_bt_protocol.c": "9efe4b493e203dcc1c01557e6934a70fa34e5956d574c26d2d2faffd86ed7fed",
+    "nova_bt.h": "9272410864ee34105499be2f6e3dee65d35bbf2b8eb7fcaa6b376bc0fc16df99"
+  },
+  "logs": "PASS: 72-byte private pairing format, independent zlib CRC fixture, exact key order, 576 bit corruptions, short/long files, bad formats/keys/hosts and one-controller records\n"
+}

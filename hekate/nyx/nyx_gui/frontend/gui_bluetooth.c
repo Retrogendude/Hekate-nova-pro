@@ -106,7 +106,7 @@ static bool save_report(void)
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 captured=get_tmr_ms(),length=strlen(buffer);
-    s_printf(buffer+length,"Capture_ms=%d; radio_image=ROM (no HCD loaded); chipset_hint=%s\n",captured,
+    s_printf(buffer+length,"Capture_ms=%d; radio_image=ROM (no HCD loaded); chipset_hint=%s\nRadio_power_policy=HWTest_WL_ON_during_BT; previous_GPIO_restored_on_stop\n",captured,
         s->controller_manufacturer==15&&s->controller_subversion==0x2409?"BCM4356A3":"unknown");length=strlen(buffer);
     s_printf(buffer+length,"Autostart=%d (1=rails 2=started 3=no-file 4=disabled 5=unknown 6=active 7=failed)\n",boot_status);length=strlen(buffer);
     s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d recognized=%d/%d source=%d (1=rails 2=SD)\n",
@@ -134,6 +134,7 @@ static bool save_report(void)
         length=strlen(buffer);
         s_printf(buffer+length,"  Full_reports=%d full_age_ms=%d max_full_gap_ms=%d gaps_over_50ms=%d gaps_over_250ms=%d\n",
             (int)p->full_reports,p->full_reports?(u32)(captured-p->last_full_ms):0,(int)p->max_full_gap_ms,(int)p->full_gaps_50ms,(int)p->full_gaps_250ms);length=strlen(buffer);
+        s_printf(buffer+length,"  Stream report_restarts=%d reconnects=%d\n",(int)p->report_restarts,(int)p->recoveries);length=strlen(buffer);
         for(unsigned k=0;k<NOVA_BT_RF_METRICS;k++){
             char value[16],low[16],high[16];
             if(p->rf.samples[k]){report_signed(value,p->rf.value[k]);report_signed(low,p->rf.minimum[k]);report_signed(high,p->rf.maximum[k]);}
@@ -142,7 +143,7 @@ static bool save_report(void)
                 p->rf.samples[k]?(u32)(captured-p->rf.updated[k]):0,value,low,high,p->rf.error[k]);length=strlen(buffer);
         }
     }
-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared) 20=pageTimeout(opcode,slots,reserved)\n");
+    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared) 20=pageTimeout(opcode,slots,reserved) 21=streamRecovery(side,1=reportRequest/2=reconnect,idle_ms)\n");
     length=strlen(buffer);
     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;

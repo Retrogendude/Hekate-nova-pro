@@ -1,0 +1,27 @@
+from pathlib import Path
+import subprocess,json,hashlib
+w=Path(__file__).resolve().parent
+cc=w/"toolchains/w64devkit/bin/gcc.exe"
+d=w/"nova32-recovery-tests";d.mkdir(exist_ok=True)
+def compile_test(name, version, source, extra=()):
+    p = w / version / 'nyx/nyx_gui'
+    lib = p / 'libs/btstack'
+    c = d / (name + '.c')
+    exe = d / (name + '.exe')
+    c.write_text(source)
+    sources = [p / 'bluetooth/nova_bt_protocol.c', p / 'bluetooth/nova_bt_trace.c', *lib.rglob('*.c')]
+    args = [str(cc), '-std=gnu11', '-O1', '-Wall', '-Wextra', '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections', *extra, '-I' + str(p / 'bluetooth'), '-I' + str(lib), str(c), *map(str, sources), '-o', str(exe)]
+    r = subprocess.run(args, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr[-8000:]
+    return exe
+test='\n#include <assert.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include "nova_bt.h"\n#undef assert\n#define assert(x) do {if(!(x)){fprintf(stderr,"assertion line %d: %s\\n",__LINE__,#x);exit(1);}}while(0)\nstatic unsigned now,us,clock_reads,in_at,in_n,packet_cost;\nstatic uint8_t in[16];\nuint32_t nova_bt_now(void){return now;}\nuint32_t nova_bt_now_us(void){clock_reads++;return ++us;}\nint nova_bt_radio_open(void){return 1;}\nvoid nova_bt_radio_close(void){}\nint nova_bt_radio_read(void){return in_at<in_n?in[in_at++]:-1;}\nint nova_bt_radio_write(uint8_t value){(void)value;return 1;}\n#define gap_disconnect test_disconnect\n#include "nova_bt_stack.c"\n#undef gap_disconnect\nstatic unsigned disconnect_calls;static int reject_disconnect;\nuint8_t test_disconnect(hci_con_handle_t handle){assert(handle==0x41);disconnect_calls++;return reject_disconnect?2:0;}\n#ifdef OLD_STREAM\nstatic void recover_stream(unsigned side,uint32_t at){(void)side;(void)at;}\n#endif\n#ifdef AUDIT_OLD\nstatic uint32_t nova_bt_take_buttons(unsigned side){return side<2?status.pad[side].buttons:0;}\n#endif\nstatic void decode(unsigned side,unsigned buttons,unsigned at)\n{\n    uint8_t r[14]={0x30};r[3]=buttons;r[4]=buttons>>8;r[5]=buttons>>16;\n    r[6]=r[9]=0x45;r[7]=r[10]=0x38;r[8]=r[11]=0x67;\n    now=at;assert(nova_bt_decode(&status.pad[side],side,r,sizeof r,now));\n}\nstatic void delayed_callback(void *unused){(void)unused;us+=3000;}\nstatic void delayed_packet(uint8_t type,uint8_t *p,uint16_t n)\n{(void)type;(void)p;(void)n;us+=packet_cost;}\n\n\nint main(void){\n nova_bt_peer pair[2]={0};for(unsigned i=0;i<2;i++){pair[i].valid=1;pair[i].mac[0]=0x40+i*2;pair[i].host[0]=0x60;memset(pair[i].key,0x70+i,16);}\n assert(nova_bt_start(pair));status.state=NOVA_BT_READY;\n for(unsigned i=0;i<2;i++){status.pad[i].hid_open=status.pad[i].encrypted=status.pad[i].mode_ack=1;link[i].handle=0x40+i;link[i].opened=100;link[i].last_input=100;link[i].stream_seen=1;}\n decode(0,1u<<16,100);decode(1,8,100);\n recover_stream(1,1099);assert(!status.pad[1].report_restarts);\n recover_stream(1,1100);assert(status.pad[1].report_restarts==1&&!status.pad[1].mode_ack&&link[1].mode_next==1100);\n recover_stream(1,2100);assert(status.pad[1].report_restarts==1&&!disconnect_calls);\n recover_stream(1,4099);assert(!disconnect_calls);\n recover_stream(1,4100);assert(disconnect_calls==1&&status.pad[1].recoveries==1&&!status.pad[1].buttons&&link[1].recovering);\n assert(status.pad[0].buttons==(1u<<16)&&status.pad[0].connected&&!status.pad[0].recoveries);assert(!memcmp(peers,pair,sizeof pair));\n recover_stream(1,15000);assert(disconnect_calls==1);\n // A fresh connection gets a new grace period; a short gap does not reconnect.\n link[1].recovering=link[1].stream_seen=link[1].nudged=0;link[1].opened=20000;\n recover_stream(1,27999);assert(disconnect_calls==1);recover_stream(1,28000);assert(disconnect_calls==2);\n // Simple mode is change-driven and must not be treated as a missing stream.\n link[1].recovering=0;link[1].simple=1;recover_stream(1,99999);assert(disconnect_calls==2);link[1].simple=0;\n // Timestamp wrap, including exactly zero for a resubscription timer.\n link[1].stream_seen=1;link[1].nudged=0;link[1].last_input=0xfffffc18u;\n recover_stream(1,0);assert(link[1].mode_next==1&&status.pad[1].report_restarts==2);\n recover_stream(1,3000);assert(disconnect_calls==3&&status.pad[1].recoveries==3);\n link[1].recovering=0;status.pad[1].encrypted=0;recover_stream(1,8000);assert(disconnect_calls==3);\n status.pad[1].encrypted=1;status.pad[1].hid_open=0;recover_stream(1,8000);assert(disconnect_calls==3);\n nova_bt_stop();recover_stream(1,0xffffffffu);assert(disconnect_calls==3&&!status.pad[1].buttons);\n puts("PASS stream recovery: one report restart at 1s, one peer reconnect at 4s, 8s setup grace, healthy left/key retention, simple mode, pending disconnect, wrap and Stop");\n}\n'
+results=[]
+for old in [False]:
+ exe=compile_test("before" if old else "current","hekate-nova-pro-v31" if old else "hekate-nova-pro-v32",test,["-DOLD_STREAM"] if old else [])
+ r=subprocess.run([str(exe)],capture_output=True,text=True,timeout=20)
+ results.append({"version":31 if old else 32,"exit":r.returncode,"output":r.stdout+r.stderr})
+ if old:assert r.returncode==1 and "report_restarts==1" in r.stderr,r.stderr
+ else:assert r.returncode==0,r.stderr
+ print(r.stdout,r.stderr)
+p=w/"hekate-nova-pro-v32/nyx/nyx_gui/bluetooth"
+(w/"nova32-recovery-check.json").write_text(json.dumps({"passed":True,"physical_radio":False,"evidence":results,"source_sha256":{n:hashlib.sha256((p/n).read_bytes()).hexdigest()for n in ["nova_bt.h","nova_bt_stack.c","nova_bt_protocol.c"]}},indent=2))

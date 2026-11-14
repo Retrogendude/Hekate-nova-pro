@@ -23,7 +23,7 @@ static uint8_t rx_type;
 static void (*receive_packet)(uint8_t,uint8_t *,uint16_t);
 static btstack_packet_callback_registration_t event_registration;
 static uint8_t descriptors[1024];
-static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, profile, output[48],rf_disabled;uint32_t next, mode_next,generation;} link[2];
+static struct {uint16_t cid,handle;uint8_t retries, sequence, mode_tries, profile, output[48],rf_disabled,stream_seen,nudged,recovering,simple;uint32_t next, mode_next,generation,opened,last_input;} link[2];
 static struct {uint8_t active,side,kind;uint16_t opcode,handle;uint32_t generation,sent;} rf_pending;
 static uint32_t rf_next,draw_last;
 static uint8_t rf_slot,draw_seen,draw_busy;
@@ -163,6 +163,26 @@ static const btstack_link_key_db_t keys={noop,key_local,noop,key_get,key_put,key
 static void clear_pad(unsigned i){status.pad[i].connected=0;status.pad[i].buttons=status.pad[i].pending_buttons=0;status.pad[i].x=status.pad[i].y=2048;}
 static int side_cid(uint16_t cid)
 {for(unsigned i=0;i<2;i++)if(cid&&link[i].cid==cid)return i;return -1;}
+/* Recover one silent HID stream without restarting the other Joy-Con or
+ * touching the saved pairing. Times are per connection and wrap-safe. */
+static void recover_stream(unsigned side,uint32_t now)
+{
+    nova_bt_pad *pad=&status.pad[side];
+    if(!pad->hid_open||!pad->encrypted||link[side].recovering||link[side].simple)return;
+    uint32_t idle=now-(link[side].stream_seen?link[side].last_input:link[side].opened);
+    if(idle>=(link[side].stream_seen?4000u:8000u)){
+        if(link[side].handle!=HCI_CON_HANDLE_INVALID&&!gap_disconnect(link[side].handle)){
+            link[side].recovering=1;pad->recoveries++;clear_pad(side);
+            nova_bt_trace_add(21,side,2,idle>65535?65535:idle);
+        }
+    }else if(link[side].stream_seen&&idle>=1000&&!link[side].nudged){
+        /* Reuse the padded 0x03/0x30 report command and existing retry path. */
+        link[side].nudged=1;link[side].mode_tries=0;link[side].mode_next=now?now:1;
+        pad->mode_ack=0;pad->report_restarts++;
+        nova_bt_trace_add(21,side,1,idle);
+    }
+}
+
 static void rf_reply(const uint8_t *p,unsigned size)
 {
     if(!rf_pending.active||size<6||little_endian_read_16(p,3)!=rf_pending.opcode)return;
@@ -308,13 +328,19 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
                 status.pad[i].stage=5;nova_bt_trace_add(10,i,0,status.pad[i].last_psm);
                 link[i].cid=hid_subevent_connection_opened_get_hid_cid(p);
                 link[i].retries=0;
+                link[i].opened=nova_bt_now();link[i].last_input=0;
+                link[i].stream_seen=link[i].nudged=link[i].recovering=link[i].simple=0;
                 status.pad[i].full_gap_valid=0;
                 link[i].mode_tries=0;link[i].mode_next=nova_bt_now()+150;
             }break;
         case HID_SUBEVENT_REPORT:
             i=side_cid(hid_subevent_report_get_hid_cid(p));if(i<0)break;
             if(!status.pad[i].reports)nova_bt_trace_add(11,i,hid_subevent_report_get_report_len(p),0);
-            nova_bt_decode(&status.pad[i],i,hid_subevent_report_get_report(p),hid_subevent_report_get_report_len(p),nova_bt_now());
+            if(nova_bt_decode(&status.pad[i],i,hid_subevent_report_get_report(p),hid_subevent_report_get_report_len(p),nova_bt_now())){
+                if(status.pad[i].report_id==0x30){
+                    link[i].last_input=nova_bt_now();link[i].stream_seen=1;link[i].nudged=link[i].simple=0;
+                }else if(status.pad[i].report_id==0x3f)link[i].simple=1;
+            }
             if(status.pad[i].connected)status.pad[i].stage=6;
             break;
         case HID_SUBEVENT_CONNECTION_CLOSED:
@@ -322,7 +348,8 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
             clear_pad(i);status.pad[i].hid_open=0;
             status.pad[i].full_gap_valid=0;
             if(!status.pad[i].last_error)status.pad[i].stage=0;
-            link[i].cid=0;link[i].next=nova_bt_now()+5000;break;
+            link[i].cid=0;link[i].next=nova_bt_now()+(link[i].recovering?1000:5000);
+            link[i].recovering=0;break;
         default:break;
         }break;
     default:break;
@@ -413,19 +440,19 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
     /* HWTest measured >300us restart latency after UART flow control.
      * The foreground drains bursts with a quiet period; drawing uses a short
      * budget without waiting for a UART restart. An empty line returns now. */
-    uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
+    uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;int rx_yielded=0;status.rx_polls++;
     if(have_poll_started){uint32_t gap=t0-poll_started_us;if(gap>status.poll_gap_max_us)status.poll_gap_max_us=gap;}
     poll_started_us=t0;have_poll_started=1;
     for(unsigned n=0;n<2048&&!failure;){
         int value=nova_bt_radio_read();
         if(value==-2){failure=4;break;}
-        if(value>=0){input_byte(value);bytes++;n++;}
+        if(value>=0){input_byte(value);bytes++;n++;if(n==2048)rx_yielded=1;}
         /* Include packet callbacks in the same clock sample, without adding
          * a timer read per byte. A callback cannot be preempted mid-packet. */
         uint32_t us=nova_bt_now_us();
         if(value>=0)last=us;
         else if(!bytes||(uint32_t)(us-last)>=quiet_us)break;
-        if((uint32_t)(us-t0)>=max_us){status.rx_budget_hits++;break;}
+        if((uint32_t)(us-t0)>=max_us){status.rx_budget_hits++;rx_yielded=1;break;}
     }
     status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
     if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
@@ -449,6 +476,8 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
     for(unsigned i=0;i<2;i++)if(link[i].cid&&!status.pad[i].hid_open)pending=1;
     for(unsigned i=0;i<2&&!failure&&status.state==NOVA_BT_READY;i++){
         if(status.pad[i].connected&&(uint32_t)(now-status.pad[i].updated)>500)clear_pad(i);
+        /* Do not mistake queued UART data or a partial H4 frame for silence. */
+        if(!rx_yielded&&!rx_type)recover_stream(i,now);
         if(!pending&&peers[i].valid&&!link[i].cid&&(int32_t)(now-link[i].next)>=0){
             if(link[i].retries<3)link[i].retries++;
             link[i].next=now+(link[i].retries>=3?10000:5000);
@@ -457,7 +486,7 @@ static void poll_budget(uint32_t max_us,uint32_t quiet_us)
             if(result){link[i].cid=0;status.pad[i].last_error=result;status.pad[i].stage=7;nova_bt_trace_add(10,i,result,0);}
             else pending=1;
         }
-        if(link[i].cid&&link[i].mode_next&&!status.pad[i].mode_ack&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
+        if(!link[i].recovering&&link[i].cid&&link[i].mode_next&&!status.pad[i].mode_ack&&(int32_t)(now-link[i].mode_next)>=0&&link[i].mode_tries<3){
             /* Keep the output storage alive until BTstack sends it. No rumble. */
             static const uint8_t neutral[]={0,1,0x40,0x40,0,1,0x40,0x40};
             if(!link[i].mode_tries){

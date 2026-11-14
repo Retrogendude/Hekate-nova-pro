@@ -28,6 +28,7 @@ typedef struct {
     uint32_t buttons_seen, first_report_ms;
     uint32_t full_reports,last_full_ms,max_full_gap_ms,full_gaps_50ms,full_gaps_250ms;
     uint8_t full_gap_valid;
+    uint32_t report_restarts,recoveries;
     nova_bt_rf rf;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };

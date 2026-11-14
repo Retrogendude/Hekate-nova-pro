@@ -4,7 +4,8 @@ static struct {
     lv_obj_t *win,*page,*content,*models,*enabled[2],*presets[2];
     lv_obj_t *sliders[3],*summary,*message,*capacity,*segments[4];
     lv_obj_t *mode_choices,*summary_panel,*summary_title,*overview,*legend;
-    lv_style_t segment_style[4],slider_bg[3],slider_ind[3],slider_knob[3];
+    lv_style_t segment_style[4],slider_bg[3],slider_ind[3],slider_knob[3],step_style[2];
+    lv_obj_t *steps[3][2],*values[3];
     u32 mode,model,actual_model,option[2],preset[2];
     bool ready;
     nova_plan_result result;
@@ -12,18 +13,21 @@ static struct {
 static void nova_partition_layout(void)
 {
     bool expert=partition_nova.mode||part_info.emmc;int height=lv_obj_get_height(partition_nova.page);
+    lv_label_set_long_mode(partition_nova.summary,LV_LABEL_LONG_BREAK);
+    lv_label_set_long_mode(partition_nova.message,LV_LABEL_LONG_BREAK);
+    lv_label_set_style(partition_nova.summary,(lv_style_t *)nyx_nova_text_style(NOVA_SMALL));
     lv_obj_set_height(partition_nova.overview,expert?56:84);
     lv_obj_set_hidden(partition_nova.legend,expert);
     lv_obj_set_pos(partition_nova.content,34,expert?140:172);
-    lv_obj_set_size(partition_nova.content,expert?1212:744,expert?height-318:height-256);
-    lv_obj_set_pos(partition_nova.summary_panel,expert?34:802,expert?height-166:172);
-    lv_obj_set_size(partition_nova.summary_panel,expert?1212:444,expert?90:height-256);
+    lv_obj_set_size(partition_nova.content,expert?1212:744,expert?height-276:height-256);
+    lv_obj_set_pos(partition_nova.summary_panel,expert?34:802,expert?height-124:172);
+    lv_obj_set_size(partition_nova.summary_panel,expert?1212:444,expert?48:height-256);
     lv_obj_set_pos(partition_nova.summary_title,expert?20:22,expert?6:14);
-    lv_obj_set_width(partition_nova.summary_title,expert?1172:400);
+    lv_obj_set_width(partition_nova.summary_title,expert?158:400);
     lv_label_set_style(partition_nova.summary_title,(lv_style_t *)nyx_nova_text_style(expert?NOVA_KICKER:NOVA_TITLE));
     nyx_nova_fit_text(partition_nova.summary_title,expert?20:38);
-    lv_obj_set_pos(partition_nova.summary,expert?20:22,expert?28:56);lv_obj_set_width(partition_nova.summary,expert?1172:400);
-    lv_obj_set_pos(partition_nova.message,expert?20:22,expert?58:172);lv_obj_set_width(partition_nova.message,expert?1172:400);
+    lv_obj_set_pos(partition_nova.summary,expert?188:22,expert?10:56);lv_obj_set_width(partition_nova.summary,expert?680:400);
+    lv_obj_set_pos(partition_nova.message,expert?890:22,expert?10:172);lv_obj_set_width(partition_nova.message,expert?302:400);
 }
 static void nova_partition_emu_text(char *text,const nova_partition_plan *plan)
 {
@@ -45,6 +49,20 @@ static const char *nova_partition_error(nova_plan_result result)
     case NOVA_PLAN_LINUX_SIZE:return "La partition Linux est trop petite.";
     case NOVA_PLAN_ANDROID_SIZE:return "Android doit inclure ses partitions système et ses données.";
     default:return "Disposition incompatible. Vérifier les tailles avant de continuer.";
+    }
+}
+
+static const char *nova_partition_status(nova_plan_result result)
+{
+    switch(result){
+    case NOVA_PLAN_OK:return "Valide · réserves incluses";
+    case NOVA_PLAN_CAPACITY:return "Espace insuffisant";
+    case NOVA_PLAN_MODEL:return "Modèle incompatible";
+    case NOVA_PLAN_EMMC_UNAVAILABLE:return "eMMC indisponible";
+    case NOVA_PLAN_EMMC_UPGRADED:return "Mode expert requis";
+    case NOVA_PLAN_LINUX_SIZE:return "Linux trop petit";
+    case NOVA_PLAN_ANDROID_SIZE:return "Android incomplet";
+    default:return "Tailles incompatibles";
     }
 }
 
@@ -97,9 +115,18 @@ static void nova_partition_refresh(void)
         s_printf(text,nyx_tr("%s : %d Go  |  emuMMC : %s  |  Linux : %d Go  |  Android : %d Go"),part_info.emmc?"USER":"FAT32",plan.fat_mib>>10,emu,plan.linux_mib>>10,plan.android_mib>>10);
     }else s_printf(text,"%s: %d MiB\nemuMMC%s: %d MiB\nLinux: %d MiB\nAndroid: %d MiB",part_info.emmc?"USER":"FAT32",plan.fat_mib,plan.emu_double?" (2x)":"",plan.emu_mib,plan.linux_mib,plan.android_mib);
     lv_label_set_text(partition_nova.summary,text);
-    nyx_nova_fit_text(partition_nova.summary,expert?28:110);
-    lv_label_set_text(partition_nova.message,nova_partition_error(partition_nova.result));
-    nyx_nova_fit_text(partition_nova.message,expert?24:70);
+    nyx_nova_fit_text(partition_nova.summary,expert?26:110);
+    lv_label_set_text(partition_nova.message,expert?nova_partition_status(partition_nova.result):nova_partition_error(partition_nova.result));
+    nyx_nova_fit_text(partition_nova.message,expert?26:70);
+    if(expert){
+        lv_obj_t *line[]={partition_nova.summary_title,partition_nova.summary,partition_nova.message};
+        const int x[]={20,188,890};
+        for(unsigned i=0;i<3;i++){
+            lv_label_set_long_mode(line[i],LV_LABEL_LONG_DOT);
+            lv_obj_set_height(line[i],lv_label_get_style(line[i])->text.font->h_px);
+            lv_obj_align(line[i],partition_nova.summary_panel,LV_ALIGN_IN_LEFT_MID,x[i],0);
+        }
+    }
     lv_obj_set_click(part_info.partition_button,valid);
     lv_btn_set_state(part_info.partition_button,valid?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
     if(expert)s_printf(text,nyx_tr("Capacité : %d Go"),part_info.total_sct>>21);
@@ -120,6 +147,7 @@ static void nova_partition_refresh(void)
         else if(expert)s_printf(text,nyx_tr("%d Go"),values[i]>>10);
         else s_printf(text,nyx_tr("%d,%02d Go"),values[i]/1024,(values[i]%1024)*100/1024);
         lv_label_set_text(labels[i],text);nyx_nova_fit_text(labels[i],expert?26:32);
+        if(expert){int row=i?i-1:0;lv_obj_set_y(labels[i],10+row*72+48-lv_obj_get_height(labels[i])/2);}
     }
     if(!partition_nova.mode&&!part_info.emmc){
         for(u32 i=0;i<2;++i)if(partition_nova.presets[i])
@@ -182,6 +210,8 @@ static void nova_partition_build_controls(void)
     nova_partition_layout();
     part_info.lbl_hos=part_info.lbl_emu=part_info.lbl_l4t=part_info.lbl_and=NULL;
     memset(partition_nova.sliders,0,sizeof(partition_nova.sliders));
+    memset(partition_nova.steps,0,sizeof(partition_nova.steps));
+    memset(partition_nova.values,0,sizeof(partition_nova.values));
     memset(partition_nova.presets,0,sizeof(partition_nova.presets));
     lv_obj_t *panel=partition_nova.content;
     if(!partition_nova.mode&&!part_info.emmc){
@@ -208,23 +238,30 @@ static void nova_partition_build_controls(void)
         const u32 values[]={nova_partition_emu_position(),part_info.l4t_size>>10,part_info.and_size>>10};
         const u32 maximum[]={EMU_SLIDER_MAX,(part_info.total_sct>>21)>2?(part_info.total_sct>>21)-2:0,(part_info.total_sct>>21)>2?(part_info.total_sct>>21)-2:0};
         for(u32 i=0;i<3;++i){
-            int y=8+i*60;
-            if(i==0&&part_info.emmc){nyx_nova_text(panel,"eMMC USER",24,y,500,NOVA_BODY);part_info.lbl_hos=nyx_nova_text(panel,"",820,y,350,NOVA_SMALL);continue;}
-            lv_obj_t *title=nyx_nova_text(panel,titles[i],24,y,500,NOVA_BODY);nyx_nova_fit_text(title,26);
+            int y=10+i*72;
+            if(i==0&&part_info.emmc){nyx_nova_text(panel,"eMMC USER",24,y,500,NOVA_SMALL);part_info.lbl_hos=nyx_nova_text(panel,"",1020,y+33,168,NOVA_SMALL);continue;}
+            lv_obj_t *title=nyx_nova_text(panel,titles[i],24,y,500,NOVA_SMALL);nyx_nova_fit_text(title,26);
             lv_obj_t *slider=lv_slider_create(panel,NULL);partition_nova.sliders[i]=slider;
-            lv_obj_set_pos(slider,76,y+34);lv_obj_set_size(slider,1060,24);
+            lv_obj_set_pos(slider,96,y+37);lv_obj_set_size(slider,832,22);
+            lv_slider_set_knob_in(slider,true);
             lv_slider_set_range(slider,0,maximum[i]>32760?32760:maximum[i]);lv_slider_set_value(slider,values[i]);
             lv_obj_set_free_num(slider,i);lv_slider_set_action(slider,nova_partition_expert_slider);
             lv_slider_set_style(slider,LV_SLIDER_STYLE_BG,&partition_nova.slider_bg[i]);
             lv_slider_set_style(slider,LV_SLIDER_STYLE_INDIC,&partition_nova.slider_ind[i]);
             lv_slider_set_style(slider,LV_SLIDER_STYLE_KNOB,&partition_nova.slider_knob[i]);
             for(unsigned direction=0;direction<2;direction++){
-                lv_obj_t *step=lv_btn_create(panel,NULL);lv_btn_set_fit(step,false,false);lv_obj_set_size(step,40,34);lv_obj_set_pos(step,direction?1148:24,y+26);
+                lv_obj_t *step=lv_btn_create(panel,NULL);lv_btn_set_fit(step,false,false);lv_obj_set_size(step,44,36);lv_obj_set_pos(step,direction?960:24,y+30);
+                lv_btn_set_style(step,LV_BTN_STYLE_REL,&partition_nova.step_style[0]);
+                lv_btn_set_style(step,LV_BTN_STYLE_PR,&partition_nova.step_style[1]);
+                lv_btn_set_layout(step,LV_LAYOUT_OFF);partition_nova.steps[i][direction]=step;
                 lv_obj_set_free_num(step,i*2+direction);lv_btn_set_action(step,LV_BTN_ACTION_CLICK,nova_partition_step);
                 lv_btn_set_action(step,LV_BTN_ACTION_LONG_PR_REPEAT,nova_partition_step);
-                lv_obj_t *sign=lv_label_create(step,NULL);lv_label_set_text(sign,direction?"+":"-");
+                lv_obj_t *sign=nyx_nova_text(step,direction?"+":"-",0,0,40,NOVA_SMALL);
+                lv_label_set_align(sign,LV_LABEL_ALIGN_CENTER);nyx_nova_fit_text(sign,28);
+                lv_obj_align(sign,step,LV_ALIGN_CENTER,0,0);
             }
-            lv_obj_t *value=nyx_nova_text(panel,"",820,y,350,NOVA_SMALL);nyx_nova_fit_text(value,26);
+            lv_obj_t *value=nyx_nova_text(panel,"",1020,y+33,168,NOVA_SMALL);nyx_nova_fit_text(value,26);
+            lv_label_set_align(value,LV_LABEL_ALIGN_RIGHT);partition_nova.values[i]=value;
             if(i==0)part_info.lbl_emu=value;else if(i==1)part_info.lbl_l4t=value;else part_info.lbl_and=value;
         }
     }
@@ -306,6 +343,13 @@ static void nova_partition_create_ui(lv_obj_t *win)
         partition_nova.slider_bg[i].body.radius=2;partition_nova.slider_bg[i].body.border.width=0;
         partition_nova.slider_ind[i].body.radius=2;partition_nova.slider_ind[i].body.main_color=partition_nova.slider_ind[i].body.grad_color=LV_COLOR_HEX(colors[i+1]);
         partition_nova.slider_knob[i].body.radius=3;partition_nova.slider_knob[i].body.border.width=1;
+    }
+    for(unsigned i=0;i<2;i++){
+        lv_style_copy(&partition_nova.step_style[i],i?lv_theme_get_current()->btn.pr:lv_theme_get_current()->btn.rel);
+        partition_nova.step_style[i].body.radius=5;
+        partition_nova.step_style[i].body.border.width=1;
+        partition_nova.step_style[i].body.shadow.width=0;
+        partition_nova.step_style[i].body.padding.hor=partition_nova.step_style[i].body.padding.ver=0;
     }
     partition_nova.content=nyx_nova_panel(partition_nova.page,34,172,744,height-256);
     lv_obj_t *summary_panel=nyx_nova_panel(partition_nova.page,802,172,444,height-256);

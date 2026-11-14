@@ -70,8 +70,10 @@ int nova_bt_radio_open(void)
     U->UART_MCR=0;U->UART_IIR_FCR=RX_TRIGGER|UART_IIR_FCR_EN_FIFO|UART_IIR_FCR_RX_CLR|UART_IIR_FCR_TX_CLR;
     /* Both REG_ON low for 20 ms; no port-H writes during the 200 ms POR. */
     msleep(20);masked(0x1ac,BIT(4),BIT(4));msleep(200);
-    /* The common cold reset need not hold Wi-Fi in reset for the session. */
-    masked(0x1ac,BIT(1),saved.h[2]);
+    /* Match HWTest-RCM _wl_reg_on_restore after the shared cold reset.
+     * Keep the companion block out of reset while BT owns the radio; close
+     * restores the exact previous GPIO state. No Wi-Fi stack is started. */
+    masked(0x1ac,BIT(1),BIT(1));
     PINMUX_AUX(pads[9])=PINMUX_INPUT_ENABLE|PINMUX_TRISTATE|PINMUX_PULL_UP;
     U->UART_IIR_FCR=RX_TRIGGER|UART_IIR_FCR_EN_FIFO|UART_IIR_FCR_RX_CLR|UART_IIR_FCR_TX_CLR;
     (void)U->UART_LSR;
