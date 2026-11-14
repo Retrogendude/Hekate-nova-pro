@@ -16,6 +16,7 @@ typedef struct {
     uint8_t auth_seen, encryption_seen, encryption_error, encrypted;
     uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
     uint8_t br_only, radio_mode, mode_seen;
+    uint32_t buttons_seen, first_report_ms;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
@@ -37,6 +38,7 @@ void nova_bt_trace_add(uint16_t kind,uint16_t a,uint16_t b,uint16_t c);
 int nova_bt_start(const nova_bt_peer peers[2]);
 void nova_bt_stop(void);
 void nova_bt_poll(void);
+void nova_bt_poll_fast(void); /* No quiet wait; short RX budget while drawing. */
 const nova_bt_status *nova_bt_get_status(void);
 /* Pure protocol helpers are exercised on the host as well as on ARM. */
 int nova_bt_decode(nova_bt_pad *pad, unsigned side, const uint8_t *report, unsigned len, uint32_t now);

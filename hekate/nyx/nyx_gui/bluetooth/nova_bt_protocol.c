@@ -2,6 +2,8 @@
 #include <string.h>
 static int nonzero(const uint8_t *p, unsigned n)
 { unsigned v=0; while(n--) v |= *p++; return v!=0; }
+static void observe(nova_bt_pad *p,uint32_t now)
+{if(!p->reports)p->first_report_ms=now;p->buttons_seen|=p->buttons;p->reports++;}
 int nova_bt_validate_peers(const nova_bt_peer p[2])
 {
     int count=0;
@@ -35,7 +37,7 @@ int nova_bt_decode(nova_bt_pad *p, unsigned side, const uint8_t *r, unsigned n, 
         static const int8_t y[9]={0,-1,-1,-1,0,1,1,1,0};
         int sign=side?-1:1;
         p->x=2048+sign*x[r[3]]*1024;p->y=2048+sign*y[r[3]]*1024;
-        p->buttons=buttons;p->updated=now;p->connected=1;p->report_id=0x3f;p->reports++;
+        p->buttons=buttons;p->updated=now;p->connected=1;p->report_id=0x3f;observe(p,now);
         return 1;
     }
     if(n<13||(r[0]!=0x30&&r[0]!=0x21)) return 0;
@@ -43,7 +45,7 @@ int nova_bt_decode(nova_bt_pad *p, unsigned side, const uint8_t *r, unsigned n, 
     p->buttons=buttons & (side?0x0016ffu:0xff2900u);
     unsigned at=side?9:6;
     p->x=r[at]|((r[at+1]&15)<<8);p->y=(r[at+1]>>4)|(r[at+2]<<4);
-    p->battery=(r[2]>>4)&0xf;p->updated=now;p->connected=1;p->report_id=r[0];p->reports++;
+    p->battery=(r[2]>>4)&0xf;p->updated=now;p->connected=1;p->report_id=r[0];observe(p,now);
     if(r[0]==0x30||(r[0]==0x21&&n>=16&&(r[13]&0x80)&&r[14]==3&&r[15]==0x30))p->mode_ack=1;
     return 1;
 }

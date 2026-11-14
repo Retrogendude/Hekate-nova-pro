@@ -9,6 +9,6 @@
   "source_sha256": {
     "bdk/input/joycon.c": "945afaab47dc3d700bb2b9c4a40e886e75cdd51581877a76eeb6a33947420e91",
     "bdk/input/joycon.h": "aae5cc7caa91206c50438db94357e6cd5a9b5926ae2f8901b1f717259f3aff49",
-    "nyx/nyx_gui/frontend/gui_bluetooth.c": "32460f22cc0d7bd5453a1970c7eb7fb2761ee3a3550de1aaed90493d32d5b2ff"
+    "nyx/nyx_gui/frontend/gui_bluetooth.c": "3fdabf0268ee310b4baa8020e2da3cd7c5ef40772d28b877cb9aadfe223a4783"
   }
 }

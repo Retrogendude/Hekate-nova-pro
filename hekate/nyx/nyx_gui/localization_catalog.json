@@ -37672,5 +37672,50 @@
     "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.",
     "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.",
     "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."
+  ],
+  "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.": [
+    "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.",
+    "v28 · Réactivité des commandes\nLectures Bluetooth courtes pendant le dessin.\nDiagnostic des appairages et des boutons reçus.",
+    "v28 · Respuesta de los mandos\nLecturas Bluetooth cortas al dibujar menús.\nDiagnóstico de enlaces y botones recibidos.",
+    "v28 · Reattività dei comandi\nLetture Bluetooth brevi durante il disegno.\nDiagnostica di associazioni e pulsanti ricevuti.",
+    "v28 · Отклик управления\nКороткий опрос Bluetooth при отрисовке меню.\nДиагностика сопряжения и приёма кнопок.",
+    "v28 · Reaktionszeit der Steuerung\nKurze Bluetooth-Abfragen beim Zeichnen.\nDiagnose von Kopplung und Tastenempfang.",
+    "v28 · Resposta dos comandos\nLeituras Bluetooth curtas ao desenhar menus.\nDiagnóstico de emparelhamento e botões."
+  ],
+  "Rail connection not ready. Attach both Joy-Con and retry.": [
+    "Rail connection not ready. Attach both Joy-Con and retry.",
+    "Connexion aux rails indisponible. Fixez les deux Joy-Con et réessayez.",
+    "Conexión a los raíles no disponible. Acopla ambos Joy-Con y reintenta.",
+    "Collegamento alle guide non pronto. Collega entrambi i Joy-Con e riprova.",
+    "Соединение с направляющими не готово. Подключите оба Joy-Con и повторите.",
+    "Schienenverbindung nicht bereit. Beide Joy-Con anstecken und erneut versuchen.",
+    "Ligação aos trilhos indisponível. Encaixe ambos os Joy-Con e tente novamente."
+  ],
+  "Pairing data could not be read from the rails.": [
+    "Pairing data could not be read from the rails.",
+    "Impossible de lire les données d’appairage sur les rails.",
+    "No se pudieron leer los datos de enlace desde los raíles.",
+    "Impossibile leggere i dati di associazione dalle guide.",
+    "Не удалось прочитать данные сопряжения через направляющие.",
+    "Kopplungsdaten konnten nicht über die Schienen gelesen werden.",
+    "Não foi possível ler os dados de emparelhamento pelos trilhos."
+  ],
+  "Nintendo pairing data not recognized by the reader.": [
+    "Nintendo pairing data not recognized by the reader.",
+    "Le lecteur ne reconnaît pas les données d’appairage Nintendo.",
+    "El lector no reconoce los datos de enlace de Nintendo.",
+    "Il lettore non riconosce i dati di associazione Nintendo.",
+    "Считыватель не распознал данные сопряжения Nintendo.",
+    "Nintendo-Kopplungsdaten werden vom Leser nicht erkannt.",
+    "O leitor não reconhece os dados de emparelhamento Nintendo."
+  ],
+  "Pairing records did not pass compatibility checks.": [
+    "Pairing records did not pass compatibility checks.",
+    "Les données d’appairage n’ont pas passé les contrôles de compatibilité.",
+    "Los datos de enlace no superaron las comprobaciones de compatibilidad.",
+    "I dati di associazione non hanno superato i controlli di compatibilità.",
+    "Данные сопряжения не прошли проверку совместимости.",
+    "Kopplungsdaten haben die Kompatibilitätsprüfung nicht bestanden.",
+    "Os dados de emparelhamento não passaram as verificações de compatibilidade."
   ]
 }

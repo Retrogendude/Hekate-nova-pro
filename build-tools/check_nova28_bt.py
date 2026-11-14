@@ -4,8 +4,8 @@ The radio is substituted. This verifies software, not a physical RF link.
 from pathlib import Path
 import subprocess, json, hashlib
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v27/nyx/nyx_gui'
-d=w/'nova27-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v28/nyx/nyx_gui'
+d=w/'nova28-tests';d.mkdir(exist_ok=True)
 test=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -51,7 +51,9 @@ int main(void)
     assert(nova_bt_decode(&pad,0,report,14,123)&&pad.buttons==0xff2900&&pad.updated==123);
     assert(pad.x==0x234&&pad.y==0x561&&pad.battery==8);
     assert(nova_bt_decode(&pad,1,report,14,124)&&pad.buttons==0x0016ff);
-    assert(pad.x==0xa78&&pad.y==0xbc9);
+    assert(pad.x==0xa78&&pad.y==0xbc9);assert(pad.buttons_seen&8);
+    nova_bt_pad seen={0};uint8_t press[14]={0x30};press[3]=8;assert(nova_bt_decode(&seen,1,press,14,100));press[3]=0;
+    assert(nova_bt_decode(&seen,1,press,14,150)&&!seen.buttons&&seen.buttons_seen==8&&seen.first_report_ms==100);
     report[1]=0x3f;assert(!nova_bt_decode(&pad,1,report,14,999)&&pad.updated==124);
     assert(!nova_bt_decode(&pad,2,report,14,999));
     uint8_t simple[12]={0x3f,1,0,8};nova_bt_pad sp={0};
@@ -103,6 +105,10 @@ int main(void)
     for(unsigned j=0;j<in_n;j++)in[j]=j%3==0?4:j%3==1?0xff:0;
     nova_bt_poll();assert(in_at<510&&status.rx_max_us<=8100);
     for(unsigned j=0;j<10&&in_at<in_n;j++)nova_bt_poll();assert(in_at==510&&delivered==170);
+    /* During 100 display rectangles, RX must not accumulate quiet waits. */
+    parser_reset();fake_us=0;step_us=10;timed=0;in_at=0;in_n=510;
+    nova_bt_poll_fast();assert(in_at<510&&status.rx_max_us<=8100&&fake_us<=270);
+    unsigned before_fast=fake_us;for(unsigned j=0;j<100;j++)nova_bt_poll_fast();assert(fake_us-before_fast<=27000);
     initialized=0;in_n=in_at=out_n=0;timed=0;step_us=100;parser_reset();
     /* Real stack initialization through the asynchronous port. The virtual
      * controller sends standard Command Complete responses only. */
@@ -176,12 +182,20 @@ old_test=test.replace('#include "nova_bt_stack.c"','#include "'+(w/'hekate-nova-
 # independent assertion block to reach the actual receive-pump regression.
 a=old_test.index('    nova_bt_trace_reset();uint8_t configs')
 b=old_test.index('    parser_reset();btstack_run_loop_init',a)
-old_test=old_test[:a]+old_test[b:];(d/'old-burst.c').write_text(old_test)
+old_test=old_test[:a]+old_test[b:];
+a=old_test.index('    /* During 100 display rectangles');b=old_test.index('    initialized=0;',a);old_test=old_test[:a]+old_test[b:];(d/'old-burst.c').write_text(old_test)
 old_exe=d/'old-burst.exe';old_args=[str(old_exe)if x==str(d/'test.exe')else str(d/'old-burst.c')if x==str(d/'test.c')else x for x in args]
 r0=subprocess.run(old_args,capture_output=True,text=True);assert r0.returncode==0,r0.stderr
 r0=subprocess.run([str(old_exe)],capture_output=True,text=True,timeout=10)
 assert r0.returncode==1 and 'delivered==16' in r0.stderr,(r0.returncode,r0.stderr)
 print('PASS: timed 700us UART restart gaps and 8ms pump budget; v26 fails the receive-pump regression; combined config messages decoded')
+old_display=test.replace('#include "nova_bt_stack.c"','#define nova_bt_poll_fast nova_bt_poll\n#include "'+(w/'hekate-nova-pro-v27/nyx/nyx_gui/bluetooth/nova_bt_stack.c').as_posix()+'"')
+(d/'old-display.c').write_text(old_display)
+old_exe=d/'old-display.exe';old_args=[str(old_exe)if x==str(d/'test.exe')else str(d/'old-display.c')if x==str(d/'test.c')else x for x in args]
+r0=subprocess.run(old_args,capture_output=True,text=True);assert r0.returncode==0,r0.stderr
+r0=subprocess.run([str(old_exe)],capture_output=True,text=True,timeout=10)
+assert r0.returncode==1 and 'fake_us<=270' in r0.stderr,(r0.returncode,r0.stderr)
+print('PASS: actual v27 display polling exceeds the new short RX budget; v28 passes')
 files=list((p/'bluetooth').glob('*.[ch]'))
-(w/'nova27-bt-check.json').write_text(json.dumps({'passed':True,'timed_uart_restart':True,'old_v26_burst_failure':True,'metadata_multi_command':True,'physical_radio':False,'output':r.stdout,
+(w/'nova28-bt-check.json').write_text(json.dumps({'passed':True,'timed_uart_restart':True,'old_v26_burst_failure':True,'metadata_multi_command':True,'fast_display_budget':True,'old_v27_display_wait_rejected':True,'physical_radio':False,'output':r.stdout,
     'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2))

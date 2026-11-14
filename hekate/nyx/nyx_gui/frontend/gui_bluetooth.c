@@ -6,7 +6,8 @@
 #include "../config.h"
 #include "../nova_version.h"
 static nova_bt_peer paired[2];
-static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[256];} ui;
+static struct {u8 attempted,rail[2],record[2],hos[2],compatible;} import_info;
+static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[512];} ui;
 static void refresh(void)
 {
     if(!ui.label)return;
@@ -27,8 +28,8 @@ static void refresh(void)
 }
 static void tick(void *unused)
 {
-    (void)unused;nova_bt_poll();
-    if((u32)(get_tmr_ms()-ui.shown)>=250){ui.shown=get_tmr_ms();refresh();}
+    (void)unused;nova_bt_poll_fast();
+    if((u32)(get_tmr_ms()-ui.shown)>=500){ui.shown=get_tmr_ms();refresh();}
 }
 void gui_bluetooth_shutdown(void)
 {
@@ -39,15 +40,20 @@ void gui_bluetooth_shutdown(void)
 bool gui_bluetooth_active(void)
 {return nova_bt_get_status()->state==NOVA_BT_READY;}
 void gui_bluetooth_poll(void){nova_bt_poll();}
+void gui_bluetooth_poll_fast(void){nova_bt_poll_fast();}
 static lv_res_t import_pairing(lv_obj_t *button)
 {
     (void)button;gui_bluetooth_shutdown();memset(paired,0,sizeof(paired));
+    memset(&import_info,0,sizeof(import_info));import_info.attempted=1;
     if(n_cfg.jc_disable||fuse_read_hw_type()==FUSE_NX_HW_TYPE_HOAG){
         strcpy(ui.note,nyx_tr("Attachable Joy-Con and the wired Joy-Con driver are required for pairing import."));refresh();return LV_RES_OK;
     }
     bool hos[2]={false,false};jc_gamepad_rpt_t *p=jc_get_bt_pairing_info(&hos[0],&hos[1]);
     if(p)for(unsigned i=0;i<2;i++){
         jc_bt_conn_t *b=i?&p->bt_conn_r:&p->bt_conn_l;
+        import_info.rail[i]=i?p->conn_r:p->conn_l;import_info.hos[i]=hos[i];
+        unsigned present=0;for(unsigned j=0;j<16;j++)present|=b->ltk[j];
+        import_info.record[i]=present!=0;
         if(!hos[i]||!(b->type&(i?2:1)))continue;
         paired[i].valid=1;memcpy(paired[i].mac,b->mac,6);memcpy(paired[i].host,b->host_mac,6);
         /* BDK already prepares the exported/HCI key order. Switchroot loads
@@ -56,8 +62,17 @@ static lv_res_t import_pairing(lv_obj_t *button)
         memcpy(paired[i].key,b->ltk,16);
     }
     int count=nova_bt_validate_peers(paired);
+    import_info.compatible=count!=0;
     if(!count)memset(paired,0,sizeof(paired));
-    s_printf(ui.note,"%s : %d / 2",nyx_tr("Pairing records imported"),count);refresh();return LV_RES_OK;
+    s_printf(ui.note,"%s : %d / 2",nyx_tr("Pairing records imported"),count);
+    if(!count){
+        const char *reason=!import_info.rail[0]||!import_info.rail[1]?"Rail connection not ready. Attach both Joy-Con and retry.":
+            !import_info.record[0]||!import_info.record[1]?"Pairing data could not be read from the rails.":
+            !import_info.hos[0]||!import_info.hos[1]?"Nintendo pairing data not recognized by the reader.":
+            "Pairing records did not pass compatibility checks.";
+        strcat(ui.note,"\n");strncat(ui.note,nyx_tr(reason),sizeof(ui.note)-strlen(ui.note)-1);
+    }
+    refresh();return LV_RES_OK;
 }
 static lv_res_t start(lv_obj_t *button)
 {
@@ -79,6 +94,9 @@ static bool save_report(void)
         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 length=strlen(buffer);
+    s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d\n",
+        import_info.attempted,import_info.rail[0],import_info.rail[1],import_info.record[0],import_info.record[1],
+        import_info.hos[0],import_info.hos[1],import_info.compatible);length=strlen(buffer);
     s_printf(buffer+length,"Controller: HCI=%02X revision=%04X manufacturer=%04X subversion=%04X\n",
         s->controller_hci_version,s->controller_revision,s->controller_manufacturer,s->controller_subversion);
     length=strlen(buffer);
@@ -89,6 +107,11 @@ static bool save_report(void)
         s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X BR_ONLY=%d MODE=%d SEEN=%d\n",
             side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error,p->auth_seen,
             p->encryption_error,p->encryption_seen,p->encrypted,p->disconnect_reason,p->role,p->br_only,p->radio_mode,p->mode_seen);
+        length=strlen(buffer);
+        u32 age=p->reports?(u32)(get_tmr_ms()-p->first_report_ms):0;
+        u32 rate=age?(u32)((u64)p->reports*1000/age):0;
+        s_printf(buffer+length,"  Buttons seen=%06X first_report_ms=%d last_report_ms=%d avg_reports_s=%d\n",
+            (unsigned)p->buttons_seen,(int)p->first_report_ms,(int)p->updated,(int)rate);
         length=strlen(buffer);
     }
     strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared)\n");
@@ -116,7 +139,7 @@ static bool save_report(void)
 }
 static lv_res_t stop(lv_obj_t *button)
 {
-    (void)button;bool had_trace=nova_bt_trace_count()!=0;
+    (void)button;bool had_trace=nova_bt_trace_count()!=0||import_info.attempted;
     bool saved=had_trace&&save_report();gui_bluetooth_shutdown();
     if(had_trace){strcpy(ui.note,nyx_tr(saved?"Bluetooth report saved: bootloader/bluetooth/last-session.txt":"Bluetooth stopped. Report could not be saved."));refresh();}
     return LV_RES_OK;

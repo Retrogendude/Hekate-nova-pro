@@ -331,7 +331,7 @@ static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const
 	// Draw to intermediate non-rotated framebuffer.
 	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
 	gui_tv_dirty(y1, y2);
-	gui_bluetooth_poll();
+	gui_bluetooth_poll_fast();
 	display_frame_dirty = true;
 	if ((x2 - x1 + 1) > 600)
 		display_frame_ready = true;

@@ -3,14 +3,16 @@
   "timed_uart_restart": true,
   "old_v26_burst_failure": true,
   "metadata_multi_command": true,
+  "fast_display_budget": true,
+  "old_v27_display_wait_rejected": true,
   "physical_radio": false,
   "output": "PASS real BTstack initialization (57 HCI commands), framing, keys, input, restart and deadlines\n",
   "source_sha256": {
     "btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
-    "nova_bt.h": "a96afe77bc218719d8adc828696af85886e2f2a0583b12858b34a1e67746b42e",
-    "nova_bt_protocol.c": "e0694540b2d071803cf4ad865f389ab43b552d51f4950f254552c49a62eb0180",
+    "nova_bt.h": "d1a91b59163d831a29420d34af626d564cb653e80fa06a3c9a79078cc176d6de",
+    "nova_bt_protocol.c": "4a130d98fff89c204cffce5a7b52ef3676b4f71935939b532bce9d99c6f67ef6",
     "nova_bt_radio.c": "e15a162314c0fef9803082870a312fd8a0968300fe217e89f3033c0f53c689ca",
-    "nova_bt_stack.c": "9a5b8efb874dee32d7370fcd945254c5a2f8ef43db452d04e568544ae838bcf3",
+    "nova_bt_stack.c": "144553f826c9971bcaf5ba8ee2d03b4a080c06a4f3003b53723bfadde4c83939",
     "nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
   }
 }

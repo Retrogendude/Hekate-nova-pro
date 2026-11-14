@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v27'
-directory=work/'lvgl-preview-nova27';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v28'
+directory=work/'lvgl-preview-nova28';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -142,7 +142,7 @@ body+='\n'+stripped(nyx/'bluetooth/nova_bt.h')
 body+=r'''
 static nova_bt_status bt_fixture;
 const nova_bt_status *nova_bt_get_status(void){return &bt_fixture;}
-static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[256];} ui;
+static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[512];} ui;
 static lv_res_t import_pairing(lv_obj_t *b){(void)b;return LV_RES_OK;}
 static lv_res_t start(lv_obj_t *b){(void)b;return LV_RES_OK;}
 static lv_res_t stop(lv_obj_t *b){(void)b;return LV_RES_OK;}
@@ -665,9 +665,13 @@ else if(!strcmp(argv[3],"touch-grid"))nyx_touch_test(NULL);
 else if(!strcmp(argv[3],"screen-patterns"))nyx_screen_patterns(NULL);
 else if(!strcmp(argv[3],"usb"))preview_usb_tools(NULL);
 else if(!strcmp(argv[3],"bluetooth")){
- bt_fixture.state=atoi(argv[6]);bt_fixture.error=3;bt_fixture.rx_packets=12345678;bt_fixture.tx_packets=9876543;
+ unsigned bt_case=atoi(argv[6]);bt_fixture.state=bt_case<4?bt_case:0;bt_fixture.error=3;bt_fixture.rx_packets=12345678;bt_fixture.tx_packets=9876543;
  for(unsigned j=0;j<2;j++){bt_fixture.pad[j].reports=1234567;bt_fixture.pad[j].report_id=0x30;bt_fixture.pad[j].hid_open=bt_fixture.pad[j].mode_ack=1;bt_fixture.pad[j].buttons=0x800008;bt_fixture.pad[j].x=3072;bt_fixture.pad[j].y=2048;}
  s_printf(ui.note,"%s : 2 / 2",nyx_tr("Pairing records imported"));
+ if(bt_case>=4){
+  const char *reasons[]={"Rail connection not ready. Attach both Joy-Con and retry.","Pairing data could not be read from the rails.","Nintendo pairing data not recognized by the reader.","Pairing records did not pass compatibility checks."};
+  assert(bt_case<8);s_printf(ui.note,"%s : 0 / 2\n%s",nyx_tr("Pairing records imported"),nyx_tr(reasons[bt_case-4]));
+ }
  if(bt_fixture.state==2){bt_fixture.pad[0].connected=bt_fixture.pad[1].connected=1;}
  gui_bluetooth_open(NULL);root=lv_win_get_content(ui.win);
 }
@@ -1005,7 +1009,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova27-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova28-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

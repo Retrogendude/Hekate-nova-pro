@@ -327,19 +327,19 @@ int nova_bt_start(const nova_bt_peer p[2])
     event_registration.callback=event;hci_add_event_handler(&event_registration);
     status.state=NOVA_BT_STARTING;hci_power_control(HCI_POWER_ON);return 1;
 }
-void nova_bt_poll(void)
+static void poll_budget(uint32_t max_us,uint32_t quiet_us)
 {
     if(!initialized)return;
     /* HWTest measured >300us restart latency after UART flow control.
-     * Finish a burst after 2ms quiet, at most 8ms/2048 bytes per call.
-     * An already empty line returns immediately to keep the GUI responsive. */
+     * The foreground drains bursts with a quiet period; drawing uses a short
+     * budget without waiting for a UART restart. An empty line returns now. */
     uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
     for(unsigned n=0;n<2048&&!failure;){
         int value=nova_bt_radio_read();uint32_t us=nova_bt_now_us();
         if(value==-2){failure=4;break;}
         if(value>=0){input_byte(value);bytes++;n++;last=us;}
-        else if(!bytes||(uint32_t)(us-last)>=2000)break;
-        if((uint32_t)(us-t0)>=8000)break;
+        else if(!bytes||(uint32_t)(us-last)>=quiet_us)break;
+        if((uint32_t)(us-t0)>=max_us)break;
     }
     status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
     if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
@@ -383,3 +383,6 @@ void nova_bt_poll(void)
     }
     if(failure){int code=failure;nova_bt_stop();status.state=NOVA_BT_ERROR;status.error=code;}
 }
+/* Drain long bursts once in the foreground, not for every display rectangle. */
+void nova_bt_poll(void){poll_budget(8000,2000);}
+void nova_bt_poll_fast(void){poll_budget(250,0);}

@@ -1,0 +1,309 @@
+--- v27/nyx/nyx_gui/bluetooth/nova_bt.h
++++ v28/nyx/nyx_gui/bluetooth/nova_bt.h
+@@ -16,6 +16,7 @@
+     uint8_t auth_seen, encryption_seen, encryption_error, encrypted;
+     uint8_t disconnect_reason, role; /* role: 0 central, 1 peripheral, 0xff unknown */
+     uint8_t br_only, radio_mode, mode_seen;
++    uint32_t buttons_seen, first_report_ms;
+ } nova_bt_pad;
+ enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
+ typedef struct {
+@@ -37,6 +38,7 @@
+ int nova_bt_start(const nova_bt_peer peers[2]);
+ void nova_bt_stop(void);
+ void nova_bt_poll(void);
++void nova_bt_poll_fast(void); /* No quiet wait; short RX budget while drawing. */
+ const nova_bt_status *nova_bt_get_status(void);
+ /* Pure protocol helpers are exercised on the host as well as on ARM. */
+ int nova_bt_decode(nova_bt_pad *pad, unsigned side, const uint8_t *report, unsigned len, uint32_t now);
+--- v27/nyx/nyx_gui/bluetooth/nova_bt_protocol.c
++++ v28/nyx/nyx_gui/bluetooth/nova_bt_protocol.c
+@@ -2,6 +2,8 @@
+ #include <string.h>
+ static int nonzero(const uint8_t *p, unsigned n)
+ { unsigned v=0; while(n--) v |= *p++; return v!=0; }
++static void observe(nova_bt_pad *p,uint32_t now)
++{if(!p->reports)p->first_report_ms=now;p->buttons_seen|=p->buttons;p->reports++;}
+ int nova_bt_validate_peers(const nova_bt_peer p[2])
+ {
+     int count=0;
+@@ -35,7 +37,7 @@
+         static const int8_t y[9]={0,-1,-1,-1,0,1,1,1,0};
+         int sign=side?-1:1;
+         p->x=2048+sign*x[r[3]]*1024;p->y=2048+sign*y[r[3]]*1024;
+-        p->buttons=buttons;p->updated=now;p->connected=1;p->report_id=0x3f;p->reports++;
++        p->buttons=buttons;p->updated=now;p->connected=1;p->report_id=0x3f;observe(p,now);
+         return 1;
+     }
+     if(n<13||(r[0]!=0x30&&r[0]!=0x21)) return 0;
+@@ -43,7 +45,7 @@
+     p->buttons=buttons & (side?0x0016ffu:0xff2900u);
+     unsigned at=side?9:6;
+     p->x=r[at]|((r[at+1]&15)<<8);p->y=(r[at+1]>>4)|(r[at+2]<<4);
+-    p->battery=(r[2]>>4)&0xf;p->updated=now;p->connected=1;p->report_id=r[0];p->reports++;
++    p->battery=(r[2]>>4)&0xf;p->updated=now;p->connected=1;p->report_id=r[0];observe(p,now);
+     if(r[0]==0x30||(r[0]==0x21&&n>=16&&(r[13]&0x80)&&r[14]==3&&r[15]==0x30))p->mode_ack=1;
+     return 1;
+ }
+--- v27/nyx/nyx_gui/bluetooth/nova_bt_stack.c
++++ v28/nyx/nyx_gui/bluetooth/nova_bt_stack.c
+@@ -327,19 +327,19 @@
+     event_registration.callback=event;hci_add_event_handler(&event_registration);
+     status.state=NOVA_BT_STARTING;hci_power_control(HCI_POWER_ON);return 1;
+ }
+-void nova_bt_poll(void)
++static void poll_budget(uint32_t max_us,uint32_t quiet_us)
+ {
+     if(!initialized)return;
+     /* HWTest measured >300us restart latency after UART flow control.
+-     * Finish a burst after 2ms quiet, at most 8ms/2048 bytes per call.
+-     * An already empty line returns immediately to keep the GUI responsive. */
++     * The foreground drains bursts with a quiet period; drawing uses a short
++     * budget without waiting for a UART restart. An empty line returns now. */
+     uint32_t t0=nova_bt_now_us(),last=t0;unsigned bytes=0;status.rx_polls++;
+     for(unsigned n=0;n<2048&&!failure;){
+         int value=nova_bt_radio_read();uint32_t us=nova_bt_now_us();
+         if(value==-2){failure=4;break;}
+         if(value>=0){input_byte(value);bytes++;n++;last=us;}
+-        else if(!bytes||(uint32_t)(us-last)>=2000)break;
+-        if((uint32_t)(us-t0)>=8000)break;
++        else if(!bytes||(uint32_t)(us-last)>=quiet_us)break;
++        if((uint32_t)(us-t0)>=max_us)break;
+     }
+     status.rx_bytes+=bytes;uint32_t elapsed=nova_bt_now_us()-t0;
+     if(elapsed>status.rx_max_us)status.rx_max_us=elapsed;
+@@ -383,3 +383,6 @@
+     }
+     if(failure){int code=failure;nova_bt_stop();status.state=NOVA_BT_ERROR;status.error=code;}
+ }
++/* Drain long bursts once in the foreground, not for every display rectangle. */
++void nova_bt_poll(void){poll_budget(8000,2000);}
++void nova_bt_poll_fast(void){poll_budget(250,0);}
+--- v27/nyx/nyx_gui/frontend/gui.c
++++ v28/nyx/nyx_gui/frontend/gui.c
+@@ -331,7 +331,7 @@
+ 	// Draw to intermediate non-rotated framebuffer.
+ 	gfx_set_rect_pitch((u32 *)NYX_FB2_ADDRESS, (u32 *)color_p, 1280, x1, y1, x2, y2);
+ 	gui_tv_dirty(y1, y2);
+-	gui_bluetooth_poll();
++	gui_bluetooth_poll_fast();
+ 	display_frame_dirty = true;
+ 	if ((x2 - x1 + 1) > 600)
+ 		display_frame_ready = true;
+--- v27/nyx/nyx_gui/frontend/gui_bluetooth.c
++++ v28/nyx/nyx_gui/frontend/gui_bluetooth.c
+@@ -6,7 +6,8 @@
+ #include "../config.h"
+ #include "../nova_version.h"
+ static nova_bt_peer paired[2];
+-static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[256];} ui;
++static struct {u8 attempted,rail[2],record[2],hos[2],compatible;} import_info;
++static struct {lv_obj_t *win,*label;lv_task_t *task;lv_signal_func_t signal;u32 shown;char note[512];} ui;
+ static void refresh(void)
+ {
+     if(!ui.label)return;
+@@ -27,8 +28,8 @@
+ }
+ static void tick(void *unused)
+ {
+-    (void)unused;nova_bt_poll();
+-    if((u32)(get_tmr_ms()-ui.shown)>=250){ui.shown=get_tmr_ms();refresh();}
++    (void)unused;nova_bt_poll_fast();
++    if((u32)(get_tmr_ms()-ui.shown)>=500){ui.shown=get_tmr_ms();refresh();}
+ }
+ void gui_bluetooth_shutdown(void)
+ {
+@@ -39,15 +40,20 @@
+ bool gui_bluetooth_active(void)
+ {return nova_bt_get_status()->state==NOVA_BT_READY;}
+ void gui_bluetooth_poll(void){nova_bt_poll();}
++void gui_bluetooth_poll_fast(void){nova_bt_poll_fast();}
+ static lv_res_t import_pairing(lv_obj_t *button)
+ {
+     (void)button;gui_bluetooth_shutdown();memset(paired,0,sizeof(paired));
++    memset(&import_info,0,sizeof(import_info));import_info.attempted=1;
+     if(n_cfg.jc_disable||fuse_read_hw_type()==FUSE_NX_HW_TYPE_HOAG){
+         strcpy(ui.note,nyx_tr("Attachable Joy-Con and the wired Joy-Con driver are required for pairing import."));refresh();return LV_RES_OK;
+     }
+     bool hos[2]={false,false};jc_gamepad_rpt_t *p=jc_get_bt_pairing_info(&hos[0],&hos[1]);
+     if(p)for(unsigned i=0;i<2;i++){
+         jc_bt_conn_t *b=i?&p->bt_conn_r:&p->bt_conn_l;
++        import_info.rail[i]=i?p->conn_r:p->conn_l;import_info.hos[i]=hos[i];
++        unsigned present=0;for(unsigned j=0;j<16;j++)present|=b->ltk[j];
++        import_info.record[i]=present!=0;
+         if(!hos[i]||!(b->type&(i?2:1)))continue;
+         paired[i].valid=1;memcpy(paired[i].mac,b->mac,6);memcpy(paired[i].host,b->host_mac,6);
+         /* BDK already prepares the exported/HCI key order. Switchroot loads
+@@ -56,8 +62,17 @@
+         memcpy(paired[i].key,b->ltk,16);
+     }
+     int count=nova_bt_validate_peers(paired);
++    import_info.compatible=count!=0;
+     if(!count)memset(paired,0,sizeof(paired));
+-    s_printf(ui.note,"%s : %d / 2",nyx_tr("Pairing records imported"),count);refresh();return LV_RES_OK;
++    s_printf(ui.note,"%s : %d / 2",nyx_tr("Pairing records imported"),count);
++    if(!count){
++        const char *reason=!import_info.rail[0]||!import_info.rail[1]?"Rail connection not ready. Attach both Joy-Con and retry.":
++            !import_info.record[0]||!import_info.record[1]?"Pairing data could not be read from the rails.":
++            !import_info.hos[0]||!import_info.hos[1]?"Nintendo pairing data not recognized by the reader.":
++            "Pairing records did not pass compatibility checks.";
++        strcat(ui.note,"\n");strncat(ui.note,nyx_tr(reason),sizeof(ui.note)-strlen(ui.note)-1);
++    }
++    refresh();return LV_RES_OK;
+ }
+ static lv_res_t start(lv_obj_t *button)
+ {
+@@ -79,6 +94,9 @@
+         "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
+         (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
+     u32 length=strlen(buffer);
++    s_printf(buffer+length,"Import: attempted=%d rail=%d/%d record=%d/%d Nintendo=%d/%d compatible=%d\n",
++        import_info.attempted,import_info.rail[0],import_info.rail[1],import_info.record[0],import_info.record[1],
++        import_info.hos[0],import_info.hos[1],import_info.compatible);length=strlen(buffer);
+     s_printf(buffer+length,"Controller: HCI=%02X revision=%04X manufacturer=%04X subversion=%04X\n",
+         s->controller_hci_version,s->controller_revision,s->controller_manufacturer,s->controller_subversion);
+     length=strlen(buffer);
+@@ -89,6 +107,11 @@
+         s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X SEEN=%d ENC=%02X SEEN=%d ENABLED=%d DISC=%02X ROLE=%02X BR_ONLY=%d MODE=%d SEEN=%d\n",
+             side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error,p->auth_seen,
+             p->encryption_error,p->encryption_seen,p->encrypted,p->disconnect_reason,p->role,p->br_only,p->radio_mode,p->mode_seen);
++        length=strlen(buffer);
++        u32 age=p->reports?(u32)(get_tmr_ms()-p->first_report_ms):0;
++        u32 rate=age?(u32)((u64)p->reports*1000/age):0;
++        s_printf(buffer+length,"  Buttons seen=%06X first_report_ms=%d last_report_ms=%d avg_reports_s=%d\n",
++            (unsigned)p->buttons_seen,(int)p->first_report_ms,(int)p->updated,(int)rate);
+         length=strlen(buffer);
+     }
+     strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity 13=role(side,handle,0central/1peripheral) 14=acceptPolicy(side,opcode,role) 15=packetTypes(handle,opcode,mask) 16=mode(handle,mode,interval) 17=config(CID,flags,MTU) 19=unusualEvent(code,size,declared)\n");
+@@ -116,7 +139,7 @@
+ }
+ static lv_res_t stop(lv_obj_t *button)
+ {
+-    (void)button;bool had_trace=nova_bt_trace_count()!=0;
++    (void)button;bool had_trace=nova_bt_trace_count()!=0||import_info.attempted;
+     bool saved=had_trace&&save_report();gui_bluetooth_shutdown();
+     if(had_trace){strcpy(ui.note,nyx_tr(saved?"Bluetooth report saved: bootloader/bluetooth/last-session.txt":"Bluetooth stopped. Report could not be saved."));refresh();}
+     return LV_RES_OK;
+--- v27/nyx/nyx_gui/frontend/gui_bluetooth.h
++++ v28/nyx/nyx_gui/frontend/gui_bluetooth.h
+@@ -6,5 +6,6 @@
+ void gui_bluetooth_shutdown(void);
+ bool gui_bluetooth_active(void);
+ void gui_bluetooth_poll(void);
++void gui_bluetooth_poll_fast(void);
+ jc_gamepad_rpt_t *gui_bluetooth_merge(jc_gamepad_rpt_t *wired);
+ #endif
+--- v27/nyx/nyx_gui/frontend/gui_nova.c
++++ v28/nyx/nyx_gui/frontend/gui_nova.c
+@@ -764,7 +764,7 @@
+         nyx_nova_fixed_page(section);
+         if(i==4){
+             static const char *changes[]={
+-                "v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.",
++                "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.",
+                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
+                 "v19 · Persistent TV output\nTV output stays active across menus.",
+                 "v18 · Customization\nPNG icons and SD partition menus."
+--- v27/nyx/nyx_gui/localization_catalog.inc
++++ v28/nyx/nyx_gui/localization_catalog.inc
+@@ -2627,6 +2627,7 @@
+     {"Next", {"Next", "Suivant", "Siguiente", "Successivo", "Далее", "Weiter", "Seguinte"}},
+     {"Next Step", {"Next Step", "Étape suivante", "Paso siguiente", "Passo successivo", "Следующий шаг", "Nächster Schritt", "Passo seguinte"}},
+     {"Nintendo folder:", {"Nintendo folder:", "Dossier Nintendo :", "Carpeta Nintendo:", "Cartella Nintendo:", "Папка Nintendo:", "Nintendo-Ordner:", "Pasta Nintendo:"}},
++    {"Nintendo pairing data not recognized by the reader.", {"Nintendo pairing data not recognized by the reader.", "Le lecteur ne reconnaît pas les données d’appairage Nintendo.", "El lector no reconoce los datos de enlace de Nintendo.", "Il lettore non riconosce i dati di associazione Nintendo.", "Считыватель не распознал данные сопряжения Nintendo.", "Nintendo-Kopplungsdaten werden vom Leser nicht erkannt.", "O leitor não reconhece os dados de emparelhamento Nintendo."}},
+     {"No", {"No", "Non", "No", "No", "Нет", "Nein", "Não"}},
+     {"No .ini or boot entries found...", {"No .ini or boot entries found...", "Aucun .ini ni entrée de démarrage…", "No hay archivos .ini ni entradas de arranque…", "Nessun file .ini o voce di avvio…", "Нет файлов .ini или записей запуска…", "Keine .ini-Dateien oder Starteinträge…", "Sem ficheiros .ini ou entradas de arranque…"}},
+     {"No Android GPT was found!", {"No Android GPT was found!", "Aucune GPT Android trouvée !", "No se encontró ninguna GPT de Android.", "Nessuna GPT Android trovata.", "GPT Android не найдена!", "Keine Android-GPT gefunden!", "Nenhuma GPT Android encontrada!"}},
+@@ -2815,6 +2816,8 @@
+     {"Page %d", {"Page %d", "Page %d", "Página %d", "Pagina %d", "Страница %d", "Seite %d", "Página %d"}},
+     {"Page %d / %d", {"Page %d / %d", "Page %d / %d", "Página %d / %d", "Pagina %d / %d", "Страница %d / %d", "Seite %d / %d", "Página %d / %d"}},
+     {"Paired", {"Paired", "Appairé", "Vinculado", "Associato", "Сопряжено", "Gekoppelt", "Emparelhado"}},
++    {"Pairing data could not be read from the rails.", {"Pairing data could not be read from the rails.", "Impossible de lire les données d’appairage sur les rails.", "No se pudieron leer los datos de enlace desde los raíles.", "Impossibile leggere i dati di associazione dalle guide.", "Не удалось прочитать данные сопряжения через направляющие.", "Kopplungsdaten konnten nicht über die Schienen gelesen werden.", "Não foi possível ler os dados de emparelhamento pelos trilhos."}},
++    {"Pairing records did not pass compatibility checks.", {"Pairing records did not pass compatibility checks.", "Les données d’appairage n’ont pas passé les contrôles de compatibilité.", "Los datos de enlace no superaron las comprobaciones de compatibilidad.", "I dati di associazione non hanno superato i controlli di compatibilità.", "Данные сопряжения не прошли проверку совместимости.", "Kopplungsdaten haben die Kompatibilitätsprüfung nicht bestanden.", "Os dados de emparelhamento não passaram as verificações de compatibilidade."}},
+     {"Pairing records imported", {"Pairing records imported", "Appairages importés", "Emparejamientos importados", "Abbinamenti importati", "Сопряжения загружены", "Kopplungen importiert", "Emparelhamentos importados"}},
+     {"Panel and backlight.", {"Panel and backlight.", "Dalle et rétroéclairage.", "Panel y retroiluminación.", "Pannello e retroilluminazione.", "Панель и подсветка.", "Display und Hintergrundbeleuchtung.", "Painel e retroiluminação."}},
+     {"Parcourir chaque case avec un doigt. Une case sombre n’a pas été testée ; cela ne prouve pas un défaut.", {"Move a finger across every square. A dark square is untested; this does not prove a defect.", "Parcourir chaque case avec un doigt. Une case sombre n’a pas été testée ; cela ne prouve pas un défaut.", "Recorra cada casilla con un dedo. Una casilla oscura no está probada; no demuestra un defecto.", "Passa un dito su ogni casella. Una casella scura non è testata; non prova un difetto.", "Проведите пальцем по каждой клетке. Тёмная клетка не проверена; это не доказывает дефект.", "Mit dem Finger jedes Feld berühren. Dunkle Felder sind ungeprüft; dies beweist keinen Defekt.", "Percorra cada quadrado com um dedo. Um quadrado escuro não foi testado; não prova um defeito."}},
+@@ -2941,6 +2944,7 @@
+     {"RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d (nyx.ini offset %s%d s%s)", {"RTC adjusted : %04d-%02d-%02d %02d:%02d:%02d (nyx.ini offset %s%d s%s)", "RTC ajustée : %04d-%02d-%02d %02d:%02d:%02d (décalage nyx.ini %s%d s%s)", "RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desfase nyx.ini %s%d s%s)", "RTC corretto: %04d-%02d-%02d %02d:%02d:%02d (scarto nyx.ini %s%d s%s)", "RTC с поправкой: %04d-%02d-%02d %02d:%02d:%02d (сдвиг nyx.ini %s%d s%s)", "RTC korrigiert: %04d-%02d-%02d %02d:%02d:%02d (nyx.ini-Versatz %s%d s%s)", "RTC ajustado: %04d-%02d-%02d %02d:%02d:%02d (desvio nyx.ini %s%d s%s)"}},
+     {"RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)", {"RTC adjusted : not available (no /bootloader/nyx.ini timeoffset)", "RTC ajustée : indisponible (pas de timeoffset dans /bootloader/nyx.ini)", "RTC ajustado: no disponible (sin timeoffset en /bootloader/nyx.ini)", "RTC corretto: non disponibile (manca timeoffset in /bootloader/nyx.ini)", "RTC с поправкой: недоступно (нет timeoffset в /bootloader/nyx.ini)", "RTC korrigiert: nicht verfügbar (kein timeoffset in /bootloader/nyx.ini)", "RTC ajustado: indisponível (sem timeoffset em /bootloader/nyx.ini)"}},
+     {"Radio ready - waiting for Joy-Con", {"Radio ready - waiting for Joy-Con", "Radio prête : connexion des Joy-Con en attente", "Radio lista: esperando Joy-Con", "Radio pronta: attesa dei Joy-Con", "Радио готово: ожидание Joy-Con", "Funk bereit: Warte auf Joy-Con", "Rádio pronto: à espera dos Joy-Con"}},
++    {"Rail connection not ready. Attach both Joy-Con and retry.", {"Rail connection not ready. Attach both Joy-Con and retry.", "Connexion aux rails indisponible. Fixez les deux Joy-Con et réessayez.", "Conexión a los raíles no disponible. Acopla ambos Joy-Con y reintenta.", "Collegamento alle guide non pronto. Collega entrambi i Joy-Con e riprova.", "Соединение с направляющими не готово. Подключите оба Joy-Con и повторите.", "Schienenverbindung nicht bereit. Beide Joy-Con anstecken und erneut versuchen.", "Ligação aos trilhos indisponível. Encaixe ambos os Joy-Con e tente novamente."}},
+     {"Range: 0x%08X - 0x%08X", {"Range: 0x%08X - 0x%08X", "Plage : 0x%08X - 0x%08X", "Intervalo: 0x%08X - 0x%08X", "Intervallo: 0x%08X - 0x%08X", "Диапазон: 0x%08X - 0x%08X", "Bereich: 0x%08X - 0x%08X", "Intervalo: 0x%08X - 0x%08X"}},
+     {"Rapide", {"Quick", "Rapide", "Rápido", "Rapido", "Быстрый", "Schnell", "Rápido"}},
+     {"Rapide\nAvancé\nPersonnalisé", {"Quick\nAdvanced\nCustom", "Rapide\nAvancé\nPersonnalisé", "Rápido\nAvanzado\nPersonalizado", "Rapido\nAvanzato\nPersonalizzato", "Быстрый\nРасширенный\nСвой режим", "Schnell\nErweitert\nBenutzerdefiniert", "Rápido\nAvançado\nPersonalizado"}},
+@@ -4141,6 +4145,7 @@
+     {"v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.", {"v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.", "v25 · Reconnexion Joy-Con\nRôle principal demandé à la reconnexion.\nConnexions successives ; rapports conservés.", "v25 · Reconexión Joy-Con\nRol central solicitado al reconectar.\nConexiones sucesivas; informes conservados.", "v25 · Riconnessione Joy-Con\nRuolo centrale richiesto in ingresso.\nConnessioni successive; rapporti conservati.", "v25 · Переподключение Joy-Con\nЗапрос центральной роли при подключении.\nПодключения по очереди; отчёты сохранены.", "v25 · Joy-Con-Wiederverbindung\nZentralrolle bei eingehenden Verbindungen.\nVerbindungen nacheinander; Berichte erhalten.", "v25 · Reconexão Joy-Con\nPapel central pedido ao reconectar.\nLigações sucessivas; relatórios preservados."}},
+     {"v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.", {"v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.", "v26 · Canaux Joy-Con\nReconnexions entrantes acceptées.\nRéponses tardives isolées.", "v26 · Canales Joy-Con\nReconexiones HID entrantes aceptadas.\nRespuestas tardías aisladas.", "v26 · Canali Joy-Con\nRiconnessioni HID in ingresso accettate.\nRisposte tardive isolate.", "v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.", "v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.", "v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas."}},
+     {"v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.", {"v27 · HWTest radio profile\nBasic-rate links and active-mode recovery.\nLonger UART bursts; clock state restored.", "v27 · Profil radio HWTest\nDébit de base et retour au mode actif.\nLecture série prolongée ; horloge restaurée.", "v27 · Perfil de radio HWTest\nEnlaces de tasa básica y modo activo.\nLectura serie ampliada; reloj restaurado.", "v27 · Profilo radio HWTest\nVelocità base e ritorno alla modalità attiva.\nLettura seriale estesa; clock ripristinato.", "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.", "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.", "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."}},
++    {"v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.", {"v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.", "v28 · Réactivité des commandes\nLectures Bluetooth courtes pendant le dessin.\nDiagnostic des appairages et des boutons reçus.", "v28 · Respuesta de los mandos\nLecturas Bluetooth cortas al dibujar menús.\nDiagnóstico de enlaces y botones recibidos.", "v28 · Reattività dei comandi\nLetture Bluetooth brevi durante il disegno.\nDiagnostica di associazioni e pulsanti ricevuti.", "v28 · Отклик управления\nКороткий опрос Bluetooth при отрисовке меню.\nДиагностика сопряжения и приёма кнопок.", "v28 · Reaktionszeit der Steuerung\nKurze Bluetooth-Abfragen beim Zeichnen.\nDiagnose von Kopplung und Tastenempfang.", "v28 · Resposta dos comandos\nLeituras Bluetooth curtas ao desenhar menus.\nDiagnóstico de emparelhamento e botões."}},
+     {"valid", {"valid", "valide", "válido", "valido", "действительно", "gültig", "válido"}},
+     {"variable", {"variable", "variable", "variable", "variabile", "переменно", "variabel", "variável"}},
+     {"verify", {"verify", "vérification", "verificación", "verifica", "проверка", "Prüfung", "verificação"}},
+@@ -4187,5 +4192,5 @@
+     {"État thermique :", {"Temperature status:", "État thermique :", "Estado térmico:", "Stato termico:", "Температурный статус:", "Temperaturstatus:", "Estado térmico:"}},
+     {"Éteindre", {"Power Off", "Éteindre", "Apagar", "Spegni", "Выключить", "Ausschalten", "Desligar"}},
+ };
+-static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2659, 2755, 2786, 2800, 2805, 2810, 2812, 2813, 2818, 2823, 2829, 2830, 2840, 2855, 2856, 2873, 2931, 2938, 2941, 2950, 2952, 2965, 2967, 3017, 3018, 3020, 3021, 3030, 3037, 3081, 3085, 3152, 3173, 3174, 3195, 3237, 3310, 3329, 3330, 3339, 3341, 3378, 3440, 3441, 3442, 3453, 3455, 3457, 3459, 3463, 3493, 3494, 3498, 3499, 3506, 3536, 3545, 3546, 3551, 3552, 3578, 3579, 3587, 3589, 3590, 3638, 3642, 3647, 3653, 3654, 3703, 3721, 3776, 3777, 3778, 3780, 3786, 3800, 3801, 3807, 3808, 3832, 3833, 3862, 3870, 3875, 3876, 3897, 3898, 3900, 3901, 3902, 3903, 3904, 3909, 3917, 3919, 3930, 3936, 3969, 3970, 3979, 4016, 4029, 4030, 4032, 4033, 4039, 4040, 4041, 4042, 4044, 4045, 4062, 4073, 4074, 4083, 4086, 4094, 4095, 4097, 4098, 4104, 4109, 4117, 4118, 4119, 4129, 4146, 4147, 4164, 4168};
++static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2660, 2756, 2787, 2801, 2806, 2811, 2813, 2814, 2821, 2826, 2832, 2833, 2843, 2858, 2859, 2876, 2934, 2941, 2945, 2954, 2956, 2969, 2971, 3021, 3022, 3024, 3025, 3034, 3041, 3085, 3089, 3156, 3177, 3178, 3199, 3241, 3314, 3333, 3334, 3343, 3345, 3382, 3444, 3445, 3446, 3457, 3459, 3461, 3463, 3467, 3497, 3498, 3502, 3503, 3510, 3540, 3549, 3550, 3555, 3556, 3582, 3583, 3591, 3593, 3594, 3642, 3646, 3651, 3657, 3658, 3707, 3725, 3780, 3781, 3782, 3784, 3790, 3804, 3805, 3811, 3812, 3836, 3837, 3866, 3874, 3879, 3880, 3901, 3902, 3904, 3905, 3906, 3907, 3908, 3913, 3921, 3923, 3934, 3940, 3973, 3974, 3983, 4020, 4033, 4034, 4036, 4037, 4043, 4044, 4045, 4046, 4048, 4049, 4066, 4077, 4078, 4087, 4090, 4098, 4099, 4101, 4102, 4108, 4113, 4121, 4122, 4123, 4133, 4151, 4152, 4169, 4173};
+ static const uint16_t locale_pattern_start[257] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 461, 461, 461, 495, 495, 527, 527, 527, 528, 528, 528, 530, 530, 530, 530, 530, 533, 535, 536, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 539, 545, 557, 567, 580, 595, 597, 600, 601, 602, 602, 605, 610, 611, 611, 626, 626, 639, 646, 664, 670, 675, 680, 681, 681, 682, 686, 686, 686, 686, 686, 686, 689, 691, 693, 693, 704, 707, 707, 709, 709, 709, 709, 709, 711, 712, 713, 723, 723, 724, 732, 737, 738, 738, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 741, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742};
+--- v27/nyx/nyx_gui/localization_catalog.json
++++ v28/nyx/nyx_gui/localization_catalog.json
+@@ -37672,5 +37672,50 @@
+     "v27 · Радиопрофиль HWTest\nБазовая скорость и активный режим.\nПродлённое чтение UART; возврат тактирования.",
+     "v27 · HWTest-Funkprofil\nBasisrate und Rückkehr in den aktiven Modus.\nLängere UART-Lesephasen; Takt restauriert.",
+     "v27 · Perfil de rádio HWTest\nTaxa básica e regresso ao modo ativo.\nLeitura série prolongada; relógio restaurado."
++  ],
++  "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.": [
++    "v28 · Input responsiveness\nShort Bluetooth polls while drawing menus.\nPairing import and button reception diagnostics.",
++    "v28 · Réactivité des commandes\nLectures Bluetooth courtes pendant le dessin.\nDiagnostic des appairages et des boutons reçus.",
++    "v28 · Respuesta de los mandos\nLecturas Bluetooth cortas al dibujar menús.\nDiagnóstico de enlaces y botones recibidos.",
++    "v28 · Reattività dei comandi\nLetture Bluetooth brevi durante il disegno.\nDiagnostica di associazioni e pulsanti ricevuti.",
++    "v28 · Отклик управления\nКороткий опрос Bluetooth при отрисовке меню.\nДиагностика сопряжения и приёма кнопок.",
++    "v28 · Reaktionszeit der Steuerung\nKurze Bluetooth-Abfragen beim Zeichnen.\nDiagnose von Kopplung und Tastenempfang.",
++    "v28 · Resposta dos comandos\nLeituras Bluetooth curtas ao desenhar menus.\nDiagnóstico de emparelhamento e botões."
++  ],
++  "Rail connection not ready. Attach both Joy-Con and retry.": [
++    "Rail connection not ready. Attach both Joy-Con and retry.",
++    "Connexion aux rails indisponible. Fixez les deux Joy-Con et réessayez.",
++    "Conexión a los raíles no disponible. Acopla ambos Joy-Con y reintenta.",
++    "Collegamento alle guide non pronto. Collega entrambi i Joy-Con e riprova.",
++    "Соединение с направляющими не готово. Подключите оба Joy-Con и повторите.",
++    "Schienenverbindung nicht bereit. Beide Joy-Con anstecken und erneut versuchen.",
++    "Ligação aos trilhos indisponível. Encaixe ambos os Joy-Con e tente novamente."
++  ],
++  "Pairing data could not be read from the rails.": [
++    "Pairing data could not be read from the rails.",
++    "Impossible de lire les données d’appairage sur les rails.",
++    "No se pudieron leer los datos de enlace desde los raíles.",
++    "Impossibile leggere i dati di associazione dalle guide.",
++    "Не удалось прочитать данные сопряжения через направляющие.",
++    "Kopplungsdaten konnten nicht über die Schienen gelesen werden.",
++    "Não foi possível ler os dados de emparelhamento pelos trilhos."
++  ],
++  "Nintendo pairing data not recognized by the reader.": [
++    "Nintendo pairing data not recognized by the reader.",
++    "Le lecteur ne reconnaît pas les données d’appairage Nintendo.",
++    "El lector no reconoce los datos de enlace de Nintendo.",
++    "Il lettore non riconosce i dati di associazione Nintendo.",
++    "Считыватель не распознал данные сопряжения Nintendo.",
++    "Nintendo-Kopplungsdaten werden vom Leser nicht erkannt.",
++    "O leitor não reconhece os dados de emparelhamento Nintendo."
++  ],
++  "Pairing records did not pass compatibility checks.": [
++    "Pairing records did not pass compatibility checks.",
++    "Les données d’appairage n’ont pas passé les contrôles de compatibilité.",
++    "Los datos de enlace no superaron las comprobaciones de compatibilidad.",
++    "I dati di associazione non hanno superato i controlli di compatibilità.",
++    "Данные сопряжения не прошли проверку совместимости.",
++    "Kopplungsdaten haben die Kompatibilitätsprüfung nicht bestanden.",
++    "Os dados de emparelhamento não passaram as verificações de compatibilidade."
+   ]
+ }--- v27/nyx/nyx_gui/nova_version.h
++++ v28/nyx/nyx_gui/nova_version.h
+@@ -1,5 +1,5 @@
+ /* Development version for this source tree; shared by UI and packaging. */
+ #ifndef NYX_NOVA_VERSION_H
+ #define NYX_NOVA_VERSION_H
+-#define NYX_NOVA_VERSION "27"
++#define NYX_NOVA_VERSION "28"
+ #endif

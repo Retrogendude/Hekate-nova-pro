@@ -4,7 +4,7 @@ The virtual peer intentionally ignores SDP, but implements standard HID channels
 """
 from pathlib import Path
 import subprocess,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v27/nyx/nyx_gui';d=w/'nova27-tests';d.mkdir(exist_ok=True)
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v28/nyx/nyx_gui';d=w/'nova28-tests';d.mkdir(exist_ok=True)
 c=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -328,6 +328,6 @@ assert r.returncode==0,r.stderr
 r=subprocess.run([str(v26_exe),'hwtest-rom'],capture_output=True,text=True,timeout=10)
 assert r.returncode==1 and 'report_id==0x30' in r.stderr,(r.returncode,r.stderr)
 print('PASS: actual v26 stack fails to receive full inputs in the HWTest EDR-drop model; v27 does')
-(w/'nova27-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'old_policy_failures':old_failures,'v25_hid_regression':old_hid_failure,'hwtest_rom_regression':True,'physical_radio':False,
+(w/'nova28-negotiation-check.json').write_text(json.dumps({'passed':True,'logs':logs,'old_policy_failures':old_failures,'v25_hid_regression':old_hid_failure,'hwtest_rom_regression':True,'physical_radio':False,
     'source_sha256':{f.relative_to(p).as_posix():hashlib.sha256(f.read_bytes()).hexdigest()for f in (p/'bluetooth').glob('*.[ch]')},
     'hid_host_sha256':hashlib.sha256((lib/'classic/hid_host.c').read_bytes()).hexdigest()},indent=2))
