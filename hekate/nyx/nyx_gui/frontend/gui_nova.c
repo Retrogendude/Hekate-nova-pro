@@ -16,7 +16,7 @@ typedef struct { const char *id, *title, *description, *icon; } nova_item;
 static lv_style_t nova_panel, nova_selected, nova_hero, nova_clear, nova_primary;
 static lv_style_t nova_text[5], nova_dim, nova_white, nova_accent_text;
 static lv_style_t nova_frame, nova_frame_active, nova_frame_halo;
-static lv_style_t nova_ink_image, nova_image, nova_image_white, nova_image_dim;
+static lv_style_t nova_logo_image, nova_ink_image, nova_image, nova_image_white, nova_image_dim;
 static lv_style_t nova_dot, nova_dot_active, nova_dot_on, nova_separator, nova_tag;
 static lv_style_t nova_track_off, nova_track_on, nova_thumb_off, nova_thumb_on;
 static lv_obj_t *nova_tabs, *nova_nav_buttons[6], *nova_nav_labels[6], *nova_nav_icons[6], *nova_underline;
@@ -39,7 +39,7 @@ void nyx_nova_init(lv_theme_t *theme)
     lv_color_t bg = nyx_nova_color(NOVA_COLOR_BACKGROUND);
     lv_color_t text = nyx_nova_color(NOVA_COLOR_TEXT);
     lv_color_t border = nyx_nova_color(NOVA_COLOR_BORDER);
-    lv_color_t accent = n_cfg.theme_color ? lv_color_hsv_to_rgb(n_cfg.theme_color, 100, 100) : LV_COLOR_HEX(0x55C9F1);
+    lv_color_t accent = nyx_nova_color(NOVA_COLOR_ICONS);
     lv_color_t panel = n_cfg.theme_bg == 0x141A19 ? LV_COLOR_HEX(0x19212D) : lv_color_mix(LV_COLOR_WHITE, bg, 14);
     lv_color_t dim = n_cfg.nova_text_color == 0xF2F5FA ? LV_COLOR_HEX(0x9BAABD) : lv_color_mix(text, bg, 166);
     memset(nova_home_icons, 0, sizeof(nova_home_icons));
@@ -54,7 +54,7 @@ void nyx_nova_init(lv_theme_t *theme)
     nova_panel.body.shadow.width = 0;
     nova_panel.body.padding.hor = nova_panel.body.padding.ver = nova_panel.body.padding.inner = 0;
     lv_style_copy(&nova_selected, &nova_panel);
-    nova_selected.body.main_color = nova_selected.body.grad_color = n_cfg.theme_bg == 0x141A19 ? LV_COLOR_HEX(0x1C2937) : lv_color_mix(accent, panel, 14);
+    nova_selected.body.main_color = nova_selected.body.grad_color = nyx_nova_color(NOVA_COLOR_SELECTION);
     nova_selected.body.border.color = n_cfg.nova_border_color==0x334050?lv_color_mix(accent,border,160):border;
     lv_style_copy(&nova_hero, &nova_panel);
     nova_hero.body.main_color = LV_COLOR_HEX(0x1E303F);
@@ -92,6 +92,7 @@ void nyx_nova_init(lv_theme_t *theme)
     lv_style_copy(&nova_image, &lv_style_plain);
     nova_image.image.color = accent;
     nova_image.image.opa = LV_OPA_COVER;
+    lv_style_copy(&nova_logo_image, &nova_image); nova_logo_image.image.color = nyx_nova_color(NOVA_COLOR_LOGO);
     lv_style_copy(&nova_image_dim, &nova_image); nova_image_dim.image.color = dim;
     lv_style_copy(&nova_image_white, &nova_image); nova_image_white.image.color = text;
     lv_style_copy(&nova_ink_image, &nova_image); nova_ink_image.image.color = LV_COLOR_HEX(0x0C1721);
@@ -113,13 +114,17 @@ void nyx_nova_init(lv_theme_t *theme)
     lv_style_copy(&nova_tag, &nova_frame); nova_tag.body.border.width = 0; nova_tag.body.radius = 4;
     nova_tag.body.main_color = nova_tag.body.grad_color = LV_COLOR_HEX(0x162530);
     lv_style_copy(&nova_track_off, &nova_dot);
-    nova_track_off.body.main_color = nova_track_off.body.grad_color = LV_COLOR_HEX(0x334050);
+    nova_track_off.body.main_color = nova_track_off.body.grad_color = panel;
+    nova_track_off.body.radius = 8; nova_track_off.body.border.width = 1;
+    nova_track_off.body.border.color = border; nova_track_off.body.border.opa = LV_OPA_COVER;
     lv_style_copy(&nova_track_on, &nova_track_off);
-    nova_track_on.body.main_color = nova_track_on.body.grad_color = LV_COLOR_HEX(0x315B52);
+    nova_track_on.body.main_color = nova_track_on.body.grad_color = nyx_nova_color(NOVA_COLOR_SELECTION);
+    nova_track_on.body.border.color = accent;
     lv_style_copy(&nova_thumb_off, &nova_track_off);
-    nova_thumb_off.body.main_color = nova_thumb_off.body.grad_color = LV_COLOR_HEX(0x9BAABD);
+    nova_thumb_off.body.main_color = nova_thumb_off.body.grad_color = dim;
+    nova_thumb_off.body.radius = 5; nova_thumb_off.body.border.width = 0;
     lv_style_copy(&nova_thumb_on, &nova_thumb_off);
-    nova_thumb_on.body.main_color = nova_thumb_on.body.grad_color = LV_COLOR_HEX(0x8AE6B6);
+    nova_thumb_on.body.main_color = nova_thumb_on.body.grad_color = accent;
 }
 
 const lv_style_t *nyx_nova_text_style(u32 role) { return role < 5 ? &nova_text[role] : &nova_dim; }
@@ -161,7 +166,7 @@ lv_obj_t *nyx_nova_glyph(lv_obj_t *parent, const char *name, int x, int y, u32 p
         break;
     }
     lv_obj_t *image = lv_img_create(parent, NULL); lv_img_set_src(image, asset);
-    lv_img_set_style(image, &nova_image); lv_obj_set_pos(image, x, y); lv_obj_set_click(image, false);
+    lv_img_set_style(image, !strcmp(name,"brand-mark") ? &nova_logo_image : &nova_image); lv_obj_set_pos(image, x, y); lv_obj_set_click(image, false);
     return image;
 }
 
@@ -171,14 +176,14 @@ lv_obj_t *nyx_nova_icon_box(lv_obj_t *parent, const char *name, int x, int y, in
     lv_cont_set_style(frame, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
     u32 pixels = size >= 70 ? 40 : 24;
     nyx_nova_glyph(frame, name, (size - pixels) / 2, (size - pixels) / 2, pixels);
-    nyx_nova_reflect(frame, selected);
+    nyx_nova_reflect(lv_obj_get_child(frame,NULL), selected);
     return frame;
 }
 
 void nyx_nova_icon_select(lv_obj_t *icon, bool selected)
 {
     lv_cont_set_style(icon, selected ? (n_cfg.nova_halo ? &nova_frame_halo : &nova_frame_active) : &nova_frame);
-    nyx_nova_reflect(icon, selected);
+    nyx_nova_reflect(lv_obj_get_child(icon,NULL), selected);
 }
 
 static lv_res_t nova_navigate(lv_obj_t *button)
@@ -202,7 +207,7 @@ void nyx_nova_navigation_select(u32 tab)
     for (u32 i = 1; i < 6; ++i) if (nova_nav_buttons[i]) {
         lv_label_set_style(nova_nav_labels[i], i == tab&&!nova_navigation_locks ? &nova_white : &nova_dim);
         lv_img_set_style(nova_nav_icons[i], i == tab&&!nova_navigation_locks ? &nova_image_white : &nova_image_dim);
-        nyx_nova_reflect(nova_nav_buttons[i], i == tab&&!nova_navigation_locks);
+        /* Navigation borders remain static; only selected card glyphs shimmer. */
     }
     if (!nova_underline) return;
     lv_obj_set_hidden(nova_underline, !tab || tab >= 6);
@@ -220,7 +225,7 @@ void nyx_nova_navigation(lv_obj_t *screen, lv_obj_t *tabs, const char *version, 
     lv_btn_set_fit(brand, false, false); lv_btn_set_layout(brand, LV_LAYOUT_OFF);
     lv_btn_set_style(brand, LV_BTN_STYLE_REL, &nova_clear); lv_btn_set_style(brand, LV_BTN_STYLE_PR, &nova_clear);
     lv_obj_set_size(brand, 178, 60); lv_obj_set_pos(brand, 26, 8);
-    lv_btn_set_action(brand, LV_BTN_ACTION_CLICK, brand_action);
+    (void)brand_action; lv_btn_set_action(brand, LV_BTN_ACTION_CLICK, nova_navigate);
     lv_btn_set_action(brand, LV_BTN_ACTION_LONG_PR, nova_navigate); lv_obj_set_free_num(brand, 0);
     nyx_nova_glyph(brand, "brand-mark", 0, 10, 40);
     lv_obj_t *name = nyx_nova_text(brand, "HEKATE", 50, 8, 122, NOVA_BODY);
@@ -363,7 +368,7 @@ static void nova_grid_select(lv_obj_t *page, u32 index)
     const nova_item *items = nova_grid_items(ext->kind);
     for (u32 i = 0; i < ext->count; ++i) {
         lv_cont_set_style(ext->cards[i], i == index ? &nova_selected : &nova_panel);
-        nyx_nova_reflect(ext->cards[i], i == index);
+
         nyx_nova_icon_select(ext->icons[i], i == index);
         lv_cont_set_style(ext->dots[i], i == index ? &nova_dot_active : &nova_dot);
         if (ext->kind == NOVA_TOOLS && i == 6)
@@ -506,7 +511,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
     const nova_item *item = &nova_reference_home[index];
     lv_obj_t *card = nyx_nova_panel(parent, x, y, width, height);
     lv_cont_set_style(card, hero ? &nova_selected : &nova_panel);
-    nyx_nova_reflect(card, hero);
+
     lv_obj_t *button = lv_btn_create(card, NULL);
     lv_btn_set_fit(button, false, false); lv_btn_set_layout(button, LV_LAYOUT_OFF);
     lv_btn_set_style(button, LV_BTN_STYLE_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_PR, &nova_clear);
@@ -563,7 +568,7 @@ static void nova_carousel_update(void)
     for (u32 i = 0; i < 5; ++i) {
         lv_btn_set_style(home_carousel.cards[i], LV_BTN_STYLE_REL, i == selected ? &nova_selected : &nova_panel);
         nyx_nova_icon_select(home_carousel.icons[i], i == selected);
-        nyx_nova_reflect(home_carousel.cards[i], i == selected);
+
     }
     lv_label_set_text(home_carousel.title, nova_reference_home[selected].title);
     lv_label_set_text(home_carousel.detail, nova_reference_home[selected].description);
@@ -638,7 +643,8 @@ bool nyx_nova_toggle_refresh(lv_obj_t *button)
     nova_toggle_ext *ext = lv_obj_get_ext_attr(button); bool enabled = (lv_btn_get_state(button) & LV_BTN_STATE_TGL_REL) != 0;
     lv_cont_set_style(ext->track, enabled ? &nova_track_on : &nova_track_off);
     lv_cont_set_style(ext->knob, enabled ? &nova_thumb_on : &nova_thumb_off);
-    lv_obj_set_x(ext->knob, enabled ? 31 : 5);
+    lv_obj_set_x(ext->knob, enabled ? 35 : 5);
+    lv_label_set_style(ext->state, enabled ? &nova_accent_text : &nova_dim);
     lv_label_set_text(ext->state, enabled ? "Actif" : "Inactif");
     if (status_bar.mid && nyx_options_has_changes()) {
         lv_obj_set_opa_scale(status_bar.mid, LV_OPA_COVER); lv_obj_set_click(status_bar.mid, true);
@@ -657,7 +663,7 @@ static lv_obj_t *nova_toggle_base(lv_obj_t *parent, lv_action_t action, bool ena
     lv_btn_set_style(button, LV_BTN_STYLE_TGL_REL, &nova_clear); lv_btn_set_style(button, LV_BTN_STYLE_TGL_PR, &nova_clear);
     lv_obj_set_size(button, width, height); lv_btn_set_toggle(button, true); lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
     ext->track = lv_cont_create(button, NULL); lv_cont_set_style(ext->track, &nova_track_off); lv_cont_set_fit(ext->track, false, false);
-    lv_obj_set_size(ext->track, 60, 34); lv_obj_set_pos(ext->track, track_x, track_y); lv_obj_set_click(ext->track, false);
+    lv_obj_set_size(ext->track, 64, 34); lv_obj_set_pos(ext->track, track_x, track_y); lv_obj_set_click(ext->track, false);
     ext->knob = lv_cont_create(ext->track, NULL); lv_cont_set_style(ext->knob, &nova_thumb_off); lv_cont_set_fit(ext->knob, false, false);
     lv_obj_set_size(ext->knob, 24, 24); lv_obj_set_pos(ext->knob, 5, 5); lv_obj_set_click(ext->knob, false);
     ext->power = nyx_nova_glyph(ext->knob, "power", 3, 3, 18); lv_img_set_style(ext->power, &nova_ink_image);
@@ -712,11 +718,18 @@ void nyx_nova_navigation_lock(bool lock)
 
 lv_color_t nyx_nova_color(u32 role)
 {
+    if (role == NOVA_COLOR_LOGO) return LV_COLOR_HEX(n_cfg.nova_logo_color);
+    if (role == NOVA_COLOR_ICONS) return LV_COLOR_HEX(n_cfg.nova_icon_color);
+    if (role == NOVA_COLOR_SELECTION) return LV_COLOR_HEX(n_cfg.nova_selection_color);
     if (role == NOVA_COLOR_TEXT) return LV_COLOR_HEX(n_cfg.nova_text_color);
     if (role == NOVA_COLOR_BORDER) return LV_COLOR_HEX(n_cfg.nova_border_color);
     if (role == NOVA_COLOR_REFLECTION) return LV_COLOR_HEX(n_cfg.nova_reflection_color);
     return LV_COLOR_HEX(n_cfg.theme_bg == 0x141A19 ? 0x10151D : n_cfg.theme_bg);
 }
+
+/* Visual bands only: no changes to fan policy or hardware protection. */
+u32 nyx_nova_temperature_rgb(u32 degrees)
+{ return degrees < 45 ? 0x8AE6B6 : degrees < 55 ? 0xF3D36A : degrees < 65 ? 0xF4A261 : 0xFF6B6B; }
 
 void nyx_nova_about(lv_obj_t *page)
 {

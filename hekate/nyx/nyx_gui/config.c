@@ -69,6 +69,9 @@ void set_nyx_default_configuration()
 	n_cfg.nova_menu_opacity = 100;
 	n_cfg.nova_icon_opacity = 100;
 	n_cfg.wallpaper_file[0] = 0;
+	n_cfg.nova_logo_color = 0x55C9F1;
+	n_cfg.nova_icon_color = 0x55C9F1;
+	n_cfg.nova_selection_color = 0x1C2937;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -116,6 +119,9 @@ void nyx_sanitize_appearance(void)
 	if (n_cfg.background_speed < 1 || n_cfg.background_speed > 3) n_cfg.background_speed = 2;
 	if (n_cfg.background_opacity < 10 || n_cfg.background_opacity > 50) n_cfg.background_opacity = 20;
 	if (n_cfg.nova_halo > 1) n_cfg.nova_halo = 1;
+	if (n_cfg.nova_logo_color > 0xFFFFFF) n_cfg.nova_logo_color = 0x55C9F1;
+	if (n_cfg.nova_icon_color > 0xFFFFFF) n_cfg.nova_icon_color = 0x55C9F1;
+	if (n_cfg.nova_selection_color > 0xFFFFFF) n_cfg.nova_selection_color = 0x1C2937;
 	if (n_cfg.nova_text_color > 0xFFFFFF) n_cfg.nova_text_color = 0xF2F5FA;
 	if (n_cfg.nova_border_color > 0xFFFFFF) n_cfg.nova_border_color = 0x334050;
 	if (n_cfg.nova_reflection_color > 0xFFFFFF) n_cfg.nova_reflection_color = 0x55C9F1;
@@ -163,6 +169,9 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "background_speed")) n_cfg.background_speed = appearance_number(value, 2);
 	else if (!strcmp(key, "background_opacity")) n_cfg.background_opacity = appearance_number(value, 20);
 	else if (!strcmp(key, "nova_halo")) n_cfg.nova_halo = appearance_number(value, 1);
+	else if (!strcmp(key, "nova_logo_color")) n_cfg.nova_logo_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "nova_icon_color")) n_cfg.nova_icon_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "nova_selection_color")) n_cfg.nova_selection_color = appearance_rgb(value, 0x1C2937);
 	else if (!strcmp(key, "nova_text_color")) n_cfg.nova_text_color = appearance_rgb(value, 0xF2F5FA);
 	else if (!strcmp(key, "nova_border_color")) n_cfg.nova_border_color = appearance_rgb(value, 0x334050);
 	else if (!strcmp(key, "nova_reflection_color")) n_cfg.nova_reflection_color = appearance_rgb(value, 0x55C9F1);
@@ -315,7 +324,7 @@ int create_nyx_config_entry(bool force_unmount)
 	// Make sure that bootloader folder exists.
 	f_mkdir("bootloader");
 
-	if (f_open(&fp, "bootloader/nyx.ini", FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
+	if (f_open(&fp, "bootloader/nyx.ini.nova.tmp", FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
 		goto out;
 	file_open = true;
 
@@ -434,6 +443,15 @@ int create_nyx_config_entry(bool force_unmount)
 	if (f_puts("\nnova_icon_opacity=", &fp) < 0) goto out;
 	itoa(n_cfg.nova_icon_opacity, lbuf, 10);
 	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_logo_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_logo_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_icon_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_icon_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_selection_color=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_selection_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
 	if (f_puts("\nwallpaper_file=", &fp) < 0 || f_puts(n_cfg.wallpaper_file, &fp) < 0) goto out;
 
 	if (f_puts("\n", &fp) < 0)
@@ -444,6 +462,25 @@ int create_nyx_config_entry(bool force_unmount)
 out:
 	if (file_open && f_close(&fp) != FR_OK)
 		result = 1;
+
+    /* Commit only a completely written AND closed file. Keep a recoverable
+     * previous copy across the two FAT renames, including power loss. */
+    if (!result) {
+        FRESULT existing=f_stat("bootloader/nyx.ini",NULL);
+        bool previous=existing==FR_OK;
+        if (!previous && existing!=FR_NO_FILE && existing!=FR_NO_PATH) result=1;
+        if (!result && previous) {
+            FRESULT removed=f_unlink("bootloader/nyx.ini.nova.bak");
+            if (removed!=FR_OK && removed!=FR_NO_FILE && removed!=FR_NO_PATH) result=1;
+            if (!result && f_rename("bootloader/nyx.ini","bootloader/nyx.ini.nova.bak")!=FR_OK) result=1;
+        }
+        if (!result && f_rename("bootloader/nyx.ini.nova.tmp","bootloader/nyx.ini")!=FR_OK) {
+            result=1;
+            if(previous) f_rename("bootloader/nyx.ini.nova.bak","bootloader/nyx.ini");
+        }
+        if (!result && previous) f_unlink("bootloader/nyx.ini.nova.bak");
+    }
+    if(result && file_open) f_unlink("bootloader/nyx.ini.nova.tmp");
 
 	if (force_unmount || !sd_mounted)
 		sd_unmount();

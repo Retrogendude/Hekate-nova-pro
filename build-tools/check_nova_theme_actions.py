@@ -16,7 +16,7 @@ preamble=r'''
 typedef uint32_t u32;typedef int lv_res_t;typedef struct{int x;}lv_obj_t;typedef struct{int x;}lv_img_dsc_t;
 #define LV_RES_OK 0
 #define FR_OK 0
-enum{NOVA_COLOR_BACKGROUND,NOVA_COLOR_TEXT,NOVA_COLOR_BORDER,NOVA_COLOR_REFLECTION};
+enum{NOVA_COLOR_BACKGROUND,NOVA_COLOR_TEXT,NOVA_COLOR_BORDER,NOVA_COLOR_REFLECTION,NOVA_COLOR_LOGO,NOVA_COLOR_ICONS,NOVA_COLOR_SELECTION};
 '''+types+r'''
 static nyx_config n_cfg,saved;static struct{nyx_config pending;u32 target;}nova_theme;
 static bool mounted,dirty,invalid_wallpaper,active,saved_flag;
@@ -37,9 +37,9 @@ static void theme_notice(const char*s){strcpy(message,s);notices++;}
 tests=r'''
 static unsigned checks;
 #define CHECK(x)do{checks++;assert(x);}while(0)
-static void reset(void){memset(&n_cfg,0,sizeof n_cfg);n_cfg.theme_bg=0x141A19;n_cfg.theme_color=173;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=n_cfg.nova_icon_opacity=100;strcpy(n_cfg.font_file,"Lecture.nyxf");n_cfg.font_size=30;n_cfg.language=4;n_cfg.verification=2;nova_theme.pending=n_cfg;nova_theme.pending.theme_bg=0x080A0D;nova_theme.pending.nova_text_color=0xAABBCC;nova_theme.pending.nova_border_color=0x112233;nova_theme.pending.nova_reflection_color=0x778899;nova_theme.pending.nova_menu_opacity=50;nova_theme.pending.nova_icon_opacity=25;strcpy(nova_theme.pending.wallpaper_file,"Nova-Carbon.bmp");mounted=invalid_wallpaper=active=saved_flag=false;dirty=true;mount_error=stat_error=boot_error=write_error=mounts=unmounts=boot_writes=writes=reloads=notices=wallpaper_reads=wallpaper_frees=0;message[0]=0;}
+static void reset(void){memset(&n_cfg,0,sizeof n_cfg);n_cfg.theme_bg=0x141A19;n_cfg.theme_color=173;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=n_cfg.nova_icon_opacity=100;strcpy(n_cfg.font_file,"Lecture.nyxf");n_cfg.font_size=30;n_cfg.language=4;n_cfg.verification=2;nova_theme.pending=n_cfg;nova_theme.pending.theme_bg=0x080A0D;nova_theme.pending.nova_text_color=0xAABBCC;nova_theme.pending.nova_border_color=0x112233;nova_theme.pending.nova_reflection_color=0x778899;nova_theme.pending.nova_logo_color=0xAB20EF;nova_theme.pending.nova_icon_color=0x20ABEF;nova_theme.pending.nova_selection_color=0x222244;nova_theme.pending.nova_menu_opacity=50;nova_theme.pending.nova_icon_opacity=25;strcpy(nova_theme.pending.wallpaper_file,"Nova-Carbon.bmp");mounted=invalid_wallpaper=active=saved_flag=false;dirty=true;mount_error=stat_error=boot_error=write_error=mounts=unmounts=boot_writes=writes=reloads=notices=wallpaper_reads=wallpaper_frees=0;message[0]=0;}
 int main(void){
- for(u32 role=0;role<4;role++){reset();nova_theme.target=role;u32*target=theme_target_color();CHECK(target==(role==0?&nova_theme.pending.theme_bg:role==1?&nova_theme.pending.nova_text_color:role==2?&nova_theme.pending.nova_border_color:&nova_theme.pending.nova_reflection_color));}
+ for(u32 role=0;role<7;role++){reset();nova_theme.target=role;u32*target=theme_target_color();CHECK(target==(role==0?&nova_theme.pending.theme_bg:role==1?&nova_theme.pending.nova_text_color:role==2?&nova_theme.pending.nova_border_color:role==4?&nova_theme.pending.nova_logo_color:role==5?&nova_theme.pending.nova_icon_color:role==6?&nova_theme.pending.nova_selection_color:&nova_theme.pending.theme_bg));}
  reset();nyx_config before=n_cfg;mount_error=1;theme_save(NULL);CHECK(!writes&&!reloads&&!boot_writes);CHECK(!memcmp(&before,&n_cfg,sizeof before));CHECK(!mounted&&notices==1);
  for(int was_mounted=0;was_mounted<2;was_mounted++){
   reset();mounted=was_mounted;before=n_cfg;stat_error=1;theme_save(NULL);CHECK(!writes&&!reloads&&!boot_writes&&!wallpaper_reads);CHECK(!memcmp(&before,&n_cfg,sizeof before));CHECK(mounted==!!was_mounted&&unmounts==!was_mounted);
@@ -47,7 +47,7 @@ int main(void){
   reset();mounted=was_mounted;before=n_cfg;boot_error=1;theme_save(NULL);CHECK(wallpaper_reads==1&&wallpaper_frees==1&&boot_writes==1&&!writes&&!reloads);CHECK(!memcmp(&before,&n_cfg,sizeof before)&&dirty);CHECK(mounted==!!was_mounted&&unmounts==!was_mounted);
  }
  reset();before=n_cfg;write_error=1;theme_save(NULL);CHECK(boot_writes==1&&writes==1&&!reloads);CHECK(!memcmp(&before,&n_cfg,sizeof before)&&!dirty);CHECK(!active&&!saved_flag&&!mounted);
- write_error=0;theme_save(NULL);CHECK(boot_writes==1&&writes==2&&reloads==1);CHECK(active&&saved_flag&&!mounted);CHECK(n_cfg.nova_menu_opacity==50&&n_cfg.nova_icon_opacity==25&&!strcmp(n_cfg.wallpaper_file,"Nova-Carbon.bmp"));CHECK(n_cfg.nova_text_color==0xAABBCC&&n_cfg.nova_border_color==0x112233&&n_cfg.nova_reflection_color==0x778899&&n_cfg.theme_bg==0x080A0D);CHECK(n_cfg.theme_color==173&&n_cfg.language==4&&n_cfg.font_size==30&&n_cfg.verification==2&&!strcmp(n_cfg.font_file,"Lecture.nyxf"));
+ write_error=0;theme_save(NULL);CHECK(boot_writes==1&&writes==2&&reloads==1);CHECK(active&&saved_flag&&!mounted);CHECK(n_cfg.nova_menu_opacity==50&&n_cfg.nova_icon_opacity==25&&!strcmp(n_cfg.wallpaper_file,"Nova-Carbon.bmp"));CHECK(n_cfg.nova_logo_color==0xAB20EF&&n_cfg.nova_icon_color==0x20ABEF&&n_cfg.nova_selection_color==0x222244);CHECK(n_cfg.nova_text_color==0xAABBCC&&n_cfg.nova_border_color==0x112233&&n_cfg.nova_reflection_color==0x778899&&n_cfg.theme_bg==0x080A0D);CHECK(n_cfg.theme_color==173&&n_cfg.language==4&&n_cfg.font_size==30&&n_cfg.verification==2&&!strcmp(n_cfg.font_file,"Lecture.nyxf"));
  reset();nova_theme.pending.wallpaper_file[0]=0;theme_save(NULL);CHECK(!wallpaper_reads&&!wallpaper_frees&&writes==1&&reloads==1&&!n_cfg.wallpaper_file[0]);
  printf("PASS: %u actual-C theme action checks; independent targets, missing SD/Nyx/wallpaper, mount ownership, boot-save failure, write rollback/retry, successful save and unrelated settings preserved.\n",checks);return 0;
 }

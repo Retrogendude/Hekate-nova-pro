@@ -10,8 +10,8 @@
 #include <libs/lvgl/lv_misc/lv_math.h>
 #include <string.h>
 
-/* Static wallpaper only. Compatibility hooks now control the selected-border
- * reflection; waves, particles and aurora are removed from this build. */
+/* Static wallpaper only. Compatibility hooks now control the selected-icon
+ * sheen; waves, particles and aurora are removed from this build. */
 void nyx_background_create(lv_obj_t *screen) { nyx_nova_backdrop(screen, 0); }
 void nyx_background_pause(bool pause) { nyx_nova_reflection_pause(pause); }
 void nyx_background_interaction(void) { nyx_nova_reflection_interaction(); }

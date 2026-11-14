@@ -119,7 +119,7 @@ int main(void) {
    n_cfg.background_effect=effect;n_cfg.background_speed=speed;n_cfg.background_opacity=opacity;
    u32 halo=(size/2+effect)&1;n_cfg.nova_halo=halo;
    n_cfg.language=I18N_RU;n_cfg.home_layout=HOME_LAYOUT_CAROUSEL;
-   require(create_nyx_config_entry(false)==0&&writes==51,"all appearance combinations write all fields");
+   require(create_nyx_config_entry(false)==0&&writes==57,"all appearance combinations write all fields");
    set_nyx_default_configuration();load_written();
    require(!strcmp(n_cfg.font_file,roundtrip_names[font])&&n_cfg.font_size==size&&
     n_cfg.background_effect==effect&&n_cfg.background_speed==speed&&n_cfg.background_opacity==opacity&&n_cfg.nova_halo==halo,"actual INI appearance roundtrip");++cases;

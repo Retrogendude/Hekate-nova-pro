@@ -450,81 +450,93 @@ typedef struct _time_edit_obj_t
 } time_edit_obj_t;
 
 time_edit_obj_t clock_ctxt;
+static u32 clock_language;
 
-static lv_res_t _action_clock_edit(lv_obj_t *btns, const char * txt)
+static void _clock_apply_selection(void)
 {
-	int btn_idx = lv_btnm_get_pressed(btns);
+	rtc_time_t time;
+	max77620_rtc_get_time(&time);
+	u32 epoch = max77620_rtc_date_to_epoch(&time);
 
-	if (btn_idx == 1)
+	u32 year  = lv_roller_get_selected(clock_ctxt.year) + CLOCK_MIN_YEAR;
+	u32 month = lv_roller_get_selected(clock_ctxt.month) + 1;
+	u32 day   = lv_roller_get_selected(clock_ctxt.day) + 1;
+	u32 hour  = lv_roller_get_selected(clock_ctxt.hour);
+	u32 min   = lv_roller_get_selected(clock_ctxt.min);
+
+	switch (month)
 	{
-		rtc_time_t time;
-		max77620_rtc_get_time(&time);
-		u32 epoch = max77620_rtc_date_to_epoch(&time);
-
-		u32 year  = lv_roller_get_selected(clock_ctxt.year) + CLOCK_MIN_YEAR;
-		u32 month = lv_roller_get_selected(clock_ctxt.month) + 1;
-		u32 day   = lv_roller_get_selected(clock_ctxt.day) + 1;
-		u32 hour  = lv_roller_get_selected(clock_ctxt.hour);
-		u32 min   = lv_roller_get_selected(clock_ctxt.min);
-
-		switch (month)
-		{
-		case 2:
-			if (!(year % 4) && day > 29)
-				day = 29;
-			else if (day > 28)
-				day = 28;
-			break;
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			if (day > 30)
-				day = 30;
-			break;
-		}
-
-		time.year  = year;
-		time.month = month;
-		time.day   = day;
-		time.hour  = hour;
-		time.min   = min;
-
-		u32 new_epoch = max77620_rtc_date_to_epoch(&time);
-
-		// Stored in u32 and allow overflow for integer offset casting.
-		n_cfg.timeoffset = new_epoch - epoch;
-
-		// If canceled set 1 for invalidating first boot clock edit.
-		if (!n_cfg.timeoffset)
-			n_cfg.timeoffset = 1;
-		else
-		{
-			// Adjust for DST between 28 march and 28 october.
-			// Good enough to cover all years as week info is not valid.
-			u16 md = (time.month << 8) | time.day;
-			if (n_cfg.timedst && md >= 0x31C && md < 0xA1C)
-				n_cfg.timeoffset -= 3600; // Store time in non DST.
-			max77620_rtc_set_epoch_offset((int)n_cfg.timeoffset);
-		}
-
-		nyx_changes_made = true;
+	case 2:
+		if (day > ((!(year % 4) && ((year % 100) || !(year % 400))) ? 29u : 28u))
+			day = (!(year % 4) && ((year % 100) || !(year % 400))) ? 29 : 28;
+		break;
+	case 4:
+	case 6:
+	case 9:
+	case 11:
+		if (day > 30)
+			day = 30;
+		break;
 	}
 
-	nyx_mbox_action(btns, txt);
+	time.year  = year;
+	time.month = month;
+	time.day   = day;
+	time.hour  = hour;
+	time.min   = min;
 
-	return LV_RES_INV;
+	u32 new_epoch = max77620_rtc_date_to_epoch(&time);
+
+	// Stored in u32 and allow overflow for integer offset casting.
+	n_cfg.timeoffset = new_epoch - epoch;
+
+	// If canceled set 1 for invalidating first boot clock edit.
+	if (!n_cfg.timeoffset)
+		n_cfg.timeoffset = 1;
+	else
+	{
+		// Adjust for DST between 28 march and 28 october.
+		// Good enough to cover all years as week info is not valid.
+		u16 md = (time.month << 8) | time.day;
+		if (n_cfg.timedst && md >= 0x31C && md < 0xA1C)
+			n_cfg.timeoffset -= 3600; // Store time in non DST.
+		max77620_rtc_set_epoch_offset((int)n_cfg.timeoffset);
+	}
+
+	nyx_changes_made = true;
 }
 
-static lv_res_t _action_clock_edit_save(lv_obj_t *btns, const char * txt)
+static lv_res_t _action_clock_edit(lv_obj_t *btns, const char *txt)
 {
-	_action_clock_edit(btns, txt);
+    if(lv_btnm_get_pressed(btns)==1)_clock_apply_selection();
+    nyx_mbox_action(btns,txt);return LV_RES_INV;
+}
 
-	// Save if changes were made.
-	if (nyx_changes_made)
-		_save_nyx_options_action(NULL);
+static lv_res_t _action_clock_edit_save(lv_obj_t *btns, const char *txt)
+{
+    /* Keep Hekate's original first-start dialog; only add a pending language.
+     * Save and reload once, after its existing Done button is accepted. */
+    if(lv_btnm_get_pressed(btns)!=1)return _action_clock_edit(btns,txt);
+    bool mounted=sd_get_card_mounted();
+    if(sd_mount()){nyx_show_help("SD card unavailable. Nothing was saved.");return LV_RES_OK;}
+    if(f_stat("bootloader/sys/nyx.bin",NULL)!=FR_OK){if(!mounted)sd_unmount();nyx_show_help("Nyx is missing. Nothing was saved.");return LV_RES_OK;}
+    if(!nyx_options_commit_boot()){if(!mounted)sd_unmount();nyx_show_help("Could not save settings. Check the SD card and retry.");return LV_RES_OK;}
+    nyx_config previous=n_cfg;bool was_dirty=nyx_changes_made;
+    _clock_apply_selection();n_cfg.language=clock_language<I18N_LANGUAGE_COUNT?clock_language:I18N_EN;
+    if(create_nyx_config_entry(true)){
+        n_cfg=previous;nyx_changes_made=was_dirty;
+        max77620_rtc_set_epoch_offset(previous.timeoffset==1?0:(int)previous.timeoffset);
+        nyx_show_help("Could not save settings. Check the SD card and retry.");return LV_RES_OK;
+    }
+    nyx_changes_made=false;reload_nyx(NULL,false);
+    nyx_mbox_action(btns,txt);return LV_RES_INV;
+}
 
-	return LV_RES_INV;
+static lv_res_t _clock_language_select(lv_obj_t *button)
+{
+    u32 language=lv_obj_get_free_num(button);
+    if(language<I18N_LANGUAGE_COUNT)clock_language=language;
+    return LV_RES_OK;
 }
 
 static lv_res_t _action_auto_dst_toggle(lv_obj_t *btn)
@@ -573,6 +585,7 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
 	lv_obj_set_size(dark_bg, LV_HOR_RES, LV_VER_RES);
 
 	static const char *mbox_btn_map[] = { "\251", "\222Done", "\222Cancel", "\251", "" };
+    static const char *first_btn_map[] = { "\251", "\222Save & reload", "\222Cancel", "\251", "" };
 	lv_obj_t *mbox = lv_mbox_create(dark_bg, NULL);
 	lv_mbox_set_style(mbox, LV_MBOX_STYLE_BG, &mbox_style);
 	lv_mbox_set_recolor_text(mbox, true);
@@ -674,8 +687,15 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
 		lv_btn_set_state(btn_dst, LV_BTN_STATE_TGL_REL);
 	nyx_generic_onoff_toggle(btn_dst);
 
+    clock_language=n_cfg.language;
+    if(!btn){
+        lv_obj_t *label=lv_label_create(mbox,NULL);lv_label_set_text(label,"Langue");
+        lv_label_set_style(label,&hint_small_style);
+        nyx_choices_create(mbox,"English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",clock_language,4,LV_HOR_RES/9*6-48,46,_clock_language_select,0,true);
+    }
+
 	// If btn is empty, save options also because it was launched from boot.
-	lv_mbox_add_btns(mbox, mbox_btn_map, btn ? _action_clock_edit : _action_clock_edit_save);
+	lv_mbox_add_btns(mbox, btn?mbox_btn_map:first_btn_map, btn ? _action_clock_edit : _action_clock_edit_save);
 
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_top(mbox, true);
@@ -685,6 +705,7 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
 
 void first_time_clock_edit(void *param)
 {
+	(void)param;
 	_create_mbox_clock_edit(NULL);
 }
 
@@ -1407,7 +1428,7 @@ static lv_res_t _nova_halo_toggle(lv_obj_t *button)
     n_cfg.nova_halo = !n_cfg.nova_halo; nyx_changes_made = true;
     lv_btn_set_state(button, n_cfg.nova_halo ? LV_BTN_STATE_TGL_REL : LV_BTN_STATE_REL);
     nyx_generic_onoff_toggle(button); nyx_nova_refresh_halos();
-    if (nova_contour_value) lv_label_set_text(nova_contour_value, n_cfg.nova_halo ? "Reflet animé" : "Contour fixe");
+    if (nova_contour_value) lv_label_set_text(nova_contour_value, n_cfg.nova_halo ? "Reflet blanc diagonal" : "Sans reflet");
     return LV_RES_OK;
 }
 static lv_res_t _nova_language_action(lv_obj_t *button)
@@ -1489,7 +1510,7 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height);
     nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height);
     nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height);
-    nyx_nova_switch_row(system, "Effets de sélection", "Reflet léger sur les contours actifs.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
+    nyx_nova_switch_row(system, "Effets de sélection", "Reflet blanc discret sur l’icône sélectionnée.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height);
     const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português"};
     _nova_setting_line(reading, "Language", language_names[n_cfg.language < 7 ? n_cfg.language : 0], 64, _nova_language_menu);
     const u32 order[] = {1,0,2,3,4,5,6}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT"};
@@ -1500,5 +1521,5 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     _nova_setting_line(reading, "Text size", size, 226, _nova_font_action);
     const u32 sizes[] = {24,28,32};
     for (u32 i = 0; i < 3; ++i) { char number[12]; s_printf(number, "%d", sizes[i]); _nova_chip(reading, number, 24 + i * 66, 280, 58, n_cfg.font_size == sizes[i], _nova_size_action, sizes[i]); }
-    nova_contour_value = _nova_setting_line(reading, "Sélection", n_cfg.nova_halo ? "Reflet animé" : "Contour fixe", 334, NULL);
+    nova_contour_value = _nova_setting_line(reading, "Sélection", n_cfg.nova_halo ? "Reflet blanc diagonal" : "Sans reflet", 334, NULL);
 }

@@ -320,7 +320,11 @@ static void _load_saved_configuration()
 	ini_free(&ini_sections);
 
 skip_main_cfg_parse:
-	if (ini_parse(&ini_nyx_sections, "bootloader/nyx.ini", false))
+	/* Recover the previous complete file if power was lost during commit. */
+    const char *nyx_ini="bootloader/nyx.ini";
+    FRESULT cfg_status=f_stat(nyx_ini,NULL);
+    if(cfg_status==FR_NO_FILE||cfg_status==FR_NO_PATH)nyx_ini="bootloader/nyx.ini.nova.bak";
+    if (ini_parse(&ini_nyx_sections, nyx_ini, false))
 		return;
 
 	// Load Nyx configuration.

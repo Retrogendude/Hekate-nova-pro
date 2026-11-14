@@ -32,6 +32,9 @@ preamble = r'''
 
 typedef uint32_t u32;
 typedef struct { bool open; } FIL;
+typedef int FRESULT;
+#define FR_NO_FILE 4
+#define FR_NO_PATH 5
 #define FR_OK 0
 #define FA_WRITE 2
 #define FA_CREATE_ALWAYS 8
@@ -51,7 +54,7 @@ static void sd_unmount(void) { unmounts++; mounted = false; }
 static int f_mkdir(const char *path) { require(!strcmp(path, "bootloader"), "mkdir path"); return 0; }
 static int f_open(FIL *file, const char *path, int flags) {
     opens++;
-    require(!strcmp(path, "bootloader/nyx.ini"), "writer path");
+    require(!strcmp(path, "bootloader/nyx.ini.nova.tmp"), "writer path");
     require(flags == (FA_WRITE | FA_CREATE_ALWAYS), "writer mode");
     if (fail_open) return 1;
     file->open = true; return 0;
@@ -70,6 +73,9 @@ static int f_close(FIL *file) {
     file->open = false; closes++;
     return fail_close ? 1 : FR_OK;
 }
+static int f_stat(const char *path,void *info){(void)path;(void)info;return FR_NO_FILE;}
+static int f_unlink(const char *path){(void)path;return FR_OK;}
+static int f_rename(const char *from,const char *to){(void)from;(void)to;return FR_OK;}
 static char *test_itoa(unsigned value, char *output, int base) {
     require(base == 10 || base == 16, "supported numeric base");
     sprintf(output, base == 16 ? "%x" : "%u", value);
@@ -123,12 +129,12 @@ int main(void) {
             "[config]\nthemebg=1a2b3c\nthemecolor=173\nentries5col=1\ntimeoffset=1234abcd"
             "\ntimedst=1\nhomescreen=3\nhome_layout=%u\nverification=2\numsemmcrw=1"
             "\njcdisable=0\njcforceright=1\nbpmpclock=5\nlanguage=%u"
-            "\nfont_file=Readable.nyxf\nfont_size=36\nbackground_effect=3\nbackground_speed=1\nbackground_opacity=50\nnova_halo=1\nnova_text_color=F2F5FA\nnova_border_color=334050\nnova_reflection_color=55C9F1\nnova_menu_opacity=100\nnova_icon_opacity=100\nwallpaper_file=\n", layout, I18N_RU);
+            "\nfont_file=Readable.nyxf\nfont_size=36\nbackground_effect=3\nbackground_speed=1\nbackground_opacity=50\nnova_halo=1\nnova_text_color=F2F5FA\nnova_border_color=334050\nnova_reflection_color=55C9F1\nnova_menu_opacity=100\nnova_icon_opacity=100\nnova_logo_color=55C9F1\nnova_icon_color=55C9F1\nnova_selection_color=1C2937\nwallpaper_file=\n", layout, I18N_RU);
         require(!strcmp(written, expected), "exact full configuration and bases");
         require(closes == 1 && unmounts == 1 && !mounted, "success cleanup");
         require(n_cfg.home_layout == layout, "valid layout remains chosen");
         require(n_cfg.language == I18N_RU, "valid language remains chosen independently");
-        require(writes == 51, "all 51 configuration writes execute");
+        require(writes == 57, "all 57 configuration writes execute");
         successful_writes = writes; cases++;
     }
     unsigned invalid_language[] = {I18N_LANGUAGE_COUNT, 17, UINT32_MAX};

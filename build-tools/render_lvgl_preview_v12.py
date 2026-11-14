@@ -15,7 +15,7 @@ from PIL import Image
 
 work=Path(__file__).resolve().parent
 project=work/'hekate-6.5.4'
-directory=work/'lvgl-preview-v11';directory.mkdir(exist_ok=True)
+directory=work/'lvgl-preview-v12';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -51,7 +51,8 @@ static lv_obj_t *autoboot_btn;
 static char *text_color="#FF0000";
 #define s_printf sprintf
 static lv_obj_t *close_btn,*autorcm_btn;
-static lv_style_t hint_small_style, hint_small_style_white;
+static lv_style_t hint_small_style, hint_small_style_white,mbox_darken;
+static lv_res_t _create_mbox_clock_edit(lv_obj_t *button);
 static lv_img_dsc_t *hekate_bg;
 static char font_root[1024];
 typedef unsigned int UINT;
@@ -112,19 +113,24 @@ def function(source,name):
     return source[at.start():at.end()+end.end()]+'\n'
 body+=function(gui,'nyx_generic_onoff_toggle')
 body+=r'''
-typedef struct{u32 hour,min;}rtc_time_t;
+typedef struct{u8 weekday,sec,min,hour,day,month;u16 year;}rtc_time_t;
 enum{BQ24193_ChargeStatus,MAX17050_RepSOC,MAX17050_VCELL,MAX17050_Current};
 static u32 preview_battery_percent=82;
-static void max77620_rtc_get_time_adjusted(rtc_time_t*t){t->hour=18;t->min=42;}
-static u16 tmp451_get_soc_temp(bool b){(void)b;return 28<<8;}
+static u32 preview_temperature=28;
+static void max77620_rtc_get_time_adjusted(rtc_time_t*t){*t=(rtc_time_t){.year=2026,.month=11,.day=6,.hour=18,.min=42};}
+static void max77620_rtc_get_time(rtc_time_t*t){max77620_rtc_get_time_adjusted(t);}
+static void max77620_rtc_set_epoch_offset(int offset){(void)offset;}
+static void max77620_rtc_set_auto_dst(bool enabled){(void)enabled;}
+
+static u16 tmp451_get_soc_temp(bool b){(void)b;return preview_temperature<<8;}
 static void bq24193_get_property(int p,int*v){(void)p;*v=0;}
 static void max17050_get_property(int p,int*v){*v=p==MAX17050_RepSOC?preview_battery_percent<<8:p==MAX17050_VCELL?4000:0;}
-static void fan_set_from_temp(u32 t){assert(t==28);}
+static void fan_set_from_temp(u32 t){assert(t==preview_temperature);}
 '''
 body+=function(gui,'_update_status_bar')
 opts=(nyx/'frontend/gui_options.c').read_text(encoding='utf-8')
 body+=r"""
-ACTION(_action_win_nyx_options_close) ACTION(_joycon_info_dump_action) ACTION(_create_mbox_clock_edit)
+ACTION(_action_win_nyx_options_close) ACTION(_joycon_info_dump_action)
 ACTION(_autoboot_hide_delay_action)
 ACTION(_slider_brightness_action) ACTION(_save_nyx_options_action)
 """
@@ -133,6 +139,13 @@ body+=function(opts,'nyx_options_appearance_active')
 body+=opts[opts.index('static const u16 theme_colors[18]'):opts.index('typedef struct _time_edit_obj_t')]
 body+=opts[opts.index('/* Compact pages keep controls'):]
 body+=stripped(nyx/'frontend/gui_nova_theme.c')
+rtc=(project/'bdk/rtc/max77620-rtc.c').read_text()
+at=rtc.index('u32 max77620_rtc_date_to_epoch(');end=rtc.index('\n}',at)+2
+body+=rtc[at:end]+'\n'
+body+='\n'.join(re.findall(r'^#define CLOCK_[^\n]*',opts,re.M))+'\n'
+body+=function(gui,'nyx_create_onoff_button')+function(gui,'nyx_mbox_action')
+body+=opts[opts.index('typedef struct _time_edit_obj_t'):opts.index('static lv_res_t _joycon_info_dump_action(')]
+
 emmc=(nyx/'frontend/gui_emmc_tools.c').read_text(encoding='utf-8')
 body+=emmc[emmc.index('typedef struct _emmc_backup_buttons_t'):emmc.index('static void _create_window_backup_restore')]
 body+='\nACTION(_emmc_backup_buttons_decider)\n'
@@ -255,8 +268,11 @@ SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX);
 _set_error_mode(_OUT_TO_STDERR);
 assert(argc==7);strcpy(font_root,argv[1]);
 FILE*f=fopen(argv[2],"rb");assert(f);fseek(f,0,SEEK_END);u32 bytes=ftell(f);rewind(f);void*res=VirtualAlloc((void*)0xEE000000,bytes,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);assert(res==(void*)0xEE000000);assert(fread(res,1,bytes,f)==bytes);fclose(f);
-n_cfg.theme_bg=0x141A19;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=100;n_cfg.nova_icon_opacity=100;n_cfg.font_size=atoi(argv[5]);strcpy(n_cfg.font_file,getenv("NYX_PREVIEW_FONT")?getenv("NYX_PREVIEW_FONT"):"Lecture.nyxf");n_cfg.language=atoi(argv[4]);n_cfg.background_effect=0;n_cfg.background_speed=2;n_cfg.background_opacity=20;n_cfg.nova_halo=1;n_cfg.verification=1;h_cfg.autonogc=1;h_cfg.backlight=130;
+n_cfg.timedst=1;n_cfg.nova_logo_color=n_cfg.nova_icon_color=0x55C9F1;n_cfg.nova_selection_color=0x1C2937;n_cfg.theme_bg=0x141A19;n_cfg.nova_text_color=0xF2F5FA;n_cfg.nova_border_color=0x334050;n_cfg.nova_reflection_color=0x55C9F1;n_cfg.nova_menu_opacity=100;n_cfg.nova_icon_opacity=100;n_cfg.font_size=atoi(argv[5]);strcpy(n_cfg.font_file,getenv("NYX_PREVIEW_FONT")?getenv("NYX_PREVIEW_FONT"):"Lecture.nyxf");n_cfg.language=atoi(argv[4]);n_cfg.background_effect=0;n_cfg.background_speed=2;n_cfg.background_opacity=20;n_cfg.nova_halo=1;n_cfg.verification=1;h_cfg.autonogc=1;h_cfg.backlight=130;
 h_cfg.rcm_patched=getenv("NYX_PREVIEW_PATCHED")!=NULL;
+if(getenv("NYX_RGB_LOGO"))n_cfg.nova_logo_color=strtoul(getenv("NYX_RGB_LOGO"),NULL,16);
+if(getenv("NYX_RGB_ICONS"))n_cfg.nova_icon_color=strtoul(getenv("NYX_RGB_ICONS"),NULL,16);
+if(getenv("NYX_RGB_SELECTION"))n_cfg.nova_selection_color=strtoul(getenv("NYX_RGB_SELECTION"),NULL,16);
 if(getenv("NYX_RGB_BACKGROUND"))n_cfg.theme_bg=strtoul(getenv("NYX_RGB_BACKGROUND"),NULL,16);
 if(getenv("NYX_RGB_TEXT"))n_cfg.nova_text_color=strtoul(getenv("NYX_RGB_TEXT"),NULL,16);
 if(getenv("NYX_RGB_BORDER"))n_cfg.nova_border_color=strtoul(getenv("NYX_RGB_BORDER"),NULL,16);
@@ -266,8 +282,8 @@ if(getenv("NYX_PREVIEW_WALLPAPER")){strcpy(n_cfg.wallpaper_file,getenv("NYX_PREV
 if(getenv("NYX_PREVIEW_MENU_OPACITY"))n_cfg.nova_menu_opacity=atoi(getenv("NYX_PREVIEW_MENU_OPACITY"));
 if(getenv("NYX_PREVIEW_ICON_OPACITY"))n_cfg.nova_icon_opacity=atoi(getenv("NYX_PREVIEW_ICON_OPACITY"));
 lv_init();nyx_localization_init();nyx_font_manager_init();lv_disp_drv_t driver;lv_disp_drv_init(&driver);driver.disp_flush=flush;lv_disp_drv_register(&driver);
-lv_theme_hekate_set_colors(n_cfg.nova_text_color,n_cfg.nova_border_color,n_cfg.nova_reflection_color,n_cfg.nova_menu_opacity);lv_theme_t*theme=lv_theme_hekate_init(n_cfg.theme_bg,n_cfg.theme_color,(lv_font_t*)nyx_font_ui(20));lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);
-static lv_style_t screen_style;lv_style_copy(&screen_style,&lv_style_plain);screen_style.body.main_color=screen_style.body.grad_color=nyx_nova_color(NOVA_COLOR_BACKGROUND);lv_obj_set_style(lv_scr_act(),&screen_style);nyx_background_create(lv_scr_act());
+lv_theme_hekate_set_accents(n_cfg.nova_icon_color,n_cfg.nova_selection_color);lv_theme_hekate_set_colors(n_cfg.nova_text_color,n_cfg.nova_border_color,n_cfg.nova_reflection_color,n_cfg.nova_menu_opacity);lv_theme_t*theme=lv_theme_hekate_init(n_cfg.theme_bg,n_cfg.theme_color,(lv_font_t*)nyx_font_ui(20));lv_theme_set_current(theme);lv_style_copy(&hint_small_style,theme->label.hint);hint_small_style.text.font=nyx_font_small();hint_small_style.text.letter_space=1;lv_style_copy(&hint_small_style_white,&hint_small_style);nyx_nova_init(theme);
+lv_obj_t *screen=lv_cont_create(NULL,NULL);lv_scr_load(screen);nyx_nova_screen(screen);
 nyx_nova_footer(lv_layer_top(),nyx_options_save_all);lv_label_set_text(status_bar.time_temp,"18:42 · 28 °C");lv_label_set_text(status_bar.battery,"82 %");
 lv_obj_t*root=NULL;
 if(strcmp(argv[3],"about")&&strcmp(argv[3],"home")&&strcmp(argv[3],"carousel")&&strcmp(argv[3],"tools")&&strcmp(argv[3],"info")&&strcmp(argv[3],"options")&&strcmp(argv[3],"diagnostics")){
@@ -281,6 +297,7 @@ else if(!strcmp(argv[3],"emummc"))preview_emummc_tools(NULL);
 else if(!strcmp(argv[3],"diagnostic-group")){lv_obj_t b;memset(&b,0,sizeof b);lv_obj_set_free_num(&b,atoi(argv[6]));preview_show_group(&b);}
 else if(!strcmp(argv[3],"diagnostic-results"))show_results(0);
 else if(!strcmp(argv[3],"ram-service"))show_ram_service(NULL);
+else if(!strcmp(argv[3],"setup")){first_time_clock_edit(NULL);root=lv_obj_get_child(lv_obj_get_child(lv_scr_act(),NULL),NULL);}
 else if(!strcmp(argv[3],"appearance"))nyx_create_appearance_window(NULL);
 else if(!strcmp(argv[3],"nyx"))create_win_nyx_options(NULL);
 else if(!strcmp(argv[3],"colors"))_create_window_nyx_colors(NULL);
@@ -293,7 +310,8 @@ else {
  for(int i=0;i<6;i++)pages[i]=lv_tabview_add_tab(tabs,names[i]);
  nyx_nova_navigation(lv_scr_act(),tabs,"hekate 6.5.4",_create_nova_quick_actions);lv_action_t quick[]={create_win_nyx_options,_create_mbox_reload,_create_mbox_reboot,_create_mbox_poweroff};nyx_nova_quick_actions(quick);
  int active=!strcmp(argv[3],"about")?0:(!strcmp(argv[3],"home")||!strcmp(argv[3],"carousel"))?1:!strcmp(argv[3],"tools")?2:!strcmp(argv[3],"info")?3:!strcmp(argv[3],"options")?4:5;
- root=pages[active];if(active==0)nyx_nova_about(root);else if(active==1){home_tabview=tabs;n_cfg.home_layout=!strcmp(argv[3],"carousel");_create_tab_home(theme,root);}else if(active==2)create_tab_tools(theme,root);else if(active==3)create_tab_info(theme,root);else if(active==4)create_tab_options(theme,root);else create_tab_diagnostics(theme,root);
+ root=pages[active];home_tabview=tabs;n_cfg.home_layout=!strcmp(argv[3],"carousel");
+ nyx_nova_about(pages[0]);_create_tab_home(theme,pages[1]);create_tab_tools(theme,pages[2]);create_tab_info(theme,pages[3]);create_tab_options(theme,pages[4]);create_tab_diagnostics(theme,pages[5]);
  lv_tabview_set_tab_act(tabs,active,false);
  for(u32 i=1;i<6;i++){nova_navigate(nova_nav_buttons[i]);assert(lv_tabview_get_tab_act(tabs)==i);}
  lv_tabview_set_tab_act(tabs,active,false);nyx_nova_navigation_select(active);
@@ -307,17 +325,22 @@ if(!root){assert(nova_navigation_locks);for(u32 i=1;i<6;i++)assert(!lv_obj_get_c
  if(!strcmp(argv[3],"appearance")||!strcmp(argv[3],"nyx")){lv_obj_t*tabs=lv_obj_get_child(lv_page_get_scrl(root),NULL);lv_tabview_set_tab_act(tabs,atoi(argv[6]),false);}}
 nyx_readability_refresh(lv_scr_act());for(int i=0;i<4;i++){lv_tick_inc(40);lv_task_handler();}lv_refr_now();
 for(u32 percent=0;percent<=100;percent++){preview_battery_percent=percent;_update_status_bar(NULL);assert(lv_obj_get_x(status_bar.battery)==1174&&lv_obj_get_y(status_bar.battery)==24);}
-preview_battery_percent=82;_update_status_bar(NULL);lv_refr_now();
+preview_battery_percent=82;
+u32 temperatures[]={0,44,45,54,55,64,65,99};
+for(u32 i=0;i<8;++i){preview_temperature=temperatures[i];_update_status_bar(NULL);char rgb[16];sprintf(rgb,"#%06X ",nyx_nova_temperature_rgb(preview_temperature));assert(strstr(lv_label_get_text(status_bar.time_temp),rgb));assert(strstr(lv_label_get_text(status_bar.time_temp),"18:42"));}
+preview_temperature=getenv("NYX_PREVIEW_TEMPERATURE")?atoi(getenv("NYX_PREVIEW_TEMPERATURE")):28;_update_status_bar(NULL);lv_refr_now();
 lv_area_t bounds;lv_obj_get_coords(root,&bounds);assert(bounds.y1>=0&&bounds.y2<656);
 verify_visible(root,bounds);
-lv_area_t screen_bounds={0,0,1279,719};verify_glyph_pixels(lv_scr_act(),screen_bounds);verify_glyph_pixels(lv_layer_top(),screen_bounds);
+nyx_nova_reflection_pause(true);lv_refr_now();lv_area_t screen_bounds={0,0,1279,719};verify_glyph_pixels(lv_scr_act(),screen_bounds);verify_glyph_pixels(lv_layer_top(),screen_bounds);
+nyx_nova_reflection_pause(false);
+if(nova_brand_button&&(!strcmp(argv[3],"home")||!strcmp(argv[3],"tools"))){lv_action_t action=lv_btn_get_action(nova_brand_button,LV_BTN_ACTION_CLICK);assert(action==nova_navigate);u32 active=lv_tabview_get_tab_act(home_tabview);action(nova_brand_button);assert(lv_tabview_get_tab_act(home_tabview)==0);lv_tabview_set_tab_act(home_tabview,active,false);nyx_nova_navigation_select(active);}
 if(!strcmp(argv[3],"home")||!strcmp(argv[3],"tools")||!strcmp(argv[3],"info")||!strcmp(argv[3],"diagnostics")||!strcmp(argv[3],"options"))assert(glyph_pixel_checks>=10);
 if(!strcmp(argv[3],"options")){
  lv_obj_t*page=lv_page_get_scrl(root);unsigned switches=0;
  for(lv_obj_t*c=lv_obj_get_child(page,NULL);c;c=lv_obj_get_child(page,c))for(lv_obj_t*b=lv_obj_get_child(c,NULL);b;b=lv_obj_get_child(c,b))if(lv_obj_get_signal_func(b)==nova_toggle_signal){
   nova_toggle_ext*e=lv_obj_get_ext_attr(b);assert(e->knob&&e->track&&e->state);lv_action_t action=lv_btn_get_action(b,LV_BTN_ACTION_CLICK);
   for(lv_obj_t*l=lv_obj_get_child(b,NULL);l;l=lv_obj_get_child(b,l))if(type_is(l,"lv_label")&&l!=e->state)assert(lv_obj_get_x(l)+lv_obj_get_width(l)<lv_obj_get_x(e->track));
-  bool before=(lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0;action(b);assert(((lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0)!=before);assert(lv_obj_get_x(e->knob)==(before?5:31));action(b);assert(((lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0)==before);++switches;
+  bool before=(lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0;action(b);assert(((lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0)!=before);assert(lv_obj_get_x(e->knob)==(before?5:35));action(b);assert(((lv_btn_get_state(b)&LV_BTN_STATE_TGL_REL)!=0)==before);++switches;
  }assert(switches==4);ini_changes_made=nyx_changes_made=false;lv_obj_set_opa_scale(status_bar.mid,LV_OPA_TRANSP);lv_obj_set_click(status_bar.mid,false);
  u32 original_language=n_cfg.language,original_size=n_cfg.font_size;
  nyx_appearance_open_language((original_language+1)%7);assert(appearance_pending.language==(original_language+1)%7&&n_cfg.language==original_language);assert(lv_tabview_get_tab_act(appearance_tabs)==0);appearance_close(close_btn);assert(!appearance_open&&!close_btn);
@@ -330,33 +353,37 @@ if(!strcmp(argv[3],"appearance")){
  char before[64];strcpy(before,appearance_pending.font_file);lv_obj_t step;memset(&step,0,sizeof step);lv_obj_set_free_num(&step,1);appearance_font_step(&step);lv_obj_set_free_num(&step,0);appearance_font_step(&step);assert(!strcmp(before,appearance_pending.font_file));
 }
 if(!strcmp(argv[3],"colors")){
- nyx_config before=n_cfg;u32 original[4]={nova_theme.pending.theme_bg,nova_theme.pending.nova_text_color,nova_theme.pending.nova_border_color,nova_theme.pending.nova_reflection_color};
- for(u32 target=0;target<4;++target){nova_theme.target=target;theme_controls_refresh();*theme_target_color()=0xAABBCC;
-  u32 actual[4]={nova_theme.pending.theme_bg,nova_theme.pending.nova_text_color,nova_theme.pending.nova_border_color,nova_theme.pending.nova_reflection_color};
-  for(u32 i=0;i<4;++i)assert(actual[i]==(i==target?0xAABBCC:original[i]));*theme_target_color()=original[target];}
+ nyx_config before=n_cfg;u32 roles[]={NOVA_COLOR_BACKGROUND,NOVA_COLOR_TEXT,NOVA_COLOR_BORDER,NOVA_COLOR_LOGO,NOVA_COLOR_ICONS,NOVA_COLOR_SELECTION};
+ u32 *fields[]={&nova_theme.pending.theme_bg,&nova_theme.pending.nova_text_color,&nova_theme.pending.nova_border_color,&nova_theme.pending.nova_logo_color,&nova_theme.pending.nova_icon_color,&nova_theme.pending.nova_selection_color};
+ u32 original[6];for(u32 i=0;i<6;++i)original[i]=*fields[i];
+ for(u32 target=0;target<6;++target){nova_theme.target=roles[target];assert(theme_target_color()==fields[target]);*theme_target_color()=0xAABBCC;theme_controls_refresh();
+  for(u32 i=0;i<6;++i)assert(*fields[i]==(i==target?0xAABBCC:original[i]));*fields[target]=original[target];}
+
  assert(!memcmp(&before,&n_cfg,sizeof n_cfg));nova_theme.target=0;theme_controls_refresh();
  theme_reset(NULL);assert(nova_theme.pending.nova_menu_opacity==100&&nova_theme.pending.nova_icon_opacity==100&&!nova_theme.pending.wallpaper_file[0]);assert(!memcmp(&before,&n_cfg,sizeof n_cfg));
 }
 
+if(!strcmp(argv[3],"setup")){assert(clock_language==n_cfg.language&&clock_ctxt.year&&clock_ctxt.month&&clock_ctxt.day&&clock_ctxt.hour&&clock_ctxt.min);assert(type_is(root,"lv_mbox"));}
 if(diagnostic_last_holder){diag_tiles_ext*ext=lv_obj_get_ext_attr(diagnostic_last_holder);u32 total=ext->count;unsigned visits=0;
  for(u32 page=0;page<(total+8)/9;++page){ext->page=page;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();verify_visible(root,bounds);for(lv_obj_t*c=lv_obj_get_child(ext->tiles,NULL);c;c=lv_obj_get_child(ext->tiles,c))for(lv_obj_t*b=lv_obj_get_child(c,NULL);b;b=lv_obj_get_child(c,b))if(type_is(b,"lv_btn")){u32 id=lv_obj_get_free_num(b);assert((id&~ONE_PROBE)<42);lv_action_t action=lv_btn_get_action(b,LV_BTN_ACTION_CLICK);assert(action==(ext->results?show_report:run_selection));++visits;}}
  assert(visits==total);ext->page=0;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();
 }
 
+if(nova_wallpaper){lv_obj_t *back=lv_obj_get_child_back(lv_scr_act(),NULL);assert(type_is(back,"lv_img")&&!lv_obj_get_click(back)&&lv_obj_is_protected(back,LV_PROTECT_PARENT));assert(lv_img_get_src(back)==nova_wallpaper);}
 if(!getenv("NYX_PREVIEW_NO_DUMP"))dump("preview.ppm");
 if(getenv("NYX_CAPTURE_REFLECTION")){
  FILE*frames=fopen("reflection.bgrx","wb");assert(frames&&sizeof(lv_color_t)==4);
- for(u32 frame=0;frame<72;++frame){lv_tick_inc(80);lv_task_handler();lv_refr_now();assert(fwrite(screen_pixels,sizeof(lv_color_t),LV_HOR_RES*LV_VER_RES,frames)==LV_HOR_RES*LV_VER_RES);}
+ for(u32 frame=0;frame<72;++frame){lv_tick_inc(50);lv_task_handler();lv_refr_now();assert(fwrite(screen_pixels,sizeof(lv_color_t),LV_HOR_RES*LV_VER_RES,frames)==LV_HOR_RES*LV_VER_RES);}
  fclose(frames);
 }
 if(!strcmp(argv[3],"tools")&&!strcmp(argv[4],"0")&&!strcmp(argv[5],"30")){
  nyx_background_pause(true);for(int i=0;i<20;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();
- rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(80);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
+ rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
  nyx_background_pause(false);rendered_pixels=0;unsigned long maximum=0,total=0;
- for(int i=0;i<72;i++){unsigned long before=rendered_pixels;lv_tick_inc(80);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
- assert(total>0&&maximum<70000);
- printf("PASS: Nova reflection max=%lu total=%lu pixels over 5760ms; pause=0\n",maximum,total);
- nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(80);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
+ for(int i=0;i<72;i++){unsigned long before=rendered_pixels;lv_tick_inc(50);lv_task_handler();lv_refr_now();unsigned long pixels=rendered_pixels-before;total+=pixels;if(pixels>maximum)maximum=pixels;}
+ assert(total>0&&maximum<=1600);
+ printf("PASS: Nova reflection max=%lu total=%lu pixels over 3600ms; pause=0\n",maximum,total);
+ nyx_nova_reflection_reset();rendered_pixels=0;lv_refr_now();rendered_pixels=0;for(int i=0;i<60;i++){lv_tick_inc(50);lv_task_handler();}lv_refr_now();assert(rendered_pixels==0);
 
 }
 printf("PASS UI %s language=%s size=%s tab=%s controls=%u\n",argv[3],argv[4],argv[5],argv[6],geometry_checks);return 0;}
@@ -376,7 +403,7 @@ jobs=[('tools',1,20,0),('tools',4,36,0),('info',1,20,0),('options',1,20,0),('opt
 jobs.extend([('home',1,30,0),('carousel',4,36,0),('tools',1,30,0),('info',1,30,0),('options',1,30,0),('diagnostics',1,30,0),('boot-options',1,30,0),('quick-actions',1,30,0)])
 jobs.extend([('about',1,30,0),('backup',1,30,0),('restore',1,30,0),('usb',1,30,0),('emummc',1,30,0),('diagnostic-group',1,30,2),('diagnostic-results',1,30,0),('ram-service',1,30,0),('colors',1,30,1)])
 if '--check-all' in sys.argv:
-    modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0)]
+    modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0),('setup',0)]
     modes.extend([('backup',0),('restore',0),('usb',0),('emummc',0),('diagnostic-results',0),('ram-service',0)]+[('diagnostic-group',i)for i in range(1,11)])
     jobs=[(screen,language,size,tab) for screen,tab in modes for language in range(7) for size in range(20,38,2)]
 if '--case' in sys.argv:
@@ -394,11 +421,11 @@ for screen,language,size,tab in jobs:
     if run.returncode:raise RuntimeError(f'{screen} {language} {size} {tab}: '+run.stdout+run.stderr)
     performance=re.search(r'Nova reflection max=(\d+) total=(\d+)',run.stdout)
     if performance:
-        result={'reflection_period_ms':80,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_5760ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
+        result={'reflection_period_ms':50,'max_redraw_pixels_per_frame':int(performance[1]),'total_redraw_pixels_over_3600ms':int(performance[2]),'paused_redraw_pixels':0,'platform':'host LVGL, not console FPS'}
         (directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
-        print('PASS: bounded border reflection; '+performance[0],flush=True)
+        print('PASS: white diagonal glyph sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-v11-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-v12-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

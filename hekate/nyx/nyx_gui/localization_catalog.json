@@ -31729,7 +31729,7 @@
     "Sélection",
     "Selección",
     "Selezione",
-    "Выделение",
+    "Выбор",
     "Auswahl",
     "Seleção"
   ],
@@ -31738,7 +31738,7 @@
     "Sélection",
     "Selección",
     "Selezione",
-    "Выделение",
+    "Выбор",
     "Auswahl",
     "Seleção"
   ],
@@ -32380,6 +32380,105 @@
     "Свободные программы",
     "Freie Software",
     "Software livre"
+  ],
+  "Logo": [
+    "Logo",
+    "Logo",
+    "Logotipo",
+    "Logo",
+    "Логотип",
+    "Logo",
+    "Logótipo"
+  ],
+  "Icônes": [
+    "Icons",
+    "Icônes",
+    "Iconos",
+    "Icone",
+    "Значки",
+    "Symbole",
+    "Ícones"
+  ],
+  "Icons": [
+    "Icons",
+    "Icônes",
+    "Iconos",
+    "Icone",
+    "Значки",
+    "Symbole",
+    "Ícones"
+  ],
+  "Subtle white sheen": [
+    "Subtle white sheen",
+    "Reflet blanc discret",
+    "Reflejo blanco sutil",
+    "Riflesso bianco discreto",
+    "Лёгкий белый блик",
+    "Dezenter weißer Schimmer",
+    "Reflexo branco discreto"
+  ],
+  "Reflet blanc discret": [
+    "Subtle white sheen",
+    "Reflet blanc discret",
+    "Reflejo blanco sutil",
+    "Riflesso bianco discreto",
+    "Лёгкий белый блик",
+    "Dezenter weißer Schimmer",
+    "Reflexo branco discreto"
+  ],
+  "White diagonal sheen": [
+    "White diagonal sheen",
+    "Reflet blanc diagonal",
+    "Reflejo blanco diagonal",
+    "Riflesso bianco diagonale",
+    "Белый диагональный блик",
+    "Weißer diagonaler Schimmer",
+    "Reflexo branco diagonal"
+  ],
+  "Reflet blanc diagonal": [
+    "White diagonal sheen",
+    "Reflet blanc diagonal",
+    "Reflejo blanco diagonal",
+    "Riflesso bianco diagonale",
+    "Белый диагональный блик",
+    "Weißer diagonaler Schimmer",
+    "Reflexo branco diagonal"
+  ],
+  "Sans reflet": [
+    "No sheen",
+    "Sans reflet",
+    "Sin reflejo",
+    "Senza riflesso",
+    "Без блика",
+    "Ohne Schimmer",
+    "Sem reflexo"
+  ],
+  "No sheen": [
+    "No sheen",
+    "Sans reflet",
+    "Sin reflejo",
+    "Senza riflesso",
+    "Без блика",
+    "Ohne Schimmer",
+    "Sem reflexo"
+  ],
+  "Subtle white sheen over the selected icon.": [
+    "Subtle white sheen over the selected icon.",
+    "Reflet blanc discret sur l’icône sélectionnée.",
+    "Reflejo blanco sutil en el icono seleccionado.",
+    "Riflesso bianco discreto sull’icona selezionata.",
+    "Лёгкий белый блик на выбранном значке.",
+    "Dezenter weißer Schimmer auf dem gewählten Symbol.",
+    "Reflexo branco discreto no ícone selecionado."
+  ],
+  "Reflet blanc discret sur l’icône sélectionnée.": [
+    "Subtle white sheen over the selected icon.",
+    "Reflet blanc discret sur l’icône sélectionnée.",
+    "Reflejo blanco sutil en el icono seleccionado.",
+    "Riflesso bianco discreto sull’icona selezionata.",
+    "Лёгкий белый блик на выбранном значке.",
+    "Dezenter weißer Schimmer auf dem gewählten Symbol.",
+    "Reflexo branco discreto no ícone selecionado."
   ],
   "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n": [
     "\n#FF0000 Hash file could not be written (error %d)!#\n#FF0000 Aborting..#\n",
@@ -33992,14 +34091,14 @@
     "  Akku",
     "  Bateria"
   ],
-  "Fond\nTextes\nContours\nReflet": [
-    "Background\nText\nBorders\nReflection",
-    "Fond\nTextes\nContours\nReflet",
-    "Fondo\nTextos\nBordes\nReflejo",
-    "Sfondo\nTesti\nBordi\nRiflesso",
-    "Фон\nТекст\nКонтуры\nБлик",
-    "Hintergrund\nTexte\nKonturen\nLichtreflex",
-    "Fundo\nTextos\nContornos\nReflexo"
+  "Fond\nTextes\nContours\nLogo\nIcônes\nSélection": [
+    "Background\nText\nBorders\nLogo\nIcons\nSelection",
+    "Fond\nTextes\nContours\nLogo\nIcônes\nSélection",
+    "Fondo\nTextos\nBordes\nLogotipo\nIconos\nSelección",
+    "Sfondo\nTesti\nBordi\nLogo\nIcone\nSelezione",
+    "Фон\nТекст\nКонтуры\nЛоготип\nЗначки\nВыбор",
+    "Hintergrund\nTexte\nKonturen\nLogo\nSymbole\nAuswahl",
+    "Fundo\nTextos\nContornos\nLogótipo\nÍcones\nSeleção"
   ],
   " Auto Boot": [
     " Auto Boot",
@@ -34235,14 +34334,14 @@
     " Darstellung und Sprache",
     " Aspeto e idioma"
   ],
-  " Color Theme": [
-    " Color Theme",
-    " Thème de couleurs",
-    " Tema de colores",
-    " Tema colori",
-    " Цветовая тема",
-    " Farbschema",
-    " Tema de cores"
+  " Thèmes et couleurs": [
+    " Themes and colors",
+    " Thèmes et couleurs",
+    " Temas y colores",
+    " Temi e colori",
+    " Темы и цвета",
+    " Themen und Farben",
+    " Temas e cores"
   ],
   " Home Screen": [
     " Home Screen",

@@ -73,6 +73,9 @@ typedef struct _nyx_config
 	u32 nova_menu_opacity; // 0..100, panel background only; text stays opaque.
 	u32 nova_icon_opacity; // 0..100, icon background only; glyph stays opaque.
 	char wallpaper_file[64]; // Safe BMP basename under /wallpapers; empty = none.
+	u32 nova_logo_color; // Independent alpha-mask tint, RGB24.
+	u32 nova_icon_color;
+	u32 nova_selection_color; // Selected card background, RGB24.
 } nyx_config;
 
 extern hekate_config h_cfg;

@@ -27,10 +27,10 @@
 #define DEF_RADIUS             8
 #define COLOR_OUTLINE          LV_COLOR_HEX(theme_border_rgb)
 
-#define COLOR_HOS_TURQUOISE    (_hue ? lv_color_hsv_to_rgb(_hue, 100, 100) : LV_COLOR_HEX(0x55C9F1))
-#define COLOR_HOS_TEAL_LIGHTER (_hue ? lv_color_hsv_to_rgb(_hue, 100,  93) : LV_COLOR_HEX(0x88D9F6))
-#define COLOR_HOS_TEAL_LIGHT   (_hue ? lv_color_hsv_to_rgb(_hue, 100,  72) : LV_COLOR_HEX(0x429DBD))
-#define COLOR_HOS_TEAL         (_hue ? lv_color_hsv_to_rgb(_hue, 100,  64) : LV_COLOR_HEX(0x327B96))
+#define COLOR_HOS_TURQUOISE    LV_COLOR_HEX(theme_icon_rgb)
+#define COLOR_HOS_TEAL_LIGHTER lv_color_mix(LV_COLOR_WHITE,LV_COLOR_HEX(theme_icon_rgb),76)
+#define COLOR_HOS_TEAL_LIGHT   lv_color_mix(LV_COLOR_BLACK,LV_COLOR_HEX(theme_icon_rgb),58)
+#define COLOR_HOS_TEAL         lv_color_mix(LV_COLOR_BLACK,LV_COLOR_HEX(theme_icon_rgb),92)
 #define COLOR_HOS_ORANGE       LV_COLOR_HEX(0xFF5500)
 #define COLOR_HOS_TXT_WHITE    LV_COLOR_HEX(theme_text_rgb)
 
@@ -40,7 +40,7 @@
 #define COLOR_BG_LIGHTER       (theme_bg_color == 0x141A19 ? LV_COLOR_HEX(0x202C3B) : lv_color_mix(LV_COLOR_WHITE, COLOR_BG, 22))
 #define COLOR_INACTIVE         lv_color_mix(COLOR_HOS_TXT_WHITE, COLOR_BG, 125)
 #define COLOR_BAR              LV_COLOR_HEX(theme_border_rgb)
-#define COLOR_PRESS            COLOR_BG_LIGHTER
+#define COLOR_PRESS            LV_COLOR_HEX(theme_selection_rgb)
 #define COLOR_LINE             LV_COLOR_HEX(theme_border_rgb)
 
 #define COLOR_SHADOW_LIGHT     LV_COLOR_HEX(0xAAAAAA)
@@ -70,6 +70,9 @@ static lv_font_t * _font;
 uint32_t theme_bg_color;
 static uint32_t theme_text_rgb=0xF2F5FA, theme_border_rgb=0x334050, theme_reflection_rgb=0x55C9F1;
 static uint32_t theme_panel_opacity=100;
+static uint32_t theme_icon_rgb=0x55C9F1,theme_selection_rgb=0x1C2937;
+void lv_theme_hekate_set_accents(uint32_t icons,uint32_t selection)
+{theme_icon_rgb=icons&0xFFFFFF;theme_selection_rgb=selection&0xFFFFFF;}
 void lv_theme_hekate_set_colors(uint32_t text, uint32_t border, uint32_t reflection, uint32_t opacity)
 {
     theme_text_rgb=text&0xFFFFFF;theme_border_rgb=border&0xFFFFFF;
@@ -263,7 +266,7 @@ static void bar_init(void)
 	bar_bg.body.padding.ver = LV_DPI / 12;
 
 	lv_style_copy(&bar_indic, &bar_bg);
-	bar_indic.body.main_color = LV_COLOR_HEX(theme_reflection_rgb);
+	bar_indic.body.main_color = COLOR_HOS_TURQUOISE;
 	bar_indic.body.grad_color = bar_indic.body.main_color;
 	bar_indic.body.padding.hor = 0;
 	bar_indic.body.padding.ver = 0;
@@ -751,7 +754,7 @@ static void tabview_init(void)
 	static lv_style_t indic, btn_bg, rel, pr, tgl_rel, tgl_pr;
 
 	lv_style_copy(&indic, &def);
-	indic.body.main_color = LV_COLOR_HEX(theme_reflection_rgb);
+	indic.body.main_color = COLOR_HOS_TURQUOISE;
 	indic.body.grad_color = indic.body.main_color;
 	indic.body.radius = 0;
 	indic.body.border.width = 0;

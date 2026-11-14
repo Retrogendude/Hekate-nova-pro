@@ -34,7 +34,7 @@ lv_obj_t *nyx_nova_toggle(lv_obj_t *parent, const char *title, lv_action_t actio
 lv_obj_t *nyx_nova_switch_row(lv_obj_t *parent, const char *title, const char *help, const char *icon, lv_action_t action, bool enabled, int x, int y, int width, int height);
 bool nyx_nova_toggle_refresh(lv_obj_t *button);
 void nyx_nova_refresh_halos(void);
-enum { NOVA_COLOR_BACKGROUND, NOVA_COLOR_TEXT, NOVA_COLOR_BORDER, NOVA_COLOR_REFLECTION };
+enum { NOVA_COLOR_BACKGROUND, NOVA_COLOR_TEXT, NOVA_COLOR_BORDER, NOVA_COLOR_REFLECTION, NOVA_COLOR_LOGO, NOVA_COLOR_ICONS, NOVA_COLOR_SELECTION };
 lv_color_t nyx_nova_color(u32 role);
 void nyx_nova_quick_actions(const lv_action_t actions[4]);
 void nyx_nova_navigation_lock(bool lock);
@@ -44,6 +44,8 @@ void nyx_nova_reflection_interaction(void);
 void nyx_nova_reflection_reset(void);
 void nyx_nova_window(lv_obj_t *win);
 void nyx_nova_wallpaper_load(void);
+void nyx_nova_screen(lv_obj_t *screen);
+u32 nyx_nova_temperature_rgb(u32 degrees);
 void nyx_nova_backdrop(lv_obj_t *parent, int y);
 lv_res_t nyx_nova_theme_window(lv_obj_t *button);
 const char *nyx_nova_caption(const char *text);

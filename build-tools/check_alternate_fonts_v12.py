@@ -4,11 +4,11 @@ import os
 import subprocess
 
 WORK=Path(__file__).resolve().parent
-directory=WORK/'lvgl-preview-v11'
+directory=WORK/'lvgl-preview-v12'
 executable=directory/'preview.exe'
 fonts=WORK/'hekate-6.5.4/nyx/nyx_gui/fonts/sd'
 modes=[('about',0),('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),
-       ('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0)]
+       ('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('colors',0),('colors',1),('boot-options',0),('quick-actions',0),('setup',0)]
 modes.extend([('backup',0),('restore',0),('usb',0),('emummc',0),('diagnostic-results',0),('ram-service',0)]+[('diagnostic-group',i)for i in range(1,11)])
 checks=0
 for font in ['Lecture-fixe.nyxf','Lecture-renforcee.nyxf','']:

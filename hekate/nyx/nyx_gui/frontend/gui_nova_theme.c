@@ -81,8 +81,25 @@ void nyx_nova_backdrop(lv_obj_t *parent, int y)
 {
     if(!nova_wallpaper)return;
     lv_obj_t *image=lv_img_create(lv_scr_act(),NULL);
-    lv_obj_set_protect(image,LV_PROTECT_PARENT);lv_obj_set_parent(image,parent);lv_img_set_src(image,nova_wallpaper);
-    lv_obj_set_pos(image,0,y);lv_obj_set_click(image,false);
+    lv_obj_set_protect(image,LV_PROTECT_PARENT);
+    if(lv_obj_get_parent(image)!=parent)lv_obj_set_parent(image,parent);
+    lv_img_set_src(image,nova_wallpaper);
+    lv_obj_set_pos(image,0,y);lv_obj_set_click(image,false);lv_obj_set_top(image,false);
+    theme_to_back(image);
+}
+
+void nyx_nova_screen(lv_obj_t *screen)
+{
+    /* One opaque root, with the wallpaper explicitly at the back. A separate
+     * opaque base child can mask a wallpaper when siblings are reordered. */
+    static lv_style_t root_style;
+    lv_style_copy(&root_style,&lv_style_plain);
+    root_style.body.main_color=root_style.body.grad_color=nyx_nova_color(NOVA_COLOR_BACKGROUND);
+    root_style.body.empty=0;root_style.body.opa=LV_OPA_COVER;
+    root_style.body.border.width=root_style.body.shadow.width=root_style.body.radius=0;
+    root_style.body.padding.hor=root_style.body.padding.ver=root_style.body.padding.inner=0;
+    lv_cont_set_style(screen,&root_style);lv_cont_set_layout(screen,LV_LAYOUT_OFF);lv_cont_set_fit(screen,false,false);
+    lv_obj_set_size(screen,LV_HOR_RES,LV_VER_RES);nyx_nova_backdrop(screen,0);
 }
 
 typedef struct {lv_win_ext_t window;lv_signal_func_t base_signal;} nova_window_ext;
@@ -115,15 +132,15 @@ void nyx_nova_window(lv_obj_t *win)
         lv_win_ext_t *ext=lv_obj_get_ext_attr(win);
         theme_to_front(ext->page);theme_to_front(ext->header);
     }
-    nyx_nova_reflect(win,true);
+    /* Window borders are static. */
 }
 
 static struct {
     bool open;
     nyx_config pending;
     lv_obj_t *window,*parent_close,*tabs,*target_choices,*menu_choices,*icon_choices,*sliders[3],*values[3],*hex,*file,*counter;
-    lv_obj_t *preview,*sample,*sample_text,*sample_icon,*preview_image,*preview_caption;
-    lv_style_t preview_style,sample_style,sample_text_style,sample_icon_style,reflection_style;
+    lv_obj_t *preview,*sample,*sample_text,*sample_icon,*sample_glyph,*preview_image,*preview_caption;
+    lv_style_t preview_style,sample_style,sample_text_style,sample_icon_style,reflection_style,glyph_style;
     lv_img_dsc_t *thumbnail;
     u32 target,wallpaper;
 } nova_theme;
@@ -135,7 +152,9 @@ static u32 *theme_target_color(void)
 {
     return nova_theme.target==NOVA_COLOR_TEXT?&nova_theme.pending.nova_text_color:
         nova_theme.target==NOVA_COLOR_BORDER?&nova_theme.pending.nova_border_color:
-        nova_theme.target==NOVA_COLOR_REFLECTION?&nova_theme.pending.nova_reflection_color:&nova_theme.pending.theme_bg;
+        nova_theme.target==NOVA_COLOR_LOGO?&nova_theme.pending.nova_logo_color:
+        nova_theme.target==NOVA_COLOR_ICONS?&nova_theme.pending.nova_icon_color:
+        nova_theme.target==NOVA_COLOR_SELECTION?&nova_theme.pending.nova_selection_color:&nova_theme.pending.theme_bg;
 }
 static void theme_preview_refresh(void)
 {
@@ -146,17 +165,21 @@ static void theme_preview_refresh(void)
     nova_theme.preview_style.body.border.color=LV_COLOR_HEX(nova_theme.pending.nova_border_color);
     lv_cont_set_style(nova_theme.preview,&nova_theme.preview_style);
     lv_style_copy(&nova_theme.sample_style,&nova_theme.preview_style);
-    nova_theme.sample_style.body.main_color=nova_theme.sample_style.body.grad_color=lv_color_mix(LV_COLOR_WHITE,LV_COLOR_HEX(bg),18);
+    nova_theme.sample_style.body.main_color=nova_theme.sample_style.body.grad_color=LV_COLOR_HEX(nova_theme.pending.nova_selection_color);
     nova_theme.sample_style.body.opa=nova_theme.pending.nova_menu_opacity*255/100;
     lv_cont_set_style(nova_theme.sample,&nova_theme.sample_style);
     lv_style_copy(&nova_theme.sample_icon_style,&nova_theme.sample_style);
     nova_theme.sample_icon_style.body.opa=nova_theme.pending.nova_icon_opacity*255/100;
     lv_cont_set_style(nova_theme.sample_icon,&nova_theme.sample_icon_style);
+    lv_style_copy(&nova_theme.glyph_style,&lv_style_plain);
+    nova_theme.glyph_style.image.color=LV_COLOR_HEX(nova_theme.target==NOVA_COLOR_LOGO?nova_theme.pending.nova_logo_color:nova_theme.pending.nova_icon_color);
+    nova_theme.glyph_style.image.opa=LV_OPA_COVER;
+    lv_img_set_style(nova_theme.sample_glyph,&nova_theme.glyph_style);
     lv_style_copy(&nova_theme.sample_text_style,nyx_nova_text_style(NOVA_TITLE));
     nova_theme.sample_text_style.text.color=LV_COLOR_HEX(nova_theme.pending.nova_text_color);
     lv_label_set_style(nova_theme.sample_text,&nova_theme.sample_text_style);
     lv_style_copy(&nova_theme.reflection_style,nyx_nova_text_style(NOVA_SMALL));
-    nova_theme.reflection_style.text.color=LV_COLOR_HEX(nova_theme.pending.nova_reflection_color);
+    nova_theme.reflection_style.text.color=LV_COLOR_WHITE;
     lv_label_set_style(nova_theme.preview_caption,&nova_theme.reflection_style);
 }
 static void theme_controls_refresh(void)
@@ -169,7 +192,7 @@ static void theme_controls_refresh(void)
 static lv_res_t theme_select(lv_obj_t *button)
 {
     u32 group=lv_obj_get_free_num(lv_obj_get_parent(button)),value=lv_obj_get_free_num(button);
-    if(group==THEME_TARGET){nova_theme.target=value<4?value:0;theme_controls_refresh();}
+    if(group==THEME_TARGET){static const u32 roles[]={NOVA_COLOR_BACKGROUND,NOVA_COLOR_TEXT,NOVA_COLOR_BORDER,NOVA_COLOR_LOGO,NOVA_COLOR_ICONS,NOVA_COLOR_SELECTION};nova_theme.target=value<6?roles[value]:0;theme_controls_refresh();}
     else if(group==THEME_MENU_OPACITY){nova_theme.pending.nova_menu_opacity=value<=4?value*25:100;theme_preview_refresh();}
     else if(group==THEME_ICON_OPACITY){nova_theme.pending.nova_icon_opacity=value<=4?value*25:100;theme_preview_refresh();}
     return LV_RES_OK;
@@ -223,6 +246,7 @@ static lv_res_t wallpaper_step(lv_obj_t *button)
 static void theme_apply(const nyx_config *source)
 {
     n_cfg.theme_bg=source->theme_bg;n_cfg.nova_text_color=source->nova_text_color;
+    n_cfg.nova_logo_color=source->nova_logo_color;n_cfg.nova_icon_color=source->nova_icon_color;n_cfg.nova_selection_color=source->nova_selection_color;
     n_cfg.nova_border_color=source->nova_border_color;n_cfg.nova_reflection_color=source->nova_reflection_color;
     n_cfg.nova_menu_opacity=source->nova_menu_opacity;n_cfg.nova_icon_opacity=source->nova_icon_opacity;
     memcpy(n_cfg.wallpaper_file,source->wallpaper_file,sizeof(n_cfg.wallpaper_file));
@@ -254,6 +278,7 @@ static lv_res_t theme_reset(lv_obj_t *button)
 {
     (void)button;nova_theme.pending.theme_bg=0x141A19;nova_theme.pending.nova_text_color=0xF2F5FA;
     nova_theme.pending.nova_border_color=0x334050;nova_theme.pending.nova_reflection_color=0x55C9F1;
+    nova_theme.pending.nova_logo_color=nova_theme.pending.nova_icon_color=0x55C9F1;nova_theme.pending.nova_selection_color=0x1C2937;
     nova_theme.pending.nova_menu_opacity=nova_theme.pending.nova_icon_opacity=100;nova_theme.pending.wallpaper_file[0]=0;nova_theme.wallpaper=0;
     nyx_choices_set_selected(nova_theme.menu_choices,4);nyx_choices_set_selected(nova_theme.icon_choices,4);
     theme_controls_refresh();wallpaper_preview_refresh();return LV_RES_OK;
@@ -290,16 +315,17 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button)
     nova_theme.preview=nyx_nova_panel(colors,730,14,516,panel_height);
     nova_theme.sample=nyx_nova_panel(nova_theme.preview,28,94,460,218);
     nova_theme.sample_icon=nyx_nova_icon_box(nova_theme.sample,"brand-mark",24,24,56,false);
+    nova_theme.sample_glyph=lv_obj_get_child(nova_theme.sample_icon,NULL);
     nova_theme.sample_text=nyx_nova_text(nova_theme.sample,"Hekate Nova Pro",24,106,410,NOVA_TITLE);nyx_nova_fit_text(nova_theme.sample_text,52);
-    nova_theme.preview_caption=nyx_nova_text(nova_theme.sample,"Reflet de sélection",24,174,410,NOVA_SMALL);
+    nova_theme.preview_caption=nyx_nova_text(nova_theme.sample,"Reflet blanc discret",24,174,410,NOVA_SMALL);
     nyx_nova_text(nova_theme.preview,"Aperçu",28,24,400,NOVA_TITLE);
-    nova_theme.target_choices=nyx_choices_create(palette,"Fond\nTextes\nContours\nReflet",0,4,624,46,theme_select,THEME_TARGET,false);lv_obj_set_pos(nova_theme.target_choices,24,20);
-    nova_theme.hex=nyx_nova_text(palette,"",24,88,590,NOVA_TITLE);
+    nova_theme.target_choices=nyx_choices_create(palette,"Fond\nTextes\nContours\nLogo\nIcônes\nSélection",0,3,624,42,theme_select,THEME_TARGET,false);lv_obj_set_pos(nova_theme.target_choices,24,20);
+    nova_theme.hex=nyx_nova_text(palette,"",24,122,590,NOVA_TITLE);
     const char *channels[]={"R","G","B"};
-    for(u32 i=0;i<3;++i){int y=142+i*56;nyx_nova_text(palette,channels[i],24,y-4,32,NOVA_BODY);lv_obj_t *slider=lv_slider_create(palette,NULL);nova_theme.sliders[i]=slider;lv_obj_set_size(slider,482,24);lv_obj_set_pos(slider,68,y);lv_bar_set_range(slider,0,255);lv_obj_set_free_num(slider,i);lv_slider_set_action(slider,theme_slider);nova_theme.values[i]=nyx_nova_text(palette,"",568,y-4,70,NOVA_BODY);}
+    for(u32 i=0;i<3;++i){int y=180+i*46;nyx_nova_text(palette,channels[i],24,y-4,32,NOVA_BODY);lv_obj_t *slider=lv_slider_create(palette,NULL);nova_theme.sliders[i]=slider;lv_obj_set_size(slider,482,24);lv_obj_set_pos(slider,68,y);lv_bar_set_range(slider,0,255);lv_obj_set_free_num(slider,i);lv_slider_set_action(slider,theme_slider);nova_theme.values[i]=nyx_nova_text(palette,"",568,y-4,70,NOVA_BODY);}
     static const u32 presets[]={0x10151D,0x19212D,0x334050,0xF2F5FA,0x55C9F1,0xA78BFA,0x8AE6B6,0xF4B860};
     static lv_style_t swatches[8];
-    for(u32 i=0;i<8;++i){lv_style_copy(&swatches[i],lv_theme_get_current()->btn.rel);swatches[i].body.empty=0;swatches[i].body.opa=LV_OPA_COVER;swatches[i].body.main_color=swatches[i].body.grad_color=LV_COLOR_HEX(presets[i]);lv_obj_t *swatch=theme_button(palette,"",theme_swatch,24+i*78,322,64,presets[i]);lv_btn_set_style(swatch,LV_BTN_STYLE_REL,&swatches[i]);lv_btn_set_style(swatch,LV_BTN_STYLE_PR,&swatches[i]);}
+    for(u32 i=0;i<8;++i){lv_style_copy(&swatches[i],lv_theme_get_current()->btn.rel);swatches[i].body.empty=0;swatches[i].body.opa=LV_OPA_COVER;swatches[i].body.main_color=swatches[i].body.grad_color=LV_COLOR_HEX(presets[i]);lv_obj_t *swatch=theme_button(palette,"",theme_swatch,24+i*78,332,64,presets[i]);lv_btn_set_style(swatch,LV_BTN_STYLE_REL,&swatches[i]);lv_btn_set_style(swatch,LV_BTN_STYLE_PR,&swatches[i]);}
     lv_obj_t *left=nyx_nova_panel(wallpaper,34,14,672,panel_height);
     nyx_nova_text(left,"Fond d’écran fixe",24,22,620,NOVA_TITLE);
     nova_theme.file=nyx_nova_text(left,"",24,78,620,NOVA_BODY);nyx_nova_fit_text(nova_theme.file,52);

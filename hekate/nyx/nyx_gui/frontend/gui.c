@@ -1456,8 +1456,9 @@ static void _update_status_bar(void *params)
 		label = (char *)malloc(512);
 
 	// Set time and SoC temperature.
-	s_printf(label, "%02d:%02d · %02d.%d °C",
-		time.hour, time.min, soc_temp_dec, (soc_temp & 0xFF) / 10);
+	s_printf(label, "%02d:%02d · #%06X %02d.%d °C#",
+		time.hour, time.min, nyx_nova_temperature_rgb(soc_temp_dec), soc_temp_dec, (soc_temp & 0xFF) / 10);
+	lv_label_set_recolor(status_bar.time_temp, true);
 
 	lv_label_set_text(status_bar.time_temp, label);
 
@@ -2285,18 +2286,8 @@ static void _nyx_main_menu(lv_theme_t * th)
 	lv_scr_load(scr);
 	lv_cont_set_style(scr, th->bg);
 
-	// Create base background and add a custom one if exists.
-	lv_obj_t *cnr = lv_cont_create(scr, NULL);
-	static lv_style_t base_bg_style;
-	lv_style_copy(&base_bg_style, &lv_style_plain_color);
-	base_bg_style.body.main_color = th->bg->body.main_color;
-	base_bg_style.body.grad_color = base_bg_style.body.main_color;
-	lv_cont_set_style(cnr, &base_bg_style);
-	lv_obj_set_size(cnr, LV_HOR_RES, LV_VER_RES);
-
-	/* The compact presentation uses one uniform charcoal base. Existing
-	 * SD artwork is retained, but does not compete with text or scrolling. */
-	nyx_background_create(scr);
+	/* Opaque root, protected wallpaper behind all interactive surfaces. */
+	nyx_nova_screen(scr);
 
 	// Add tabview page to screen.
 	lv_obj_t *tv = nyx_nova_tabview(scr);
@@ -2436,6 +2427,7 @@ void nyx_load_and_run()
 	tmp451_init();
 
 	// Set hekate theme based on chosen hue.
+	lv_theme_hekate_set_accents(n_cfg.nova_icon_color,n_cfg.nova_selection_color);
 	lv_theme_hekate_set_colors(n_cfg.nova_text_color, n_cfg.nova_border_color, n_cfg.nova_reflection_color, n_cfg.nova_menu_opacity);
 	lv_theme_t *th = lv_theme_hekate_init(n_cfg.theme_bg, n_cfg.theme_color, (lv_font_t *)nyx_font_ui(20));
 	lv_theme_set_current(th);
