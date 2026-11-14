@@ -4,8 +4,8 @@ The radio is substituted. This verifies software, not a physical RF link.
 from pathlib import Path
 import subprocess, json, hashlib
 w=Path(__file__).resolve().parent
-p=w/'hekate-nova-pro-v25/nyx/nyx_gui'
-d=w/'nova25-tests';d.mkdir(exist_ok=True)
+p=w/'hekate-nova-pro-v26/nyx/nyx_gui'
+d=w/'nova26-tests';d.mkdir(exist_ok=True)
 test=r'''
 #include <assert.h>
 #include <stdio.h>
@@ -146,5 +146,5 @@ r=subprocess.run([str(d/'test.exe')],capture_output=True,text=True,timeout=20)
 print(r.stdout,r.stderr)
 assert r.returncode==0,r.returncode
 files=list((p/'bluetooth').glob('*.[ch]'))
-(w/'nova25-bt-check.json').write_text(json.dumps({'passed':True,'physical_radio':False,'output':r.stdout,
+(w/'nova26-bt-check.json').write_text(json.dumps({'passed':True,'physical_radio':False,'output':r.stdout,
     'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2))

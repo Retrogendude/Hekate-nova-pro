@@ -895,6 +895,22 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
 
                     switch (l2cap_event_incoming_connection_get_psm(packet)){
                         case PSM_HID_CONTROL:
+#ifdef NOVA_HID_KNOWN_PSMS
+                            /* Joy-Con reconnects can cross our control open.
+                             * Reuse the HID session and let the peer's channel
+                             * win while our own control open is still pending.
+                             * The old L2CAP CID remains owned by L2CAP until its
+                             * response/timeout; its callback is filtered below. */
+                            if (connection && !connection->incoming &&
+                                connection->requested_protocol_mode == HID_PROTOCOL_MODE_REPORT &&
+                                connection->state == HID_HOST_W4_CONTROL_CONNECTION_ESTABLISHED){
+                                connection->con_handle = con_handle;
+                                connection->control_cid = l2cap_event_incoming_connection_get_local_cid(packet);
+                                connection->incoming = true;
+                                hid_emit_incoming_connection_event(connection->hid_cid, address, con_handle, ERROR_CODE_SUCCESS);
+                                break;
+                            }
+#endif
                             if (connection){
                                 l2cap_decline_connection(channel);
                                 break; 
@@ -921,6 +937,17 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
                                 l2cap_decline_connection(channel);
                                 break;
                             }
+#ifdef NOVA_HID_KNOWN_PSMS
+                            /* Only one incoming interrupt channel may win. An
+                             * outgoing interrupt still awaiting its response
+                             * may be superseded in the same way as control. */
+                            if (connection->incoming && connection->interrupt_cid){
+                                l2cap_decline_connection(channel);
+                                break;
+                            }
+                            if (connection->requested_protocol_mode == HID_PROTOCOL_MODE_REPORT)
+                                connection->incoming = true;
+#endif
                             
                             connection->state = HID_HOST_W4_INTERRUPT_CONNECTION_ESTABLISHED;
                             connection->interrupt_cid = l2cap_event_incoming_connection_get_local_cid(packet);
@@ -937,12 +964,25 @@ static void hid_host_packet_handler(uint8_t packet_type, uint16_t channel, uint8
 
                 case L2CAP_EVENT_CHANNEL_OPENED: 
                     l2cap_event_channel_opened_get_address(packet, address); 
+#ifdef NOVA_HID_KNOWN_PSMS
+                    /* Match the canonical CID, not merely the peer address.
+                     * A superseded outgoing open may complete or time out after
+                     * the incoming session is active, or after a reconnect. */
+                    l2cap_cid = l2cap_event_channel_opened_get_local_cid(packet);
+                    connection = hid_host_get_connection_for_l2cap_cid(l2cap_cid);
+                    if (!connection || memcmp(connection->remote_addr, address, 6) != 0){
+                        if (l2cap_event_channel_opened_get_status(packet) == ERROR_CODE_SUCCESS)
+                            l2cap_disconnect(l2cap_cid);
+                        break;
+                    }
+#else
                    
                     connection = hid_host_get_connection_for_bd_addr(address);
                     if (!connection){
                         log_error("Connection does not exist %s", bd_addr_to_str(address));
                         break;
                     }
+#endif
                     
                     status = l2cap_event_channel_opened_get_status(packet); 
                     if (status != ERROR_CODE_SUCCESS){

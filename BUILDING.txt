@@ -1,11 +1,12 @@
-Hekate Nova Pro25: build with devkitARM, GNU make -j4 -r and Python.
-Read LIRE-MOI-V25.md, AUTH-SOURCES-V25.md and all licenses.
-The Windows scripts retain the development workspace layout: scripts in work/, project in work/hekate-nova-pro-v25.
+Hekate Nova Pro26: build with devkitARM, GNU make -j4 -r and Python.
+Read LIRE-MOI-V26.md, AUTH-SOURCES-V26.md and all licenses.
+The Windows scripts retain the development workspace layout: scripts in work/, project in work/hekate-nova-pro-v26.
 Adjust the portable tools paths when using another machine; the project Makefiles also support the usual devkitPro environment.
 Native UI tests additionally use the prior official res.pak archive and font fixtures described in the renderer.
 For negative regressions, restore build-tools/regression-reference/v23-gui_bluetooth.c as work/hekate-nova-pro-v23/nyx/nyx_gui/frontend/gui_bluetooth.c,
 v21-gui.c as work/hekate-nova-pro-v21-bt/nyx/nyx_gui/frontend/gui.c, and v21-nyx.bin as work/hekate-nova-pro-v21-bt/output/nyx.bin.
 Restore v24-nova_bt_stack.c as work/hekate-nova-pro-v24/nyx/nyx_gui/bluetooth/nova_bt_stack.c for the old-policy regressions.
+Restore v25-hid_host.c as work/hekate-nova-pro-v25/nyx/nyx_gui/libs/btstack/classic/hid_host.c for the actual refusal regression.
 Run pairing before negotiation (it builds the SPI/import fixture object); build renderer and run native UI before navigation.
 Run verify after the tests and final ARM build. Do not remove the Nyx metadata linker assertion.
 PC tests substitute the radio and do not establish successful wireless operation on real hardware.

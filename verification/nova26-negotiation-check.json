@@ -38,6 +38,22 @@
       "output": "PASS: a pending first connection prevents a concurrent second HCI Create Connection"
     },
     {
+      "mode": "hid-cross-control",
+      "output": "PASS: crossed HID control accepted; late failure cannot close active sessions; pools return from six to four channels (peak 6)\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "hid-cross-interrupt",
+      "output": "PASS: crossed HID interrupt accepted; late failure cannot close active sessions; pools return from six to four channels (peak 6)\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "hid-late-success",
+      "output": "PASS: crossed HID control accepted; late success cannot close active sessions; pools return from six to four channels (peak 6)\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
+      "mode": "hid-orphan-timeout",
+      "output": "PASS: crossed HID control accepted; late timeout cannot close active sessions; pools return from six to four channels (peak 6)\nPASS: Joy-Con initiated HCI connections request central; Role Change updates both roles\nPASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
+    },
+    {
       "mode": "outgoing",
       "output": "PASS: two real HCI authentications, control/interrupt configuration, padded report command, ACK, buttons/sticks and disconnect through the full stack"
     },
@@ -56,6 +72,12 @@
       "expected_assertion": "!stall_first"
     }
   ],
+  "v25_hid_regression": {
+    "source": "v25 hid_host.c",
+    "actual_l2cap_refusal": 4,
+    "assertion": "!refused_cross",
+    "physical_radio": false
+  },
   "physical_radio": false,
   "source_sha256": {
     "bluetooth/btstack_config.h": "7800d548059387df4ed40353ec3787e752c2f510a93b4ce004b5a895b0136101",
@@ -65,5 +87,5 @@
     "bluetooth/nova_bt_stack.c": "e1ad2f95bae0c5d93bfb193d3364c814abd4cbd19319fb19aee24d89989b2ae3",
     "bluetooth/nova_bt_trace.c": "b95d5dfa8655bd4612d4d1160abe0191cacfa785042856204afad66d1bb5d274"
   },
-  "hid_host_sha256": "50699e1dc20a82797ed0aac125678448d1b9d4656158bf578a47c553008d029f"
+  "hid_host_sha256": "46667bf5db4ef5139e3ff230759a7634d2a0c53f3d94377d31f8b2b66cc3887e"
 }

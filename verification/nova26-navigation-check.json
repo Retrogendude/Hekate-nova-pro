@@ -1,8 +1,8 @@
 {
   "passed_scenes": 28,
   "regressions_fail_on_v21": [
-    "Assertion failed: jc_drv_ctx.calibration_step==JC_CAL_MAX_STEPS, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova25-tests\\old_navigation.c, line 8381",
-    "Assertion failed: !jc_drv_ctx.cursor_hidden, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova25-tests\\old_navigation.c, line 8385"
+    "Assertion failed: jc_drv_ctx.calibration_step==JC_CAL_MAX_STEPS, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova26-tests\\old_navigation.c, line 8381",
+    "Assertion failed: !jc_drv_ctx.cursor_hidden, file C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\nova26-tests\\old_navigation.c, line 8385"
   ],
   "real_code": "decoder, merge, pointer callback and LVGL widgets; radio substituted",
   "source_sha256": {

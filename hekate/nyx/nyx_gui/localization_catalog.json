@@ -37654,5 +37654,14 @@
     "v25 · Переподключение Joy-Con\nЗапрос центральной роли при подключении.\nПодключения по очереди; отчёты сохранены.",
     "v25 · Joy-Con-Wiederverbindung\nZentralrolle bei eingehenden Verbindungen.\nVerbindungen nacheinander; Berichte erhalten.",
     "v25 · Reconexão Joy-Con\nPapel central pedido ao reconectar.\nLigações sucessivas; relatórios preservados."
+  ],
+  "v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.": [
+    "v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.",
+    "v26 · Canaux Joy-Con\nReconnexions entrantes acceptées.\nRéponses tardives isolées.",
+    "v26 · Canales Joy-Con\nReconexiones HID entrantes aceptadas.\nRespuestas tardías aisladas.",
+    "v26 · Canali Joy-Con\nRiconnessioni HID in ingresso accettate.\nRisposte tardive isolate.",
+    "v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.",
+    "v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.",
+    "v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas."
   ]
 }

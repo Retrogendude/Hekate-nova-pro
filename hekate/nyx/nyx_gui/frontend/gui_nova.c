@@ -764,7 +764,7 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
-                "v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.",
+                "v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
                 "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."

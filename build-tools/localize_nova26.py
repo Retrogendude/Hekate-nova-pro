@@ -1,15 +1,15 @@
 from pathlib import Path
 import json,re
-root=Path(__file__).resolve().parent/'hekate-nova-pro-v25/nyx/nyx_gui'
+root=Path(__file__).resolve().parent/'hekate-nova-pro-v26/nyx/nyx_gui'
 phrases={}
 def add(en,fr,es,it,ru,de,pt):phrases[en]=[en,fr,es,it,ru,de,pt]
-add('v25 · Joy-Con reconnection\nCentral role requested on incoming links.\nConnection attempts serialized; reports retained.',
- 'v25 · Reconnexion Joy-Con\nRôle principal demandé à la reconnexion.\nConnexions successives ; rapports conservés.',
- 'v25 · Reconexión Joy-Con\nRol central solicitado al reconectar.\nConexiones sucesivas; informes conservados.',
- 'v25 · Riconnessione Joy-Con\nRuolo centrale richiesto in ingresso.\nConnessioni successive; rapporti conservati.',
- 'v25 · Переподключение Joy-Con\nЗапрос центральной роли при подключении.\nПодключения по очереди; отчёты сохранены.',
- 'v25 · Joy-Con-Wiederverbindung\nZentralrolle bei eingehenden Verbindungen.\nVerbindungen nacheinander; Berichte erhalten.',
- 'v25 · Reconexão Joy-Con\nPapel central pedido ao reconectar.\nLigações sucessivas; relatórios preservados.')
+add('v26 · Joy-Con channels\nIncoming HID reconnects accepted.\nLate channel replies isolated.',
+ 'v26 · Canaux Joy-Con\nReconnexions entrantes acceptées.\nRéponses tardives isolées.',
+ 'v26 · Canales Joy-Con\nReconexiones HID entrantes aceptadas.\nRespuestas tardías aisladas.',
+ 'v26 · Canali Joy-Con\nRiconnessioni HID in ingresso accettate.\nRisposte tardive isolate.',
+ 'v26 · Каналы Joy-Con\nВходящие подключения HID принимаются.\nПоздние ответы изолированы.',
+ 'v26 · Joy-Con-Kanäle\nEingehende HID-Verbindungen angenommen.\nVerspätete Antworten getrennt behandelt.',
+ 'v26 · Canais Joy-Con\nReconexões HID recebidas aceites.\nRespostas tardias isoladas.')
 # Preserve the existing catalog and regenerate its pattern indices after sorting.
 catalog=root/'localization_catalog.inc';lines={}
 for line in catalog.read_text(encoding='utf-8').splitlines():
@@ -24,5 +24,5 @@ tail+='static const uint16_t locale_pattern_start[257] = {'+', '.join(str(sum(ch
 catalog.write_text('/* Nova catalog: en fr es it ru de pt. */\nstatic const locale_entry locale_catalog[] = {\n'+'\n'.join(lines[k]for k in keys)+'\n};\n'+tail,encoding='utf-8')
 data=json.loads((root/'localization_catalog.json').read_text(encoding='utf-8'));data.update(phrases)
 (root/'localization_catalog.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
-(root/'localization_nova25.json').write_text(json.dumps(phrases,ensure_ascii=False,indent=2),encoding='utf-8')
+(root/'localization_nova26.json').write_text(json.dumps(phrases,ensure_ascii=False,indent=2),encoding='utf-8')
 print(f'PASS: {len(phrases)} Bluetooth/changelog phrases in seven languages.')

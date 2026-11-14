@@ -1,7 +1,7 @@
 """Exercise the real manual SD report writer with file/card I/O substituted."""
 from pathlib import Path
 import subprocess,json,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v25';d=w/'nova25-tests'
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v26';d=w/'nova26-tests'
 f=p/'nyx/nyx_gui/frontend/gui_bluetooth.c';s=f.read_text();a=s.index('static bool save_report(');b=s.index('\nstatic lv_res_t stop(',a);body=s[a:b]
 test=r'''
 #include <stdio.h>
@@ -11,7 +11,7 @@ test=r'''
 #include <utils/types.h>
 #include <utils/sprintf.h>
 #include "nova_bt.h"
-#define NYX_NOVA_VERSION "25"
+#define NYX_NOVA_VERSION "26"
 #define FR_EXIST 8
 #define FA_WRITE 2
 #define FA_CREATE_ALWAYS 8
@@ -54,4 +54,4 @@ cc=w/'toolchains/w64devkit/bin/gcc.exe'
 r=subprocess.run([str(cc),'-std=gnu11','-O1','-Wall','-Wextra','-Werror','-Wno-unused-parameter','-I'+str(p/'bdk'),'-I'+str(p/'nyx/nyx_gui/bluetooth'),str(d/'report.c'),str(p/'bdk/utils/sprintf.c'),str(p/'nyx/nyx_gui/bluetooth/nova_bt_trace.c'),'-o',str(d/'report.exe')],capture_output=True,text=True)
 assert r.returncode==0,r.stderr
 r=subprocess.run([str(d/'report.exe')],capture_output=True,text=True,timeout=10);print(r.stdout,r.stderr);assert r.returncode==0,r.returncode
-(w/'nova25-report-check.json').write_text(json.dumps({'passed':True,'cases':11,'output':r.stdout,'source_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'card_io':'substituted'},indent=2))
+(w/'nova26-report-check.json').write_text(json.dumps({'passed':True,'cases':11,'output':r.stdout,'source_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'card_io':'substituted'},indent=2))
