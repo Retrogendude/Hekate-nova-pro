@@ -1,0 +1,26 @@
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Built module: libsys_lp0.bso
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Built module: libsys_minerva.bso
+Built module: module_sample.bso
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Building ../build/nyx/localization.o
+[100%] Linking nyx.elf[KC:/devkitPro/devkitARM/bin/../lib/gcc/arm-none-eabi/16.1.0/../../../../arm-none-eabi/bin/ld.exe: warning: ../build/nyx/nyx.elf has a LOAD segment with RWX permissions
+
+nyx was built with the following flags:
+CFLAGS:  -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -O2 -g -gdwarf-4 -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -std=gnu11 -DNYX_LOAD_ADDR=0x81000000 -DNYX_MAGIC=0x43544347  -DNYX_VER_MJ=1 -DNYX_VER_MN=9 -DNYX_VER_HF=5 -DNYX_VER_RL=0 -DBDK_MINERVA_CFG_FROM_RAM -DBDK_HW_EXTRA_DEINIT -DBDK_SDMMC_EXTRA_PRINT -DGFX_INC='../nyx/nyx_gui/gfx/gfx.h' -DFFCFG_INC='../nyx/nyx_gui/libs/fatfs/ffconf.h' -DHAVE_CPU_STUB=1
+LDFLAGS: -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -nostartfiles -lgcc -Wl,--nmagic,--gc-sections -Xlinker --defsym=NYX_LOAD_ADDR=0x81000000
+--------------------------------------
+Nyx size: 2220929 Bytes
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+--------------------------------------
+hekate size:
+Uncompr:  139273 Bytes
+Payload:  110866 Bytes
+--------------------------------------

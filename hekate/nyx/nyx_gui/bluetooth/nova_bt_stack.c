@@ -110,6 +110,15 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
     (void)channel;if(type!=HCI_EVENT_PACKET||size<2)return;
     bd_addr_t addr;int i;uint16_t cid;
     switch(hci_event_packet_get_type(p)){
+    case HCI_EVENT_COMMAND_COMPLETE:
+        /* Verify the controller's readback, never log either address. */
+        if(size>=12 && little_endian_read_16(p,3)==HCI_OPCODE_HCI_READ_BD_ADDR && !p[5]){
+            reverse_bd_addr(p+6,addr);
+            status.host_identity=memcmp(addr,peers[peers[0].valid?0:1].host,6)?2:1;
+            nova_bt_trace_add(12,status.host_identity,0,0);
+            if(status.host_identity==2)failure=9;
+        }
+        break;
     case HCI_EVENT_CONNECTION_COMPLETE:
         if(size<13)break;
         hci_event_connection_complete_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
@@ -121,9 +130,13 @@ static void event(uint8_t type,uint16_t channel,uint8_t *p,uint16_t size)
     case HCI_EVENT_ENCRYPTION_CHANGE:
         if(size<5)break;
         i=side_handle(little_endian_read_16(p,3));if(i<0)break;
+        if(p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE)status.pad[i].auth_error=p[2];
         status.pad[i].last_error=p[2];status.pad[i].stage=p[2]?7:3;break;
     case BTSTACK_EVENT_STATE:
-        if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){status.state=NOVA_BT_READY;}
+        if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){
+            if(status.host_identity==1)status.state=NOVA_BT_READY;
+            else failure=9;
+        }
         break;
     case HCI_EVENT_HARDWARE_ERROR: failure=8;break;
     case HCI_EVENT_PIN_CODE_REQUEST:

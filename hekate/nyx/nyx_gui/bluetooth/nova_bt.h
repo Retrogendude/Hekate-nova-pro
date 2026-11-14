@@ -12,11 +12,12 @@ typedef struct {
     uint8_t report_id, mode_ack, hid_open, last_error;
     uint32_t reports;
     uint16_t last_psm;
-    uint8_t stage;
+    uint8_t stage, auth_error;
 } nova_bt_pad;
 enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
 typedef struct {
     int state, error;
+    uint8_t host_identity; /* 0 unknown, 1 controller matches imported host, 2 mismatch */
     uint32_t rx_packets, tx_packets;
     uint32_t rx_acl, tx_acl;
     nova_bt_pad pad[2];

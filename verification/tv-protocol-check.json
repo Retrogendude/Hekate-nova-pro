@@ -1,6 +1,0 @@
-{
-  "result": "PASS: 18 protocol regression checks (no hardware).",
-  "source": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-nova-pro-v23\\bdk\\display\\tv\\usbpd.c",
-  "source_sha256": "7235ff8e94c9f825cbc94dd3ab3fbad392c421efcc0673a1c74cc2cca44c9e27",
-  "hardware_validation": false
-}

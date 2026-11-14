@@ -50,9 +50,10 @@ static lv_res_t import_pairing(lv_obj_t *button)
         jc_bt_conn_t *b=i?&p->bt_conn_r:&p->bt_conn_l;
         if(!hos[i]||!(b->type&(i?2:1)))continue;
         paired[i].valid=1;memcpy(paired[i].mac,b->mac,6);memcpy(paired[i].host,b->host_mac,6);
-        /* BDK reverses the SPI key for its exported big-endian string.
-         * BTstack expects the original 16-byte HCI link-key wire order. */
-        for(unsigned j=0;j<16;j++)paired[i].key[j]=b->ltk[15-j];
+        /* BDK already prepares the exported/HCI key order. Switchroot loads
+         * this same byte sequence into BlueZ without another reversal.
+         * BTstack's Link_Key_Request_Reply "P" field copies these 16 bytes. */
+        memcpy(paired[i].key,b->ltk,16);
     }
     int count=nova_bt_validate_peers(paired);
     if(!count)memset(paired,0,sizeof(paired));
@@ -75,16 +76,16 @@ static bool save_report(void)
     const nova_bt_status *s=nova_bt_get_status();
     s_printf(buffer,"Hekate Nova Pro " NYX_NOVA_VERSION " Bluetooth\n"
         "Metadata only: no addresses, pairing keys or packet payloads.\n"
-        "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d\n",
-        (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error);
+        "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
+        (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
     u32 length=strlen(buffer);
     for(unsigned side=0;side<2;side++){
         const nova_bt_pad *p=&s->pad[side];
-        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d\n",
-            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage);
+        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X\n",
+            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error);
         length=strlen(buffer);
     }
-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport\n");
+    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity\n");
     length=strlen(buffer);
     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;

@@ -1,0 +1,140 @@
+--- v23/nyx/nyx_gui/bluetooth/nova_bt.h
++++ v24/nyx/nyx_gui/bluetooth/nova_bt.h
+@@ -12,11 +12,12 @@
+     uint8_t report_id, mode_ack, hid_open, last_error;
+     uint32_t reports;
+     uint16_t last_psm;
+-    uint8_t stage;
++    uint8_t stage, auth_error;
+ } nova_bt_pad;
+ enum { NOVA_BT_OFF, NOVA_BT_STARTING, NOVA_BT_READY, NOVA_BT_ERROR };
+ typedef struct {
+     int state, error;
++    uint8_t host_identity; /* 0 unknown, 1 controller matches imported host, 2 mismatch */
+     uint32_t rx_packets, tx_packets;
+     uint32_t rx_acl, tx_acl;
+     nova_bt_pad pad[2];
+--- v23/nyx/nyx_gui/bluetooth/nova_bt_stack.c
++++ v24/nyx/nyx_gui/bluetooth/nova_bt_stack.c
+@@ -110,6 +110,15 @@
+     (void)channel;if(type!=HCI_EVENT_PACKET||size<2)return;
+     bd_addr_t addr;int i;uint16_t cid;
+     switch(hci_event_packet_get_type(p)){
++    case HCI_EVENT_COMMAND_COMPLETE:
++        /* Verify the controller's readback, never log either address. */
++        if(size>=12 && little_endian_read_16(p,3)==HCI_OPCODE_HCI_READ_BD_ADDR && !p[5]){
++            reverse_bd_addr(p+6,addr);
++            status.host_identity=memcmp(addr,peers[peers[0].valid?0:1].host,6)?2:1;
++            nova_bt_trace_add(12,status.host_identity,0,0);
++            if(status.host_identity==2)failure=9;
++        }
++        break;
+     case HCI_EVENT_CONNECTION_COMPLETE:
+         if(size<13)break;
+         hci_event_connection_complete_get_bd_addr(p,addr);i=side_for(addr);if(i<0)break;
+@@ -121,9 +130,13 @@
+     case HCI_EVENT_ENCRYPTION_CHANGE:
+         if(size<5)break;
+         i=side_handle(little_endian_read_16(p,3));if(i<0)break;
++        if(p[0]==HCI_EVENT_AUTHENTICATION_COMPLETE)status.pad[i].auth_error=p[2];
+         status.pad[i].last_error=p[2];status.pad[i].stage=p[2]?7:3;break;
+     case BTSTACK_EVENT_STATE:
+-        if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){status.state=NOVA_BT_READY;}
++        if(btstack_event_state_get_state(p)==HCI_STATE_WORKING){
++            if(status.host_identity==1)status.state=NOVA_BT_READY;
++            else failure=9;
++        }
+         break;
+     case HCI_EVENT_HARDWARE_ERROR: failure=8;break;
+     case HCI_EVENT_PIN_CODE_REQUEST:
+--- v23/nyx/nyx_gui/frontend/gui_bluetooth.c
++++ v24/nyx/nyx_gui/frontend/gui_bluetooth.c
+@@ -50,9 +50,10 @@
+         jc_bt_conn_t *b=i?&p->bt_conn_r:&p->bt_conn_l;
+         if(!hos[i]||!(b->type&(i?2:1)))continue;
+         paired[i].valid=1;memcpy(paired[i].mac,b->mac,6);memcpy(paired[i].host,b->host_mac,6);
+-        /* BDK reverses the SPI key for its exported big-endian string.
+-         * BTstack expects the original 16-byte HCI link-key wire order. */
+-        for(unsigned j=0;j<16;j++)paired[i].key[j]=b->ltk[15-j];
++        /* BDK already prepares the exported/HCI key order. Switchroot loads
++         * this same byte sequence into BlueZ without another reversal.
++         * BTstack's Link_Key_Request_Reply "P" field copies these 16 bytes. */
++        memcpy(paired[i].key,b->ltk,16);
+     }
+     int count=nova_bt_validate_peers(paired);
+     if(!count)memset(paired,0,sizeof(paired));
+@@ -75,16 +76,16 @@
+     const nova_bt_status *s=nova_bt_get_status();
+     s_printf(buffer,"Hekate Nova Pro " NYX_NOVA_VERSION " Bluetooth\n"
+         "Metadata only: no addresses, pairing keys or packet payloads.\n"
+-        "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d\n",
+-        (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error);
++        "HCI RX/TX %d/%d; ACL RX/TX %d/%d; state %d error %d; HOST=%d (0=unknown 1=match 2=mismatch)\n",
++        (int)s->rx_packets,(int)s->tx_packets,(int)s->rx_acl,(int)s->tx_acl,s->state,s->error,s->host_identity);
+     u32 length=strlen(buffer);
+     for(unsigned side=0;side<2;side++){
+         const nova_bt_pad *p=&s->pad[side];
+-        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d\n",
+-            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage);
++        s_printf(buffer+length,"side %d: HID=%d reports=%d ID=%02X ACK=%d ERR=%02X PSM=%04X STEP=%d AUTH=%02X\n",
++            side,p->hid_open,(int)p->reports,p->report_id,p->mode_ack,p->last_error,(unsigned)p->last_psm,p->stage,p->auth_error);
+         length=strlen(buffer);
+     }
+-    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport\n");
++    strcpy(buffer+length,"Trace: ms kind a b c (hex)\n1=TXcmd 2=CC 3=CS 4=event 5=TXsignal 6=RXsignal 7=TXhid 10=HIDopen 11=firstReport 12=hostIdentity\n");
+     length=strlen(buffer);
+     for(unsigned i=0;i<nova_bt_trace_count()&&length+80<8192;i++){
+         nova_bt_trace r;if(!nova_bt_trace_get(i,&r))break;
+--- v23/nyx/nyx_gui/frontend/gui_nova.c
++++ v24/nyx/nyx_gui/frontend/gui_nova.c
+@@ -764,7 +764,7 @@
+         nyx_nova_fixed_page(section);
+         if(i==4){
+             static const char *changes[]={
+-                "v23 · Joy-Con connection\nDirect authenticated HID channels.\nSession report saved with Stop Bluetooth.",
++                "v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.",
+                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
+                 "v19 · Persistent TV output\nTV output stays active across menus.",
+                 "v18 · Customization\nPNG icons and SD partition menus."
+--- v23/nyx/nyx_gui/localization_catalog.inc
++++ v24/nyx/nyx_gui/localization_catalog.inc
+@@ -4137,6 +4137,7 @@
+     {"v21 · Wireless Joy-Con (experimental)\nBluetooth service; requires console testing.\nCredits background and USB frame fixed.", {"v21 · Wireless Joy-Con (experimental)\nBluetooth service; requires console testing.\nCredits background and USB frame fixed.", "v21 · Joy-Con sans fil (expérimental)\nService Bluetooth à tester sur console.\nFond des crédits et cadre USB corrigés.", "v21 · Joy-Con inalámbricos (experimental)\nServicio Bluetooth por probar en consola.\nFondo de créditos y marco USB corregidos.", "v21 · Joy-Con wireless (sperimentale)\nServizio Bluetooth da provare su console.\nSfondo dei crediti e cornice USB corretti.", "v21 · Беспроводные Joy-Con (тест)\nBluetooth требует проверки на консоли.\nИсправлены фон титров и рамка USB.", "v21 · Kabellose Joy-Con (experimentell)\nBluetooth-Dienst auf Konsole testen.\nHintergrund der Credits und USB-Rahmen korrigiert.", "v21 · Joy-Con sem fios (experimental)\nServiço Bluetooth por testar na consola.\nFundo dos créditos e moldura USB corrigidos."}},
+     {"v22 · Compatibility and input fixes\nHekate 6.5.5 / Nyx 1.9.5.\nNyx header and wireless navigation corrected.", {"v22 · Compatibility and input fixes\nHekate 6.5.5 / Nyx 1.9.5.\nNyx header and wireless navigation corrected.", "v22 · Compatibilité et commandes\nHekate 6.5.5 / Nyx 1.9.5.\nEn-tête Nyx et navigation sans fil corrigés.", "v22 · Compatibilidad y controles\nHekate 6.5.5 / Nyx 1.9.5.\nCabecera Nyx y navegación inalámbrica corregidas.", "v22 · Compatibilità e comandi\nHekate 6.5.5 / Nyx 1.9.5.\nIntestazione Nyx e navigazione wireless corrette.", "v22 · Совместимость и управление\nHekate 6.5.5 / Nyx 1.9.5.\nИсправлены заголовок Nyx и беспроводное управление.", "v22 · Kompatibilität und Eingaben\nHekate 6.5.5 / Nyx 1.9.5.\nNyx-Header und kabellose Navigation korrigiert.", "v22 · Compatibilidade e comandos\nHekate 6.5.5 / Nyx 1.9.5.\nCabeçalho Nyx e navegação sem fios corrigidos."}},
+     {"v23 · Joy-Con connection\nDirect authenticated HID channels.\nSession report saved with Stop Bluetooth.", {"v23 · Joy-Con connection\nDirect authenticated HID channels.\nSession report saved with Stop Bluetooth.", "v23 · Connexion des Joy-Con\nCanaux manette directs et authentifiés.\nRapport enregistré avec Arrêter Bluetooth.", "v23 · Conexión de Joy-Con\nCanales HID directos y autenticados.\nInforme guardado al detener Bluetooth.", "v23 · Connessione Joy-Con\nCanali HID diretti e autenticati.\nRapporto salvato fermando Bluetooth.", "v23 · Подключение Joy-Con\nПрямые защищённые каналы HID.\nОтчёт сохраняется при выключении Bluetooth.", "v23 · Joy-Con-Verbindung\nDirekte authentifizierte HID-Kanäle.\nBericht beim Stoppen von Bluetooth.", "v23 · Ligação dos Joy-Con\nCanais HID diretos e autenticados.\nRelatório guardado ao parar Bluetooth."}},
++    {"v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.", {"v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.", "v24 · Authentification Joy-Con\nOrdre des octets de la clé corrigé.\nIdentité vérifiée sans publier les adresses.", "v24 · Autenticación Joy-Con\nOrden de bytes de la clave corregido.\nIdentidad verificada sin registrar direcciones.", "v24 · Autenticazione Joy-Con\nOrdine dei byte della chiave corretto.\nIdentità verificata senza registrare indirizzi.", "v24 · Аутентификация Joy-Con\nИсправлен порядок байтов ключа.\nПроверка без записи адресов.", "v24 · Joy-Con-Authentifizierung\nByte-Reihenfolge des Schlüssels korrigiert.\nIdentität ohne Adressprotokoll geprüft.", "v24 · Autenticação Joy-Con\nOrdem dos bytes da chave corrigida.\nIdentidade verificada sem registar endereços."}},
+     {"valid", {"valid", "valide", "válido", "valido", "действительно", "gültig", "válido"}},
+     {"variable", {"variable", "variable", "variable", "variabile", "переменно", "variabel", "variável"}},
+     {"verify", {"verify", "vérification", "verificación", "verifica", "проверка", "Prüfung", "verificação"}},
+@@ -4183,5 +4184,5 @@
+     {"État thermique :", {"Temperature status:", "État thermique :", "Estado térmico:", "Stato termico:", "Температурный статус:", "Temperaturstatus:", "Estado térmico:"}},
+     {"Éteindre", {"Power Off", "Éteindre", "Apagar", "Spegni", "Выключить", "Ausschalten", "Desligar"}},
+ };
+-static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2659, 2755, 2786, 2800, 2805, 2810, 2812, 2813, 2818, 2823, 2829, 2830, 2840, 2855, 2856, 2873, 2931, 2938, 2941, 2950, 2952, 2965, 2967, 3017, 3018, 3020, 3021, 3030, 3037, 3081, 3085, 3152, 3173, 3174, 3195, 3237, 3310, 3329, 3330, 3339, 3341, 3378, 3440, 3441, 3442, 3453, 3455, 3457, 3459, 3463, 3493, 3494, 3498, 3499, 3506, 3536, 3545, 3546, 3551, 3552, 3578, 3579, 3587, 3589, 3590, 3638, 3642, 3647, 3653, 3654, 3703, 3721, 3776, 3777, 3778, 3780, 3786, 3800, 3801, 3807, 3808, 3832, 3833, 3862, 3870, 3875, 3876, 3897, 3898, 3900, 3901, 3902, 3903, 3904, 3909, 3917, 3919, 3930, 3936, 3969, 3970, 3979, 4016, 4029, 4030, 4032, 4033, 4039, 4040, 4041, 4042, 4044, 4045, 4062, 4073, 4074, 4083, 4086, 4094, 4095, 4097, 4098, 4104, 4109, 4117, 4118, 4119, 4129, 4142, 4143, 4160, 4164};
++static const uint16_t locale_pattern_rows[] = {2, 5, 7, 18, 19, 20, 22, 23, 24, 25, 26, 28, 31, 32, 34, 39, 42, 43, 44, 45, 46, 47, 48, 64, 89, 90, 91, 92, 95, 96, 97, 108, 109, 110, 111, 118, 122, 123, 125, 126, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 144, 145, 159, 164, 166, 169, 171, 181, 182, 183, 184, 185, 186, 189, 190, 191, 192, 193, 195, 196, 201, 202, 203, 204, 205, 208, 209, 210, 211, 212, 214, 215, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 259, 261, 262, 263, 264, 265, 266, 267, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 294, 295, 296, 298, 299, 300, 301, 302, 303, 304, 307, 308, 309, 310, 311, 312, 313, 314, 316, 317, 318, 319, 320, 321, 322, 323, 324, 326, 327, 328, 329, 330, 331, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 378, 379, 380, 382, 383, 384, 385, 386, 387, 388, 389, 390, 394, 395, 396, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 441, 442, 443, 444, 445, 446, 447, 448, 449, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 462, 463, 464, 465, 467, 468, 469, 470, 471, 473, 474, 477, 478, 479, 492, 494, 495, 496, 497, 498, 499, 503, 504, 505, 506, 507, 508, 509, 511, 513, 516, 517, 518, 519, 521, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 550, 551, 554, 555, 556, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 570, 571, 572, 573, 575, 578, 579, 581, 582, 583, 584, 585, 586, 587, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 608, 609, 612, 613, 615, 619, 620, 621, 622, 623, 624, 626, 627, 628, 629, 630, 632, 633, 634, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 653, 654, 656, 657, 658, 659, 660, 661, 662, 663, 665, 669, 673, 674, 675, 677, 678, 679, 680, 682, 683, 684, 686, 689, 690, 710, 751, 780, 783, 784, 803, 806, 807, 808, 809, 818, 820, 839, 841, 842, 844, 845, 846, 850, 851, 852, 855, 863, 864, 869, 882, 884, 885, 889, 897, 911, 919, 921, 937, 954, 957, 967, 968, 970, 975, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 1031, 1032, 1034, 1035, 1036, 1038, 1039, 1040, 1041, 1042, 1043, 1046, 1092, 1093, 1112, 1113, 1115, 1147, 1162, 1204, 1213, 1268, 1326, 1430, 1435, 1445, 1456, 1504, 1509, 1520, 1527, 1539, 1540, 1543, 1544, 1568, 1569, 1618, 1665, 1705, 1765, 1795, 1796, 1797, 1798, 1799, 1831, 1832, 1838, 1885, 1899, 1930, 1964, 1965, 1966, 1967, 1972, 1973, 1974, 1975, 1978, 1980, 1983, 1992, 2040, 2041, 2062, 2063, 2068, 2071, 2080, 2081, 2082, 2088, 2092, 2093, 2102, 2123, 2148, 2173, 2202, 2221, 2238, 2247, 2265, 2387, 2455, 2474, 2475, 2522, 2527, 2528, 2537, 2583, 2659, 2755, 2786, 2800, 2805, 2810, 2812, 2813, 2818, 2823, 2829, 2830, 2840, 2855, 2856, 2873, 2931, 2938, 2941, 2950, 2952, 2965, 2967, 3017, 3018, 3020, 3021, 3030, 3037, 3081, 3085, 3152, 3173, 3174, 3195, 3237, 3310, 3329, 3330, 3339, 3341, 3378, 3440, 3441, 3442, 3453, 3455, 3457, 3459, 3463, 3493, 3494, 3498, 3499, 3506, 3536, 3545, 3546, 3551, 3552, 3578, 3579, 3587, 3589, 3590, 3638, 3642, 3647, 3653, 3654, 3703, 3721, 3776, 3777, 3778, 3780, 3786, 3800, 3801, 3807, 3808, 3832, 3833, 3862, 3870, 3875, 3876, 3897, 3898, 3900, 3901, 3902, 3903, 3904, 3909, 3917, 3919, 3930, 3936, 3969, 3970, 3979, 4016, 4029, 4030, 4032, 4033, 4039, 4040, 4041, 4042, 4044, 4045, 4062, 4073, 4074, 4083, 4086, 4094, 4095, 4097, 4098, 4104, 4109, 4117, 4118, 4119, 4129, 4143, 4144, 4161, 4165};
+ static const uint16_t locale_pattern_start[257] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 461, 461, 461, 495, 495, 527, 527, 527, 528, 528, 528, 530, 530, 530, 530, 530, 533, 535, 536, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 537, 539, 545, 557, 567, 580, 595, 597, 600, 601, 602, 602, 605, 610, 611, 611, 626, 626, 639, 646, 664, 670, 675, 680, 681, 681, 682, 686, 686, 686, 686, 686, 686, 689, 691, 693, 693, 704, 707, 707, 709, 709, 709, 709, 709, 711, 712, 713, 723, 723, 724, 732, 737, 738, 738, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 740, 741, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742, 742};
+--- v23/nyx/nyx_gui/localization_catalog.json
++++ v24/nyx/nyx_gui/localization_catalog.json
+@@ -37636,5 +37636,14 @@
+     "v23 · Подключение Joy-Con\nПрямые защищённые каналы HID.\nОтчёт сохраняется при выключении Bluetooth.",
+     "v23 · Joy-Con-Verbindung\nDirekte authentifizierte HID-Kanäle.\nBericht beim Stoppen von Bluetooth.",
+     "v23 · Ligação dos Joy-Con\nCanais HID diretos e autenticados.\nRelatório guardado ao parar Bluetooth."
++  ],
++  "v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.": [
++    "v24 · Joy-Con authentication\nPairing key byte order corrected.\nHost identity checked without logging addresses.",
++    "v24 · Authentification Joy-Con\nOrdre des octets de la clé corrigé.\nIdentité vérifiée sans publier les adresses.",
++    "v24 · Autenticación Joy-Con\nOrden de bytes de la clave corregido.\nIdentidad verificada sin registrar direcciones.",
++    "v24 · Autenticazione Joy-Con\nOrdine dei byte della chiave corretto.\nIdentità verificata senza registrare indirizzi.",
++    "v24 · Аутентификация Joy-Con\nИсправлен порядок байтов ключа.\nПроверка без записи адресов.",
++    "v24 · Joy-Con-Authentifizierung\nByte-Reihenfolge des Schlüssels korrigiert.\nIdentität ohne Adressprotokoll geprüft.",
++    "v24 · Autenticação Joy-Con\nOrdem dos bytes da chave corrigida.\nIdentidade verificada sem registar endereços."
+   ]
+ }--- v23/nyx/nyx_gui/nova_version.h
++++ v24/nyx/nyx_gui/nova_version.h
+@@ -1,5 +1,5 @@
+ /* Development version for this source tree; shared by UI and packaging. */
+ #ifndef NYX_NOVA_VERSION_H
+ #define NYX_NOVA_VERSION_H
+-#define NYX_NOVA_VERSION "23"
++#define NYX_NOVA_VERSION "24"
+ #endif
