@@ -1,7 +1,7 @@
 {
-  "tag": "v1",
-  "source_archive": "hekate-6.5.4-diagnostic-prototype.zip",
-  "source_archive_sha256": "86c2bd4f79ef3b700262e6a976d0f8be8c48d622876319deb16602aeb90411ae",
+  "tag": "v2",
+  "source_archive": "hekate-6.5.4-interface-console-prototype-2.zip",
+  "source_archive_sha256": "6a480ca4a9332d4fa5736dcb7769bdc932a73e270892f6b8b564e537a35c9bc5",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",

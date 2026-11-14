@@ -149,14 +149,14 @@ emc_mr_data_t sdram_read_mrx(emc_mr_t mrx)
 	// Ram module 0 info.
 	mrr = EMC_CH0(EMC_MRR);
 	data.chip0.rank0_ch0 = mrr & 0xFF;
-	data.chip0.rank0_ch1 = (mrr & 0xFF00 >> 8);
+	data.chip0.rank0_ch1 = ((mrr & 0xFF00) >> 8);
 
 	// Ram module 1 info.
 	if (dual_channel)
 	{
 		mrr = EMC_CH1(EMC_MRR);
 		data.chip1.rank0_ch0 = mrr & 0xFF;
-		data.chip1.rank0_ch1 = (mrr & 0xFF00 >> 8);
+		data.chip1.rank0_ch1 = ((mrr & 0xFF00) >> 8);
 	}
 
 	// If Rank 1 exists, get info.
@@ -168,14 +168,14 @@ emc_mr_data_t sdram_read_mrx(emc_mr_t mrx)
 		// Ram module 0 info.
 		mrr = EMC_CH0(EMC_MRR);
 		data.chip0.rank1_ch0 = mrr & 0xFF;
-		data.chip0.rank1_ch1 = (mrr & 0xFF00 >> 8);
+		data.chip0.rank1_ch1 = ((mrr & 0xFF00) >> 8);
 
 		// Ram module 1 info.
 		if (dual_channel)
 		{
 			mrr = EMC_CH1(EMC_MRR);
 			data.chip1.rank1_ch0 = mrr & 0xFF;
-			data.chip1.rank1_ch1 = (mrr & 0xFF00 >> 8);
+			data.chip1.rank1_ch1 = ((mrr & 0xFF00) >> 8);
 		}
 	}
 

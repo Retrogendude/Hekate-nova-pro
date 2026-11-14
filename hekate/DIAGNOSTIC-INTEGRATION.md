@@ -1,5 +1,9 @@
 # Hekate 6.5.4 — onglet Diagnostic, prototype 1
 
+Mise à jour : cette archive inclut aussi le prototype 2 de présentation.
+Voir `INTERFACE-CONSOLE.md` pour les changements d'interface, la correction
+de lecture des canaux DRAM et les limites de validation.
+
 Cette version de travail ajoute un onglet Diagnostic dans Nyx. Les tests tournent directement dans Nyx, sans lancer HWTest-RCM séparément.
 
 Intégré depuis HWTest-RCM 0.15 : identification écran, état du rétroéclairage LCD/OLED, identification DRAM et comparaison des canaux. Résultats textuels PASS/WARN/FAIL. Les sources des sondes sont conservées dans frontend/diagnostics, avec un adaptateur Nyx spécifique.
