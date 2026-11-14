@@ -1,4 +1,4 @@
-# Hekate 6.5.4 — deux dispositions d'accueil, prototype 4
+# Hekate 6.5.4 — deux dispositions d'accueil, prototype 5
 
 Cette version intègre deux dispositions de l'accueil Nyx, sélectionnables
 dans les réglages. Les fonctions Hekate et le nouvel onglet Diagnostic restent
@@ -44,20 +44,29 @@ sauvegarde doit afficher un message et empêcher le rechargement. Les erreurs
 d'écriture et de fermeture du fichier de configuration sont désormais prises
 en compte par le rédacteur de configuration Nyx.
 
-Les contrôles Diagnostic disponibles restent l'identification écran,
-l'état du rétroéclairage et l'identification DRAM. L'audio, les radios,
-le stockage et le test complet de RAM ne sont pas intégrés. La correction
-de lecture des canaux DRAM du prototype précédent est conservée.
+Le thème de l'accueil est également appliqué aux composants des menus et
+sous-menus : fenêtres, panneaux, boutons, listes, réglages, sélecteurs,
+interrupteurs, boîtes de dialogue et barre d'onglets. Les couleurs d'alerte
+et les textes numériques à police fixe sont conservés. Les fonds et teintes
+personnalisés restent pris en compte. Le thème par défaut utilise le fond
+141A19, les panneaux 202B27, l'accent 93E1AE et les angles arrondis.
+
+Le Diagnostic contient désormais toute la table des sondes HWTest, l'export
+et le service RAM avec retour à Hekate. Voir DIAGNOSTIC-INTEGRATION.md.
 
 ## Validation et limites
 
-Cette livraison contient les sources uniquement. La chaîne de compilation
-ARM n'est pas installée dans l'environnement utilisé ; aucun binaire compilé
-ni essai sur console n'est fourni. La maquette interactive présente le choix
-dans les réglages et ne lit ni n'écrit une carte SD réelle.
+La compilation complète a réussi le 4 novembre 2026 avec devkitARM GCC 16.1.0.
+Hekate, Nyx et les modules ont été générés. Les tailles du payload et de
+Hekate non compressé respectent les limites du Makefile. Les fichiers binaires
+ont été comparés à leur ELF lié. Le programme Wi-Fi AArch64 et le service
+RAM séparé ont également été construits. La sauvegarde des réglages a passé 69 cas C
+exécutés avec une carte SD simulée, y compris les erreurs d'écriture.
 
-Avant installation, compiler Hekate et Nyx avec la chaîne prévue par leurs
-Makefiles, puis vérifier les deux dispositions sur l'écran 1280 × 720,
+Aucun essai sur console n'a encore été effectué. La maquette interactive
+présente le choix dans les réglages et ne lit ni n'écrit une carte SD réelle.
+
+Pour la validation matérielle, vérifier les deux dispositions sur l'écran 1280 × 720,
 les raccourcis, les réglages, la conservation du choix après rechargement,
 l'annulation, les erreurs d'écriture et la navigation tactile/Joy-Con.
 

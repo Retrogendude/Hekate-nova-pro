@@ -1,0 +1,7 @@
+{
+  "hwtest_commit": "778e25b66a11c5cdd65c11a69ef8083aff1cd9f7",
+  "atmosphere_commit": "cb4b882e3b176480ac57a1161a85ff175c3f162c",
+  "atmosphere_archive_sha256": "1519beb863969ece1909a8efc49f654c42cc57e6d6c9e42fdca5828e10b3a83f",
+  "hekate_source_commit": "45cd81ed08e30a26ba380958c7e20b55c342834b",
+  "note": "Hekate BDK from supplied6.5.4archive; original HWTest pin94947672958d6d05c450cf1c9e575ce208a18ea7"
+}

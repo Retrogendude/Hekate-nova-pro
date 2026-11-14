@@ -73,7 +73,7 @@ static void _create_window_emummc()
 
 	static lv_style_t h_style;
 	lv_style_copy(&h_style, lv_cont_get_style(h1));
-	h_style.body.main_color = LV_COLOR_HEX(0x1d1d1d);
+	h_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
 	h_style.body.grad_color = h_style.body.main_color;
 	h_style.body.opa = LV_OPA_COVER;
 
@@ -919,7 +919,7 @@ static lv_res_t _create_change_emummc_window(lv_obj_t *btn_caller)
 
 out0:;
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 6;
@@ -1064,7 +1064,7 @@ lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 	sd_unmount();
 
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 9;

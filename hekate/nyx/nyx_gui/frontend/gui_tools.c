@@ -38,7 +38,7 @@ extern char *emmcsn_path_impl(char *path, char *sub_dir, char *filename, sdmmc_s
 static lv_obj_t *_create_container(lv_obj_t *parent)
 {
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 6;
@@ -676,7 +676,7 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
 	lv_obj_t *win = nyx_create_standard_window(SYMBOL_USB" USB Tools", NULL);
 
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 9;

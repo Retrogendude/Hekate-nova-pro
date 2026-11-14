@@ -1,0 +1,6 @@
+Sources Hekate/Nyx et compagnon HWTest-RCM avec dependances RAM incluses.
+Construire Hekate a sa racine avec make -j4 (devkitARM, devkitA64, Python3, GCC natif).
+Construire ensuite HWTest-RCM-0.15/ramtest avec make -j4 (devkitARM, Python3, Git).
+Les scripts build-tools sont les references de construction et verification
+du workspace Windows utilise ici ; ils attendent sa disposition work/.
+Ne pas utiliser les sorties intermediaires *_unc.bin comme payloads.

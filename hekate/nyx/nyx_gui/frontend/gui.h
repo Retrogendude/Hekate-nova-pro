@@ -82,6 +82,10 @@ lv_obj_t *nyx_create_standard_window(const char *win_title, lv_action_t close_ac
 void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, const char *btn_name, lv_action_t action, bool transparent);
 lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn);
 void manual_system_maintenance(bool refresh);
+/* Pause native input and hardware maintenance while diagnostic probes own it. */
+void gui_diagnostics_suspend(unsigned int groups);
+void gui_diagnostics_resume(unsigned int groups);
+bool gui_diagnostics_inputs_ready(void);
 void nyx_load_and_run();
 
 #endif

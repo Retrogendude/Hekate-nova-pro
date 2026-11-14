@@ -66,7 +66,7 @@ static void _create_window_backup_restore(emmcPartType_t type, const char* win_l
 
 	static lv_style_t h_style;
 	lv_style_copy(&h_style, lv_cont_get_style(h1));
-	h_style.body.main_color = LV_COLOR_HEX(0x1d1d1d);
+	h_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
 	h_style.body.grad_color = h_style.body.main_color;
 	h_style.body.opa = LV_OPA_COVER;
 
@@ -288,7 +288,7 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 		win = nyx_create_standard_window(SYMBOL_SD" Restore", NULL);
 
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 9;

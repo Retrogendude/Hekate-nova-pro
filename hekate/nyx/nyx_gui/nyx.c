@@ -29,6 +29,9 @@
 
 #include "frontend/fe_emmc_tools.h"
 #include "frontend/gui.h"
+#include "frontend/gui_diagnostics.h"
+#include "diagnostics/nyx_diagnostics.h"
+#include "diagnostics/ram_handoff.h"
 
 nyx_config n_cfg;
 hekate_config h_cfg;
@@ -160,6 +163,95 @@ out:
 	sd_unmount();
 
 	return LV_RES_OK;
+}
+
+/* Validate size before allocating, and reject short/failed reads. */
+static u8 *_read_service_payload(const char *path, u32 limit, u32 *size)
+{
+	FIL file;
+	if (f_open(&file, path, FA_READ) != FR_OK)
+		return NULL;
+	u32 length = f_size(&file);
+	if (length < 0x100 || length > limit)
+	{
+		f_close(&file);
+		return NULL;
+	}
+	u8 *buffer = malloc(length);
+	if (!buffer)
+	{
+		f_close(&file);
+		return NULL;
+	}
+	UINT received = 0;
+	FRESULT read_result = f_read(&file, buffer, length, &received);
+	FRESULT close_result = f_close(&file);
+	if (read_result != FR_OK || close_result != FR_OK || received != length)
+	{
+		free(buffer);
+		return NULL;
+	}
+	*size = length;
+	return buffer;
+}
+
+int nyx_launch_ram_service(void)
+{
+	if (nyx_diag_running())
+		return 5;
+	/* A failed preparation must not leave an older automatic-run request. */
+	((volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR)->magic = 0;
+	if (sd_mount())
+		return 1;
+	u32 ram_size = 0, return_size = 0;
+	u8 *ram_image = _read_service_payload("bootloader/sys/hwtest_ram.bin", 130392, &ram_size);
+	if (!ram_image)
+	{
+		sd_unmount();
+		return 2;
+	}
+	u8 *return_image = _read_service_payload("bootloader/update.bin", NYX_RAM_RETURN_MAX, &return_size);
+	if (!return_image)
+	{
+		free(ram_image);
+		sd_unmount();
+		return 3;
+	}
+	/* The return image must be a Hekate payload, not an arbitrary .bin. */
+	if (!ram_size || ram_size > 130392 || return_size < 0x100 ||
+		return_size > NYX_RAM_RETURN_MAX ||
+		memcmp(return_image + return_size - 6, "ICTC", 4))
+	{
+		free(return_image);
+		free(ram_image);
+		sd_unmount();
+		return 4;
+	}
+	/* Force Hekate's menu on return, even when normal autoboot is configured. */
+	return_image[0x94] = BOOT_CFG_AUTOBOOT_EN;
+	return_image[0x95] = 0;
+	return_image[0x96] = 0;
+	return_image[0x97] = 0;
+	memcpy((void *)NYX_RAM_RETURN_ADDR, return_image, return_size);
+	nyx_ram_handoff_t request = {0};
+	request.version = NYX_RAM_VERSION;
+	request.payload_size = return_size;
+	request.payload_hash = nyx_ram_hash(return_image, return_size);
+	request.auto_run = 1;
+	request.magic = NYX_RAM_HANDOFF_MAGIC;
+	memcpy((void *)NYX_RAM_HANDOFF_ADDR, &request, sizeof(request));
+	memcpy((void *)RCM_PAYLOAD_ADDR, ram_image, ram_size);
+	memset((void *)(RCM_PAYLOAD_ADDR + ram_size), 0, ALIGN(ram_size, 0x10) - ram_size);
+	_reloc_append(PATCHED_RELOC_ENTRY, EXT_PAYLOAD_ADDR, ALIGN(ram_size, 0x10));
+	free(return_image);
+	free(ram_image);
+	sd_end();
+	bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_WAY, false);
+	hw_deinit(false);
+	void (*payload)(void) = (void *)EXT_PAYLOAD_ADDR;
+	payload();
+	((volatile nyx_ram_handoff_t *)NYX_RAM_HANDOFF_ADDR)->magic = 0;
+	return 6;
 }
 
 static void _load_saved_configuration()

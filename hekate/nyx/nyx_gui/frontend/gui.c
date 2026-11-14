@@ -24,6 +24,7 @@
 #include "gui_info.h"
 #include "gui_options.h"
 #include "gui_diagnostics.h"
+#include "../diagnostics/nyx_diagnostics.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
 #include <libs/lvgl/lvgl.h>
 #include "../gfx/logos-gui.h"
@@ -332,11 +333,22 @@ static void _disp_fb_flush(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const
 static touch_event_t touchpad;
 static bool touch_enabled;
 static bool console_enabled = false;
+static bool diagnostics_suspended;
+static bool diagnostics_touch_was_enabled;
+static bool diagnostics_inputs_ready = true;
 
 static bool _fts_touch_read(lv_indev_data_t *data)
 {
-	if (!touch_enabled)
+	if (diagnostics_suspended)
+	{
+		data->state = LV_INDEV_STATE_REL;
 		return false;
+	}
+	if (!touch_enabled)
+	{
+		data->state = LV_INDEV_STATE_REL;
+		return false;
+	}
 
 	int res = touch_poll(&touchpad);
 
@@ -384,6 +396,11 @@ static bool _fts_touch_read(lv_indev_data_t *data)
 
 static bool _jc_virt_mouse_read(lv_indev_data_t *data)
 {
+	if (diagnostics_suspended || n_cfg.jc_disable)
+	{
+		data->state = LV_INDEV_STATE_REL;
+		return false;
+	}
 	// Poll Joy-Con.
 	jc_gamepad_rpt_t *jc_pad = joycon_poll();
 
@@ -637,9 +654,80 @@ typedef struct _system_maintenance_tasks_t
 } system_maintenance_tasks_t;
 
 static system_maintenance_tasks_t system_tasks;
+static lv_task_prio_t diagnostics_saved_task_priorities[2];
+
+/* This HWTest helper resets/senses touch without the button-triggered
+ * persistent auto-calibration path in touch_power_on(). */
+extern int touch_power_on_safe(void);
+
+void gui_diagnostics_suspend(u32 groups)
+{
+	(void)groups;
+	if (diagnostics_suspended)
+		return;
+	diagnostics_suspended = true;
+	diagnostics_inputs_ready = true;
+	diagnostics_touch_was_enabled = touch_enabled;
+	for (u32 i = 0; i < ARRAY_SIZE(system_tasks.tasks); i++)
+	{
+		lv_task_t *task = system_tasks.tasks[i];
+		if (task)
+		{
+			diagnostics_saved_task_priorities[i] = task->prio;
+			lv_task_set_prio(task, LV_TASK_PRIO_OFF);
+		}
+	}
+	lv_indev_reset(jc_drv_ctx.indev_jc);
+	lv_indev_reset(jc_drv_ctx.indev_touch);
+	if (jc_drv_ctx.cursor)
+		lv_obj_set_opa_scale(jc_drv_ctx.cursor, LV_OPA_TRANSP);
+}
+
+void gui_diagnostics_resume(u32 groups)
+{
+	if (!diagnostics_suspended)
+		return;
+	if (groups & NYX_DIAG_G_INPUTS)
+	{
+		touch_enabled = diagnostics_touch_was_enabled && !touch_power_on_safe();
+		diagnostics_inputs_ready = !diagnostics_touch_was_enabled || touch_enabled;
+	}
+	touchpad.touch = false;
+	if (!n_cfg.jc_disable)
+	{
+		/* Keep powered Joy-Con rails intact during measurements; resync the
+		 * driver only after the backend has restored its hardware snapshot. */
+		jc_deinit();
+		jc_init_hw();
+		jc_drv_ctx.calibration_step = 0;
+	}
+	lv_indev_reset(jc_drv_ctx.indev_jc);
+	lv_indev_reset(jc_drv_ctx.indev_touch);
+	for (u32 i = 0; i < ARRAY_SIZE(system_tasks.tasks); i++)
+	{
+		lv_task_t *task = system_tasks.tasks[i];
+		if (task)
+		{
+			task->last_run = lv_tick_get();
+			lv_task_set_prio(task, diagnostics_saved_task_priorities[i]);
+		}
+	}
+	diagnostics_suspended = false;
+}
+
+bool gui_diagnostics_inputs_ready(void)
+{
+	return diagnostics_inputs_ready;
+}
 
 void manual_system_maintenance(bool refresh)
 {
+	if (diagnostics_suspended)
+	{
+		if (refresh)
+			lv_refr_now();
+		return;
+	}
 	for (u32 task_idx = 0; task_idx < (sizeof(system_maintenance_tasks_t) / sizeof(lv_task_t *)); task_idx++)
 	{
 		lv_task_t *task = system_tasks.tasks[task_idx];
@@ -1203,7 +1291,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
 	btn_onoff_rel_hos_style.body.padding.hor = 0;
-	btn_onoff_rel_hos_style.body.radius = 0;
+	btn_onoff_rel_hos_style.body.radius = 28;
 	btn_onoff_rel_hos_style.body.empty = 1;
 
 	lv_style_copy(&btn_onoff_pr_hos_style, &btn_onoff_rel_hos_style);
@@ -1213,7 +1301,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 		btn_onoff_pr_hos_style.body.opa = 35;
 	}
 	else
-		btn_onoff_pr_hos_style.body.main_color = LV_COLOR_HEX(theme_bg_color ? (theme_bg_color + 0x101010) : 0x2D2D2D); // COLOR_HOS_BG_LIGHT.
+		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT.
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.empty = 0;
@@ -1252,7 +1340,7 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 	lv_style_copy(&btn_onoff_rel_hos_style, th->btn.rel);
 	btn_onoff_rel_hos_style.body.shadow.width = 0;
 	btn_onoff_rel_hos_style.body.border.width = 0;
-	btn_onoff_rel_hos_style.body.radius = 0;
+	btn_onoff_rel_hos_style.body.radius = 28;
 	btn_onoff_rel_hos_style.body.padding.hor = LV_DPI / 4;
 	btn_onoff_rel_hos_style.body.empty = 1;
 
@@ -1263,7 +1351,7 @@ static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn,
 		btn_onoff_pr_hos_style.body.opa = 35;
 	}
 	else
-		btn_onoff_pr_hos_style.body.main_color = LV_COLOR_HEX(theme_bg_color ? (theme_bg_color + 0x101010) : 0x2D2D2D); // COLOR_HOS_BG_LIGHT
+		btn_onoff_pr_hos_style.body.main_color = th->btn.pr->body.main_color; // COLOR_HOS_BG_LIGHT
 	btn_onoff_pr_hos_style.body.grad_color = btn_onoff_pr_hos_style.body.main_color;
 	btn_onoff_pr_hos_style.text.color = th->btn.pr->text.color;
 	btn_onoff_pr_hos_style.body.empty = 0;
@@ -2028,9 +2116,10 @@ static const char *const home_action_icons[HOME_ACTION_COUNT] = {
 static void _home_modern_init_styles(lv_theme_t *th)
 {
 	lv_style_copy(&home_bg, &lv_style_plain);
-	home_bg.body.main_color = LV_COLOR_HEX(0x141A19);
+	home_bg.body.main_color = th->bg->body.main_color;
 	home_bg.body.grad_color = home_bg.body.main_color;
 	home_bg.body.radius = 0;
+	home_bg.body.empty = hekate_bg != NULL;
 	home_bg.body.border.width = 0;
 	home_bg.body.padding.hor = 0;
 	home_bg.body.padding.ver = 0;
@@ -2041,44 +2130,47 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	lv_style_copy(&home_card_rel, th->btn.rel);
 	home_card_rel.body.empty = 0;
 	home_card_rel.body.opa = LV_OPA_COVER;
-	home_card_rel.body.main_color = LV_COLOR_HEX(0x202B27);
+	home_card_rel.body.main_color = th->btn.rel->body.main_color;
 	home_card_rel.body.grad_color = home_card_rel.body.main_color;
 	home_card_rel.body.radius = 28;
 	home_card_rel.body.border.width = 1;
-	home_card_rel.body.border.color = LV_COLOR_HEX(0x43564B);
+	home_card_rel.body.border.color = th->btn.rel->body.border.color;
 	home_card_rel.body.border.opa = LV_OPA_COVER;
 	home_card_rel.body.shadow.width = 0;
 	home_card_rel.body.padding.hor = 0;
 	home_card_rel.body.padding.ver = 0;
 	home_card_rel.text.color = LV_COLOR_HEX(0xF2F7F3);
 	lv_style_copy(&home_card_pr, &home_card_rel);
-	home_card_pr.body.main_color = LV_COLOR_HEX(0x2D4536);
+	home_card_pr.body.main_color = th->btn.pr->body.main_color;
 	home_card_pr.body.grad_color = home_card_pr.body.main_color;
 	home_card_pr.body.border.width = 2;
-	home_card_pr.body.border.color = LV_COLOR_HEX(0x93E1AE);
+	home_card_pr.body.border.color = th->btn.pr->text.color;
 	lv_style_copy(&home_card_sel, &home_card_pr);
-	home_card_sel.body.main_color = LV_COLOR_HEX(0x254333);
+	home_card_sel.body.main_color = th->btn.tgl_rel->body.main_color;
 	home_card_sel.body.grad_color = home_card_sel.body.main_color;
 	lv_style_copy(&home_hero_rel, &home_card_sel);
 	lv_style_copy(&home_hero_pr, &home_card_pr);
 
 	lv_style_copy(&home_primary_rel, &home_card_rel);
-	home_primary_rel.body.main_color = LV_COLOR_HEX(0x93E1AE);
+	home_primary_rel.body.main_color = th->btn.pr->text.color;
 	home_primary_rel.body.grad_color = home_primary_rel.body.main_color;
 	home_primary_rel.body.border.width = 0;
-	home_primary_rel.text.color = LV_COLOR_HEX(0x102019);
+	lv_color32_t accent = { .full = lv_color_to32(home_primary_rel.body.main_color) };
+	// Custom accent hues can be dark blue; keep action labels legible too.
+	unsigned brightness = (77 * accent.red + 150 * accent.green + 29 * accent.blue) >> 8;
+	home_primary_rel.text.color = brightness < 128 ? LV_COLOR_HEX(0xF2F7F3) : LV_COLOR_HEX(0x102019);
 	lv_style_copy(&home_primary_pr, &home_primary_rel);
-	home_primary_pr.body.main_color = LV_COLOR_HEX(0xB6F0C9);
+	home_primary_pr.body.main_color = lv_color_mix(home_primary_rel.body.main_color, LV_COLOR_WHITE, 200);
 	home_primary_pr.body.grad_color = home_primary_pr.body.main_color;
 	lv_style_copy(&home_title, th->label.prim);
 	home_title.text.font = &interui_30;
-	home_title.text.color = LV_COLOR_HEX(0xF2F7F3);
+	home_title.text.color = th->label.prim->text.color;
 	home_title.text.letter_space = 1;
 	lv_style_copy(&home_detail, &hint_small_style_white);
-	home_detail.text.color = LV_COLOR_HEX(0xC3D4C8);
+	home_detail.text.color = th->label.hint->text.color;
 	lv_style_copy(&home_small_icon, &home_title);
 	home_small_icon.text.font = &hekate_symbol_30;
-	home_small_icon.text.color = LV_COLOR_HEX(0x93E1AE);
+	home_small_icon.text.color = th->btn.pr->text.color;
 	lv_style_copy(&home_big_icon, &home_small_icon);
 	home_big_icon.text.font = &hekate_symbol_120;
 	lv_style_copy(&home_button_text, &home_detail);
@@ -2088,7 +2180,7 @@ static void _home_modern_init_styles(lv_theme_t *th)
 	lv_style_copy(&home_icon_disc, &home_card_rel);
 	home_icon_disc.body.radius = 44;
 	home_icon_disc.body.border.width = 0;
-	home_icon_disc.body.main_color = LV_COLOR_HEX(0x31483A);
+	home_icon_disc.body.main_color = th->btn.pr->body.main_color;
 	home_icon_disc.body.grad_color = home_icon_disc.body.main_color;
 }
 
@@ -2453,7 +2545,7 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	lv_style_copy(&mbox_darken, &lv_style_plain);
 	mbox_darken.body.main_color = LV_COLOR_BLACK;
 	mbox_darken.body.grad_color = mbox_darken.body.main_color;
-	mbox_darken.body.opa = LV_OPA_30;
+	mbox_darken.body.opa = LV_OPA_50;
 
 	lv_style_copy(&hint_small_style, th->label.hint);
 	hint_small_style.text.letter_space = 1;
@@ -2475,43 +2567,43 @@ static void _nyx_set_default_styles(lv_theme_t * th)
 	monospace_text.text.line_space = 0;
 
 	lv_style_copy(&btn_transp_rel, th->btn.rel);
-	btn_transp_rel.body.main_color = LV_COLOR_HEX(0x444444);
+	btn_transp_rel.body.main_color = th->btn.rel->body.main_color;
 	btn_transp_rel.body.grad_color = btn_transp_rel.body.main_color;
 	btn_transp_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_pr, th->btn.pr);
-	btn_transp_pr.body.main_color = LV_COLOR_HEX(0x888888);
+	btn_transp_pr.body.main_color = th->btn.pr->body.main_color;
 	btn_transp_pr.body.grad_color = btn_transp_pr.body.main_color;
 	btn_transp_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_rel, th->btn.tgl_rel);
-	btn_transp_tgl_rel.body.main_color = LV_COLOR_HEX(0x444444);
+	btn_transp_tgl_rel.body.main_color = th->btn.tgl_rel->body.main_color;
 	btn_transp_tgl_rel.body.grad_color = btn_transp_tgl_rel.body.main_color;
 	btn_transp_tgl_rel.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_rel.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_tgl_pr, th->btn.tgl_pr);
-	btn_transp_tgl_pr.body.main_color = LV_COLOR_HEX(0x888888);
+	btn_transp_tgl_pr.body.main_color = th->btn.tgl_pr->body.main_color;
 	btn_transp_tgl_pr.body.grad_color = btn_transp_tgl_pr.body.main_color;
 	btn_transp_tgl_pr.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_tgl_pr.body.opa = LV_OPA_50;
 
 	lv_style_copy(&btn_transp_ina, th->btn.ina);
-	btn_transp_ina.body.main_color = LV_COLOR_HEX(0x292929);
+	btn_transp_ina.body.main_color = th->btn.ina->body.main_color;
 	btn_transp_ina.body.grad_color = btn_transp_ina.body.main_color;
-	btn_transp_ina.body.border.color = LV_COLOR_HEX(0x444444);
+	btn_transp_ina.body.border.color = th->btn.ina->body.border.color;
 	btn_transp_ina.body.shadow.color = LV_COLOR_HEX(0x0F0F0F);
 	btn_transp_ina.body.opa = LV_OPA_50;
 
 	lv_style_copy(&ddlist_transp_bg, th->ddlist.bg);
-	ddlist_transp_bg.body.main_color = LV_COLOR_HEX(0x2D2D2D);
+	ddlist_transp_bg.body.main_color = th->ddlist.bg->body.main_color;
 	ddlist_transp_bg.body.grad_color = ddlist_transp_bg.body.main_color;
 	ddlist_transp_bg.body.opa = 180; // 70.6%.
 
 	lv_style_copy(&ddlist_transp_sel, th->ddlist.sel);
-	ddlist_transp_sel.body.main_color = LV_COLOR_HEX(0x4D4D4D);
+	ddlist_transp_sel.body.main_color = th->ddlist.sel->body.main_color;
 	ddlist_transp_sel.body.grad_color = ddlist_transp_sel.body.main_color;
 	ddlist_transp_sel.body.opa = 180; // 70.6%.
 
@@ -2634,7 +2726,7 @@ static void _nyx_main_menu(lv_theme_t * th)
 	static lv_style_t line_style;
 	lv_style_copy(&line_style, &lv_style_plain_color);
 
-	line_style.body.main_color = LV_COLOR_HEX(0xDDDDDD); // 0x505050
+	line_style.body.main_color = th->line.decor->line.color;
 	line_style.body.grad_color = line_style.body.main_color;
 	line_style.body.shadow.width = 0;
 

@@ -1389,7 +1389,7 @@ static lv_res_t _create_mbox_lockpick(lv_obj_t *btn)
 static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 {
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 6;
@@ -3122,7 +3122,7 @@ void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
 	lv_page_set_scrl_layout(parent, LV_LAYOUT_PRETTY);
 
 	static lv_style_t h_style;
-	lv_style_copy(&h_style, &lv_style_transp);
+	lv_style_copy(&h_style, lv_theme_get_current()->panel);
 	h_style.body.padding.inner = 0;
 	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
 	h_style.body.padding.ver = LV_DPI / 6;
@@ -3195,7 +3195,7 @@ void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
 
 	static lv_style_t line_style;
 	lv_style_copy(&line_style, th->line.decor);
-	line_style.line.color = LV_COLOR_HEX(theme_bg_color ? (theme_bg_color + 0x171717) : 0x343434);
+	line_style.line.color = th->line.decor->line.color;
 
 	line_sep = lv_line_create(h1, line_sep);
 	lv_obj_align(line_sep, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 16);
