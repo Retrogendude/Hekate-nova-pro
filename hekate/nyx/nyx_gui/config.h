@@ -43,6 +43,9 @@ typedef struct _hekate_config
 	hos_eks_mbr_t *eks;
 } hekate_config;
 
+#define HOME_LAYOUT_TILES    0
+#define HOME_LAYOUT_CAROUSEL 1
+
 typedef struct _nyx_config
 {
 	u32 theme_bg; // COLOR_BG_BASE_MIN - COLOR_BG_BASE_MAX.
@@ -56,6 +59,7 @@ typedef struct _nyx_config
 	u32 jc_disable;
 	u32 jc_force_right;
 	u32 bpmp_clock;
+	u32 home_layout; // Appended: keep all previous field offsets unchanged.
 } nyx_config;
 
 extern hekate_config h_cfg;

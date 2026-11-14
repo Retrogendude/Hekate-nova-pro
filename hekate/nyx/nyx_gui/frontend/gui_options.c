@@ -1416,6 +1416,95 @@ disabled_or_cal0_issue:;
 	return LV_RES_OK;
 }
 
+/* Pending until Save & Reload: closing this window leaves n_cfg unchanged. */
+static u32 home_layout_pending;
+
+static void _home_layout_notice(const char *text)
+{
+	static const char *buttons[] = { "\251", "\222OK", "\251", "" };
+	lv_obj_t *mbox = lv_mbox_create(lv_scr_act(), NULL);
+	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
+	lv_mbox_set_text(mbox, text);
+	lv_mbox_add_btns(mbox, buttons, NULL);
+	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
+	lv_obj_set_top(mbox, true);
+}
+
+static lv_res_t _home_layout_action(lv_obj_t *ddlist)
+{
+	home_layout_pending = lv_ddlist_get_selected(ddlist) == HOME_LAYOUT_CAROUSEL
+		? HOME_LAYOUT_CAROUSEL : HOME_LAYOUT_TILES;
+	return LV_RES_OK;
+}
+
+static lv_res_t _save_home_layout(lv_obj_t *btn)
+{
+	(void)btn;
+	bool was_mounted = sd_get_card_mounted();
+	if (sd_mount())
+	{
+		_home_layout_notice("Carte SD indisponible. Aucun changement enregistre.");
+		return LV_RES_OK;
+	}
+	if (f_stat("bootloader/sys/nyx.bin", NULL) != FR_OK)
+	{
+		if (!was_mounted)
+			sd_unmount();
+		_home_layout_notice("Impossible de recharger Nyx : bootloader/sys/nyx.bin est introuvable.\n\nAucun changement enregistre.");
+		return LV_RES_OK;
+	}
+
+	u32 previous_layout = n_cfg.home_layout;
+	n_cfg.home_layout = home_layout_pending;
+	if (create_nyx_config_entry(true))
+	{
+		n_cfg.home_layout = previous_layout;
+		_home_layout_notice("Echec de l'enregistrement. Verifiez la carte SD puis reessayez.");
+		return LV_RES_OK;
+	}
+
+	nyx_changes_made = false;
+	reload_nyx(NULL, false);
+	/* Reload can return if the SD card or Nyx file disappears after saving. */
+	_home_layout_notice("Disposition enregistree. Nyx n'a pas pu etre recharge.\n\nLe choix sera applique au prochain demarrage de Nyx.");
+	return LV_RES_OK;
+}
+
+static lv_res_t _create_window_home_layout(lv_obj_t *btn)
+{
+	(void)btn;
+	lv_theme_t *th = lv_theme_get_current();
+	home_layout_pending = n_cfg.home_layout == HOME_LAYOUT_CAROUSEL
+		? HOME_LAYOUT_CAROUSEL : HOME_LAYOUT_TILES;
+	lv_obj_t *win = nyx_create_standard_window("Disposition de l'accueil", NULL);
+	lv_win_add_btn(win, NULL, SYMBOL_SAVE" Enregistrer & recharger", _save_home_layout);
+
+	lv_obj_t *title = lv_label_create(win, NULL);
+	lv_label_set_style(title, th->label.prim);
+	lv_label_set_text(title, "Choisir la disposition");
+	lv_obj_set_pos(title, 50, 30);
+
+	lv_obj_t *ddlist = lv_ddlist_create(win, NULL);
+	lv_ddlist_set_draw_arrow(ddlist, true);
+	lv_ddlist_set_options(ddlist, "Tuiles          \nCarrousel");
+	lv_ddlist_set_selected(ddlist, home_layout_pending);
+	lv_ddlist_set_action(ddlist, _home_layout_action);
+	lv_obj_set_pos(ddlist, 50, 95);
+
+	lv_obj_t *help = lv_label_create(win, NULL);
+	lv_label_set_style(help, &hint_small_style);
+	lv_label_set_long_mode(help, LV_LABEL_LONG_BREAK);
+	lv_obj_set_width(help, 1100);
+	lv_label_set_text(help,
+		"Tuiles : les fonctions sont affichees dans une grille.\n"
+		"Carrousel : les fonctions sont presentees une par une.\n\n"
+		"Enregistrer & recharger conserve les reglages Nyx sur la carte SD,\n"
+		"puis recharge l'interface pour appliquer la disposition.\n"
+		"Fermer cette fenetre annule le choix sans modifier les reglages.");
+	lv_obj_set_pos(help, 50, 225);
+	lv_obj_set_top(ddlist, true);
+	return LV_RES_OK;
+}
 static lv_res_t _home_screen_action(lv_obj_t *ddlist)
 {
 	u32 new_selection = lv_ddlist_get_selected(ddlist);
@@ -1484,6 +1573,7 @@ lv_res_t create_win_nyx_options(lv_obj_t *parrent_btn)
 	lv_theme_t *th = lv_theme_get_current();
 
 	lv_obj_t *win = nyx_create_standard_window(SYMBOL_HOME" Nyx Settings", _action_win_nyx_options_close);
+	lv_win_add_btn(win, NULL, SYMBOL_HOME" Disposition", _create_window_home_layout);
 
 	static lv_style_t h_style;
 	lv_style_copy(&h_style, &lv_style_transp);

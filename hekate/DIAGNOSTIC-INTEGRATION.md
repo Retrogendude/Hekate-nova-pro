@@ -1,7 +1,7 @@
 # Hekate 6.5.4 — onglet Diagnostic, prototype 1
 
-Mise à jour : cette archive reprend l'interface originale dans le prototype 3.
-Voir `INTERFACE-ORIGINALE.md` pour les changements d'interface et les limites
+Mise à jour : cette archive propose deux accueils dans le prototype 4.
+Voir `INTERFACE-ACCUEIL.md` pour les changements d'interface et les limites
 de validation. La correction de lecture des canaux DRAM est conservée :
 les quatre expressions `(mrr & 0xFF00 >> 8)` utilisent désormais
 `((mrr & 0xFF00) >> 8)` pour lire le second octet plutôt que le premier.

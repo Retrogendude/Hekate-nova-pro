@@ -54,6 +54,7 @@ void set_nyx_default_configuration()
 	n_cfg.timeoffset     = 0;
 	n_cfg.timedst        = 1;
 	n_cfg.home_screen    = 0;
+	n_cfg.home_layout    = HOME_LAYOUT_TILES;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
@@ -193,64 +194,102 @@ int create_nyx_config_entry(bool force_unmount)
 
 	char lbuf[64];
 	FIL fp;
+	bool file_open = false;
+	int result = 1;
 
 	// Make sure that bootloader folder exists.
 	f_mkdir("bootloader");
 
 	if (f_open(&fp, "bootloader/nyx.ini", FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
-		return 1;
+		goto out;
+	file_open = true;
 
 	// Add config entry.
-	f_puts("[config]\nthemebg=", &fp);
+	if (f_puts("[config]\nthemebg=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.theme_bg, lbuf, 16);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\nthemecolor=", &fp);
+	if (f_puts("\nthemecolor=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.theme_color, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\nentries5col=", &fp);
+	if (f_puts("\nentries5col=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.entries_5_col, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\ntimeoffset=", &fp);
+	if (f_puts("\ntimeoffset=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.timeoffset, lbuf, 16);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\ntimedst=", &fp);
+	if (f_puts("\ntimedst=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.timedst, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\nhomescreen=", &fp);
+	if (f_puts("\nhomescreen=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.home_screen, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\nverification=", &fp);
+	// Invalid or corrupted values always fall back to the tiles layout.
+	if (n_cfg.home_layout != HOME_LAYOUT_CAROUSEL)
+		n_cfg.home_layout = HOME_LAYOUT_TILES;
+	if (f_puts("\nhome_layout=", &fp) < 0)
+		goto out;
+	itoa(n_cfg.home_layout, lbuf, 10);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
+	if (f_puts("\nverification=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.verification, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\numsemmcrw=", &fp);
+	if (f_puts("\numsemmcrw=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.ums_emmc_rw, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\njcdisable=", &fp);
+	if (f_puts("\njcdisable=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.jc_disable, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\njcforceright=", &fp);
+	if (f_puts("\njcforceright=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.jc_force_right, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\nbpmpclock=", &fp);
+	if (f_puts("\nbpmpclock=", &fp) < 0)
+		goto out;
 	itoa(n_cfg.bpmp_clock, lbuf, 10);
-	f_puts(lbuf, &fp);
+	if (f_puts(lbuf, &fp) < 0)
+		goto out;
 
-	f_puts("\n", &fp);
+	if (f_puts("\n", &fp) < 0)
+		goto out;
 
-	f_close(&fp);
+	result = 0;
+
+out:
+	if (file_open && f_close(&fp) != FR_OK)
+		result = 1;
 
 	if (force_unmount || !sd_mounted)
 		sd_unmount();
 
-	return 0;
+	return result;
 }

@@ -1,7 +1,7 @@
 {
-  "tag": "v3",
-  "source_archive": "hekate-6.5.4-interface-originale-prototype-3.zip",
-  "source_archive_sha256": "8dec92b2ac8dc7cf36822b246033f0ea96133b250a541b5f9964ccb5762c02d4",
+  "tag": "v4",
+  "source_archive": "hekate-6.5.4-tuiles-carrousel-reglages-prototype-4.zip",
+  "source_archive_sha256": "15ddd240ede230f4232190e2b5b6458e8df53bfe1859d1cec6371d0d4cc3620c",
   "original_source_directory": "hekate-6.5.4",
   "repository_source_directory": "hekate",
   "imported_on": "2026-11-14",
