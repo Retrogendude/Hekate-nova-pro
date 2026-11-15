@@ -10,7 +10,9 @@
 #define I18N_RU 4
 #define I18N_DE 5
 #define I18N_PT 6
-#define I18N_LANGUAGE_COUNT 7
+#define I18N_ZH_CN 7
+#define I18N_LANGUAGE_COUNT 8
+#define I18N_LANGUAGE_NAMES "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês\nChinese (Simplified)"
 const char *nyx_tr(const char *text);
 /* Returns an owned translation, or NULL if unchanged/allocation failed. */
 char *nyx_translate_text(const char *text);

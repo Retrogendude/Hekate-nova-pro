@@ -1,0 +1,55 @@
+{
+  "packs": {
+    "ram-ui-de.bin": {
+      "entries": 109,
+      "glyphs": 99,
+      "bytes": 7150,
+      "sha256": "d880de7e5190a656e6d9e81c8045554775ab3c883a804ddf205925d5cb1a46b5"
+    },
+    "ram-ui-en.bin": {
+      "entries": 109,
+      "glyphs": 95,
+      "bytes": 4689,
+      "sha256": "a4309589ee174d06cb53651737928330b0e0a2f4cb6c327e0dae97e802ea25b8"
+    },
+    "ram-ui-es.bin": {
+      "entries": 109,
+      "glyphs": 100,
+      "bytes": 7255,
+      "sha256": "f7ef049c5274f1dd9da43166afea118c393f8d08346aeada4b894d453352dcd2"
+    },
+    "ram-ui-fr.bin": {
+      "entries": 109,
+      "glyphs": 101,
+      "bytes": 7285,
+      "sha256": "fa2efe71a62109d79bb18bbb4d3f645ba746a8c4dec04128f9b3bcde4d591fbc"
+    },
+    "ram-ui-it.bin": {
+      "entries": 109,
+      "glyphs": 98,
+      "bytes": 7134,
+      "sha256": "37d0407db455b3e83e1f31365885b29fbd4a3079ef841e9b5e9fb32fb6ff7c51"
+    },
+    "ram-ui-pt.bin": {
+      "entries": 109,
+      "glyphs": 103,
+      "bytes": 7231,
+      "sha256": "3cddedf000dd9b833f1e7fac91f5239ea5a4d8fbeaf0d57f06add89d4b94f1eb"
+    },
+    "ram-ui-ru.bin": {
+      "entries": 109,
+      "glyphs": 148,
+      "bytes": 9221,
+      "sha256": "2fa8ae3be84c50fc24e0020a4ef41cb4a2a2eca59374fd53b7fc2e5e4bab02f2"
+    },
+    "ram-ui-zh.bin": {
+      "entries": 109,
+      "glyphs": 279,
+      "bytes": 16012,
+      "sha256": "23e59852db25535fb643a1a6cdc77c0062e847e0568e1f4f8044d0cf548c3f94"
+    }
+  },
+  "missing_translations": [],
+  "passed": true,
+  "new_message_translated_in_all_languages": true
+}

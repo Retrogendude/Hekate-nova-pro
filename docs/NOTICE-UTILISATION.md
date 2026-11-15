@@ -1,14 +1,14 @@
 # Hekate Nova Pro — notice d’utilisation
 
-Guide pour la **bêta v32**, sur base Hekate 6.5.5 / Nyx 1.9.5. Mise à jour : 14 novembre 2026.
+Guide pour la **bêta v33.1**, sur base Hekate 6.5.5 / Nyx 1.9.5. Mise à jour : 15 novembre 2026.
 
-[Paquet d’installation v32](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v32) · [Historique](../CHANGELOG.md) · [Notice technique de la v32](releases/v32.md)
+[Paquet d’installation v33.1](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.1) · [Historique](../CHANGELOG.md) · [Notice technique de la v33.1](releases/v33.1.md)
 
 Nova s’utilise sur une console disposant déjà d’une méthode de démarrage compatible avec Hekate. La méthode de lancement dépend du modèle et de l’installation existante.
 
 ## Installation et premier démarrage
 
-1. Dans les fichiers de la [release v32](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v32), télécharger **hekate-nova-pro-v32.zip** et le décompresser sur l’ordinateur.
+1. Dans les fichiers de la [release v32](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.1), télécharger **hekate-nova-pro-v32.zip** et le décompresser sur l’ordinateur.
 2. Console éteinte, conserver une copie du dossier bootloader et des réglages de la carte SD.
 3. Copier les dossiers fournis **bootloader**, **fonts**, **wallpapers** et **icone** à la racine de la SD. Fusionner les dossiers existants et remplacer les fichiers livrés par la mise à jour.
 4. Conserver les configurations de démarrage, les fonds et polices personnels, ainsi que les fichiers privés d’appairage. Aucun formatage n’est nécessaire pour installer cette mise à jour.
@@ -178,4 +178,22 @@ Transmettre uniquement le rapport texte. **Ne pas publier joycon-pairing.bin, jo
 
 ## Sources et limites
 
-Cette notice décrit la v32. Les notices historiques et résultats de vérification restent dans [les documents de chaque version](releases/v32.md) et [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Les contrôles sur PC et les périphériques simulés ne remplacent pas une validation sur la console réelle.
+Cette notice décrit la v32. Les notices historiques et résultats de vérification restent dans [les documents de chaque version](releases/v33.1.md) et [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Les contrôles sur PC et les périphériques simulés ne remplacent pas une validation sur la console réelle.
+
+## Nouveautés v33.1 : langues, icônes et démarrage
+
+Huit langues : anglais, français, espagnol, italien, russe, allemand, portugais et chinois simplifié. Le chinois utilise sa ressource obligatoire bootloader/sys/Nova-Chinese-Simplified.nyxf ; la police personnelle est conservée et le choix redevient disponible en quittant cette langue. La taille reste réglable. Les longs rapports chinois restent à relire.
+
+Le choix de police Par défaut emploie Lecture.nyxf pour les langues latines et la famille intégrée pour le russe. Le choix Hekate d’origine utilise la police intégrée sans installation supplémentaire. Placer les polices NYXF personnelles dans /fonts ; un fichier TTF/OTF ne peut pas être chargé directement.
+
+À la première installation sans nyx.ini : français, Carbon Cyan, taille 30, opacité fenêtres/icônes à 75 %, couleurs Nova fournies. Le réglage d’horloge d’origine est conservé. Les fichiers de configuration existants ont priorité et ne sont pas remplacés par le pack.
+
+La tuile Démarrer utilise deux images : /icone/launch.png pour la petite icône en haut à gauche et le fichier choisi par launch_image, par défaut /icone/Launcher.png, pour le grand fond remplaçable dans Nova. Les autres icônes et les fonds BMP se trouvent dans /icone et /wallpapers. Conserver les caractères de casse des noms fournis et une copie des images personnelles avant remplacement.
+
+Réglages > Options de démarrage regroupe Auto Boot, délai, Auto NoGC et Auto HOS Power Off. Le sélecteur Auto Boot présente les entrées existantes par pages. Le lien Luminosité rejoint le curseur déjà présent. Enregistrer après modification.
+
+## Consoles modifiées RAM 8 Go
+
+Choisir le pack standard pour les consoles normales. Le pack 8GB est expérimental et exclusivement destiné aux consoles physiquement modifiées ; ne pas mélanger son payload et le dossier bootloader d’un autre pack. Atmosphère 1.11.0 minimum et configuration mémoire adaptée sont nécessaires. Lire [le guide RAM 8 Go](RAM-8GO-V33.1.md) avant utilisation : profils Erista/Mariko, réglage memmode, limites et état des essais.
+
+Le diagnostic préserve le mode 8 Go au lancement et au retour. Il accède aux adresses hautes et rapporte séparément capacité, zone testable et zone vérifiée. Sur 8192 Mio, 8176 Mio sont testables ; 16 Mio restent protégés. Les contrôles PC ne certifient pas les puces de remplacement et ne remplacent pas une validation sur chaque modèle.

@@ -56,7 +56,7 @@ void set_nyx_default_configuration()
 	n_cfg.timedst        = 1;
 	n_cfg.home_screen    = 0;
 	n_cfg.home_layout    = HOME_LAYOUT_TILES;
-	n_cfg.language       = I18N_EN;
+	n_cfg.language       = I18N_FR;
 	n_cfg.font_file[0]   = 0;
 	n_cfg.font_size      = 30;
 	n_cfg.background_effect = 0;
@@ -66,19 +66,20 @@ void set_nyx_default_configuration()
 	n_cfg.nova_text_color = 0xF2F5FA;
 	n_cfg.nova_border_color = 0x334050;
 	n_cfg.nova_reflection_color = 0x55C9F1;
-	n_cfg.nova_menu_opacity = 25;
-	n_cfg.nova_icon_opacity = 100;
-	strcpy(n_cfg.wallpaper_file, "Nova-Carbon.bmp");
+	n_cfg.nova_menu_opacity = 75;
+	n_cfg.nova_icon_opacity = 75;
+	strcpy(n_cfg.wallpaper_file, "Nova-Carbon-Cyan.bmp");
 	n_cfg.nova_logo_color = 0x55C9F1;
-	n_cfg.nova_icon_color = 0x55C9F1;
+	n_cfg.nova_icon_color = 0xF2F2F2;
 	n_cfg.nova_selection_color = 0x1C2937;
-	n_cfg.launch_image[0] = 0;
-	n_cfg.boot_logo_color = n_cfg.boot_bar_color = 0x55C9F1;
+	strcpy(n_cfg.launch_image, "Launcher.png");
+	n_cfg.boot_logo_color = 0xF2F2F2;
+	n_cfg.boot_bar_color = 0x55C9F1;
 	n_cfg.verification   = 1;
 	n_cfg.ums_emmc_rw    = 0;
 	n_cfg.jc_disable     = 0;
 	n_cfg.jc_force_right = 0;
-	n_cfg.bpmp_clock     = 0;
+	n_cfg.bpmp_clock     = 1;
 	n_cfg.tv_auto        = 0;
 	n_cfg.tv_keep_screen = 1;
 }

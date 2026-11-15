@@ -1,0 +1,201 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-bins:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Mark workspace safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Test host UART parser
+        working-directory: host_tools
+        run: python3 test_parser.py
+
+      # The devkitarm image carries only devkitARM, and the Wi-Fi probe's PCIe
+      # half runs on CPU0 from an AArch64 stub - without a second toolchain the
+      # build silently drops it and the release ships with that half disabled.
+      #
+      # devkitA64 is NOT installable here: pkg.devkitpro.org answers 403 to
+      # cloud CI runners, so `dkp-pacman -Sy devkitA64` fails on the database
+      # sync. It is not needed either - the stub is freestanding (no libc, no
+      # syscalls), so Debian's bare-metal-capable aarch64 gcc builds it, and
+      # this image is Debian-based.
+      - name: Install an aarch64 compiler for the CPU0 stub
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+          aarch64-linux-gnu-gcc --version | head -1
+
+      # REQUIRE_A64=1 makes a missing aarch64 compiler fail the build instead
+      # of quietly producing a payload without the stub.
+      - name: Build diagnostic payloads
+        run: |
+          make all REQUIRE_A64=1 A64_CC=aarch64-linux-gnu-gcc A64_OC=aarch64-linux-gnu-objcopy
+          make ram
+          make gui REQUIRE_A64=1 A64_CC=aarch64-linux-gnu-gcc A64_OC=aarch64-linux-gnu-objcopy
+
+      # Grep the uncompressed images: the shipped .bin is the self-extracting
+      # stub plus an LZ blob, so no string from the payload survives in it as
+      # plaintext. mkpayload.py refuses to emit a blob that does not decompress
+      # back to the exact input, so checking the input covers what ships.
+      - name: Verify the CPU0 stub was actually built in
+        run: |
+          test -s build/cpu_stub.bin || { echo "build/cpu_stub.bin missing"; exit 1; }
+          for f in build/hwtest_unc.bin; do
+            if grep -qa 'devkitA64 absent at build time' "$f"; then
+              echo "FAIL: $f was built without the CPU0 stub"; exit 1
+            fi
+            grep -qa 'CPU0 handoff (PCIe needs' "$f" || {
+              echo "FAIL: $f is missing the CPU0 handoff path"; exit 1; }
+          done
+          echo "CPU0 stub present ($(stat -c%s build/cpu_stub.bin) bytes)"
+
+      - name: Verify production launcher and RAM menus
+        run: |
+          for s in 'Hardware test' 'RAM test' 'Custom test' 'Power off'; do
+            grep -qa "$s" build/hwtest_unc.bin || { echo "FAIL: launcher string missing: $s"; exit 1; }
+          done
+          for s in 'Quick test' 'Advanced test' 'Custom test' 'Power off'; do
+            grep -qa "$s" build-ram/hwtest_ram_unc.bin || { echo "FAIL: RAM-menu string missing: $s"; exit 1; }
+          done
+          if grep -qai 'destructive' build/hwtest_unc.bin build-ram/hwtest_ram_unc.bin; then
+            echo 'FAIL: deprecated destructive wording is present'; exit 1
+          fi
+
+      # TegraRcmSmash prepends a 66216-byte prologue and truncates the result to
+      # 192 KiB without saying so, so anything past this ceiling reaches the
+      # console as a partial image that hangs. That shipped unnoticed from v0.6
+      # to v0.10; refuse to publish it again.
+      # hwtest.bin only hands over to a file whose header (gui/start.S) has
+      # the magic and the load address it expects; check the build has both.
+      - name: Verify the GUI stage header
+        run: |
+          python3 - <<'EOF'
+          import struct, sys
+          b = open('build-gui/gui.bin', 'rb').read()
+          magic, end, start = struct.unpack_from('<III', b, 4)
+          ok = magic == 0x55475748 and start == 0x81000000 and end - start <= len(b)
+          print('gui.bin: %d bytes, magic %08X, load %08X, end %08X' % (len(b), magic, start, end))
+          sys.exit(0 if ok else 'FAIL: gui.bin header does not match what hwtest.bin checks')
+          EOF
+
+      - name: Check the payloads fit the RCM injection ceiling
+        run: |
+          limit=130392
+          for f in build/hwtest.bin build-ram/hwtest_ram.bin; do
+            size=$(stat -c%s "$f")
+            if [ "$size" -gt "$limit" ]; then
+              echo "FAIL: $f is $size bytes, over the $limit ceiling"; exit 1
+            fi
+            echo "ok: $f is $size bytes ($((limit - size)) to spare)"
+          done
+
+      # Everything for the SD card in one zip, laid out as it goes there
+      # (tools/mksdzip.py): unzip it at the root of the card. The payloads
+      # are already built, so this only packs; the flags are repeated so
+      # that nothing could be rebuilt without the CPU0 stub.
+      - name: Pack the SD card zip
+        run: make sdzip REQUIRE_A64=1 A64_CC=aarch64-linux-gnu-gcc A64_OC=aarch64-linux-gnu-objcopy
+
+      - name: Upload workflow artifact (always)
+        uses: actions/upload-artifact@v7
+        with:
+          name: hwtest-bins
+          path: |
+            build/hwtest.bin
+            build-ram/hwtest_ram.bin
+            build/hwtest-sd.zip
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            build/hwtest.bin
+            build-ram/hwtest_ram.bin
+            build/hwtest-sd.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+
+  build-exe:
+    # Windows .exe build for host_tools/hwtest_viewer.py. Runs in parallel
+    # with build-bins; both publish to the same GitHub Release on tag pushes.
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        # No submodules needed -- host_tools is pure Python with no native deps
+        # beyond what pip pulls in.
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: host_tools/requirements.txt
+
+      - name: Test UART parser
+        working-directory: host_tools
+        run: python test_parser.py
+
+      - name: Install dependencies
+        working-directory: host_tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build hwtest_viewer.exe
+        working-directory: host_tools
+        # --onefile  : single self-contained .exe; bundles the Python
+        #   interpreter so end users don't need Python installed.
+        # --windowed : no console window pops up when launched from Explorer.
+        #   The script's CLI args (--port, --baud, --replay) are all optional
+        #   and still work when invoked from cmd/PowerShell, but the default
+        #   double-click flow goes straight into the imgui GUI.
+        # --collect-all imgui_bundle : imgui-bundle ships native DLLs and font
+        #   assets that PyInstaller's static scan misses; without this the
+        #   built exe crashes on import. Mandatory.
+        run: >
+          pyinstaller
+          --onefile
+          --windowed
+          --name hwtest_viewer
+          --collect-all imgui_bundle
+          hwtest_viewer.py
+
+      - name: Show artifact size
+        working-directory: host_tools
+        run: dir dist\hwtest_viewer.exe
+
+      - name: Upload workflow artifact (always)
+        uses: actions/upload-artifact@v7
+        with:
+          name: hwtest-viewer-exe
+          path: host_tools/dist/hwtest_viewer.exe
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: host_tools/dist/hwtest_viewer.exe
+          fail_on_unmatched_files: true
+          generate_release_notes: true

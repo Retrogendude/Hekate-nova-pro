@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "archives": {
+    "hekate-nova-pro-v33.1-beta.zip": {
+      "bytes": 16070749,
+      "sha256": "6db576ef5ad25710ec6959b3294f3d9201f04ccb9a487c8a8034f3226c18d864"
+    },
+    "hekate-nova-pro-v33.1-beta-8GB.zip": {
+      "bytes": 16072311,
+      "sha256": "e459e86ace19d3c40a74c07ac7767b4c114e7789ea2b24c1d8069d40df70c6ca"
+    },
+    "hekate-nova-pro-v33.1-beta-sources.zip": {
+      "bytes": 29878637,
+      "sha256": "b9b68945ea0c1338c2b0b5c47ea4bfaec49224c86cc252afbb03959331eb39ab"
+    }
+  },
+  "configs_preserved": true,
+  "8gb_only_difference": "payload byte 0x122 bit 0",
+  "not_yet_published": true
+}

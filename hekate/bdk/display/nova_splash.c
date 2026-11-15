@@ -2,7 +2,7 @@
 #include "nova_splash.h"
 #include <soc/timer.h>
 
-u32 nova_splash_logo_color=0x55C9F1,nova_splash_bar_color=0x55C9F1;
+u32 nova_splash_logo_color=0xF2F2F2,nova_splash_bar_color=0x55C9F1;
 static u32 *splash_frame;
 static u32 splash_percent,splash_ceiling,splash_tick,splash_phase;
 u32 nova_splash_tint(u32 color,u32 alpha)

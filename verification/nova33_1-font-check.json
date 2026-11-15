@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "result": "PASS: 731 actual-C Chinese font, locale policy, cached role, fallback, allocation and preservation assertions",
+  "physical_console_test": false
+}

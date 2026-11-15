@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "nyx_metadata_offset": "0x98",
+  "nyx_version": "1.9.5",
+  "loader_metadata_offset": "0x118",
+  "loader_version": "6.5.5",
+  "old_defect_reproduced": true,
+  "extra_c_callback_does_not_shift_header": true,
+  "invalid_entry_growth_rejected_by_linker": true,
+  "source_sha256": {
+    "nyx/nyx_gui/start.S": "7f7102bd8399cefd219d780cf2aa2f40d9c42f6969dbb53e948bb3cab9c87956",
+    "nyx/nyx_gui/link.ld": "d4335c4c193ead0dc40e67e0a3a232b186290147d623493c9e9e5f012a2ba9da"
+  }
+}

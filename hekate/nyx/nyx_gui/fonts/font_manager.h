@@ -20,6 +20,12 @@ bool nyx_font_available(const char *filename);
 bool nyx_font_available_at_size(const char *filename, u32 size);
 const char *nyx_font_status(void);
 u32 nyx_font_size(void);
+/* The saved personal face is never overwritten by a language-specific face. */
+bool nyx_font_language_locked(u32 language);
+const char *nyx_font_effective_filename(u32 language, const char *personal);
+const char *nyx_font_display_name(u32 language, const char *personal);
+#define NYX_FONT_ORIGINAL "Hekate-Original.nyxf"
+#define NYX_FONT_CHINESE "Nova-Chinese-Simplified.nyxf"
 /* Standalone validator, also used by the actual-C host regression checks. */
 bool nyx_font_validate_header(const u8 header[32], u32 file_size);
 bool nyx_font_filename_valid(const char *filename);

@@ -752,7 +752,7 @@ void nyx_nova_about(lv_obj_t *page)
     static const char *credits[]={
         "hekate\n(c) 2018, naehrwert, st4rk\n(c) 2018-2026, CTCaer\n\nNyx\n(c) 2019-2026, CTCaer\n\nHekate 6.5.5 / Nyx 1.9.5",
         "derrek, nedwill, plutoo\nshuffle2, smea, thexyz\nyellows8\n\nfincs, hexkyz, SciresM\nShiny Quagsire, WinterMute\nswitchbrew",
-        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne\nBTstack (c) BlueKitchen GmbH\nLicence personnelle / non commerciale"
+        "Littlev Graphics Library\n(c) 2016-2018, Gabor Kiss-Vamosi\nFatFs R0.13c\n(c) 2006-2018, ChaN\n(c) 2018-2022, CTCaer\n\nHWTest-RCM 0.15\nCreased (Baptiste MOINE)\ngithub.com/Creased/HWTest-RCM\n\nbcl-1.2.0\n(c) 2003-2006, Marcus Geelnard\nblz (c) 2018, SciresM\nelfload (c) 2014, Owen Shepherd\n(c) 2018, M4xw\n\nLodePNG 20261102\n(c) 2005-2026, Lode Vandevenne\nBTstack (c) BlueKitchen GmbH\nLicence personnelle / non commerciale"
     };
     (void)icons;
     /* A real card beneath the transparent tabs keeps wallpaper behind credits. */
@@ -764,9 +764,10 @@ void nyx_nova_about(lv_obj_t *page)
         nyx_nova_fixed_page(section);
         if(i==4){
             static const char *changes[]={
+                "v33.1 · Interface and 8GB RAM\nIndependent Launch icon and background; refined settings and emuMMC frames.\nSeparate 8GB payload and capacity-aware RAM diagnostic (hardware validation pending).",
+                "v33 · Languages and defaults\nSimplified Chinese with its required font.\nBundled wallpapers, icons and clearer boot options.",
                 "v32 · Layout and wireless recovery\nAligned partition values and a single-line summary.\nAutomatic per-Joy-Con stream recovery.",
                 "v20 · TV / Dock\nAutomatic dock detection.\nTV only or TV + console.",
-                "v19 · Persistent TV output\nTV output stays active across menus.",
                 "v18 · Customization\nPNG icons and SD partition menus."
             };
             for(u32 j=0;j<4;j++){
@@ -785,8 +786,8 @@ void nyx_nova_about(lv_obj_t *page)
             const char *second=strstr(text,"bcl-1.2.0");char first[512];
             u32 length=second?(u32)(second-text):strlen(text);if(length>=sizeof(first))length=sizeof(first)-1;
             memcpy(first,text,length);first[length]=0;
-            nyx_nova_text(section,first,20,12,566,NOVA_SMALL);
-            if(second)nyx_nova_text(section,second,626,12,566,NOVA_SMALL);
+            lv_obj_t *left=nyx_nova_text(section,first,20,12,566,NOVA_SMALL);nyx_nova_fit_text(left,lv_obj_get_height(section)-24);
+            if(second){lv_obj_t *right=nyx_nova_text(section,second,626,12,566,NOVA_SMALL);nyx_nova_fit_text(right,lv_obj_get_height(section)-24);}
         }else nyx_nova_text(section,text,20,12,1172,NOVA_SMALL);
     }
     lv_obj_t *resources=nyx_nova_text(page,"HWTest-RCM 0.15 · Noto Sans (OFL) · Lucide (ISC) · Nova Pro (GPL)",34,520,1212,NOVA_SMALL);nyx_nova_fit_text(resources,44);

@@ -27,6 +27,7 @@
 #include "gui_choices.h"
 #include "../config.h"
 #include "../localization.h"
+#include "../fonts/font_manager.h"
 #include <libs/lvgl/lv_themes/lv_theme_hekate.h>
 #include <libs/lvgl/lvgl.h>
 
@@ -95,203 +96,109 @@ static lv_res_t _update_r2p_action(lv_obj_t *btn)
 	return LV_RES_OK;
 }
 
-static lv_res_t _win_autoboot_close_action(lv_obj_t * btn)
+/* Paged boot entries retain their original INI index; no vertical list. */
+typedef struct nova_boot_entry { struct nova_boot_entry *next; u32 index; char name[]; } nova_boot_entry;
+static struct {
+    lv_obj_t *win,*parent_close,*panels[2];
+    nova_boot_entry *entries[2];
+    u32 count[2],page[2];
+} nova_boot;
+#define NOVA_BOOT_PAGE_SIZE 6
+
+static void nova_boot_release(void)
 {
-	if (!h_cfg.autoboot)
-		lv_btn_set_state(autoboot_btn, LV_BTN_STATE_REL);
-	else
-		lv_btn_set_state(autoboot_btn, LV_BTN_STATE_TGL_REL);
-
-	nyx_generic_onoff_toggle(autoboot_btn);
-
-	lv_obj_t * win = lv_win_get_from_btn(btn);
-
-	lv_obj_del(win);
-
-	close_btn = NULL;
-
-	return LV_RES_INV;
+    for(u32 side=0;side<2;++side) {
+        nova_boot_entry *entry=nova_boot.entries[side];
+        while(entry){nova_boot_entry *next=entry->next;free(entry);entry=next;}
+    }
 }
-
-lv_obj_t *create_window_autoboot(const char *win_title)
+static lv_res_t nova_boot_finish(void)
 {
-	static lv_style_t win_bg_style;
-
-	lv_style_copy(&win_bg_style, &lv_style_plain);
-	win_bg_style.body.main_color = lv_theme_get_current()->bg->body.main_color;
-	win_bg_style.body.grad_color = win_bg_style.body.main_color;
-
-	lv_obj_t *win = lv_win_create(lv_scr_act(), NULL);
-	lv_win_set_title(win, win_title);
-	lv_win_set_style(win, LV_WIN_STYLE_BG, &win_bg_style);
-	nyx_nova_window(win);
-
-	close_btn = lv_win_add_btn(win, NULL, SYMBOL_CLOSE" Close", _win_autoboot_close_action);
-
-	return win;
+    lv_obj_t *win=nova_boot.win,*parent=nova_boot.parent_close;
+    nova_boot_release();memset(&nova_boot,0,sizeof(nova_boot));
+    if(win)lv_obj_del(win);
+    close_btn=parent;
+    if(autoboot_btn){lv_btn_set_state(autoboot_btn,h_cfg.autoboot?LV_BTN_STATE_TGL_REL:LV_BTN_STATE_REL);nyx_generic_onoff_toggle(autoboot_btn);}
+    return LV_RES_INV;
 }
-
-static lv_res_t _autoboot_disable_action(lv_obj_t *btn)
+static lv_res_t _win_autoboot_close_action(lv_obj_t *button)
+{ (void)button;return nova_boot_finish(); }
+static lv_res_t _autoboot_disable_action(lv_obj_t *button)
+{ (void)button;h_cfg.autoboot=h_cfg.autoboot_list=0;ini_changes_made=true;return nova_boot_finish(); }
+static lv_res_t nova_boot_select(lv_obj_t *button)
 {
-	h_cfg.autoboot = 0;
-	h_cfg.autoboot_list = 0;
-	ini_changes_made = true;
-
-	lv_btn_set_state(autoboot_btn, LV_BTN_STATE_REL);
-	nyx_generic_onoff_toggle(autoboot_btn);
-
-	lv_obj_t * win = lv_win_get_from_btn(btn);
-
-	lv_obj_del(win);
-
-	close_btn = NULL;
-
-	return LV_RES_OK;
+    u32 selection=lv_obj_get_free_num(button);
+    h_cfg.autoboot=selection&0x7FFFFFFFu;h_cfg.autoboot_list=selection>>31;
+    ini_changes_made=true;return nova_boot_finish();
 }
-
-lv_obj_t *auto_main_list;
-lv_obj_t *auto_more_list;
-static lv_res_t _autoboot_enable_main_action(lv_obj_t *btn)
+static void nova_boot_draw(u32 side);
+static lv_res_t nova_boot_page(lv_obj_t *button)
 {
-	h_cfg.autoboot = lv_list_get_btn_index(auto_main_list, btn) + 1;
-	h_cfg.autoboot_list = 0;
-	ini_changes_made = true;
-
-	lv_btn_set_state(autoboot_btn, LV_BTN_STATE_TGL_REL);
-	nyx_generic_onoff_toggle(autoboot_btn);
-
-	lv_obj_t *obj = lv_obj_get_parent(btn);
-	for (int i = 0; i < 5; i++)
-		obj = lv_obj_get_parent(obj);
-	lv_obj_del(obj);
-
-	close_btn = NULL;
-
-	return LV_RES_INV;
+    u32 action=lv_obj_get_free_num(button),side=action>>1;
+    if(side>1)return LV_RES_OK;
+    u32 pages=(nova_boot.count[side]+NOVA_BOOT_PAGE_SIZE-1)/NOVA_BOOT_PAGE_SIZE;
+    if(!pages)return LV_RES_OK;
+    nova_boot.page[side]=(nova_boot.page[side]+(action&1?1:pages-1))%pages;
+    nova_boot_draw(side);return LV_RES_INV;
 }
-
-static lv_res_t _autoboot_enable_more_action(lv_obj_t *btn)
+static void nova_boot_draw(u32 side)
 {
-	h_cfg.autoboot = lv_list_get_btn_index(auto_more_list, btn) + 1;
-	h_cfg.autoboot_list = 1;
-	ini_changes_made = true;
-
-	lv_btn_set_state(autoboot_btn, LV_BTN_STATE_TGL_REL);
-	nyx_generic_onoff_toggle(autoboot_btn);
-
-	lv_obj_t *obj = lv_obj_get_parent(btn);
-	for (int i = 0; i < 5; i++)
-		obj = lv_obj_get_parent(obj);
-	lv_obj_del(obj);
-
-	close_btn = NULL;
-
-	return LV_RES_INV;
+    lv_obj_t *panel=nova_boot.panels[side];lv_obj_clean(panel);
+    int width=lv_obj_get_width(panel),height=lv_obj_get_height(panel);
+    nyx_nova_text(panel,side?"Ini folder configurations":"Main configurations",18,16,width-36,NOVA_TITLE);
+    nova_boot_entry *entry=nova_boot.entries[side];
+    u32 first=nova_boot.page[side]*NOVA_BOOT_PAGE_SIZE;
+    for(u32 i=0;i<first&&entry;++i)entry=entry->next;
+    int row_height=(height-116)/NOVA_BOOT_PAGE_SIZE;
+    for(u32 row=0;row<NOVA_BOOT_PAGE_SIZE&&entry;++row,entry=entry->next) {
+        lv_obj_t *button=lv_btn_create(panel,NULL);lv_btn_set_fit(button,false,false);lv_btn_set_layout(button,LV_LAYOUT_OFF);
+        lv_obj_set_pos(button,18,64+row*row_height);lv_obj_set_size(button,width-36,row_height-6);
+        lv_obj_set_free_num(button,(side<<31)|entry->index);lv_btn_set_action(button,LV_BTN_ACTION_CLICK,nova_boot_select);
+        if(h_cfg.autoboot_list==side&&h_cfg.autoboot==entry->index)lv_btn_set_state(button,LV_BTN_STATE_TGL_REL);
+        lv_obj_t *label=nyx_nova_text(button,"",12,8,width-60,NOVA_BODY);
+        /* Configuration names belong to the user, not to the locale catalog. */
+        (lv_label_set_text)(label,entry->name);nyx_nova_fit_text(label,row_height-16);
+    }
+    if(!nova_boot.count[side])nyx_nova_text(panel,"No configurations found.",18,82,width-36,NOVA_BODY);
+    u32 pages=(nova_boot.count[side]+NOVA_BOOT_PAGE_SIZE-1)/NOVA_BOOT_PAGE_SIZE;if(!pages)pages=1;
+    char value[32];s_printf(value,"%d / %d",nova_boot.page[side]+1,pages);
+    lv_obj_t *counter=nyx_nova_text(panel,value,width/2-64,height-42,128,NOVA_SMALL);lv_label_set_align(counter,LV_LABEL_ALIGN_CENTER);
+    for(u32 direction=0;direction<2;++direction) {
+        lv_obj_t *button=lv_btn_create(panel,NULL);lv_btn_set_fit(button,false,false);
+        lv_obj_set_pos(button,direction?width-100:18,height-50);lv_obj_set_size(button,82,36);
+        lv_obj_set_free_num(button,side*2+direction);lv_btn_set_action(button,LV_BTN_ACTION_CLICK,nova_boot_page);
+        lv_obj_set_click(button,pages>1);if(pages==1)lv_btn_set_state(button,LV_BTN_STATE_INA);
+        lv_obj_t *label=lv_label_create(button,NULL);lv_label_set_text(label,direction?">":"<");
+    }
 }
-
-static void _create_autoboot_window()
+static bool nova_boot_read(u32 side,const char *path,bool directory)
 {
-	lv_obj_t *win = create_window_autoboot(SYMBOL_GPS" Auto Boot");
-	lv_win_add_btn(win, NULL, SYMBOL_POWER" Disable", _autoboot_disable_action);
-
-	static lv_style_t h_style;
-	lv_style_copy(&h_style, lv_theme_get_current()->panel);
-	h_style.body.padding.inner = 0;
-	h_style.body.padding.hor = LV_DPI - (LV_DPI / 4);
-	h_style.body.padding.ver = LV_DPI / 6;
-
-	// Main configurations container.
-	lv_obj_t *h1 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h1, &h_style);
-	lv_cont_set_fit(h1, false, true);
-	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h1, false);
-	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
-
-	lv_obj_t *label_sep = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt = lv_label_create(h1, NULL);
-	lv_label_set_static_text(label_txt, "Main configurations");
-	lv_obj_set_style(label_txt, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -(LV_DPI / 4));
-
-	lv_obj_t *line_sep = lv_line_create(h1, NULL);
-	static const lv_point_t line_pp[] = { {0, 0}, { LV_HOR_RES - (LV_DPI - (LV_DPI / 4)) * 2, 0} };
-	lv_line_set_points(line_sep, line_pp, 2);
-	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
-	lv_obj_align(line_sep, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 4), LV_DPI / 8);
-
-	// Create list and populate it with Main boot entries.
-	lv_obj_t *list_main = lv_list_create(h1, NULL);
-	auto_main_list = list_main;
-	lv_obj_align(list_main, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, LV_DPI / 4);
-
-	lv_obj_set_size(list_main, LV_HOR_RES * 4 / 10, LV_VER_RES * 4 / 7);
-	lv_list_set_single_mode(list_main, true);
-
-	sd_mount();
-
-	// Parse hekate main configuration.
-	LIST_INIT(ini_sections);
-	if (!ini_parse(&ini_sections, "bootloader/hekate_ipl.ini", false))
-	{
-		LIST_FOREACH_ENTRY(ini_sec_t, ini_sec, &ini_sections, link)
-		{
-			if (!strcmp(ini_sec->name, "config") || (ini_sec->type != INI_CHOICE))
-				continue;
-
-			lv_list_add(list_main, NULL, ini_sec->name, _autoboot_enable_main_action);
-		}
-
-		ini_free(&ini_sections);
-	}
-
-	// More configuration container.
-	lv_obj_t *h2 = lv_cont_create(win, NULL);
-	lv_cont_set_style(h2, &h_style);
-	lv_cont_set_fit(h2, false, true);
-	lv_obj_set_width(h2, (LV_HOR_RES / 9) * 4);
-	lv_obj_set_click(h2, false);
-	lv_cont_set_layout(h2, LV_LAYOUT_OFF);
-	lv_obj_align(h2, h1, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI * 17 / 29, 0);
-
-	label_sep = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_sep, "");
-
-	lv_obj_t *label_txt3 = lv_label_create(h2, NULL);
-	lv_label_set_static_text(label_txt3, "Ini folder configurations");
-	lv_obj_set_style(label_txt3, lv_theme_get_current()->label.prim);
-	lv_obj_align(label_txt3, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 11);
-
-	line_sep = lv_line_create(h2, line_sep);
-	lv_obj_align(line_sep, label_txt3, LV_ALIGN_OUT_BOTTOM_LEFT, -(LV_DPI / 2), LV_DPI / 8);
-	lv_line_set_style(line_sep, lv_theme_get_current()->line.decor);
-
-	// Create list and populate it with more cfg boot entries.
-	lv_obj_t *list_more_cfg = lv_list_create(h2, NULL);
-	auto_more_list = list_more_cfg;
-	lv_obj_align(list_more_cfg, line_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 2, LV_DPI / 4);
-
-	lv_obj_set_size(list_more_cfg, LV_HOR_RES * 4 / 10, LV_VER_RES * 4 / 7);
-	lv_list_set_single_mode(list_more_cfg, true);
-
-	// Parse all .ini files in ini folder.
-	LIST_INIT(ini_list_sections);
-	if (!ini_parse(&ini_list_sections, "bootloader/ini", true))
-	{
-		LIST_FOREACH_ENTRY(ini_sec_t, ini_sec, &ini_list_sections, link)
-		{
-			if (!strcmp(ini_sec->name, "config") || (ini_sec->type != INI_CHOICE))
-				continue;
-
-			lv_list_add(list_more_cfg, NULL, ini_sec->name, _autoboot_enable_more_action);
-		}
-
-		ini_free(&ini_list_sections);
-	}
-
-	sd_unmount();
+    LIST_INIT(sections);nova_boot_entry **tail=&nova_boot.entries[side];
+    if(ini_parse(&sections,path,directory))return true;
+    bool valid=true;u32 index=0;
+    LIST_FOREACH_ENTRY(ini_sec_t,section,&sections,link) {
+        if(!strcmp(section->name,"config")||section->type!=INI_CHOICE)continue;
+        ++index;u32 length=strlen(section->name);
+        nova_boot_entry *entry=malloc(sizeof(*entry)+length+1);
+        if(!entry){valid=false;break;}
+        entry->next=NULL;entry->index=index;memcpy(entry->name,section->name,length+1);
+        *tail=entry;tail=&entry->next;++nova_boot.count[side];
+    }
+    ini_free(&sections);return valid;
+}
+static void _create_autoboot_window(void)
+{
+    if(nova_boot.win)return;
+    memset(&nova_boot,0,sizeof(nova_boot));nova_boot.parent_close=close_btn;
+    bool mounted=sd_get_card_mounted(),ok=!sd_mount();
+    if(ok)ok=nova_boot_read(0,"bootloader/hekate_ipl.ini",false)&&nova_boot_read(1,"bootloader/ini",true);
+    if(!mounted)sd_unmount();
+    if(!ok){nova_boot_release();memset(&nova_boot,0,sizeof(nova_boot));nyx_show_help("Could not read boot configurations. Check the SD card and retry.");return;}
+    nova_boot.win=nyx_create_standard_window("Auto Boot",_win_autoboot_close_action);
+    lv_win_add_btn(nova_boot.win,NULL,nyx_tr("Disable"),_autoboot_disable_action);
+    lv_obj_t *page=lv_win_get_content(nova_boot.win);nyx_nova_fixed_page(page);
+    int width=(lv_obj_get_width(page)-72)/2,height=lv_obj_get_height(page)-32;
+    for(u32 side=0;side<2;++side){nova_boot.panels[side]=nyx_nova_panel(page,24+side*(width+24),16,width,height);nova_boot_draw(side);}
 }
 
 static lv_res_t _autoboot_hide_delay_action(lv_obj_t *btn)
@@ -507,6 +414,9 @@ static lv_res_t _action_clock_edit_save(lv_obj_t *btns, const char *txt)
     bool mounted=sd_get_card_mounted();
     if(sd_mount()){nyx_show_help("SD card unavailable. Nothing was saved.");return LV_RES_OK;}
     if(f_stat("bootloader/sys/nyx.bin",NULL)!=FR_OK){if(!mounted)sd_unmount();nyx_show_help("Nyx is missing. Nothing was saved.");return LV_RES_OK;}
+    if(clock_language==I18N_ZH_CN && !nyx_font_available_at_size(NYX_FONT_CHINESE,n_cfg.font_size)){
+        if(!mounted)sd_unmount();nyx_show_help("The selected font is missing or invalid. Choose another font.");return LV_RES_OK;
+    }
     if(!nyx_options_commit_boot()){if(!mounted)sd_unmount();nyx_show_help("Could not save settings. Check the SD card and retry.");return LV_RES_OK;}
     nyx_config previous=n_cfg;bool was_dirty=nyx_changes_made;
     _clock_apply_selection();n_cfg.language=clock_language<I18N_LANGUAGE_COUNT?clock_language:I18N_EN;
@@ -678,7 +588,7 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
     if(!btn){
         lv_obj_t *label=lv_label_create(mbox,NULL);lv_label_set_text(label,"Langue");
         lv_label_set_style(label,&hint_small_style);
-        nyx_choices_create(mbox,"English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",clock_language,4,LV_HOR_RES/9*6-48,46,_clock_language_select,0,true);
+        nyx_choices_create(mbox,I18N_LANGUAGE_NAMES,clock_language,4,LV_HOR_RES/9*6-48,46,_clock_language_select,0,true);
     }
 
 	// If btn is empty, save options also because it was launched from boot.
@@ -1096,7 +1006,13 @@ static lv_res_t _save_language(lv_obj_t *btn)
 	}
 
 	u32 previous = n_cfg.language;
-	n_cfg.language = language_pending < I18N_LANGUAGE_COUNT ? language_pending : I18N_EN;
+	u32 requested = language_pending < I18N_LANGUAGE_COUNT ? language_pending : I18N_EN;
+	if (!nyx_font_available_at_size(nyx_font_effective_filename(requested,n_cfg.font_file),n_cfg.font_size)) {
+		if (!was_mounted) sd_unmount();
+		_home_layout_notice(nyx_tr("The selected font is missing or invalid. Choose another font."));
+		return LV_RES_OK;
+	}
+	n_cfg.language = requested;
 	if (create_nyx_config_entry(true))
 	{
 		n_cfg.language = previous;
@@ -1392,6 +1308,15 @@ lv_res_t create_win_nyx_options(lv_obj_t *parent_button)
     return LV_RES_OK;
 }
 
+static lv_res_t _open_nyx_backlight(lv_obj_t *button)
+{
+    lv_res_t result=create_win_nyx_options(button);
+    lv_obj_t *win=lv_win_get_from_btn(close_btn);
+    lv_obj_t *tabs=lv_obj_get_child(lv_page_get_scrl(lv_win_get_content(win)),NULL);
+    if(tabs)lv_tabview_set_tab_act(tabs,1,false);
+    return result;
+}
+
 void create_tab_boot_options(lv_theme_t *theme, lv_obj_t *parent)
 {
     (void)theme; settings_page(parent);
@@ -1409,13 +1334,8 @@ void create_tab_boot_options(lv_theme_t *theme, lv_obj_t *parent)
     _settings_toggle(card, SYMBOL_POWER" Auto HOS Power Off", auto_hos_poweroff_toggle, h_cfg.autohosoff);
     _settings_help(card, "Automatically power off on the next payload injection after shutting down from HOS.");
     card = _settings_card(parent, 4, 3);
-    lv_obj_t *heading = _settings_heading(card, SYMBOL_BRIGHTNESS" Backlight");
-    lv_obj_t *slider = lv_slider_create(card, NULL);
-    lv_obj_set_size(slider, lv_obj_get_width(card) - 48, 40);
-    lv_obj_set_pos(slider, 24, lv_obj_get_height(heading) + 34);
-    lv_bar_set_range(slider, 30, 220); lv_bar_set_value(slider, h_cfg.backlight);
-    lv_slider_set_action(slider, _slider_brightness_action);
-    _settings_help(card, "Set backlight brightness.");
+    _settings_button(card, SYMBOL_BRIGHTNESS" Backlight", _open_nyx_backlight);
+    _settings_help(card, "Backlight is available in Nyx Settings > System.");
     card = _settings_card(parent, 5, 3);
     _settings_toggle(card, SYMBOL_REFRESH" Update Reboot 2 Payload", _update_r2p_action, h_cfg.updater2p);
     _settings_help(card, "When FSS0 is used, check and update the reboot-to-payload image to Hekate.");
@@ -1526,13 +1446,18 @@ static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int
     lv_label_set_align(label, LV_LABEL_ALIGN_CENTER); nyx_nova_fit_text(label, 24); return button;
 }
 
-/* The system column keeps its fill and switch state, with no surrounding
- * outlines. Other settings retain their normal selection feedback. */
+/* Only the two system switch rows are transparent. Their text and switch
+ * children keep their own opacity; the surrounding panel keeps its border. */
 static void nova_system_flat(lv_obj_t *button)
 {
     static lv_style_t styles[4];
     const u32 states[]={LV_BTN_STYLE_REL,LV_BTN_STYLE_PR,LV_BTN_STYLE_TGL_REL,LV_BTN_STYLE_TGL_PR};
-    for(u32 i=0;i<4;++i){lv_style_copy(&styles[i],lv_btn_get_style(button,states[i]));styles[i].body.border.width=0;lv_btn_set_style(button,states[i],&styles[i]);}
+    for(u32 i=0;i<4;++i){
+        lv_style_copy(&styles[i],lv_btn_get_style(button,states[i]));
+        styles[i].body.empty=1;styles[i].body.opa=LV_OPA_TRANSP;
+        styles[i].body.border.width=0;styles[i].body.shadow.width=0;
+        lv_btn_set_style(button,states[i],&styles[i]);
+    }
 }
 void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
 {
@@ -1542,22 +1467,25 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     int right_width = LV_HOR_RES - 68 - 22 - left_width;
     lv_obj_t *system = nyx_nova_panel(parent, 34, 140, left_width, height);
     lv_obj_t *reading = nyx_nova_panel(parent, 34 + left_width + 22, 140, right_width, height);
-    static lv_style_t flat_panel,flat_heading;
-    lv_style_copy(&flat_panel,lv_cont_get_style(system));flat_panel.body.border.width=0;lv_cont_set_style(system,&flat_panel);
-    lv_obj_t *system_heading=_nova_heading_button(system,"Options système","toggle-right",_nova_boot_options);
-    lv_style_copy(&flat_heading,lv_btn_get_style(system_heading,LV_BTN_STYLE_PR));flat_heading.body.border.width=0;lv_btn_set_style(system_heading,LV_BTN_STYLE_PR,&flat_heading);
+    _nova_heading_button(system,"Options système","toggle-right",_nova_boot_options);
     _nova_heading_button(reading, "Apparence et lecture", "paintbrush", create_win_nyx_options);
     int row_height = (height - 64 - 16) / 4;
-    nova_system_flat(nyx_nova_switch_row(system, "Auto NoGC", "Protection du lecteur de cartes.", "shield-check", auto_nogc_toggle, h_cfg.autonogc, 24, 64, left_width - 48, row_height));
-    nova_system_flat(nyx_nova_switch_row(system, "Extinction HOS", "Arrêt automatique après HOS.", "power", auto_hos_poweroff_toggle, h_cfg.autohosoff, 24, 64 + row_height, left_width - 48, row_height));
+    lv_obj_t *boot_access = lv_btn_create(system,NULL);
+    lv_btn_set_fit(boot_access,false,false);lv_btn_set_layout(boot_access,LV_LAYOUT_OFF);
+    lv_obj_set_pos(boot_access,24,64);lv_obj_set_size(boot_access,left_width-48,row_height*2-8);
+    lv_btn_set_action(boot_access,LV_BTN_ACTION_CLICK,_nova_boot_options);
+    nyx_nova_icon_box(boot_access,"power",16,18,44,false);
+    nyx_nova_text(boot_access,"Boot options",76,18,left_width-150,NOVA_TITLE);
+    lv_obj_t *boot_hint=nyx_nova_text(boot_access,"Auto Boot / Boot Delay / Auto NoGC / Auto HOS Power Off",16,76,left_width-80,NOVA_SMALL);
+    nyx_nova_fit_text(boot_hint,row_height*2-104);
     nova_system_flat(nyx_nova_switch_row(system, "Vérification des sauvegardes", "Contrôler les données écrites.", "badge-check", _nova_verification_toggle, n_cfg.verification, 24, 64 + 2 * row_height, left_width - 48, row_height));
     nova_system_flat(nyx_nova_switch_row(system, "Effets de sélection", "Reflet blanc discret sur la tuile sélectionnée.", "sparkles", _nova_halo_toggle, n_cfg.nova_halo, 24, 64 + 3 * row_height, left_width - 48, row_height));
-    const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português"};
-    _nova_setting_line(reading, "Language", language_names[n_cfg.language < 7 ? n_cfg.language : 0], 64, _nova_language_menu);
-    const u32 order[] = {1,0,2,3,4,5,6}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT"};
-    for (u32 i = 0; i < 7; ++i) _nova_chip(reading, codes[order[i]], 24 + i * 50, 118, 42, n_cfg.language == order[i], _nova_language_action, order[i]);
-    char face[64]; strcpy(face, n_cfg.font_file[0] ? n_cfg.font_file : "Inter"); char *extension = strstr(face, ".nyxf"); if (extension) *extension = 0;
-    lv_obj_t *font_name = _nova_setting_line(reading, "Font", face, 170, _nova_font_action); (lv_label_set_text)(font_name, face);
+    const char *language_names[] = {"English", "Français", "Español", "Italiano", "Русский", "Deutsch", "Português", "Chinese (Simplified)"};
+    _nova_setting_line(reading, "Language", language_names[n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : 0], 64, _nova_language_menu);
+    const u32 order[] = {1,0,2,3,4,5,6,7}; const char *codes[] = {"EN","FR","ES","IT","RU","DE","PT","ZH"};
+    for (u32 i = 0; i < I18N_LANGUAGE_COUNT; ++i) _nova_chip(reading, codes[order[i]], 24 + i * 50, 118, 42, n_cfg.language == order[i], _nova_language_action, order[i]);
+    const char *face=nyx_font_display_name(n_cfg.language,n_cfg.font_file);
+    lv_obj_t *font_name = _nova_setting_line(reading, "Font", face, 170, nyx_font_language_locked(n_cfg.language)?NULL:_nova_font_action); (lv_label_set_text)(font_name, face);
     char size[20]; s_printf(size, "%d px", n_cfg.font_size);
     _nova_setting_line(reading, "Text size", size, 226, _nova_font_action);
     const u32 sizes[] = {24,28,32};

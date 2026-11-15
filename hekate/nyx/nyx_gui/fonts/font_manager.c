@@ -10,7 +10,7 @@
 #define SECTION_LIMIT 24
 #define MAX_FILE_SIZE (16u * 1024u * 1024u)
 #define MAX_SECTION_SIZE (2u * 1024u * 1024u)
-#define MAX_GLYPHS 1024u
+#define MAX_GLYPHS 2048u
 
 typedef struct {
     lv_font_t font;
@@ -21,10 +21,25 @@ typedef struct {
 static managed_font regular, small, mono, regular_icons, small_icons;
 static managed_font ui_faces[12];
 static const lv_font_t *regular_font = &interui_30, *small_font = &interui_20, *mono_font = &ubuntu_mono;
-static char font_files[FONT_LIMIT + 1][64];
-static char font_options[(FONT_LIMIT + 1) * 65];
+static char font_files[FONT_LIMIT + 2][64];
+static char font_options[(FONT_LIMIT + 2) * 65];
 static u32 font_count, selected_size = 30;
 static const char *status = "Default font";
+
+bool nyx_font_language_locked(u32 language) { return language == I18N_ZH_CN; }
+const char *nyx_font_effective_filename(u32 language, const char *personal)
+{
+    if (nyx_font_language_locked(language)) return NYX_FONT_CHINESE;
+    if (personal && personal[0]) return personal;
+    return language == I18N_RU ? NYX_FONT_ORIGINAL : "Lecture.nyxf";
+}
+const char *nyx_font_display_name(u32 language, const char *personal)
+{
+    const char *file = nyx_font_effective_filename(language, personal);
+    if (!strcmp(file, NYX_FONT_CHINESE)) return nyx_tr("Chinese font (required)");
+    if (!strcmp(file, NYX_FONT_ORIGINAL)) return nyx_tr("Hekate original");
+    return file;
+}
 
 static u16 read16(const u8 *p) { return p[0] | (u16)p[1] << 8; }
 static u32 read32(const u8 *p) { return p[0] | (u32)p[1] << 8 | (u32)p[2] << 16 | (u32)p[3] << 24; }
@@ -67,7 +82,9 @@ static bool read_exact(FIL *file, u32 offset, void *buffer, u32 length)
 static bool open_font(const char *filename, FIL *file, u8 header[32])
 {
     if (!nyx_font_filename_valid(filename)) return false;
-    char path[72]; strcpy(path, "fonts/"); strcat(path, filename);
+    char path[112];
+    strcpy(path, !strcmp(filename, NYX_FONT_CHINESE) ? "bootloader/sys/" : "fonts/");
+    strcat(path, filename);
     if (f_open(file, path, FA_READ) != FR_OK) return false;
     if (f_size(file) > MAX_FILE_SIZE || !read_exact(file, 0, header, 32) || !nyx_font_validate_header(header, f_size(file))) {
         f_close(file); return false;
@@ -195,7 +212,7 @@ static bool load_selected(const char *filename, u32 normal_height, u32 small_hei
 bool nyx_font_available_at_size(const char *filename, u32 size)
 {
     if (size < 20 || size > 36 || size & 1) return false;
-    if (!filename || !filename[0]) return true;
+    if (!filename || !filename[0] || !strcmp(filename, NYX_FONT_ORIGINAL)) return true;
     if (!nyx_font_filename_valid(filename)) return false;
     bool was_mounted = sd_get_card_mounted();
     if (sd_mount()) return false;
@@ -266,23 +283,48 @@ static bool scale_font(const lv_font_t *source, u32 height, managed_font *target
     if (fixed) target->font.monospace = fixed_width;
     return true;
 }
+/* Fixed ASCII columns plus double-width CJK cells keep diagnostic tables
+ * aligned without squeezing ideographs into a Latin monospace cell. */
+static bool chinese_mono(const lv_font_t *source,managed_font *target)
+{
+    u32 height=source->h_px,count=source->glyph_cnt,bytes=0;
+    for(u32 i=0;i<count;++i){u32 width=source->unicode_list[i]>=0x2E80?height:height/2;bytes+=((width+1)/2)*height;}
+    if(!allocate_font(target,count,bytes,height))return false;
+    memset(target->bitmap,0,bytes);u32 offset=0;
+    for(u32 i=0;i<count;++i){
+        u32 cp=source->unicode_list[i],width=cp>=0x2E80?height:height/2;
+        u32 sw=source->glyph_dsc[i].w_px,dw=sw<width?sw:width,pad=(width-dw)/2;
+        const u8 *pixels=source->glyph_bitmap+source->glyph_dsc[i].glyph_index;
+        target->codepoints[i]=cp;target->glyphs[i].w_px=width;target->glyphs[i].glyph_index=offset;
+        for(u32 y=0;y<height;++y)for(u32 x=0;x<dw;++x){
+            u32 sx=x*sw/dw;u8 byte=pixels[y*((sw+1)/2)+sx/2];u8 value=sx&1?byte&15:byte>>4;
+            u32 dx=pad+x;target->bitmap[offset+y*((width+1)/2)+dx/2]|=value<<(dx&1?0:4);
+        }
+        offset+=((width+1)/2)*height;
+    }
+    target->font.unicode_first=source->unicode_first;target->font.unicode_last=source->unicode_last;
+    return true;
+}
 static void scan_fonts(void)
 {
-    font_count = 1; font_files[0][0] = 0;
+    font_count = 2; font_files[0][0] = 0;
+    strcpy(font_files[1], NYX_FONT_ORIGINAL);
     strcpy(font_options, nyx_tr("Default"));
+    strcat(font_options, "\n"); strcat(font_options, nyx_tr("Hekate original"));
     DIR directory; FILINFO entry;
     if (f_opendir(&directory, "fonts") != FR_OK) return;
-    while (font_count <= FONT_LIMIT && f_readdir(&directory, &entry) == FR_OK && entry.fname[0]) {
-        if ((entry.fattrib & (AM_DIR | AM_HID)) || !nyx_font_filename_valid(entry.fname) || !nyx_font_available(entry.fname)) continue;
+    while (font_count < FONT_LIMIT + 2 && f_readdir(&directory, &entry) == FR_OK && entry.fname[0]) {
+        if ((entry.fattrib & (AM_DIR | AM_HID)) || !strcmp(entry.fname, NYX_FONT_ORIGINAL) ||
+            !strcmp(entry.fname, NYX_FONT_CHINESE) || !nyx_font_filename_valid(entry.fname) || !nyx_font_available(entry.fname)) continue;
         strcpy(font_files[font_count++], entry.fname);
     }
     f_closedir(&directory);
-    for (u32 i = 1; i < font_count; ++i)
+    for (u32 i = 2; i < font_count; ++i)
         for (u32 j = i + 1; j < font_count; ++j)
             if (strcmp(font_files[i], font_files[j]) > 0) {
                 char temp[64]; strcpy(temp, font_files[i]); strcpy(font_files[i], font_files[j]); strcpy(font_files[j], temp);
             }
-    for (u32 i = 1; i < font_count; ++i) { strcat(font_options, "\n"); strcat(font_options, font_files[i]); }
+    for (u32 i = 2; i < font_count; ++i) { strcat(font_options, "\n"); strcat(font_options, font_files[i]); }
 }
 void nyx_font_manager_init(void)
 {
@@ -295,12 +337,20 @@ void nyx_font_manager_init(void)
     if (small_size < 14) small_size = 14;
     bool was_mounted = sd_get_card_mounted();
     bool mounted = !sd_mount();
+    bool chinese = nyx_font_language_locked(n_cfg.language);
     if (mounted) scan_fonts();
-    else { font_count = 1; font_files[0][0] = 0; strcpy(font_options, nyx_tr("Default")); }
-    bool custom = mounted && n_cfg.font_file[0] && load_selected(n_cfg.font_file, selected_size, small_size);
+    else { font_count = 2; font_files[0][0] = 0; strcpy(font_files[1], NYX_FONT_ORIGINAL);
+        strcpy(font_options, nyx_tr("Default")); strcat(font_options,"\n");strcat(font_options,nyx_tr("Hekate original")); }
+    const char *effective = nyx_font_effective_filename(n_cfg.language, n_cfg.font_file);
+    bool custom = mounted && strcmp(effective, NYX_FONT_ORIGINAL) && load_selected(effective, selected_size, small_size);
+    if (chinese && !custom) {
+        /* A missing Chinese resource must not turn the interface into boxes.
+         * Keep the saved preference and use readable English for this boot. */
+        n_cfg.language = I18N_EN;
+        status = "Chinese font missing or invalid. English restored for this session.";
+    }
     if (mounted && !was_mounted) sd_unmount();
-    if (n_cfg.font_file[0]) status = custom ? "SD font loaded" : "Font unavailable or invalid. Default font restored.";
-    else status = "Default font";
+    if (!chinese || custom) status = custom ? "SD font loaded" : "Default font";
     if (custom) { regular_font = &regular.font; small_font = &small.font; }
     else if (selected_size != 30) {
         if (scale_font(&interui_30, selected_size, &regular, false, false) && scale_font(&interui_20, small_size, &small, false, false)) {
@@ -320,8 +370,10 @@ void nyx_font_manager_init(void)
         release_font(&regular); release_font(&small); release_font(&regular_icons); release_font(&small_icons);
         regular_font = &interui_30; small_font = &interui_20; selected_size = 30; small_size = 20;
         status = "Not enough memory. Default font restored.";
+        if(chinese){n_cfg.language=I18N_EN;custom=false;}
     }
-    if (scale_font(&ubuntu_mono, small_size, &mono, false, true)) mono_font = &mono.font;
+    if (chinese && custom) mono_font = chinese_mono(small_font,&mono)?&mono.font:small_font;
+    else if (scale_font(&ubuntu_mono, small_size, &mono, false, true)) mono_font = &mono.font;
 }
 const lv_font_t *nyx_font_regular(void) { return regular_font; }
 const lv_font_t *nyx_font_small(void) { return small_font; }
@@ -339,10 +391,13 @@ const lv_font_t *nyx_font_ui(u32 pixels)
     bool was_mounted = sd_get_card_mounted();
     managed_font temporary = {0};
     bool loaded = false;
-    if (n_cfg.font_file[0] && !sd_mount())
-        loaded = load_selected_into(n_cfg.font_file, height, height, face, &temporary);
+    const char *effective = nyx_font_effective_filename(n_cfg.language,n_cfg.font_file);
+    if (strcmp(effective,NYX_FONT_ORIGINAL) && !sd_mount())
+        loaded = load_selected_into(effective, height, height, face, &temporary);
     release_font(&temporary);
     if (!was_mounted && sd_get_card_mounted()) sd_unmount();
+    /* The Latin-only scaler must never strip the Chinese character set. */
+    if (!loaded && nyx_font_language_locked(n_cfg.language)) return height <= small_font->h_px ? small_font : regular_font;
     if (!loaded) loaded = scale_font(regular_font, height, face, false, false);
     return loaded ? &face->font : small_font;
 }

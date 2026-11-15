@@ -252,14 +252,14 @@ int nyx_launch_ram_service(u32 mode,u32 mask)
 		return 4;
 	}
 	/* Force Hekate's menu on return, even when normal autoboot is configured. */
-	static const char *ram_languages[] = {"en", "fr", "es", "it", "ru", "de", "pt"};
+	static const char *ram_languages[] = {"en", "fr", "es", "it", "ru", "de", "pt", "zh"};
 	_Static_assert(ARRAY_SIZE(ram_languages) == I18N_LANGUAGE_COUNT, "RAM language codes must match Nyx locales");
 	_Static_assert(NYX_RAM_UI_ADDR + NYX_RAM_UI_MAX <= NYX_RAM_HANDOFF_ADDR, "RAM UI must stay below the return handoff");
 	char ui_path[64];
 	s_printf(ui_path, "bootloader/sys/ram-ui-%s.bin", ram_languages[n_cfg.language < I18N_LANGUAGE_COUNT ? n_cfg.language : I18N_EN]);
 	u32 ui_size = 0;
 	u8 *ui = _read_service_payload(ui_path, NYX_RAM_UI_MAX, &ui_size);
-	if (ui && *(u32 *)ui == NYX_RAM_UI_MAGIC && ((u32 *)ui)[1] == ui_size &&
+	if (ui && (*(u32 *)ui == NYX_RAM_UI_MAGIC || *(u32 *)ui == NYX_RAM_UI_MAGIC_HIRES) && ((u32 *)ui)[1] == ui_size &&
 		((u32 *)ui)[2] == nyx_ram_hash(ui + 32, ui_size - 32))
 		memcpy((void *)NYX_RAM_UI_ADDR, ui, ui_size);
 	free(ui);
@@ -267,6 +267,10 @@ int nyx_launch_ram_service(u32 mode,u32 mask)
 	return_image[0x95] = 0;
 	return_image[0x96] = 0;
 	return_image[0x97] = 0;
+	/* Keep the running payload's documented DRAM override on return from the
+	 * isolated test. The standard build must not inherit an SD file's 8GB bit. */
+	if(return_size>0x122)
+		return_image[0x122]=(return_image[0x122]&~RSVD_FLAG_DRAM_8GB)|(nyx_str->info_ex.rsvd_flags&RSVD_FLAG_DRAM_8GB);
 	memcpy((void *)NYX_RAM_RETURN_ADDR, return_image, return_size);
 	nyx_ram_handoff_t request = {0};
 	request.version = NYX_RAM_VERSION;

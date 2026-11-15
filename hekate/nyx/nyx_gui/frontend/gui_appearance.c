@@ -20,6 +20,8 @@ static nyx_config appearance_pending;
 static lv_obj_t *appearance_parent_close;
 static bool appearance_open;
 static lv_obj_t *appearance_tabs, *appearance_language_choice, *appearance_size_choice;
+static lv_obj_t *appearance_font_name, *appearance_font_counter, *appearance_font_buttons[2];
+static void appearance_refresh_font(void);
 
 enum { AP_LANGUAGE, AP_FONT, AP_SIZE, AP_LAYOUT };
 static u32 bounded(u32 value,u32 low,u32 high,u32 fallback) { return value>=low&&value<=high?value:fallback; }
@@ -50,6 +52,7 @@ static lv_res_t appearance_set_selection(u32 id, u32 selected)
     case AP_LANGUAGE:
         appearance_pending.language = selected < I18N_LANGUAGE_COUNT ? selected : I18N_EN; break;
     case AP_FONT: {
+        if (nyx_font_language_locked(appearance_pending.language)) return LV_RES_OK;
         if (selected >= nyx_font_count()) return LV_RES_OK;
         const char *file = nyx_font_filename(selected);
         if (!file || strlen(file) >= sizeof(appearance_pending.font_file)) return LV_RES_OK;
@@ -58,6 +61,7 @@ static lv_res_t appearance_set_selection(u32 id, u32 selected)
     case AP_SIZE: appearance_pending.font_size = selected <= 8 ? 20 + selected * 2 : 30; break;
     case AP_LAYOUT: appearance_pending.home_layout = selected == HOME_LAYOUT_CAROUSEL ? selected : HOME_LAYOUT_TILES; break;
     }
+    if (appearance_open && appearance_font_name) appearance_refresh_font();
     return LV_RES_OK;
 }
 
@@ -78,7 +82,8 @@ static lv_res_t appearance_save(lv_obj_t *button)
         if (!mounted_before) sd_unmount();
         appearance_notice("Nyx is missing. Nothing was saved."); return LV_RES_OK;
     }
-    if (appearance_pending.font_file[0] && !nyx_font_available_at_size(appearance_pending.font_file, appearance_pending.font_size)) {
+    const char *effective = nyx_font_effective_filename(appearance_pending.language, appearance_pending.font_file);
+    if (!nyx_font_available_at_size(effective, appearance_pending.font_size)) {
         if (!mounted_before) sd_unmount();
         appearance_notice("The selected font is missing or invalid. Choose another font."); return LV_RES_OK;
     }
@@ -105,7 +110,19 @@ static lv_obj_t *appearance_text(lv_obj_t *parent, const char *text,
     return nyx_nova_text(parent,text,x,y,width,small?NOVA_SMALL:NOVA_TITLE);
 }
 
-static lv_obj_t *appearance_font_name, *appearance_font_counter;
+static void appearance_refresh_font(void)
+{
+    bool locked = nyx_font_language_locked(appearance_pending.language);
+    (lv_label_set_text)(appearance_font_name, nyx_font_display_name(appearance_pending.language,appearance_pending.font_file));
+    char counter[256];
+    if (locked) strcpy(counter,nyx_tr("Personal fonts disabled for Chinese."));
+    else s_printf(counter,"%d / %d",nyx_font_selected_index(appearance_pending.font_file)+1,nyx_font_count());
+    (lv_label_set_text)(appearance_font_counter,counter);
+    for(u32 i=0;i<2;++i) if(appearance_font_buttons[i]) {
+        lv_obj_set_click(appearance_font_buttons[i],!locked);
+        lv_btn_set_state(appearance_font_buttons[i],locked?LV_BTN_STATE_INA:LV_BTN_STATE_REL);
+    }
+}
 
 static lv_res_t appearance_select(lv_obj_t *button)
 {
@@ -114,13 +131,14 @@ static lv_res_t appearance_select(lv_obj_t *button)
 
 static lv_res_t appearance_font_step(lv_obj_t *button)
 {
+    if(nyx_font_language_locked(appearance_pending.language)) return LV_RES_OK;
     u32 count = nyx_font_count();
     if (!count) return LV_RES_OK;
     u32 current = nyx_font_selected_index(appearance_pending.font_file);
     current = (current + (lv_obj_get_free_num(button) ? 1 : count - 1)) % count;
     appearance_set_selection(AP_FONT, current);
     const char *file = nyx_font_filename(current);
-    (lv_label_set_text)(appearance_font_name, file && *file ? file : nyx_tr("Default font"));
+    (lv_label_set_text)(appearance_font_name, nyx_font_display_name(appearance_pending.language,file));
     char counter[24]; s_printf(counter, "%d / %d", current + 1, count);
     (lv_label_set_text)(appearance_font_counter, counter);
     nyx_background_interaction();
@@ -147,13 +165,14 @@ static lv_obj_t *appearance_choices(lv_obj_t *page, const char *options, u32 sel
     return choices;
 }
 
-static void appearance_step_button(lv_obj_t *page, const char *title, int x, u32 next)
+static lv_obj_t *appearance_step_button(lv_obj_t *page, const char *title, int x, u32 next)
 {
     lv_obj_t *button = lv_btn_create(page, NULL);
     lv_btn_set_fit(button, false, false); lv_obj_set_size(button, 246, 64);
     lv_obj_set_pos(button, x, 210); lv_obj_set_free_num(button, next);
     lv_btn_set_action(button, LV_BTN_ACTION_CLICK, appearance_font_step);
     lv_obj_t *label = lv_label_create(button, NULL); lv_label_set_text(label, title);
+    return button;
 }
 
 lv_res_t nyx_create_appearance_window(lv_obj_t *button)
@@ -161,7 +180,8 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     (void)button;
     if (appearance_open) return LV_RES_OK;
     appearance_open = true; appearance_pending = n_cfg;
-    if (!nyx_font_selected_index(n_cfg.font_file)) appearance_pending.font_file[0] = 0;
+    appearance_font_name=appearance_font_counter=NULL;
+    appearance_font_buttons[0]=appearance_font_buttons[1]=NULL;
     appearance_parent_close = close_btn;
     lv_obj_t *win = nyx_create_standard_window("Appearance", appearance_close);
     lv_win_add_btn(win, NULL, SYMBOL_SAVE" Save & reload", appearance_save);
@@ -176,7 +196,7 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     int height=lv_obj_get_height(language)-28;
     lv_obj_t *language_card=nyx_nova_panel(language,34,14,1212,height);
     appearance_text(language_card, "Interface language", 24, 20, 1164, false);
-    appearance_language_choice = appearance_choices(language_card, "English\nFrançais\nEspañol\nItaliano\nРусский\nDeutsch\nPortuguês",
+    appearance_language_choice = appearance_choices(language_card, I18N_LANGUAGE_NAMES,
         bounded(n_cfg.language, 0, I18N_LANGUAGE_COUNT - 1, I18N_EN), 3, 24, 78, 1164, 82, AP_LANGUAGE, true);
     lv_obj_t *note=appearance_text(language_card, "Save & reload applies all choices. Closing cancels the pending changes.", 24, height-62, 1164, true);nyx_nova_fit_text(note,52);
     lv_obj_t *font_card=nyx_nova_panel(reading,34,14,594,height);
@@ -185,10 +205,12 @@ lv_res_t nyx_create_appearance_window(lv_obj_t *button)
     const char *file = appearance_pending.font_file;
     appearance_font_name = appearance_text(font_card, "", 24, 82, 546, true);
     (lv_label_set_text)(appearance_font_name, *file ? file : nyx_tr("Default font"));
-    appearance_step_button(font_card, "<", 24, 0); appearance_step_button(font_card, ">", 294, 1);
+    appearance_font_buttons[0]=appearance_step_button(font_card, "<", 24, 0);
+    appearance_font_buttons[1]=appearance_step_button(font_card, ">", 294, 1);
     u32 count = nyx_font_count();
     char counter[24]; s_printf(counter, "%d / %d", nyx_font_selected_index(file) + 1, count);
     appearance_font_counter = appearance_text(font_card, counter, 24, 286, 546, true);
+    appearance_refresh_font();
     note=appearance_text(font_card, "To add a font, copy a Nyx font file into /fonts on the SD card, then reload Nyx.", 24, 332, 546, true);nyx_nova_fit_text(note,height-344);
     appearance_text(size_card, "Text size", 24, 20, 546, false);
     u32 size = bounded(n_cfg.font_size, 20, 36, 30);

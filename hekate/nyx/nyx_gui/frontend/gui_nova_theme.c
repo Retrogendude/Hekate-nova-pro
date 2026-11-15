@@ -368,7 +368,8 @@ static void launch_preview_refresh(void)
     if(nova_theme.launch_card)lv_obj_del(nova_theme.launch_card);
     nova_theme.launch_card=nyx_nova_panel(nova_theme.launch_preview,20,70,476,292);
     bool valid=launch_image_place(nova_theme.launch_card,nova_theme.pending.launch_image);
-    nyx_nova_icon_box(nova_theme.launch_card,"rocket",24,24,56,false);
+    lv_obj_t *icon=nyx_nova_icon_box(nova_theme.launch_card,"play",24,24,56,false);
+    nyx_nova_custom_icon(icon,0);
     nyx_nova_text(nova_theme.launch_card,"Launch",24,166,428,NOVA_TITLE);
     lv_obj_t *caption=nyx_nova_text(nova_theme.launch_card,"Choisir un système",24,214,428,NOVA_BODY);nyx_nova_fit_text(caption,50);
     (lv_label_set_text)(nova_theme.launch_file,nova_theme.pending.launch_image[0]?nova_theme.pending.launch_image:nyx_tr("Aucune image"));
@@ -424,13 +425,14 @@ static lv_res_t theme_reset(lv_obj_t *button)
 {
     (void)button;nova_theme.pending.theme_bg=0x10151D;nova_theme.pending.nova_text_color=0xF2F5FA;
     nova_theme.pending.nova_border_color=0x334050;nova_theme.pending.nova_reflection_color=0x55C9F1;
-    nova_theme.pending.nova_logo_color=nova_theme.pending.nova_icon_color=0x55C9F1;nova_theme.pending.nova_selection_color=0x1C2937;
-    nova_theme.pending.nova_menu_opacity=25;nova_theme.pending.nova_icon_opacity=100;
-    strcpy(nova_theme.pending.wallpaper_file,"Nova-Carbon.bmp");nova_theme.wallpaper=0;
-    nova_theme.pending.launch_image[0]=0;nova_theme.launch=0;
-    nova_theme.pending.boot_logo_color=nova_theme.pending.boot_bar_color=0x55C9F1;
-    for(u32 i=0;i<wallpaper_count;++i)if(!strcmp(wallpaper_names[i],"Nova-Carbon.bmp"))nova_theme.wallpaper=i+1;
-    nyx_choices_set_selected(nova_theme.menu_choices,1);nyx_choices_set_selected(nova_theme.icon_choices,4);
+    nova_theme.pending.nova_logo_color=0x55C9F1;nova_theme.pending.nova_icon_color=0xF2F2F2;nova_theme.pending.nova_selection_color=0x1C2937;
+    nova_theme.pending.nova_menu_opacity=75;nova_theme.pending.nova_icon_opacity=75;
+    strcpy(nova_theme.pending.wallpaper_file,"Nova-Carbon-Cyan.bmp");nova_theme.wallpaper=0;
+    strcpy(nova_theme.pending.launch_image,"Launcher.png");nova_theme.launch=0;
+    nova_theme.pending.boot_logo_color=0xF2F2F2;nova_theme.pending.boot_bar_color=0x55C9F1;
+    for(u32 i=0;i<wallpaper_count;++i)if(!strcmp(wallpaper_names[i],"Nova-Carbon-Cyan.bmp"))nova_theme.wallpaper=i+1;
+    for(u32 i=0;i<launch_count;++i)if(!strcmp(launch_names[i],"Launcher.png"))nova_theme.launch=i+1;
+    nyx_choices_set_selected(nova_theme.menu_choices,3);nyx_choices_set_selected(nova_theme.icon_choices,3);
     theme_controls_refresh();wallpaper_preview_refresh();boot_controls_refresh();launch_preview_refresh();return LV_RES_OK;
 }
 static void theme_page(lv_obj_t *page)

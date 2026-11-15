@@ -4,16 +4,18 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Bêta v32 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v32)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Bêta v33.1 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.1)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-La v32 améliore le partitionnement expert et la reprise d’un Joy-Con silencieux. Les essais PC et la compilation sont vérifiés ; **la portée sans fil de 2–3 mètres reste à valider sur console**. Les premières versions sont conservées pour l’historique et ne sont pas des mises à jour recommandées.
+La v33.1 ajoute le chinois simplifié, les polices et fonds inclus, des options de démarrage plus visibles et les corrections des tuiles, réglages et cadres emuMMC. Un pack RAM 8 Go séparé est proposé à titre expérimental ; ses essais matériels restent à faire. La portée Bluetooth de 2–3 mètres reste également à valider sur console.
 
-![Menu de partitionnement v32, rendu du code sur PC](docs/images/partitionnement-v32.png)
+![Aperçu v33.1, rendu du véritable code sur PC](docs/images/preview-v33.1/apercu-v33.1.png)
+
+[Corrections v33.1](docs/changelogs/CHANGELOG-NOVA33.1-fr.md) · [Guide RAM 8 Go](docs/RAM-8GO-V33.1.md) · [Notice actualisée](docs/NOTICE-UTILISATION.md)
 
 ## Fonctions
 
 - Accueil Nova en tuiles ou carrousel, réglages répartis en onglets et fenêtres adaptées aux bandeaux.
-- Sept langues : anglais, français, espagnol, italien, russe, allemand, portugais ; polices SD et taille de texte réglable.
+- Huit langues : anglais, français, espagnol, italien, russe, allemand, portugais et chinois simplifié ; polices SD et taille de texte réglable.
 - Couleurs indépendantes, palette avec aperçu, fond d’écran, transparence, icônes PNG et reflet de sélection désactivable.
 - Diagnostics natifs issus de HWTest-RCM : 42 entrées, rapports exportables, bilan par composant, contrôles interactifs et test RAM séparé avec retour à Hekate.
 - Partitionnement simplifié / expert, lecture des tailles en Go, réserves et confirmations Hekate conservées.
@@ -32,13 +34,13 @@ Les instructions propres à chaque version, ses limites et ses vérifications fi
 
 Le dossier hekate contient les sources Hekate / Nyx de l’instantané sélectionné. Les archives de sources d’origine restent jointes à chaque release, avec les scripts de compilation et de vérification associés. Elles conservent leur disposition historique et constituent la référence pour reproduire une ancienne livraison.
 
-Dans le dépôt : entrer dans hekate puis utiliser les Makefiles du projet. Les outils requis comprennent devkitARM, devkitA64, GNU Make, Python 3 et un compilateur C natif pour les composants qui le nécessitent. Le compagnon HWTest-RCM-0.15 et les outils complémentaires sont conservés lorsqu’ils étaient présents dans l’archive. Voir BUILDING.txt et la notice de la version pour les particularités Windows.
+Pour la v33.1, voir [BUILDING-V33.1.txt](BUILDING-V33.1.txt) : le diagnostic séparé utilise HWTest-RCM-nova33_1 et ses dépendances publiques HWTest-RCM-0.15. Dans le dépôt : entrer dans hekate puis utiliser les Makefiles du projet. Les outils requis comprennent devkitARM, devkitA64, GNU Make, Python 3 et un compilateur C natif pour les composants qui le nécessitent. Le compagnon HWTest-RCM-0.15 et les outils complémentaires sont conservés lorsqu’ils étaient présents dans l’archive. Voir BUILDING.txt et la notice de la version pour les particularités Windows.
 
 Les répertoires de travail locaux, SDK et données de console ne sont pas importés. Les archives compilées sont des assets de Releases, pas des fichiers ZIP ajoutés à chaque commit Git.
 
 ## Historique et état des essais
 
-34 instantanés sont conservés : v1 à v32 et deux essais TV autonomes. Les tags et commits ont été reconstitués à partir des archives lors de leur publication ; ils ne prétendent pas restituer les dates ou les commits originaux du développement. Une sauvegarde des sources v15 a été retrouvée et comparée aux empreintes des sources modifiées conservées dans les preuves de cette version ; les deux fichiers payload générés ne font pas partie de cette archive de sources.
+Les instantanés v1 à v32 et deux essais TV autonomes restent conservés. La v33.1 publie les évolutions v33 et leurs correctifs dans une seule bêta. Les tags et commits ont été reconstitués à partir des archives lors de leur publication ; ils ne prétendent pas restituer les dates ou les commits originaux du développement. Une sauvegarde des sources v15 a été retrouvée et comparée aux empreintes des sources modifiées conservées dans les preuves de cette version ; les deux fichiers payload générés ne font pas partie de cette archive de sources.
 
 Les aperçus natifs, tests à périphériques simulés et retours sur console sont distingués dans les notices. Un verdict PASS ne couvre que les contrôles réellement exécutés. Les résultats RAM, tactiles et écran ont leurs propres limites détaillées dans la documentation.
 

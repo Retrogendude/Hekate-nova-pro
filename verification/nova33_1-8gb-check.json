@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "host_only": true,
+  "hardware_validated": false,
+  "bridge": "PASS bridge: 212 checks",
+  "mapping": "PASS handoff/mapping/report: 6216 checks; 8GB end=0x280000000, testable=8176 MiB",
+  "8gb_testable_mib": 8176,
+  "protected_mib": 16,
+  "sources": {
+    "HWTest-RCM-nova33_1\\ramtest\\source\\ramtest_main.c": "1387aee66ef033295a4a87929e7615b6e021c648ba91edfeee3b45990830ef21",
+    "HWTest-RCM-nova33_1\\ramtest\\source\\ramtest_mtc_universal.cpp": "f26fd6a60e9cd5dd7445ec369498b143fafa5286568f794f448b8e55b04741ad",
+    "HWTest-RCM-nova33_1\\ramtest\\source\\ramtest_mtc.h": "383edec22120dbfff57aa04c3df9d3d668df84e9e64254cc15d0081d85f35a45"
+  }
+}
