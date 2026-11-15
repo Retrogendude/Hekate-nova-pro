@@ -1,4 +1,5 @@
 # Hekate Nova Pro 29 — appairages, sauvegarde SD et reconnexion
+**Languages:** **Français** · [English](LIRE-MOI-V29.en.md) · [Español](LIRE-MOI-V29.es.md) · [Русский](LIRE-MOI-V29.ru.md)
 
 Le formatage de la carte SD n'est pas une correction du problème observé.
 Les données d'appairage sont lues dans les Joy-Con. La v28 a reçu les deux

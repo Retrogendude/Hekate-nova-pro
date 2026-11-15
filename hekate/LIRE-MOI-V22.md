@@ -1,4 +1,5 @@
 # Hekate Nova Pro 22
+**Languages:** **Français** · [English](LIRE-MOI-V22.en.md) · [Español](LIRE-MOI-V22.es.md) · [Русский](LIRE-MOI-V22.ru.md)
 
 Base fonctionnelle actualisée : Hekate 6.5.5 / Nyx 1.9.5, avec le style Nova.
 Cette version corrige l’avertissement Nyx erroné et plusieurs blocages possibles

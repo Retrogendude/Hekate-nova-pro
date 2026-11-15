@@ -1,4 +1,5 @@
 # Hekate Nova Pro — corrections v12
+**Languages:** **Français** · [English](CORRECTIONS-NOVA-PRO-V12.en.md) · [Español](CORRECTIONS-NOVA-PRO-V12.es.md) · [Русский](CORRECTIONS-NOVA-PRO-V12.ru.md)
 
 Hekate 6.5.4 / Nyx 1.9.4. Cette livraison reprend Nova v11 et les sept corrections demandées. Le point 7 suit la dernière consigne : **conserver le réglage d’heure d’origine et y ajouter simplement la langue**.
 

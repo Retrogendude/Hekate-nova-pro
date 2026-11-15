@@ -1,4 +1,5 @@
 # Hekate Nova Pro — bêta v32
+**Languages:** **Français** · [English](LIRE-MOI-V32.en.md) · [Español](LIRE-MOI-V32.es.md) · [Русский](LIRE-MOI-V32.ru.md)
 
 Base : Hekate 6.5.5 / Nyx 1.9.5. Archive complète bootloader + payload correspondant.
 

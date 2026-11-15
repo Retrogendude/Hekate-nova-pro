@@ -1,4 +1,5 @@
 # Hekate Nova Pro
+**Languages:** **Français** · [English](README.en.md) · [Español](README.es.md) · [Русский](README.ru.md)
 
 Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics matériels, personnalisation et prise en charge du dock et des Joy-Con sans fil. Projet non officiel ; les auteurs des composants d’origine conservent leurs droits et leur attribution.
 

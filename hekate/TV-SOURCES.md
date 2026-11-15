@@ -1,4 +1,5 @@
 # Origine de l'intégration TV Nova 20-Dock
+**Languages:** **Français** · [English](TV-SOURCES.en.md) · [Español](TV-SOURCES.es.md) · [Русский](TV-SOURCES.ru.md)
 
 Base Nova Pro v18 : copie séparée de `work/hekate-6.5.4`, sans remplacement de
 la version déjà livrée. Pilote vidéo `dpout.c/.h` identique au prototype TV01.

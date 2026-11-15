@@ -1,4 +1,5 @@
 # Hekate Nova Pro — correctif v13
+**Languages:** **Français** · [English](CORRECTIONS-NOVA-PRO-V13.en.md) · [Español](CORRECTIONS-NOVA-PRO-V13.es.md) · [Русский](CORRECTIONS-NOVA-PRO-V13.ru.md)
 
 Cette version corrige le blocage des menus après activation d’un fond d’écran et remplace le reflet du symbole par un reflet sur toute la tuile sélectionnée.
 

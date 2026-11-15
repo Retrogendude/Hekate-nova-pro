@@ -1,4 +1,5 @@
 # Nova26 — crossed HID channel establishment
+**Languages:** **Français** · [English](AUTH-SOURCES-V26.en.md) · [Español](AUTH-SOURCES-V26.es.md) · [Русский](AUTH-SOURCES-V26.ru.md)
 
 The new physical Nova25 report changes the diagnosis. HCI85/46, ACL5/6,
 HOST1, controller HCI08/revision2000/manufacturer000F/subversion2409. Both pad

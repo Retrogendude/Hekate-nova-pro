@@ -1,3 +1,4 @@
+**Languages:** **Français** · [English](BUILDING.en.txt) · [Español](BUILDING.es.txt) · [Русский](BUILDING.ru.txt)
 Hekate Nova Pro32: build with devkitARM, GNU make -j4 -r and Python.
 Read LIRE-MOI-V32.md, HWTEST-BLUETOOTH-SOURCES.md and all licenses.
 The Windows scripts retain the development workspace layout: scripts in work/, project in work/hekate-nova-pro-v32.

@@ -1,4 +1,5 @@
 # Joy-Con authentication: byte-order correction
+**Languages:** **Français** · [English](AUTH-SOURCES-V24.en.md) · [Español](AUTH-SOURCES-V24.es.md) · [Русский](AUTH-SOURCES-V24.ru.md)
 
 The v23 physical report shows authentication status 0x05 after a successful
 Link_Key_Request_Reply command, and zero ACL traffic. It does not show an input

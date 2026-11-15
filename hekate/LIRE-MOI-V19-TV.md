@@ -1,4 +1,5 @@
 # Hekate Nova Pro 19-TV — première intégration de la sortie TV
+**Languages:** **Français** · [English](LIRE-MOI-V19-TV.en.md) · [Español](LIRE-MOI-V19-TV.es.md) · [Русский](LIRE-MOI-V19-TV.ru.md)
 
 Cette version reprend Nova Pro v18 et ajoute une sortie TV manuelle qui reste
 active dans les menus. Base Hekate 6.5.4 / Nyx 1.9.4, interface Nova préservée.

@@ -1,4 +1,5 @@
 # Hekate Nova Pro — corrections v15
+**Languages:** **Français** · [English](CORRECTIONS-NOVA-PRO-V15.en.md) · [Español](CORRECTIONS-NOVA-PRO-V15.es.md) · [Русский](CORRECTIONS-NOVA-PRO-V15.ru.md)
 
 Les onze points de la liste ont été traités dans les sources et intégrés à la compilation. Les vérifications ci-dessous sont réalisées sur PC avec le moteur LVGL du projet. Les accès au matériel sont remplacés par des données de test dans ces aperçus ; ils ne constituent pas une sauvegarde, un partitionnement ou un diagnostic exécuté sur une Switch.
 

@@ -1,4 +1,5 @@
 # tv-experiment-01 — Essai TV autonome 01
+**Languages:** **Français** · [English](tv-experiment-01.en.md) · [Español](tv-experiment-01.es.md) · [Русский](tv-experiment-01.ru.md)
 
 - Programme TV autonome de référence sur base Hekate 6.5.5 ; distinct des versions Nova.
 - Essai sur dock officiel ; conserver les limites et la procédure VOL− décrites dans la notice originale.

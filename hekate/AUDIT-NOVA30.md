@@ -1,4 +1,5 @@
 # Hekate Nova Pro — audit global et optimisations v30
+**Languages:** **Français** · [English](AUDIT-NOVA30.en.md) · [Español](AUDIT-NOVA30.es.md) · [Русский](AUDIT-NOVA30.ru.md)
 
 Revue des sources du rendu, de l'ordonnancement, des commandes sans fil, des
 entrées, du démarrage, des chargements SD, de la mémoire, des diagnostics et

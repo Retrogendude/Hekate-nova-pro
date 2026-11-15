@@ -1,4 +1,5 @@
 # Hekate Nova Pro25 — essai de reconnexion des Joy-Con
+**Languages:** **Français** · [English](LIRE-MOI-V25.en.md) · [Español](LIRE-MOI-V25.es.md) · [Русский](LIRE-MOI-V25.ru.md)
 
 Base conservée : Hekate6.5.5 / Nyx1.9.5. Interface et réglages Nova conservés.
 

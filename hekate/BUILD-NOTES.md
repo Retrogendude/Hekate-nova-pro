@@ -1,4 +1,5 @@
 # Version courante — Hekate Nova Pro 11 (6 novembre 2026)
+**Languages:** **Français** · [English](BUILD-NOTES.en.md) · [Español](BUILD-NOTES.es.md) · [Русский](BUILD-NOTES.ru.md)
 
 Les douze modifications et leur fonctionnement sont décrits dans [NOVA-PRO-V11.md](NOVA-PRO-V11.md). La compilation et l'ensemble des vérifications v11 sont validés. Binaire Hekate : 110036 octets ; Nyx : 1924293 octets ; service RAM : 77052 octets. Le contenu compressé du payload final correspond au nouveau Hekate décompressé ; les dépendances du chargeur sont corrigées pour les compilations incrémentales.
 

@@ -1,4 +1,5 @@
 # Audit Nova 30 — entrées sans fil, fluidité et budgets
+**Languages:** **Français** · [English](AUDIT-NOVA30-WIRELESS.en.md) · [Español](AUDIT-NOVA30-WIRELESS.es.md) · [Русский](AUDIT-NOVA30-WIRELESS.ru.md)
 
 Audit local du 13 novembre 2026. Les essais physiques de la v29 sont déclarés concluants par l’utilisateur. Les résultats ci-dessous proviennent des sources et de tests natifs avec radio/horloge simulées. **Aucune latence de console ou de liaison RF n’a été mesurée.** L’autoreprise au démarrage est traitée séparément par le parent.
 

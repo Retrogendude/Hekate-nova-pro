@@ -1,4 +1,5 @@
 # Hekate Nova Pro 21-BT — prototype personnel
+**Languages:** **Français** · [English](LIRE-MOI-V21-BT.en.md) · [Español](LIRE-MOI-V21-BT.es.md) · [Русский](LIRE-MOI-V21-BT.ru.md)
 
 Base Hekate 6.5.4 / Nyx 1.9.4, à partir de Nova 20-Dock.
 

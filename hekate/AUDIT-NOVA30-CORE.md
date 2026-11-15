@@ -1,4 +1,5 @@
 # Audit Nova Pro v30 — cœur, démarrage, stockage et diagnostics
+**Languages:** **Français** · [English](AUDIT-NOVA30-CORE.en.md) · [Español](AUDIT-NOVA30-CORE.es.md) · [Русский](AUDIT-NOVA30-CORE.ru.md)
 
 Audit statique en lecture seule du 13 novembre 2026, sur `work/hekate-nova-pro-v30`. Aucun fichier source modifié. Les références de lignes décrivent la version lue pendant l’audit ; le parent travaille simultanément sur le démarrage. GUI générale et Bluetooth font l’objet d’audits distincts.
 

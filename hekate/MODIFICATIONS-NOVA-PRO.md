@@ -1,4 +1,5 @@
 # Hekate Nova Pro — modifications demandées
+**Languages:** **Français** · [English](MODIFICATIONS-NOVA-PRO.en.md) · [Español](MODIFICATIONS-NOVA-PRO.es.md) · [Русский](MODIFICATIONS-NOVA-PRO.ru.md)
 
 1. Pourcentage de batterie à droite, à côté de son icône, y compris après actualisation.
 2. Navigation en haut à gauche ; accès directs Nyx, recharger, redémarrer et éteindre à droite.

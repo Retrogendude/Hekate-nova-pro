@@ -1,4 +1,5 @@
 # Historique de Hekate Nova Pro
+**Languages:** **Français** · [English](CHANGELOG.en.md) · [Español](CHANGELOG.es.md) · [Русский](CHANGELOG.ru.md)
 
 # Hekate Nova Pro v33.1 beta
 
