@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "actual_c": true,
+  "result": "PASS: 98 actual-C Halo config checks; independent RGB, backward defaults, writer/read round trip and all write failures"
+}

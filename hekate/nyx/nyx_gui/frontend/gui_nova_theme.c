@@ -226,11 +226,12 @@ static struct {
     lv_obj_t *preview,*sample,*sample_text,*sample_icon,*sample_glyph,*sample_option_glyph,*preview_image,*preview_caption;
     lv_style_t preview_style,sample_style,sample_text_style,sample_icon_style,reflection_style,glyph_style,option_style;
     lv_img_dsc_t *thumbnail;
-    u32 target,wallpaper,boot_target,launch;
+    u32 target,wallpaper,boot_target,launch,halo_stop;
+    lv_obj_t *halo_choices;
     lv_obj_t *boot_picker,*boot_logo,*boot_bar,*boot_choices,*launch_file,*launch_counter,*launch_preview,*launch_card;
     lv_style_t boot_logo_style,boot_bar_style;
 } nova_theme;
-enum { THEME_TARGET=40,THEME_MENU_OPACITY,THEME_ICON_OPACITY,THEME_BOOT_TARGET };
+enum { THEME_TARGET=40,THEME_MENU_OPACITY,THEME_ICON_OPACITY,THEME_BOOT_TARGET,THEME_HALO_STOP };
 
 static void theme_notice(const char *message)
 { nyx_show_help(message); }
@@ -240,7 +241,7 @@ static u32 *theme_target_color(void)
         nova_theme.target==NOVA_COLOR_BORDER?&nova_theme.pending.nova_border_color:
         nova_theme.target==NOVA_COLOR_LOGO?&nova_theme.pending.nova_logo_color:
         nova_theme.target==NOVA_COLOR_ICONS?&nova_theme.pending.nova_icon_color:
-        nova_theme.target==NOVA_COLOR_SELECTION?&nova_theme.pending.nova_selection_color:&nova_theme.pending.theme_bg;
+        nova_theme.target==NOVA_COLOR_SELECTION?&nova_theme.pending.nova_selection_color:(nova_theme.halo_stop?&nova_theme.pending.nova_halo_color2:&nova_theme.pending.nova_halo_color1);
 }
 static void theme_preview_refresh(void)
 {
@@ -270,11 +271,13 @@ static void theme_preview_refresh(void)
     lv_style_copy(&nova_theme.reflection_style,nyx_nova_text_style(NOVA_SMALL));
     nova_theme.reflection_style.text.color=LV_COLOR_WHITE;
     lv_label_set_style(nova_theme.preview_caption,&nova_theme.reflection_style);
+    nyx_nova_halo_preview(nova_theme.sample,nova_theme.pending.nova_halo_color1,nova_theme.pending.nova_halo_color2);
 }
 static void theme_controls_refresh(void)
 {
-    u32 value=*theme_target_color();if(nova_theme.target==NOVA_COLOR_BACKGROUND&&value==0x141A19)value=0x10151D;
+    u32 value=*theme_target_color();
     nyx_color_picker_set(nova_theme.picker,value);
+    lv_obj_set_hidden(nova_theme.halo_choices,nova_theme.target!=NOVA_COLOR_BACKGROUND);
     theme_preview_refresh();
 }
 static void boot_preview_refresh(void)
@@ -304,6 +307,7 @@ static lv_res_t theme_select(lv_obj_t *button)
 {
     u32 group=lv_obj_get_free_num(lv_obj_get_parent(button)),value=lv_obj_get_free_num(button);
     if(group==THEME_TARGET){static const u32 roles[]={NOVA_COLOR_BACKGROUND,NOVA_COLOR_TEXT,NOVA_COLOR_BORDER,NOVA_COLOR_LOGO,NOVA_COLOR_ICONS,NOVA_COLOR_SELECTION};nova_theme.target=value<6?roles[value]:0;theme_controls_refresh();}
+    else if(group==THEME_HALO_STOP){nova_theme.halo_stop=value==1;theme_controls_refresh();}
     else if(group==THEME_BOOT_TARGET){nova_theme.boot_target=value==1;boot_controls_refresh();}
     else if(group==THEME_MENU_OPACITY){nova_theme.pending.nova_menu_opacity=value<=4?value*25:100;theme_preview_refresh();}
     else if(group==THEME_ICON_OPACITY){nova_theme.pending.nova_icon_opacity=value<=4?value*25:100;theme_preview_refresh();}
@@ -387,6 +391,7 @@ static void theme_apply(const nyx_config *source)
 {
     n_cfg.theme_bg=source->theme_bg;n_cfg.nova_text_color=source->nova_text_color;
     n_cfg.nova_logo_color=source->nova_logo_color;n_cfg.nova_icon_color=source->nova_icon_color;n_cfg.nova_selection_color=source->nova_selection_color;
+    n_cfg.nova_halo_color1=source->nova_halo_color1;n_cfg.nova_halo_color2=source->nova_halo_color2;
     n_cfg.nova_border_color=source->nova_border_color;n_cfg.nova_reflection_color=source->nova_reflection_color;
     n_cfg.nova_menu_opacity=source->nova_menu_opacity;n_cfg.nova_icon_opacity=source->nova_icon_opacity;
     memcpy(n_cfg.wallpaper_file,source->wallpaper_file,sizeof(n_cfg.wallpaper_file));
@@ -423,7 +428,8 @@ static lv_res_t theme_close(lv_obj_t *button)
 }
 static lv_res_t theme_reset(lv_obj_t *button)
 {
-    (void)button;nova_theme.pending.theme_bg=0x10151D;nova_theme.pending.nova_text_color=0xF2F5FA;
+    (void)button;nova_theme.pending.nova_halo_color1=0x3590FF;nova_theme.pending.nova_halo_color2=0x9C63FF;
+    nova_theme.halo_stop=0;nyx_choices_set_selected(nova_theme.halo_choices,0);nova_theme.pending.theme_bg=0x10151D;nova_theme.pending.nova_text_color=0xF2F5FA;
     nova_theme.pending.nova_border_color=0x334050;nova_theme.pending.nova_reflection_color=0x55C9F1;
     nova_theme.pending.nova_logo_color=0x55C9F1;nova_theme.pending.nova_icon_color=0xF2F2F2;nova_theme.pending.nova_selection_color=0x1C2937;
     nova_theme.pending.nova_menu_opacity=75;nova_theme.pending.nova_icon_opacity=75;
@@ -475,7 +481,8 @@ lv_res_t nyx_nova_theme_window(lv_obj_t *button)
     nova_theme.sample_text=nyx_nova_text(nova_theme.sample,"Hekate Nova Pro",24,106,410,NOVA_TITLE);nyx_nova_fit_text(nova_theme.sample_text,52);
     nova_theme.preview_caption=nyx_nova_text(nova_theme.sample,"Reflet blanc discret",24,174,410,NOVA_SMALL);
     nyx_nova_text(nova_theme.preview,"Aperçu",28,24,400,NOVA_TITLE);
-    nova_theme.target_choices=nyx_choices_create(palette,"Fond\nTextes\nContours\nLogo\nIcônes\nSélection",0,3,624,42,theme_select,THEME_TARGET,false);lv_obj_set_pos(nova_theme.target_choices,24,20);
+    nova_theme.target_choices=nyx_choices_create(palette,"Halo\nTextes\nContours\nLogo\nIcônes\nSélection",0,3,624,42,theme_select,THEME_TARGET,false);lv_obj_set_pos(nova_theme.target_choices,24,20);
+    nova_theme.halo_choices=nyx_choices_create(nova_theme.preview,"Couleur 1\nCouleur 2",0,2,460,48,theme_select,THEME_HALO_STOP,false);lv_obj_set_pos(nova_theme.halo_choices,28,330);
     nova_theme.picker=nyx_color_picker_create(palette,24,132,624,250,theme_picker_changed);
     lv_obj_t *left=nyx_nova_panel(wallpaper,34,14,672,panel_height);
     nyx_nova_text(left,"Fond d’écran fixe",24,22,620,NOVA_TITLE);

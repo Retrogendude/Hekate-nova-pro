@@ -17,7 +17,8 @@ typedef struct {
     lv_obj_t *target,*overlay;
     lv_area_t dirty[REFLECTION_STRIPS];
     u32 phase,dirty_count;
-    bool painted;
+    bool painted,outline_only,preview;
+    u32 color1,color2;
 } reflection_target;
 static reflection_target reflection_targets[REFLECTION_TARGETS];
 static lv_task_t *reflection_task;
@@ -147,8 +148,19 @@ static void reflection_border_draw(const reflection_target *target,const lv_area
     /* A 1-KiB palette and two-pixel row spans; no texture, heap allocation
      * or full-window invalidation. Fixed-point perimeter positions avoid
      * integer division for each pixel on Tegra's ARM control processor. */
-    static lv_color_t palette[256];static bool ready;
-    if(!ready){for(u32 i=0;i<256;++i){u32 t=i<128?i:255-i;palette[i]=LV_COLOR_MAKE(53+((103*t)>>7),144-((45*t)>>7),255);}ready=true;}
+    /* Keep separate caches for pending preview colors and saved colors. */
+    static lv_color_t palettes[2][256];static bool ready[2];static u32 cached[2][2];
+    u32 slot=target->preview?1:0,c1=slot?target->color1:n_cfg.nova_halo_color1,c2=slot?target->color2:n_cfg.nova_halo_color2;
+    lv_color_t *palette=palettes[slot];
+    if(!ready[slot]||cached[slot][0]!=c1||cached[slot][1]!=c2){
+        for(u32 i=0;i<256;++i){u32 t=i<128?i:255-i;
+            u32 red=(((c1>>16)&255)*(127-t)+((c2>>16)&255)*t)/127;
+            u32 green=(((c1>>8)&255)*(127-t)+((c2>>8)&255)*t)/127;
+            u32 blue=((c1&255)*(127-t)+(c2&255)*t)/127;
+            palette[i]=LV_COLOR_MAKE(red,green,blue);
+        }
+        cached[slot][0]=c1;cached[slot][1]=c2;ready[slot]=true;
+    }
     int width=coords->x2-coords->x1+1,height=coords->y2-coords->y1+1;
     u32 step=(256u<<16)/(2u*(width+height)),phase=target->phase*4u;
     static const u8 rounded[]={7,5,4,3,2,1,1,0};
@@ -175,12 +187,14 @@ static void reflection_border_draw(const reflection_target *target,const lv_area
 static bool reflection_design(lv_obj_t *object,const lv_area_t *mask,lv_design_mode_t mode)
 {
     if(mode==LV_DESIGN_COVER_CHK)return false;
-    if(mode!=LV_DESIGN_DRAW_MAIN||!n_cfg.nova_halo||reflection_pause_depth)return true;
+    if(mode!=LV_DESIGN_DRAW_MAIN)return true;
     reflection_target *target=lv_obj_get_free_ptr(object);
     if(!target)return true;
+    if(!target->outline_only&&(!n_cfg.nova_halo||reflection_pause_depth))return true;
     lv_area_t coords,clip;lv_obj_get_coords(object,&coords);
     if(!lv_area_intersect(&clip,&coords,mask))return true;
     reflection_border_draw(target,&coords,&clip);
+    if(target->outline_only)return true;
     if(!target->painted||lv_obj_get_width(object)<100||lv_obj_get_height(object)<64)return true;
     int center=reflection_center(target),height=lv_obj_get_height(object);
     static const u8 corner_inset[]={7,5,4,3,2,2,2,2};
@@ -221,7 +235,7 @@ static void reflection_frame(void *unused)
     reflection_first_target=(reflection_first_target+1)%REFLECTION_TARGETS;
     for(u32 n=0;n<REFLECTION_TARGETS;++n){
         u32 i=(first+n)%REFLECTION_TARGETS;
-        reflection_target *target=&reflection_targets[i];if(!target->target)continue;
+        reflection_target *target=&reflection_targets[i];if(!target->target||target->outline_only)continue;
         lv_area_t visible;
         if(!reflection_visible(target->target,&visible)){target->painted=false;continue;}
         reflection_target next=*target;
@@ -241,10 +255,10 @@ static void reflection_frame(void *unused)
         *target=next;
     }
 }
-void nyx_nova_reflect(lv_obj_t *object,bool selected)
+static void reflection_set(lv_obj_t *object,bool selected,bool outline_only)
 {
     if(!object)return;
-    selected=selected&&n_cfg.nova_halo;
+    selected=selected&&(outline_only||n_cfg.nova_halo);
     reflection_target *vacant=NULL;
     for(u32 i=0;i<REFLECTION_TARGETS;++i){
         reflection_target *target=&reflection_targets[i];
@@ -256,11 +270,11 @@ void nyx_nova_reflect(lv_obj_t *object,bool selected)
     lv_obj_set_style(overlay,&lv_style_transp_tight);lv_obj_set_click(overlay,false);
     lv_obj_set_protect(overlay,LV_PROTECT_PARENT);
     lv_obj_set_size(overlay,lv_obj_get_width(object),lv_obj_get_height(object));lv_obj_set_pos(overlay,0,0);
-    vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_sweeping(reflection_phase);
+    vacant->outline_only=outline_only;vacant->target=object;vacant->overlay=overlay;vacant->phase=reflection_phase;vacant->painted=reflection_sweeping(reflection_phase);
     reflection_bounds(vacant);lv_obj_set_free_ptr(overlay,vacant);
     if(!reflection_base_signal)reflection_base_signal=lv_obj_get_signal_func(overlay);
     lv_obj_set_signal_func(overlay,reflection_signal);lv_obj_set_design_func(overlay,reflection_design);
-    if(!reflection_task){reflection_phase_tick=lv_tick_get();reflection_task=lv_task_create(reflection_frame,REFLECTION_PERIOD,LV_TASK_PRIO_LOWEST,NULL);}
+    if(!outline_only&&!reflection_task){reflection_phase_tick=lv_tick_get();reflection_task=lv_task_create(reflection_frame,REFLECTION_PERIOD,LV_TASK_PRIO_LOWEST,NULL);}
 }
 void nyx_nova_reflection_reset(void)
 {
@@ -281,3 +295,66 @@ void nyx_nova_reflection_pause(bool pause)
 }
 void nyx_nova_reflection_interaction(void)
 {reflection_interaction_tick=lv_tick_get();reflection_interacting=true;}
+
+/* Active switch frames stay visible even when animated effects are disabled.
+ * Drawing last prevents the full-height inset row from covering the bottom. */
+void nyx_nova_active_outline(lv_obj_t *frame,bool enabled)
+{reflection_set(frame,enabled,true);}
+void nyx_nova_reflect(lv_obj_t *frame,bool selected)
+{reflection_set(frame,selected,false);}
+
+#define NOVA_SELECTABLES 96
+typedef struct {lv_obj_t *button,*frame,*icon;lv_signal_func_t base;} nova_selectable;
+static nova_selectable nova_selectables[NOVA_SELECTABLES];
+static nova_selectable *nova_pointer_selection;
+static void nova_select(nova_selectable *selected)
+{
+    if(nova_pointer_selection==selected)return;
+    for(u32 i=0;i<NOVA_SELECTABLES;++i){nova_selectable *entry=&nova_selectables[i];
+        if(!entry->button)continue;
+        nyx_nova_reflect(entry->frame,entry==selected);
+        if(entry->icon)nyx_nova_icon_select(entry->icon,entry==selected);
+    }
+    nova_pointer_selection=selected;
+    nyx_nova_home_focus(selected->frame);
+}
+static lv_res_t nova_selectable_signal(lv_obj_t *button,lv_signal_t signal,void *parameter)
+{
+    for(u32 i=0;i<NOVA_SELECTABLES;++i){nova_selectable *entry=&nova_selectables[i];
+        if(entry->button!=button)continue;
+        lv_signal_func_t base=entry->base;
+        if((signal==LV_SIGNAL_PRESSED||signal==LV_SIGNAL_FOCUS)&&lv_obj_get_click(button)&&lv_btn_get_state(button)!=LV_BTN_STATE_INA)nova_select(entry);
+        if(signal==LV_SIGNAL_STYLE_CHG&&lv_btn_get_state(button)==LV_BTN_STATE_INA){
+            nyx_nova_reflect(entry->frame,false);if(entry->icon)nyx_nova_icon_select(entry->icon,false);
+            if(nova_pointer_selection==entry)nova_pointer_selection=NULL;
+        }
+        if(signal==LV_SIGNAL_CLEANUP){if(nova_pointer_selection==entry)nova_pointer_selection=NULL;memset(entry,0,sizeof(*entry));}
+        return base(button,signal,parameter);
+    }
+    return LV_RES_OK;
+}
+void nyx_nova_selectable(lv_obj_t *button,lv_obj_t *frame,lv_obj_t *icon)
+{
+    if(!button||!frame)return;
+    for(u32 i=0;i<NOVA_SELECTABLES;++i)if(!nova_selectables[i].button){
+        nova_selectables[i]=(nova_selectable){button,frame,icon,lv_obj_get_signal_func(button)};
+        lv_obj_set_signal_func(button,nova_selectable_signal);return;
+    }
+}
+void nyx_nova_pointer(int x,int y)
+{
+    for(u32 i=0;i<NOVA_SELECTABLES;++i){nova_selectable *entry=&nova_selectables[i];
+        if(!entry->button||!lv_obj_get_click(entry->button)||lv_btn_get_state(entry->button)==LV_BTN_STATE_INA)continue;
+        lv_area_t visible;
+        if(reflection_visible(entry->button,&visible)&&x>=visible.x1&&x<=visible.x2&&y>=visible.y1&&y<=visible.y2){nova_select(entry);return;}
+    }
+}
+
+void nyx_nova_halo_preview(lv_obj_t *frame,u32 color1,u32 color2)
+{
+    reflection_set(frame,true,true);
+    for(u32 i=0;i<REFLECTION_TARGETS;++i)if(reflection_targets[i].target==frame){
+        reflection_targets[i].preview=true;reflection_targets[i].color1=color1;reflection_targets[i].color2=color2;
+        lv_obj_invalidate(reflection_targets[i].overlay);return;
+    }
+}

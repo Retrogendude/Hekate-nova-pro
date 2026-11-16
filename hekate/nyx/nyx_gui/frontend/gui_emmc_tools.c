@@ -184,6 +184,7 @@ static lv_res_t _emmc_backup_buttons_raw_toggle(lv_obj_t *btn)
 	/* The active outline belongs to the outer panel, never the inset row. */
 	if(emmc_btn_ctxt.partition_panel)
 		lv_cont_set_style(emmc_btn_ctxt.partition_panel,emmc_btn_ctxt.raw_emummc?&emmc_partition_active:&emmc_partition_normal);
+    nyx_nova_active_outline(emmc_btn_ctxt.partition_panel,emmc_btn_ctxt.raw_emummc);
 	lv_obj_t *cards[]={emmc_btn_ctxt.emmc_boot,emmc_btn_ctxt.emmc_raw_gpp,emmc_btn_ctxt.emmc_sys,emmc_btn_ctxt.emmc_usr};
 	for(u32 i=0;i<4;++i)if(cards[i]){
 		lv_obj_t *label=lv_obj_get_child(cards[i],NULL);

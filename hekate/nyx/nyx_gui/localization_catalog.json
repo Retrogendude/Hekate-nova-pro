@@ -34634,10 +34634,10 @@
     "Halo",
     "Halo",
     "Alone",
-    "Свечение",
-    "Leuchten",
+    "Ореол",
     "Halo",
-    "光环"
+    "Halo",
+    "选中边框"
   ],
   "Outline": [
     "Outline",
@@ -42608,5 +42608,25 @@
     " - Speicherkapazität stimmt nicht überein; Test gestoppt\n",
     " - capacidade de memória incompatível; teste interrompido\n",
     " - 内存容量不匹配，测试已停止\n"
+  ],
+  "Couleur 1": [
+    "Color 1",
+    "Couleur 1",
+    "Color 1",
+    "Colore 1",
+    "Цвет 1",
+    "Farbe 1",
+    "Cor 1",
+    "颜色 1"
+  ],
+  "Couleur 2": [
+    "Color 2",
+    "Couleur 2",
+    "Color 2",
+    "Colore 2",
+    "Цвет 2",
+    "Farbe 2",
+    "Cor 2",
+    "颜色 2"
   ]
 }

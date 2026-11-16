@@ -70,6 +70,7 @@ typedef struct _nyx_config
 	u32 nova_text_color; // Independent 24-bit RGB colors, appended for compatibility.
 	u32 nova_border_color;
 	u32 nova_reflection_color;
+	u32 nova_halo_color1, nova_halo_color2;
 	u32 nova_menu_opacity; // 0..100, panel background only; text stays opaque.
 	u32 nova_icon_opacity; // 0..100, icon background only; glyph stays opaque.
 	char wallpaper_file[64]; // Safe BMP basename under /wallpapers; empty = none.

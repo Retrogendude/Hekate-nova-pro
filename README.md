@@ -4,13 +4,13 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Bêta v33.1 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.1)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Bêta v33.3 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.3)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-La v33.1 ajoute le chinois simplifié, les polices et fonds inclus, des options de démarrage plus visibles et les corrections des tuiles, réglages et cadres emuMMC. Un pack RAM 8 Go séparé est proposé à titre expérimental ; ses essais matériels restent à faire. La portée Bluetooth de 2–3 mètres reste également à valider sur console.
+La v33.3 rassemble les corrections de sélection des v33.2 et v33.3 : contours lumineux sur les tuiles, cadres complets des options actives et halo à deux couleurs avec aperçu et sauvegarde. Essais matériels à confirmer ; RAM 8 Go et portée Bluetooth restent expérimentales.
 
-![Aperçu v33.1, rendu du véritable code sur PC](docs/images/preview-v33.1/apercu-v33.1.png)
+![Halo à deux couleurs — rendu du code sur PC](docs/images/preview-v33.3/colors.png)
 
-[Corrections v33.1](docs/changelogs/CHANGELOG-NOVA33.1-fr.md) · [Guide RAM 8 Go](docs/RAM-8GO-V33.1.md) · [Notice actualisée](docs/NOTICE-UTILISATION.md)
+[Corrections v33.3 et v33.2](docs/changelogs/CHANGELOG-NOVA33.3-fr.md) · [Guide RAM 8 Go](docs/RAM-8GO-V33.1.md) · [Notice actualisée](docs/NOTICE-UTILISATION.md)
 
 ## Fonctions
 

@@ -656,6 +656,7 @@ set_cursor:
 	// Set cursor position.
 	data->point.x = jc_drv_ctx.pos_x;
 	data->point.y = jc_drv_ctx.pos_y;
+    if(jc_drv_ctx.pos_x!=jc_drv_ctx.pos_last_x||jc_drv_ctx.pos_y!=jc_drv_ctx.pos_last_y)nyx_nova_pointer(data->point.x,data->point.y);
 
 	// Auto hide cursor.
 	if (jc_drv_ctx.pos_x != jc_drv_ctx.pos_last_x || jc_drv_ctx.pos_y != jc_drv_ctx.pos_last_y ||

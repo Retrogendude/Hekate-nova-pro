@@ -197,3 +197,8 @@ Réglages > Options de démarrage regroupe Auto Boot, délai, Auto NoGC et Auto 
 Choisir le pack standard pour les consoles normales. Le pack 8GB est expérimental et exclusivement destiné aux consoles physiquement modifiées ; ne pas mélanger son payload et le dossier bootloader d’un autre pack. Atmosphère 1.11.0 minimum et configuration mémoire adaptée sont nécessaires. Lire [le guide RAM 8 Go](RAM-8GO-V33.1.md) avant utilisation : profils Erista/Mariko, réglage memmode, limites et état des essais.
 
 Le diagnostic préserve le mode 8 Go au lancement et au retour. Il accède aux adresses hautes et rapporte séparément capacité, zone testable et zone vérifiée. Sur 8192 Mio, 8176 Mio sont testables ; 16 Mio restent protégés. Les contrôles PC ne certifient pas les puces de remplacement et ne remplacent pas une validation sur chaque modèle.
+
+
+## v33.3 — Halo à deux couleurs
+
+Dans Interface > Thèmes et couleurs > Couleurs, Halo remplace le choix Fond. Choisir Couleur 1, régler la palette, puis Couleur 2. L’aperçu affiche le dégradé immédiatement ; les deux choix sont conservés entre onglets. Enregistrer et recharger applique et conserve les couleurs. Fermer sans sauvegarder abandonne les modifications. Les anciennes configurations gardent le bleu/violet par défaut et leur fond existant. Les corrections des contours de la v33.2 sont incluses.

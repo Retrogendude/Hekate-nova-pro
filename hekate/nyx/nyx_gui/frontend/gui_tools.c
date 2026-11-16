@@ -658,6 +658,7 @@ static lv_res_t _emmc_read_only_toggle(lv_obj_t *btn)
 	nyx_generic_onoff_toggle(btn);
 
 	usb_msc_emmc_read_only = lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL ? 1 : 0;
+    nyx_nova_active_outline(lv_obj_get_parent(btn),usb_msc_emmc_read_only);
 
 	return LV_RES_OK;
 }

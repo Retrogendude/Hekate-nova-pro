@@ -66,6 +66,7 @@ void set_nyx_default_configuration()
 	n_cfg.nova_text_color = 0xF2F5FA;
 	n_cfg.nova_border_color = 0x334050;
 	n_cfg.nova_reflection_color = 0x55C9F1;
+	n_cfg.nova_halo_color1 = 0x3590FF; n_cfg.nova_halo_color2 = 0x9C63FF;
 	n_cfg.nova_menu_opacity = 75;
 	n_cfg.nova_icon_opacity = 75;
 	strcpy(n_cfg.wallpaper_file, "Nova-Carbon-Cyan.bmp");
@@ -137,6 +138,8 @@ void nyx_sanitize_appearance(void)
 	if (n_cfg.nova_text_color > 0xFFFFFF) n_cfg.nova_text_color = 0xF2F5FA;
 	if (n_cfg.nova_border_color > 0xFFFFFF) n_cfg.nova_border_color = 0x334050;
 	if (n_cfg.nova_reflection_color > 0xFFFFFF) n_cfg.nova_reflection_color = 0x55C9F1;
+	if (n_cfg.nova_halo_color1 > 0xFFFFFF) n_cfg.nova_halo_color1 = 0x3590FF;
+	if (n_cfg.nova_halo_color2 > 0xFFFFFF) n_cfg.nova_halo_color2 = 0x9C63FF;
 	if (n_cfg.nova_menu_opacity > 100) n_cfg.nova_menu_opacity = 100;
 	if (n_cfg.nova_icon_opacity > 100) n_cfg.nova_icon_opacity = 100;
 	n_cfg.wallpaper_file[sizeof(n_cfg.wallpaper_file) - 1] = 0;
@@ -191,6 +194,8 @@ bool nyx_appearance_key(const char *key, const char *value)
 	else if (!strcmp(key, "nova_text_color")) n_cfg.nova_text_color = appearance_rgb(value, 0xF2F5FA);
 	else if (!strcmp(key, "nova_border_color")) n_cfg.nova_border_color = appearance_rgb(value, 0x334050);
 	else if (!strcmp(key, "nova_reflection_color")) n_cfg.nova_reflection_color = appearance_rgb(value, 0x55C9F1);
+	else if (!strcmp(key, "nova_halo_color1")) n_cfg.nova_halo_color1 = appearance_rgb(value, 0x3590FF);
+	else if (!strcmp(key, "nova_halo_color2")) n_cfg.nova_halo_color2 = appearance_rgb(value, 0x9C63FF);
 	else if (!strcmp(key, "nova_menu_opacity")) n_cfg.nova_menu_opacity = appearance_percent(value);
 	else if (!strcmp(key, "nova_icon_opacity")) n_cfg.nova_icon_opacity = appearance_percent(value);
 	else if (!strcmp(key, "boot_logo_color")) n_cfg.boot_logo_color = appearance_rgb(value, 0x55C9F1);
@@ -468,6 +473,12 @@ int create_nyx_config_entry(bool force_unmount)
 	if (f_puts(lbuf, &fp) < 0) goto out;
 	if (f_puts("\nnova_reflection_color=", &fp) < 0) goto out;
 	s_printf(lbuf, "%06X", n_cfg.nova_reflection_color);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_halo_color1=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_halo_color1);
+	if (f_puts(lbuf, &fp) < 0) goto out;
+	if (f_puts("\nnova_halo_color2=", &fp) < 0) goto out;
+	s_printf(lbuf, "%06X", n_cfg.nova_halo_color2);
 	if (f_puts(lbuf, &fp) < 0) goto out;
 	if (f_puts("\nnova_menu_opacity=", &fp) < 0) goto out;
 	itoa(n_cfg.nova_menu_opacity, lbuf, 10);
