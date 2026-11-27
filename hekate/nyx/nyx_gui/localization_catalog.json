@@ -43008,5 +43008,225 @@
     "emuMMC kopiert, geprüft und aktiviert. Linux/Android-Installationsdateien werden weiterhin benötigt.",
     "emuMMC copiada, verificada e ativada. Os ficheiros de instalação Linux/Android continuam necessários.",
     "emuMMC 已复制、验证并启用。仍需 Linux/Android 安装文件。"
+  ],
+  "16 GB\nMinimum": [
+    "16 GB\nMinimum",
+    "16 Go\nMinimum",
+    "16 GB\nMínimo",
+    "16 GB\nMinimo",
+    "16 ГБ\nМинимум",
+    "16 GB\nMinimum",
+    "16 GB\nMínimo",
+    "16 GB\n最低"
+  ],
+  "32 GB\nRecommended": [
+    "32 GB\nRecommended",
+    "32 Go\nRecommandé",
+    "32 GB\nRecomendado",
+    "32 GB\nConsigliato",
+    "32 ГБ\nРекомендуется",
+    "32 GB\nEmpfohlen",
+    "32 GB\nRecomendado",
+    "32 GB\n推荐"
+  ],
+  "Full emuMMC: %d GB": [
+    "Full emuMMC: %d GB",
+    "emuMMC complète : %d Go",
+    "emuMMC completa: %d GB",
+    "emuMMC completa: %d GB",
+    "Полная emuMMC: %d ГБ",
+    "Vollständige emuMMC: %d GB",
+    "emuMMC completa: %d GB",
+    "完整 emuMMC：%d GB"
+  ],
+  "I agree": [
+    "I agree",
+    "J’accepte",
+    "Acepto",
+    "Accetto",
+    "Я согласен",
+    "Ich stimme zu",
+    "Aceito",
+    "我同意"
+  ],
+  "I do not agree": [
+    "I do not agree",
+    "Je n’accepte pas",
+    "No acepto",
+    "Non accetto",
+    "Я не согласен",
+    "Ich stimme nicht zu",
+    "Não aceito",
+    "我不同意"
+  ],
+  "I agree to partition this SD card.": [
+    "I agree to partition this SD card.",
+    "J’accepte le partitionnement de cette carte SD.",
+    "Acepto particionar esta tarjeta SD.",
+    "Accetto il partizionamento di questa SD.",
+    "Я согласен на разметку этой карты SD.",
+    "Ich stimme der Partitionierung dieser SD-Karte zu.",
+    "Aceito particionar este cartão SD.",
+    "我同意对此 SD 卡进行分区。"
+  ],
+  "Data that has not been backed up will be erased.": [
+    "Data that has not been backed up will be erased.",
+    "Les données non sauvegardées seront effacées.",
+    "Los datos sin copia de seguridad se borrarán.",
+    "I dati senza backup saranno cancellati.",
+    "Данные без резервной копии будут удалены.",
+    "Nicht gesicherte Daten werden gelöscht.",
+    "Os dados sem cópia de segurança serão apagados.",
+    "未备份的数据将被清除。"
+  ],
+  "Not enough space. Select 16 GB, remove a system or use a larger SD card.": [
+    "Not enough space. Select 16 GB, remove a system or use a larger SD card.",
+    "Espace insuffisant. Choisissez 16 Go, retirez un système ou utilisez une carte SD plus grande.",
+    "Espacio insuficiente. Elige 16 GB, quita un sistema o usa una SD mayor.",
+    "Spazio insufficiente. Scegli 16 GB, rimuovi un sistema o usa una SD più grande.",
+    "Недостаточно места. Выберите 16 ГБ, уберите систему или используйте карту SD большего объёма.",
+    "Zu wenig Platz. 16 GB wählen, ein System abwählen oder eine größere SD-Karte nutzen.",
+    "Espaço insuficiente. Escolha 16 GB, retire um sistema ou use uma SD maior.",
+    "空间不足。请选择 16 GB、减少系统或使用更大的 SD 卡。"
+  ],
+  "Storage check failed.\n%s\n\nNo partitioning was started.": [
+    "Storage check failed.\n%s\n\nNo partitioning was started.",
+    "Vérification du stockage impossible.\n%s\n\nLe partitionnement n’a pas commencé.",
+    "Falló la comprobación del almacenamiento.\n%s\n\nNo se inició el particionado.",
+    "Controllo memoria non riuscito.\n%s\n\nPartizionamento non avviato.",
+    "Проверка носителя не пройдена.\n%s\n\nСоздание разделов не начато.",
+    "Speicherprüfung fehlgeschlagen.\n%s\n\nPartitionierung wurde nicht gestartet.",
+    "Falha na verificação do armazenamento.\n%s\n\nO particionamento não começou.",
+    "存储检查失败。\n%s\n\n尚未开始分区。"
+  ],
+  "The target is internal memory, not the SD card. Restart the assistant.": [
+    "The target is internal memory, not the SD card. Restart the assistant.",
+    "La cible correspond à la mémoire interne au lieu de la carte SD. Relancez l’assistant.",
+    "El destino es la memoria interna en lugar de la SD. Reinicia el asistente.",
+    "La destinazione è la memoria interna anziché la SD. Riavvia l’assistente.",
+    "Целью является внутренняя память вместо SD. Перезапустите мастер.",
+    "Ziel ist der interne Speicher statt der SD-Karte. Assistenten neu starten.",
+    "O destino é a memória interna em vez da SD. Reinicie o assistente.",
+    "目标是内部存储而非 SD 卡，请重启向导。"
+  ],
+  "The console model no longer matches the installation plan. Restart the assistant.": [
+    "The console model no longer matches the installation plan. Restart the assistant.",
+    "Le modèle de console ne correspond plus au plan d’installation. Relancez l’assistant.",
+    "El modelo ya no coincide con el plan. Reinicia el asistente.",
+    "Il modello non corrisponde più al piano. Riavvia l’assistente.",
+    "Модель консоли больше не соответствует плану. Перезапустите мастер.",
+    "Konsolenmodell passt nicht mehr zum Plan. Assistenten neu starten.",
+    "O modelo já não corresponde ao plano. Reinicie o assistente.",
+    "主机型号与安装方案不匹配，请重启向导。"
+  ],
+  "The SD card could not be initialized. Reinsert it and check that it is readable.": [
+    "The SD card could not be initialized. Reinsert it and check that it is readable.",
+    "Impossible d’initialiser la carte SD. Réinsérez-la et vérifiez qu’elle est lisible.",
+    "No se pudo inicializar la SD. Reinsértala y comprueba su lectura.",
+    "Impossibile inizializzare la SD. Reinseriscila e controlla la lettura.",
+    "Не удалось инициализировать SD. Вставьте её снова и проверьте чтение.",
+    "SD-Karte konnte nicht initialisiert werden. Neu einsetzen und Lesbarkeit prüfen.",
+    "Não foi possível inicializar a SD. Reinsira-a e verifique a leitura.",
+    "无法初始化 SD 卡。请重新插入并检查是否可读。"
+  ],
+  "The SD card capacity has changed. Restart the assistant with the intended card.": [
+    "The SD card capacity has changed. Restart the assistant with the intended card.",
+    "La capacité de la carte SD a changé. Relancez l’assistant avec la carte prévue.",
+    "La capacidad de la SD ha cambiado. Reinicia el asistente con la tarjeta correcta.",
+    "La capacità SD è cambiata. Riavvia l’assistente con la scheda corretta.",
+    "Ёмкость SD изменилась. Перезапустите мастер с нужной картой.",
+    "SD-Kapazität hat sich geändert. Assistenten mit der richtigen Karte neu starten.",
+    "A capacidade da SD mudou. Reinicie o assistente com o cartão correto.",
+    "SD 卡容量已更改，请使用原定卡片重启向导。"
+  ],
+  "A different SD card was detected. Restart the assistant and review its partition layout.": [
+    "A different SD card was detected. Restart the assistant and review its partition layout.",
+    "Une autre carte SD a été détectée. Relancez l’assistant et vérifiez sa disposition.",
+    "Se detectó otra SD. Reinicia el asistente y revisa la disposición.",
+    "Rilevata una SD diversa. Riavvia l’assistente e controlla la disposizione.",
+    "Обнаружена другая SD. Перезапустите мастер и проверьте разметку.",
+    "Andere SD-Karte erkannt. Assistenten neu starten und Aufteilung prüfen.",
+    "Foi detetada outra SD. Reinicie o assistente e verifique a disposição.",
+    "检测到另一张 SD 卡，请重启向导并检查分区方案。"
+  ],
+  "Internal memory could not be initialized. The emuMMC source is unavailable.": [
+    "Internal memory could not be initialized. The emuMMC source is unavailable.",
+    "Impossible d’initialiser la mémoire interne. La source de l’emuMMC est indisponible.",
+    "No se pudo inicializar la memoria interna. El origen emuMMC no está disponible.",
+    "Impossibile inizializzare la memoria interna. Origine emuMMC non disponibile.",
+    "Не удалось инициализировать внутреннюю память. Источник emuMMC недоступен.",
+    "Interner Speicher konnte nicht initialisiert werden. emuMMC-Quelle nicht verfügbar.",
+    "Não foi possível inicializar a memória interna. Origem emuMMC indisponível.",
+    "无法初始化内部存储，emuMMC 源不可用。"
+  ],
+  "Internal memory capacity has changed. The prepared emuMMC size is no longer valid.": [
+    "Internal memory capacity has changed. The prepared emuMMC size is no longer valid.",
+    "La capacité de la mémoire interne a changé. La taille emuMMC préparée n’est plus valide.",
+    "La capacidad interna ha cambiado. El tamaño emuMMC preparado ya no es válido.",
+    "La capacità interna è cambiata. Dimensione emuMMC preparata non più valida.",
+    "Ёмкость внутренней памяти изменилась. Подготовленный размер emuMMC недействителен.",
+    "Interne Kapazität hat sich geändert. Vorbereitete emuMMC-Größe ist ungültig.",
+    "A capacidade interna mudou. O tamanho emuMMC preparado já não é válido.",
+    "内部存储容量已更改，原定 emuMMC 大小无效。"
+  ],
+  "Partition sizes no longer match the confirmed plan. Restart the assistant.": [
+    "Partition sizes no longer match the confirmed plan. Restart the assistant.",
+    "Les tailles des partitions ne correspondent plus au plan confirmé. Relancez l’assistant.",
+    "Los tamaños ya no coinciden con el plan confirmado. Reinicia el asistente.",
+    "Le dimensioni non corrispondono al piano confermato. Riavvia l’assistente.",
+    "Размеры разделов не соответствуют подтверждённому плану. Перезапустите мастер.",
+    "Partitionsgrößen passen nicht mehr zum bestätigten Plan. Assistenten neu starten.",
+    "Os tamanhos já não correspondem ao plano confirmado. Reinicie o assistente.",
+    "分区大小与已确认方案不匹配，请重启向导。"
+  ],
+  "Could not save emuMMC/emummc.ini to disable emuMMC safely. Check SD free space and write protection.": [
+    "Could not save emuMMC/emummc.ini to disable emuMMC safely. Check SD free space and write protection.",
+    "Impossible d’enregistrer emuMMC/emummc.ini pour désactiver l’emuMMC en sécurité. Vérifiez l’espace libre et la protection en écriture de la SD.",
+    "No se pudo guardar emuMMC/emummc.ini para desactivar emuMMC con seguridad. Comprueba espacio libre y protección de escritura.",
+    "Impossibile salvare emuMMC/emummc.ini per disattivare emuMMC in sicurezza. Controlla spazio libero e protezione scrittura.",
+    "Не удалось сохранить emuMMC/emummc.ini для безопасного отключения emuMMC. Проверьте свободное место и защиту записи SD.",
+    "emuMMC/emummc.ini konnte nicht gespeichert werden. emuMMC kann nicht sicher deaktiviert werden. Freien Platz und Schreibschutz prüfen.",
+    "Não foi possível guardar emuMMC/emummc.ini para desativar emuMMC em segurança. Verifique espaço livre e proteção de escrita.",
+    "无法保存 emuMMC/emummc.ini 以安全停用 emuMMC。请检查 SD 卡剩余空间及写入保护。"
+  ],
+  "Hekate flagged this SD card as potentially counterfeit (manufacturer ID 0x00). Use a reliable card; automatic installation is blocked.": [
+    "Hekate flagged this SD card as potentially counterfeit (manufacturer ID 0x00). Use a reliable card; automatic installation is blocked.",
+    "Hekate signale une carte SD potentiellement contrefaite (identifiant fabricant 0x00). Utilisez une carte fiable ; l’installation automatique est bloquée.",
+    "Hekate señala una SD posiblemente falsa (fabricante 0x00). Usa una tarjeta fiable; instalación automática bloqueada.",
+    "Hekate segnala una SD potenzialmente falsa (produttore 0x00). Usa una scheda affidabile; installazione automatica bloccata.",
+    "Hekate пометил SD как возможную подделку (код производителя 0x00). Используйте надёжную карту. Автоустановка заблокирована.",
+    "Hekate meldet eine möglicherweise gefälschte SD-Karte (Hersteller-ID 0x00). Zuverlässige Karte verwenden; automatische Installation gesperrt.",
+    "Hekate indica uma SD possivelmente falsa (fabricante 0x00). Use um cartão fiável; instalação automática bloqueada.",
+    "Hekate 提示 SD 卡可能是假卡（厂商代码 0x00）。请使用可靠卡片，自动安装已阻止。"
+  ],
+  "The SD card identity could not be read. Reinsert it and restart the assistant.": [
+    "The SD card identity could not be read. Reinsert it and restart the assistant.",
+    "Impossible de lire l’identité de la carte SD. Réinsérez-la et relancez l’assistant.",
+    "No se pudo leer la identidad SD. Reinsértala y reinicia el asistente.",
+    "Impossibile leggere l’identità SD. Reinseriscila e riavvia l’assistente.",
+    "Не удалось прочитать идентификатор SD. Вставьте её снова и перезапустите мастер.",
+    "SD-Identität konnte nicht gelesen werden. Karte neu einsetzen und Assistenten neu starten.",
+    "Não foi possível ler a identidade SD. Reinsira-a e reinicie o assistente.",
+    "无法读取 SD 卡身份，请重新插入并重启向导。"
+  ],
+  "Full emuMMC: 29 GB on Switch V1/V2 and Lite; 58 GB on OLED.\nChoose 16 GB minimum or 32 GB recommended for each selected Linux/Android system.\nFor custom partition sizes, close the assistant and open Tools > SD Partition Manager > Expert mode.\nSeveral systems can be selected. Back up the SD card before partitioning.": [
+    "Full emuMMC: 29 GB on Switch V1/V2 and Lite; 58 GB on OLED.\nChoose 16 GB minimum or 32 GB recommended for each selected Linux/Android system.\nFor custom partition sizes, close the assistant and open Tools > SD Partition Manager > Expert mode.\nSeveral systems can be selected. Back up the SD card before partitioning.",
+    "emuMMC complète : 29 Go sur Switch V1/V2 et Lite ; 58 Go sur OLED.\nChoisissez 16 Go minimum ou 32 Go recommandé pour chaque système Linux/Android sélectionné.\nPour une taille personnalisée, fermez l’assistant puis ouvrez Outils > Gestionnaire de partitions SD > Mode expert.\nPlusieurs systèmes peuvent être sélectionnés. Sauvegardez la SD avant le partitionnement.",
+    "emuMMC completa: 29 GB en Switch V1/V2 y Lite; 58 GB en OLED.\nElige 16 GB mínimo o 32 GB recomendado para cada Linux/Android seleccionado.\nPara tamaños personalizados, cierra el asistente y abre Herramientas > Gestor de particiones SD > Modo experto.\nPuedes elegir varios sistemas. Guarda la SD antes de particionar.",
+    "emuMMC completa: 29 GB su Switch V1/V2 e Lite; 58 GB su OLED.\nScegli 16 GB minimo o 32 GB consigliato per ogni Linux/Android selezionato.\nPer dimensioni personalizzate, chiudi l’assistente e apri Strumenti > Gestore partizioni SD > Modalità esperta.\nPuoi scegliere più sistemi. Salva la SD prima di partizionare.",
+    "Полная emuMMC: 29 ГБ на Switch V1/V2 и Lite; 58 ГБ на OLED.\nВыберите 16 ГБ минимум или 32 ГБ рекомендуется для каждой выбранной Linux/Android.\nДля своего размера закройте мастер и откройте Инструменты > Разделы SD > Экспертный режим.\nМожно выбрать несколько систем. Сохраните данные SD до разметки.",
+    "Vollständige emuMMC: 29 GB auf Switch V1/V2 und Lite; 58 GB auf OLED.\nJe ausgewähltem Linux/Android 16 GB Minimum oder 32 GB empfohlen wählen.\nFür eigene Größen Assistenten schließen und Werkzeuge > SD-Partitionsmanager > Expertenmodus öffnen.\nMehrere Systeme möglich. SD vor der Partitionierung sichern.",
+    "emuMMC completa: 29 GB na Switch V1/V2 e Lite; 58 GB na OLED.\nEscolha 16 GB mínimo ou 32 GB recomendado para cada Linux/Android selecionado.\nPara tamanhos personalizados, feche o assistente e abra Ferramentas > Gestor de partições SD > Modo avançado.\nPode escolher vários sistemas. Guarde a SD antes de particionar.",
+    "完整 emuMMC：Switch V1/V2 和 Lite 为 29 GB；OLED 为 58 GB。\n每个所选 Linux/Android 系统可选最低 16 GB 或推荐 32 GB。\n自定义分区大小：关闭向导，打开工具 > SD 分区管理 > 专家模式。\n可选多个系统。分区前请备份 SD 卡。"
+  ],
+  "Help": [
+    "Help",
+    "Aide",
+    "Ayuda",
+    "Aiuto",
+    "Помощь",
+    "Hilfe",
+    "Ajuda",
+    "帮助"
   ]
 }

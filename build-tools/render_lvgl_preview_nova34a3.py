@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v34-alpha2'
-directory=work/'lvgl-preview-nova34a2';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v34-alpha3'
+directory=work/'lvgl-preview-nova34a3';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -127,7 +127,18 @@ nova=nova.replace('lv_obj_t *label = lv_label_create(parent, NULL);','if(getenv(
 for asset in ['nova_reference.inc','nova_icons.inc']:
     nova=nova.replace('#include "nova_assets/'+asset+'"',(nyx/'frontend/nova_assets'/asset).read_text(encoding='utf-8'))
 body+=stripped(nyx/'frontend/gui_nova_reflection.c')+re.sub(r'^#include[^\n]*\n','',nova,flags=re.M)+stripped(nyx/'frontend/gui_readability.c')+stripped(nyx/'frontend/gui_choices.c')+stripped(nyx/'frontend/gui_layout.c')+stripped(nyx/'frontend/gui_appearance.c')
-body+=stripped(nyx/'frontend/gui_install_wizard.inc')
+body+=stripped(nyx/'frontend/gui_install_wizard.inc') 
+body+=r"""
+static void preview_wizard_sizes(void){
+ for(u32 os=0;os<2;++os){
+  const char *value=getenv(os?"NYX_WIZARD_ANDROID":"NYX_WIZARD_LINUX");u32 mib=value&&atoi(value)==16?16384:32768;
+  if(!(install_wizard.systems&(2u<<os))){u32 previous=install_wizard.os_mib[os];install_wizard_size(install_wizard.sizes[os][0]);assert(install_wizard.os_mib[os]==previous);continue;}
+  install_wizard_size(install_wizard.sizes[os][mib==32768]);assert(install_wizard.os_mib[os]==mib);
+  assert(lv_obj_get_hidden(install_wizard.checks[os][mib==32768])==false&&lv_obj_get_hidden(install_wizard.checks[os][mib!=32768]));
+ }
+}
+"""
+
 
 for filename,name in [('gui_tools.c','create_tab_tools'),('gui_info.c','create_tab_info')]:
     s=(nyx/'frontend'/filename).read_text();body+=s[s.index('void '+name+'('):]
@@ -229,7 +240,7 @@ body+=function(tools,'_create_window_usb_tools').replace('_create_window_usb_too
 partition=(nyx/'frontend/gui_tools_partition_manager.c').read_text(encoding='utf-8')
 body+='\n#define AU_ALIGN_SECTORS 0x8000\n#define ALIGN_DOWN(x,a) ((x)&~((a)-1))\n#define HOS_USER_SECTOR 0x53C000\n'
 body+='\n'.join(re.findall(r'^#define (?:EMU_|AND_SYS_)[^\n]*',partition,re.M))+'\n'
-body+='\ntypedef struct{u32 sec_cnt;u8 raw_cid[16];}sdmmc_storage_t;\ntypedef struct{u32 unused;}mbr_t;\nstatic sdmmc_storage_t sd_storage,emmc_storage;\n'
+body+='\ntypedef struct{u32 sec_cnt;u8 raw_cid[16];struct{u8 manfid;}cid;}sdmmc_storage_t;\ntypedef struct{u32 unused;}mbr_t;\nstatic sdmmc_storage_t sd_storage,emmc_storage;\n'
 start=partition.index('typedef struct _partition_ctxt_t');end=partition.index('typedef struct _l4t_flasher_ctxt_t',start)
 body+=partition[start:end]
 body+='\nstatic partition_ctxt_t part_info;static lv_obj_t *btn_flash_l4t,*btn_flash_android;\nstatic u32 fixture_model;\nenum{FUSE_NX_HW_TYPE_IOWA=1,FUSE_NX_HW_TYPE_HOAG=2,FUSE_NX_HW_TYPE_AULA=3,EMMC_GPP=0};\nstatic u32 fuse_read_hw_type(void){return fixture_model;}\nstatic int emmc_initialize(bool b){(void)b;return 0;}\nstatic void emmc_set_partition(u32 p){(void)p;}\nstatic void emmc_end(void){}\nACTION(_action_part_manager_ums_sd) ACTION(_action_check_flash_linux) ACTION(_action_flash_android) ACTION(_action_fix_mbr_gpt) ACTION(_create_mbox_partitioning_next_legacy)\nstatic void nova_partition_refresh(void);\n'
@@ -717,11 +728,17 @@ else if(!strcmp(argv[3],"touch-grid"))nyx_touch_test(NULL);
 else if(!strcmp(argv[3],"screen-patterns"))nyx_screen_patterns(NULL);
 else if(!strcmp(argv[3],"wizard")){
  fixture_model=getenv("NYX_TEST_MODEL")?atoi(getenv("NYX_TEST_MODEL")):0;
- sd_storage.raw_cid[0]=42;
+ sd_storage.raw_cid[0]=42;sd_storage.cid.manfid=getenv("NYX_TEST_FAKE_SD")?0:3;
  sd_storage.sec_cnt=(getenv("NYX_TEST_CAPACITY")?atoi(getenv("NYX_TEST_CAPACITY")):128)*2097152u;
  emmc_storage.sec_cnt=(fixture_model==3?59640u:29820u)<<11;
  nyx_nova_installation_wizard(NULL);
- if(atoi(argv[6])>0){install_wizard_next(NULL);if(atoi(argv[6])>1)install_wizard_next(NULL);if(atoi(argv[6])>2)install_wizard_next(NULL);}
+ if(atoi(argv[6])>0){
+  install_wizard_next(NULL);u32 mask=getenv("NYX_WIZARD_SYSTEMS")?atoi(getenv("NYX_WIZARD_SYSTEMS")):1;
+  for(u32 i=0;i<3;++i){lv_obj_t*b=install_wizard.systems_buttons[i];lv_btn_set_state(b,(mask&(1u<<i))?LV_BTN_STATE_TGL_REL:LV_BTN_STATE_REL);install_wizard_system(b);}preview_wizard_sizes();
+  if(atoi(argv[6])>1)install_wizard_next(NULL);if(atoi(argv[6])>2)install_wizard_next(NULL);
+ }
+ if(getenv("NYX_TEST_WIZARD_HELP"))install_wizard_help(NULL);
+ if(getenv("NYX_TEST_FAKE_SD")){assert(install_wizard.step==2&&!install_wizard.media_ready&&lv_btn_get_state(install_wizard.next)==LV_BTN_STATE_INA);assert(install_wizard.media_error&&strstr(install_wizard.media_error,"counterfeit"));install_wizard_next(NULL);assert(install_wizard.open&&!install_job.armed);}
 }
 else if(!strcmp(argv[3],"usb"))preview_usb_tools(NULL);
 else if(!strcmp(argv[3],"bluetooth")){
@@ -791,7 +808,12 @@ u32 temperatures[]={0,44,45,54,55,64,65,99};
 for(u32 i=0;i<8;++i){preview_temperature=temperatures[i];_update_status_bar(NULL);char rgb[16];sprintf(rgb,"#%06X ",nyx_nova_temperature_rgb(preview_temperature));assert(strstr(lv_label_get_text(status_bar.time_temp),rgb));assert(strstr(lv_label_get_text(status_bar.time_temp),"18:42"));}
 preview_temperature=getenv("NYX_PREVIEW_TEMPERATURE")?atoi(getenv("NYX_PREVIEW_TEMPERATURE")):28;_update_status_bar(NULL);lv_refr_now();
 lv_area_t bounds;lv_obj_get_coords(root,&bounds);assert(bounds.y1>=76&&bounds.y2<656);
-verify_visible(root,bounds);verify_reachable(root,bounds);
+verify_visible(root,bounds);
+if(getenv("NYX_TEST_WIZARD_HELP")){
+ lv_obj_t *box=find_type(lv_scr_act(),"lv_mbox");assert(box);lv_area_t a;lv_obj_get_coords(box,&a);assert(a.x1>=0&&a.x2<1280&&a.y1>=76&&a.y2<656);
+ verify_visible(box,bounds);lv_obj_t *buttons=find_type(box,"lv_btnm");assert(buttons&&lv_obj_get_click(buttons));
+ lv_area_t b;lv_obj_get_coords(buttons,&b);assert(preview_hit((b.x1+b.x2)/2,(b.y1+b.y2)/2)==buttons);
+}else verify_reachable(root,bounds);
 if(!strcmp(argv[3],"usb")){
  lv_indev_drv_t usb_pointer;lv_indev_drv_init(&usb_pointer);usb_pointer.type=LV_INDEV_TYPE_POINTER;usb_pointer.read=preview_pointer_read;preview_pointer_state=LV_INDEV_STATE_REL;lv_indev_drv_register(&usb_pointer);
  lv_obj_t *readonly=find_action(root,_emmc_read_only_toggle);assert(readonly&&usb_msc_emmc_read_only==1);
@@ -946,7 +968,12 @@ if(!strcmp(argv[3],"colors")&&!atoi(argv[6])){
 }
 if(!strcmp(argv[3],"emmc-info")){
  lv_tabview_set_tab_act(preview_emmc_tabs,1,false);report_ext *report=lv_obj_get_ext_attr(preview_report_panel);u32 pages=0,end=0;
- do{assert(report->starts[report->page]==end);assert(report->next>end);assert(lv_obj_get_height(report->label)<=report->text_height);end=report->next;++pages;lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);
+ do{assert(report->starts[report->page]==end);assert(report->next>end);assert(lv_obj_get_height(report->label)<=report->text_height);end=report->next;++pages;lv_refr_now();verify_visible(root,bounds);
+if(getenv("NYX_TEST_WIZARD_HELP")){
+ lv_obj_t *box=find_type(lv_scr_act(),"lv_mbox");assert(box);lv_area_t a;lv_obj_get_coords(box,&a);assert(a.x1>=0&&a.x2<1280&&a.y1>=76&&a.y2<656);
+ verify_visible(box,bounds);lv_obj_t *buttons=find_type(box,"lv_btnm");assert(buttons&&lv_obj_get_click(buttons));
+ lv_area_t b;lv_obj_get_coords(buttons,&b);assert(preview_hit((b.x1+b.x2)/2,(b.y1+b.y2)/2)==buttons);
+}else verify_reachable(root,bounds);
 if(!strcmp(argv[3],"usb")){
  lv_indev_drv_t usb_pointer;lv_indev_drv_init(&usb_pointer);usb_pointer.type=LV_INDEV_TYPE_POINTER;usb_pointer.read=preview_pointer_read;preview_pointer_state=LV_INDEV_STATE_REL;lv_indev_drv_register(&usb_pointer);
  lv_obj_t *readonly=find_action(root,_emmc_read_only_toggle);assert(readonly&&usb_msc_emmc_read_only==1);
@@ -965,7 +992,12 @@ if(!strcmp(argv[3],"bluetooth")){
 }
 if(!strcmp(argv[3],"emummc-change")){
  u32 count=emummc_img->file_count,pages=(count+3)/4;if(!pages)pages=1;u32 visited=0;
- for(u32 page=0;page<pages;++page){emummc_img->file_page=page;_fill_emummc_files();lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);
+ for(u32 page=0;page<pages;++page){emummc_img->file_page=page;_fill_emummc_files();lv_refr_now();verify_visible(root,bounds);
+if(getenv("NYX_TEST_WIZARD_HELP")){
+ lv_obj_t *box=find_type(lv_scr_act(),"lv_mbox");assert(box);lv_area_t a;lv_obj_get_coords(box,&a);assert(a.x1>=0&&a.x2<1280&&a.y1>=76&&a.y2<656);
+ verify_visible(box,bounds);lv_obj_t *buttons=find_type(box,"lv_btnm");assert(buttons&&lv_obj_get_click(buttons));
+ lv_area_t b;lv_obj_get_coords(buttons,&b);assert(preview_hit((b.x1+b.x2)/2,(b.y1+b.y2)/2)==buttons);
+}else verify_reachable(root,bounds);
 if(!strcmp(argv[3],"usb")){
  lv_indev_drv_t usb_pointer;lv_indev_drv_init(&usb_pointer);usb_pointer.type=LV_INDEV_TYPE_POINTER;usb_pointer.read=preview_pointer_read;preview_pointer_state=LV_INDEV_STATE_REL;lv_indev_drv_register(&usb_pointer);
  lv_obj_t *readonly=find_action(root,_emmc_read_only_toggle);assert(readonly&&usb_msc_emmc_read_only==1);
@@ -985,7 +1017,12 @@ if(!strcmp(argv[3],"bluetooth")){
 
 if(!strcmp(argv[3],"setup")){assert(clock_language==n_cfg.language&&clock_ctxt.year&&clock_ctxt.month&&clock_ctxt.day&&clock_ctxt.hour&&clock_ctxt.min);assert(type_is(root,"lv_mbox"));}
 if(diagnostic_last_holder){diag_tiles_ext*ext=lv_obj_get_ext_attr(diagnostic_last_holder);u32 total=ext->count;unsigned visits=0;
- for(u32 page=0;page<(total+8)/9;++page){ext->page=page;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();verify_visible(root,bounds);verify_reachable(root,bounds);
+ for(u32 page=0;page<(total+8)/9;++page){ext->page=page;diagnostic_tiles_fill(diagnostic_last_holder);lv_refr_now();verify_visible(root,bounds);
+if(getenv("NYX_TEST_WIZARD_HELP")){
+ lv_obj_t *box=find_type(lv_scr_act(),"lv_mbox");assert(box);lv_area_t a;lv_obj_get_coords(box,&a);assert(a.x1>=0&&a.x2<1280&&a.y1>=76&&a.y2<656);
+ verify_visible(box,bounds);lv_obj_t *buttons=find_type(box,"lv_btnm");assert(buttons&&lv_obj_get_click(buttons));
+ lv_area_t b;lv_obj_get_coords(buttons,&b);assert(preview_hit((b.x1+b.x2)/2,(b.y1+b.y2)/2)==buttons);
+}else verify_reachable(root,bounds);
 if(!strcmp(argv[3],"usb")){
  lv_indev_drv_t usb_pointer;lv_indev_drv_init(&usb_pointer);usb_pointer.type=LV_INDEV_TYPE_POINTER;usb_pointer.read=preview_pointer_read;preview_pointer_state=LV_INDEV_STATE_REL;lv_indev_drv_register(&usb_pointer);
  lv_obj_t *readonly=find_action(root,_emmc_read_only_toggle);assert(readonly&&usb_msc_emmc_read_only==1);
@@ -1060,7 +1097,7 @@ if(!strcmp(argv[3],"wizard")&&getenv("NYX_TEST_WIZARD")){
  assert(!install_wizard.systems&&lv_btn_get_state(install_wizard.next)==LV_BTN_STATE_INA);install_wizard_next(NULL);assert(install_wizard.step==1);
  u32 mask=getenv("NYX_WIZARD_SYSTEMS")?atoi(getenv("NYX_WIZARD_SYSTEMS")):7;
  for(u32 i=0;i<3;++i){lv_obj_t*b=install_wizard.systems_buttons[i];lv_btn_set_state(b,(mask&(1u<<i))?LV_BTN_STATE_TGL_REL:LV_BTN_STATE_REL);install_wizard_system(b);}
- assert(install_wizard.systems==mask);
+ assert(install_wizard.systems==mask);preview_wizard_sizes();
  lv_obj_t *wrong=find_choice(install_wizard.window,86,actual==3?0:2);assert(wrong);lv_btn_get_action(wrong,LV_BTN_ACTION_CLICK)(wrong);
  install_wizard_next(NULL);assert(install_wizard.step==2);
  if(sd_storage.sec_cnt)assert(install_wizard.result==NOVA_PLAN_MODEL);
@@ -1069,14 +1106,20 @@ if(!strcmp(argv[3],"wizard")&&getenv("NYX_TEST_WIZARD")){
  lv_obj_t *right=find_choice(install_wizard.window,86,actual<2?0:actual-1);assert(right);lv_btn_get_action(right,LV_BTN_ACTION_CLICK)(right);
  install_wizard_next(NULL);assert(install_wizard.step==2&&install_wizard.model==(actual<2?0:actual));
  if(install_wizard.result==NOVA_PLAN_OK){
-  nova_partition_plan plan=install_wizard.plan;install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.backup_ack);
+  nova_partition_plan plan=install_wizard.plan;
+  assert(plan.linux_mib==((mask&2)?install_wizard.os_mib[0]:0)&&plan.android_mib==((mask&4)?install_wizard.os_mib[1]:0));
+  install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.erase_ack);
   install_wizard_next(NULL);assert(install_wizard.open);
-  lv_obj_t*ack=find_action(install_wizard.window,install_wizard_backup);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_backup(ack);
-  assert(install_wizard.backup_ack);
+  lv_obj_t*ack=find_action(install_wizard.window,install_wizard_consent);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_consent(ack);
+  assert(install_wizard.erase_ack);nova_toggle_ext*ce=lv_obj_get_ext_attr(ack);assert(!strcmp(lv_label_get_text(ce->state),nyx_tr("I agree")));
+  lv_btn_set_state(ack,LV_BTN_STATE_REL);install_wizard_consent(ack);assert(!install_wizard.erase_ack&&lv_btn_get_state(install_wizard.next)==LV_BTN_STATE_INA&&!strcmp(lv_label_get_text(ce->state),nyx_tr("I do not agree")));
+  lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_consent(ack);
   sd_storage.raw_cid[0]++;install_wizard_next(NULL);assert(install_wizard.open&&install_wizard.step==2&&!install_job.armed);
-  install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.backup_ack);
-  ack=find_action(install_wizard.window,install_wizard_backup);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_backup(ack);
+  install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.erase_ack);
+  ack=find_action(install_wizard.window,install_wizard_consent);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_consent(ack);
   install_wizard_next(NULL);assert(!install_wizard.open&&partition_nova.ready&&install_job.armed);
+  assert(lv_obj_get_parent(part_info.partition_button)==lv_page_get_scrl(partition_nova.page));
+  assert(lv_obj_get_x(part_info.partition_button)==966&&lv_obj_get_y(part_info.partition_button)==lv_obj_get_height(partition_nova.page)-70);
   assert(part_info.emu_size==plan.emu_mib&&part_info.l4t_size==plan.linux_mib&&part_info.and_size==plan.android_mib&&part_info.hos_size==plan.fat_mib);
   assert(partition_nova.mode==1&&lv_obj_get_hidden(partition_nova.content)&&lv_obj_get_hidden(partition_nova.mode_choices));
   assert(lv_btn_get_action(part_info.partition_button,LV_BTN_ACTION_CLICK)==nova_partition_review);
@@ -1199,6 +1242,7 @@ part_info.l4t_size=16384;""")
 body+='\nstatic lv_res_t create_window_partition_manager(bool emmc){return preview_partition(emmc?"partition-emmc":"partition-expert",0); }\n'
 body+=function(partition,'nyx_nova_installation_model')
 body+=function(partition,'nyx_nova_installation_read_media')
+body+='\nconst char *nyx_nova_installation_storage_error(void){return install_storage_error;}\n'
 body+=function(partition,'nyx_nova_installation_read_card')
 body+=function(partition,'nyx_nova_installation_partition')
 (directory/'preview.c').write_text(body,encoding='utf-8')
@@ -1239,7 +1283,8 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova34a2-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova34a3-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)
+

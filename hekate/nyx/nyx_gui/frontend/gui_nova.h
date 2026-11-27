@@ -46,7 +46,8 @@ lv_res_t nyx_nova_installation_wizard(lv_obj_t *button);
 u32 nyx_nova_installation_model(void);
 bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model);
 bool nyx_nova_installation_read_card(u8 *cid);
-lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid);
+const char *nyx_nova_installation_storage_error(void);
+lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,u32 linux_mib,u32 android_mib,const u8 *cid);
 bool nyx_nova_installation_copy(u32 index,u32 start,u32 size,u32 sectors,u32 gpp,
     const u8 *cid);
 void nyx_nova_active_outline(lv_obj_t *frame,bool enabled);

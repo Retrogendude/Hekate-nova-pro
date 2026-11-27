@@ -82,7 +82,7 @@ static nova_plan_result nova_partition_current(nova_partition_plan *plan)
 
 static bool nova_partition_preflight(void)
 {
-    if(!nova_install_job_valid()){nyx_show_help("Storage changed. Restart the installation assistant.");return false;}
+    if(!nova_install_job_valid()){nyx_show_help(install_storage_error);return false;}
     nova_partition_plan plan;
     if(!partition_nova.ready||nova_partition_current(&plan)!=NOVA_PLAN_OK){
         nyx_show_help("Disposition incompatible. Vérifier les tailles avant de continuer.");return false;

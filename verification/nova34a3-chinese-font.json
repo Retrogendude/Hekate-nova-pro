@@ -1,7 +1,7 @@
 {
-  "file": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-nova-pro-v34-alpha2\\nyx\\nyx_gui\\fonts\\sd\\Nova-Chinese-Simplified.nyxf",
-  "bytes": 6332014,
-  "glyphs": 1882,
+  "file": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-nova-pro-v34-alpha3\\nyx\\nyx_gui\\fonts\\sd\\Nova-Chinese-Simplified.nyxf",
+  "bytes": 6343606,
+  "glyphs": 1885,
   "coverage": [
     32,
     33,
@@ -962,6 +962,7 @@
     21040,
     21046,
     21069,
+    21097,
     21103,
     21106,
     21147,
@@ -1185,6 +1186,7 @@
     24335,
     24341,
     24343,
+    24352,
     24357,
     24359,
     24367,
@@ -1645,6 +1647,7 @@
     33521,
     33539,
     33609,
+    33616,
     33647,
     33655,
     33719,
@@ -1889,88 +1892,88 @@
   "sections": [
     {
       "height": 14,
-      "glyphs": 1882,
-      "bitmap_bytes": 142198,
-      "section_bytes": 164782,
+      "glyphs": 1885,
+      "bitmap_bytes": 142450,
+      "section_bytes": 165070,
       "cjk_font_pixels": 11
     },
     {
       "height": 16,
-      "glyphs": 1882,
-      "bitmap_bytes": 170288,
-      "section_bytes": 192872,
+      "glyphs": 1885,
+      "bitmap_bytes": 170576,
+      "section_bytes": 193196,
       "cjk_font_pixels": 12
     },
     {
       "height": 18,
-      "glyphs": 1882,
-      "bitmap_bytes": 239022,
-      "section_bytes": 261606,
+      "glyphs": 1885,
+      "bitmap_bytes": 239454,
+      "section_bytes": 262074,
       "cjk_font_pixels": 15
     },
     {
       "height": 20,
-      "glyphs": 1882,
-      "bitmap_bytes": 297520,
-      "section_bytes": 320104,
+      "glyphs": 1885,
+      "bitmap_bytes": 298060,
+      "section_bytes": 320680,
       "cjk_font_pixels": 17
     },
     {
       "height": 22,
-      "glyphs": 1882,
-      "bitmap_bytes": 360778,
-      "section_bytes": 383362,
+      "glyphs": 1885,
+      "bitmap_bytes": 361438,
+      "section_bytes": 384058,
       "cjk_font_pixels": 19
     },
     {
       "height": 24,
-      "glyphs": 1882,
-      "bitmap_bytes": 432168,
-      "section_bytes": 454752,
+      "glyphs": 1885,
+      "bitmap_bytes": 432960,
+      "section_bytes": 455580,
       "cjk_font_pixels": 21
     },
     {
       "height": 26,
-      "glyphs": 1882,
-      "bitmap_bytes": 508196,
-      "section_bytes": 530780,
+      "glyphs": 1885,
+      "bitmap_bytes": 509132,
+      "section_bytes": 531752,
       "cjk_font_pixels": 24
     },
     {
       "height": 28,
-      "glyphs": 1882,
-      "bitmap_bytes": 590100,
-      "section_bytes": 612684,
+      "glyphs": 1885,
+      "bitmap_bytes": 591192,
+      "section_bytes": 613812,
       "cjk_font_pixels": 25
     },
     {
       "height": 30,
-      "glyphs": 1882,
-      "bitmap_bytes": 680730,
-      "section_bytes": 703314,
+      "glyphs": 1885,
+      "bitmap_bytes": 681990,
+      "section_bytes": 704610,
       "cjk_font_pixels": 27
     },
     {
       "height": 32,
-      "glyphs": 1882,
-      "bitmap_bytes": 775520,
-      "section_bytes": 798104,
+      "glyphs": 1885,
+      "bitmap_bytes": 776960,
+      "section_bytes": 799580,
       "cjk_font_pixels": 30
     },
     {
       "height": 34,
-      "glyphs": 1882,
-      "bitmap_bytes": 879614,
-      "section_bytes": 902198,
+      "glyphs": 1885,
+      "bitmap_bytes": 881246,
+      "section_bytes": 903866,
       "cjk_font_pixels": 31
     },
     {
       "height": 36,
-      "glyphs": 1882,
-      "bitmap_bytes": 984456,
-      "section_bytes": 1007040,
+      "glyphs": 1885,
+      "bitmap_bytes": 986292,
+      "section_bytes": 1008912,
       "cjk_font_pixels": 33
     }
   ],
-  "sha256": "446a16b686ac05f9c4c1db8875e7887f9699985fdf05ec876c7041f29b7fe916"
+  "sha256": "95f1f6885ce6a4d020bb3a67a32853f6d0b4971ea62f424e3a8b3f8f6857c2ce"
 }

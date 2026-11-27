@@ -1,7 +1,7 @@
 """Actual partition transaction/table writers with fake I/O and injected failures."""
 from pathlib import Path
 import re,subprocess,json,hashlib
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha2';D=W/'nova34a2-partition-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha3';D=W/'nova34a3-partition-check';D.mkdir(exist_ok=True)
 s=(P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_text()
 def fn(n):
  m=re.search(r'^static (?:int|bool|void|lv_res_t) '+n+r'\(',s,re.M);assert m,n
@@ -16,7 +16,7 @@ c=r'''
 #include <stdint.h>
 #include "gui_partition_plan.h"
 #include <storage/mbr_gpt.h>
-typedef struct{u32 sec_cnt;u8 raw_cid[16];}sdmmc_storage_t;
+typedef struct{u32 sec_cnt;u8 raw_cid[16];struct{u8 manfid;}cid;}sdmmc_storage_t;
 typedef int lv_res_t;typedef int lv_obj_t;typedef int FATFS;
 #define AU_ALIGN_SECTORS 0x8000u
 #define AU_ALIGN_BYTES (AU_ALIGN_SECTORS*512u)
@@ -38,6 +38,7 @@ typedef int lv_res_t;typedef int lv_obj_t;typedef int FATFS;
 #define SET_SECTOR_COUNT 0
 #define SE_RNG_BLOCK_SIZE 16
 #define s_printf sprintf
+#define nyx_tr(x) (x)
 static sdmmc_storage_t sd_storage,emmc_storage;
 static struct{bool emmc,emu_double,and_dynamic,backup_possible;sdmmc_storage_t*storage;u32 total_sct,alignment,emu_size,l4t_size,and_size;int hos_size;lv_obj_t*partition_button;mbr_t mbr_old;}part_info;
 static u8 alt[64u*1024*1024],cache[32u*1024*1024];static mbr_t disk_mbr;
@@ -73,7 +74,8 @@ static void*zalloc(size_t n){return calloc(1,n);}
 #define lv_obj_set_size(...) ((void)0)
 #define lv_mbox_set_recolor_text(...) ((void)0)
 #define lv_obj_set_width(...) ((void)0)
-#define lv_mbox_set_text(...) ((void)0)
+static char last_message[2048];
+static void lv_mbox_set_text(lv_obj_t*p,const char*text){(void)p;snprintf(last_message,sizeof last_message,"%s",text);}
 #define lv_obj_align(...) ((void)0)
 #define lv_obj_set_top(...) ((void)0)
 #define lv_label_set_recolor(...) ((void)0)
@@ -107,7 +109,7 @@ static void reset(u32 hw,u32 systems){
  memset(&install_job,0,sizeof install_job);memset(&part_info,0,sizeof part_info);memset(&disk_mbr,0,sizeof disk_mbr);
  write_no=read_no=last_lba=last_count=copy_calls=format_calls=backup_calls=restore_calls=disable_calls=0;
  fail_write=flip_read=fail_read=fail_mount=fail_emmc=fail_ram=fail_backup=fail_restore=fail_format=fail_remount=fail_disable=swap_power=swap_final=bad_target=preflight_reject=0;
- model=hw;button=BTN_POWER;sd_storage.sec_cnt=128*2097152u;memset(sd_storage.raw_cid,42,16);emmc_storage.sec_cnt=(hw==3?59640u:29820u)*2048u;
+ model=hw;button=BTN_POWER;sd_storage.cid.manfid=3;sd_storage.sec_cnt=128*2097152u;memset(sd_storage.raw_cid,42,16);emmc_storage.sec_cnt=(hw==3?59640u:29820u)*2048u;
  nova_partition_plan p={0};p.total_sectors=sd_storage.sec_cnt;p.fat_min_mib=2048;C(nova_partition_installation(&p,hw,hw<2?0:hw,emmc_storage.sec_cnt/2048,systems)==NOVA_PLAN_OK);
  install_job.armed=true;install_job.plan=p;install_job.systems=systems;install_job.sectors=sd_storage.sec_cnt;install_job.gpp=emmc_storage.sec_cnt;install_job.model=hw;memcpy(install_job.cid,sd_storage.raw_cid,16);
  part_info.storage=&sd_storage;part_info.total_sct=sd_storage.sec_cnt;part_info.hos_size=p.fat_mib;part_info.emu_size=p.emu_mib;part_info.l4t_size=p.linux_mib;part_info.and_size=p.android_mib;
@@ -122,6 +124,12 @@ int main(void){
  reset(0,1);button=0;_sd_create_mbox_start_partitioning();C(!copy_calls&&!write_no&&!format_calls&&!disable_calls);
  unsigned*errors[]={&preflight_reject,&fail_mount,&fail_emmc,&fail_ram,&fail_backup,&fail_restore,&fail_format,&fail_remount,&fail_disable,&swap_power,&swap_final,&bad_target};
  for(u32 i=0;i<sizeof errors/sizeof*errors;++i){reset(0,1);*errors[i]=1;_sd_create_mbox_start_partitioning();C(!copy_calls&&!install_job.running&&!install_job.armed);}
+ reset(0,1);sd_storage.cid.manfid=0;_sd_create_mbox_start_partitioning();C(!copy_calls&&!format_calls&&strstr(install_storage_error,"counterfeit"));
+ reset(0,1);fail_disable=1;_sd_create_mbox_start_partitioning();C(!format_calls&&!copy_calls&&strstr(last_message,"emummc.ini")&&strstr(last_message,"No partitioning"));
+ reset(0,1);swap_power=1;_sd_create_mbox_start_partitioning();C(!format_calls&&!copy_calls&&strstr(last_message,"different SD card")&&strstr(last_message,"No partitioning"));
+ reset(0,1);emmc_storage.sec_cnt--;C(!nova_install_job_valid()&&strstr(install_storage_error,"Internal memory capacity"));
+ reset(0,1);sd_storage.sec_cnt--;C(!nova_install_job_valid()&&strstr(install_storage_error,"SD card capacity"));
+ reset(0,1);part_info.hos_size--;C(!nova_install_job_valid()&&strstr(install_storage_error,"Partition sizes"));
  reset(0,1);part_info.emmc=true;_sd_create_mbox_start_partitioning();C(!copy_calls&&!write_no&&!format_calls);
  reset(0,1);install_job.armed=false;_sd_create_mbox_start_partitioning();C(!copy_calls&&!disable_calls);
  reset(0,1);install_job.running=true;unsigned before=write_no;C(nova_table_write(&sd_storage,sd_storage.sec_cnt,1,cache)!=0&&write_no==before);C(nova_table_write(&emmc_storage,0,1,cache)!=0&&write_no==before);C(nova_table_write(&sd_storage,0,0,cache)!=0&&write_no==before);
@@ -131,4 +139,4 @@ int main(void){
 (D/'test.c').write_text(c)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-I'+str(P/'bdk'),'-I'+str(P/'nyx/nyx_gui/frontend'),str(D/'test.c'),str(P/'nyx/nyx_gui/frontend/gui_partition_plan.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a2-partition-check.json').write_text(json.dumps({'passed':True,'actual_transaction_and_table_writers':True,'storage_and_ui_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_bytes()).hexdigest()},indent=2))
+(W/'nova34a3-partition-check.json').write_text(json.dumps({'passed':True,'actual_transaction_and_table_writers':True,'storage_and_ui_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_bytes()).hexdigest()},indent=2))

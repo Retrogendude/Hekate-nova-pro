@@ -1,7 +1,7 @@
 """Actual full-size raw transfer loop on fake SD/eMMC; resize-only tail excluded."""
 from pathlib import Path
 import re,subprocess,json,hashlib
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha2';D=W/'nova34a2-transfer-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha3';D=W/'nova34a3-transfer-check';D.mkdir(exist_ok=True)
 s=(P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_text()
 def fn(n):
  m=re.search(r'^static (?:int|bool) '+n+r'\(',s,re.M);a=s.index('{',m.start());i=a+1;d=1
@@ -72,5 +72,5 @@ int main(void){
 (D/'test.c').write_text(c)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-Wall',str(D/'test.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a2-transfer-check.json').write_text(json.dumps({'passed':True,'actual_full_size_transfer_loop':True,'resize_only_tail_excluded':True,'storage_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_bytes()).hexdigest()},indent=2))
+(W/'nova34a3-transfer-check.json').write_text(json.dumps({'passed':True,'actual_full_size_transfer_loop':True,'resize_only_tail_excluded':True,'storage_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_bytes()).hexdigest()},indent=2))
 

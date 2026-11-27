@@ -35,6 +35,9 @@ void nova_partition_widths(const nova_partition_plan *plan,u32 width,u32 out[4])
  * Flags: bit0=emuMMC, bit1=Linux, bit2=Android. No storage I/O. */
 nova_plan_result nova_partition_installation(nova_partition_plan *plan,u32 actual_model,
     u32 chosen_model,u32 emmc_data_mib,u32 systems);
+/* Exact 16/32 GiB presets selected independently for enabled OSes. */
+nova_plan_result nova_partition_installation_sizes(nova_partition_plan *plan,u32 actual_model,
+    u32 chosen_model,u32 emmc_data_mib,u32 systems,u32 linux_mib,u32 android_mib);
 bool nova_install_target_valid(const nova_partition_plan *plan,u32 sectors,u32 gpp_sectors,
     u32 index,u32 type,u32 start,u32 size);
 #endif

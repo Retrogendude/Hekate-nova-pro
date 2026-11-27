@@ -302,16 +302,25 @@ static struct {
     u32 sectors,gpp,model,systems;u8 cid[16];nova_partition_plan plan;
 } install_job;
 static bool partition_write_failed;
+static const char *install_storage_error;
 static bool nova_install_job_valid(void)
 {
+    install_storage_error=NULL;
     if(!install_job.armed&&!install_job.running)return true;
-    if(part_info.emmc||nyx_nova_installation_model()!=install_job.model||sd_mount())return false;
-    bool valid=sd_storage.sec_cnt==install_job.sectors&&!memcmp(sd_storage.raw_cid,install_job.cid,16);
-    if(emmc_initialize(false))return false;
-    emmc_set_partition(EMMC_GPP);valid=valid&&emmc_storage.sec_cnt==install_job.gpp;emmc_end();
+    if(part_info.emmc){install_storage_error="The target is internal memory, not the SD card. Restart the assistant.";return false;}
+    if(nyx_nova_installation_model()!=install_job.model){install_storage_error="The console model no longer matches the installation plan. Restart the assistant.";return false;}
+    if(sd_mount()){install_storage_error="The SD card could not be initialized. Reinsert it and check that it is readable.";return false;}
+    if(!sd_storage.cid.manfid){install_storage_error="Hekate flagged this SD card as potentially counterfeit (manufacturer ID 0x00). Use a reliable card; automatic installation is blocked.";return false;}
+    if(sd_storage.sec_cnt!=install_job.sectors){install_storage_error="The SD card capacity has changed. Restart the assistant with the intended card.";return false;}
+    if(memcmp(sd_storage.raw_cid,install_job.cid,16)){install_storage_error="A different SD card was detected. Restart the assistant and review its partition layout.";return false;}
+    if(emmc_initialize(false)){install_storage_error="Internal memory could not be initialized. The emuMMC source is unavailable.";return false;}
+    emmc_set_partition(EMMC_GPP);bool valid=emmc_storage.sec_cnt==install_job.gpp;emmc_end();
+    if(!valid){install_storage_error="Internal memory capacity has changed. The prepared emuMMC size is no longer valid.";return false;}
     nova_partition_plan *p=&install_job.plan;
-    return valid&&part_info.hos_size>=0&&(u32)part_info.hos_size==p->fat_mib&&part_info.emu_size==p->emu_mib&&
+    valid=part_info.hos_size>=0&&(u32)part_info.hos_size==p->fat_mib&&part_info.emu_size==p->emu_mib&&
         part_info.l4t_size==p->linux_mib&&part_info.and_size==p->android_mib&&!part_info.emu_double;
+    if(!valid)install_storage_error="Partition sizes no longer match the confirmed plan. Restart the assistant.";
+    return valid;
 }
 static int nova_table_write(sdmmc_storage_t *device,u32 sector,u32 count,const void *data)
 {
@@ -1688,8 +1697,15 @@ static lv_res_t _sd_create_mbox_start_partitioning()
 	if (!(btn_wait() & BTN_POWER))
 		goto exit;
 
-    if(automated&&(!nova_install_job_valid()||save_emummc_cfg_checked(0,0,NULL))){
-        lv_mbox_set_text(mbox,"Storage check failed. Automatic installation stopped.");goto exit;
+    if(automated){
+        bool valid=nova_install_job_valid();
+        if(valid&&save_emummc_cfg_checked(0,0,NULL)){
+            valid=false;install_storage_error="Could not save emuMMC/emummc.ini to disable emuMMC safely. Check SD free space and write protection.";
+        }
+        if(!valid){
+            char error[1024];s_printf(error,nyx_tr("Storage check failed.\n%s\n\nNo partitioning was started."),nyx_tr(install_storage_error));
+            lv_mbox_set_text(mbox,error);goto exit;
+        }
     }
 	// Start partitioning.
 	lv_mbox_set_text(mbox, "#FF8000 SD Partition Manager#");
@@ -3036,8 +3052,8 @@ u32 nyx_nova_installation_model(void)
 /* Read-only discovery for the installation assistant; retain mount ownership. */
 bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model)
 {
-    *sectors=*emmc_mib=0;*model=nyx_nova_installation_model();
-    bool mounted=sd_get_card_mounted();if(sd_mount())return false;
+    *sectors=*emmc_mib=0;*model=nyx_nova_installation_model();install_storage_error=NULL;
+    bool mounted=sd_get_card_mounted();if(sd_mount()){install_storage_error="The SD card could not be initialized. Reinsert it and check that it is readable.";return false;}
     *sectors=sd_storage.sec_cnt;
     if(!emmc_initialize(false)){
         emmc_set_partition(EMMC_GPP);*emmc_mib=emmc_storage.sec_cnt>>11;emmc_end();
@@ -3046,19 +3062,23 @@ bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model)
     return *sectors!=0;
 }
 
+const char *nyx_nova_installation_storage_error(void){return install_storage_error;}
 bool nyx_nova_installation_read_card(u8 *cid)
 {
-    bool mounted=sd_get_card_mounted();if(sd_mount())return false;
+    install_storage_error=NULL;
+    bool mounted=sd_get_card_mounted();if(sd_mount()){install_storage_error="The SD card could not be initialized. Reinsert it and check that it is readable.";return false;}
     memcpy(cid,sd_storage.raw_cid,16);u32 bits=0;for(u32 i=0;i<16;++i)bits|=cid[i];
+    if(!sd_storage.cid.manfid){bits=0;install_storage_error="Hekate flagged this SD card as potentially counterfeit (manufacturer ID 0x00). Use a reliable card; automatic installation is blocked.";}
+    else if(!bits)install_storage_error="The SD card identity could not be read. Reinsert it and restart the assistant.";
     if(!mounted)sd_unmount();
     return bits!=0;
 }
-lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid)
+lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,u32 linux_mib,u32 android_mib,const u8 *cid)
 {
     create_window_partition_manager(false);
     if(!partition_nova.ready)return LV_RES_OK;
     nova_partition_plan plan={0};plan.total_sectors=part_info.total_sct;plan.fat_min_mib=part_info.hos_min_size;
-    nova_plan_result result=nova_partition_installation(&plan,partition_nova.actual_model,model,part_info.emmc_size_mb,systems);
+    nova_plan_result result=nova_partition_installation_sizes(&plan,partition_nova.actual_model,model,part_info.emmc_size_mb,systems,linux_mib,android_mib);
     if(result!=NOVA_PLAN_OK){
         lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);
         nyx_show_help(nova_partition_error(result));return LV_RES_OK;
@@ -3067,6 +3087,7 @@ lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid)
         lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);
         nyx_show_help("Storage unavailable. Automatic installation was not started.");return LV_RES_OK;
     }
+    if(!sd_storage.cid.manfid){emmc_end();lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);nyx_show_help("Hekate flagged this SD card as potentially counterfeit (manufacturer ID 0x00). Use a reliable card; automatic installation is blocked.");return LV_RES_OK;}
     if(!cid||memcmp(cid,sd_storage.raw_cid,16)){emmc_end();lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);nyx_show_help("Storage changed. Restart the installation assistant.");return LV_RES_OK;}
     emmc_set_partition(EMMC_GPP);
     install_job.sectors=sd_storage.sec_cnt;install_job.gpp=emmc_storage.sec_cnt;install_job.model=nyx_nova_installation_model();
@@ -3083,6 +3104,11 @@ lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid)
         if(type.type[0]&&!strcmp(type.type[0],"lv_btn"))lv_obj_set_hidden(child,true);
     }
 
+    /* Only the assistant moves its Next button; manual partition menus keep their header action. */
+    lv_obj_set_parent(part_info.partition_button,lv_page_get_scrl(partition_nova.page));
+    lv_btn_set_fit(part_info.partition_button,false,false);
+    lv_obj_set_size(part_info.partition_button,280,54);
+    lv_obj_set_pos(part_info.partition_button,966,lv_obj_get_height(partition_nova.page)-70);
     lv_label_set_text(lv_obj_get_child(part_info.partition_button,NULL),"Next");
     lv_obj_t *panel=nyx_nova_panel(partition_nova.page,34,140,1212,lv_obj_get_height(partition_nova.page)-278);
     nyx_nova_fit_text(nyx_nova_text(panel,"Your partition layout is prepared.",24,18,1164,NOVA_TITLE),46);

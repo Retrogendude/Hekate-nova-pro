@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "cases": 48,
+  "real_lvgl": true,
+  "hardware_test": false,
+  "coverage": [
+    "help popup",
+    "Hekate manufacturer-ID 0 suspect flag blocks Next",
+    "8 locales, 3 text sizes"
+  ],
+  "failures": []
+}

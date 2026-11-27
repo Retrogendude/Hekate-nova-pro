@@ -95,3 +95,16 @@ bool nova_install_target_valid(const nova_partition_plan *p,u32 sectors,u32 gpp,
         expected+expected_size<=sectors&&0xC000ULL+gpp<=expected_size&&
         (sectors-sectors%NOVA_DISK_ALIGN_SECTORS)==p->total_sectors;
 }
+
+/* Explicit assistant choices never fall back to a smaller OS partition. */
+nova_plan_result nova_partition_installation_sizes(nova_partition_plan *plan,u32 actual_model,
+    u32 chosen_model,u32 emmc_data_mib,u32 systems,u32 linux_mib,u32 android_mib)
+{
+    nova_plan_result result=nova_partition_installation(plan,actual_model,chosen_model,emmc_data_mib,systems);
+    if(result!=NOVA_PLAN_OK&&result!=NOVA_PLAN_CAPACITY)return result;
+    if(((systems&2u)&&linux_mib!=16384u&&linux_mib!=32768u)||
+        ((systems&4u)&&android_mib!=16384u&&android_mib!=32768u))return NOVA_PLAN_INVALID;
+    plan->linux_mib=(systems&2u)?linux_mib:0;
+    plan->android_mib=(systems&4u)?android_mib:0;
+    return nova_partition_validate(plan);
+}
