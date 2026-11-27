@@ -1,0 +1,82 @@
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Built module: libsys_lp0.bso
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Built module: libsys_minerva.bso
+Built module: module_sample.bso
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+Building ../build/nyx/nyx.o
+Building ../build/nyx/gui.o
+Building ../build/nyx/gui_tv.o
+Building ../build/nyx/gui_info.o
+./nyx_gui/frontend/gui.c:1422:13: warning: '_create_text_button' defined but not used [-Wunused-function]
+ 1422 | static void _create_text_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, const char *btn_name, lv_action_t action)
+      |             ^~~~~~~~~~~~~~~~~~~
+Building ../build/nyx/gui_tools.o
+Building ../build/nyx/gui_options.o
+./nyx_gui/frontend/gui_options.c: In function '_action_clock_edit_save':
+./nyx_gui/frontend/gui_options.c:418:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  418 |         if(!mounted)sd_unmount();nyx_show_help("The selected font is missing or invalid. Choose another font.");return LV_RES_OK;
+      |         ^~
+./nyx_gui/frontend/gui_options.c:418:34: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  418 |         if(!mounted)sd_unmount();nyx_show_help("The selected font is missing or invalid. Choose another font.");return LV_RES_OK;
+      |                                  ^~~~~~~~~~~~~
+./nyx_gui/frontend/gui_options.c: At top level:
+./nyx_gui/frontend/gui_options.c:1028:17: warning: '_create_window_language' defined but not used [-Wunused-function]
+ 1028 | static lv_res_t _create_window_language(lv_obj_t *btn)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~
+./nyx_gui/frontend/gui_options.c:932:17: warning: '_create_window_home_layout' defined but not used [-Wunused-function]
+  932 | static lv_res_t _create_window_home_layout(lv_obj_t *btn)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+Building ../build/nyx/gui_appearance.o
+Building ../build/nyx/gui_layout.o
+Building ../build/nyx/gui_choices.o
+Building ../build/nyx/gui_nova.o
+Building ../build/nyx/gui_nova_reflection.o
+Building ../build/nyx/gui_nova_theme.o
+./nyx_gui/frontend/gui_nova_reflection.c: In function 'reflection_border_draw':
+./nyx_gui/frontend/gui_nova_reflection.c:160:13: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  160 |             if(left<clip->x1)left=clip->x1;if(right>clip->x2)right=clip->x2;
+      |             ^~
+./nyx_gui/frontend/gui_nova_reflection.c:160:44: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  160 |             if(left<clip->x1)left=clip->x1;if(right>clip->x2)right=clip->x2;
+      |                                            ^~
+./nyx_gui/frontend/gui_nova_theme.c: In function 'nyx_nova_custom_icon':
+./nyx_gui/frontend/gui_nova_theme.c:123:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  123 |     if(!mounted)sd_unmount();if(!pixels)return;
+      |     ^~
+./nyx_gui/frontend/gui_nova_theme.c:123:30: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  123 |     if(!mounted)sd_unmount();if(!pixels)return;
+      |                              ^~
+Building ../build/nyx/gui_color_picker.o
+Building ../build/nyx/gui_nova_report.o
+Building ../build/nyx/gui_diagnostics.o
+Building ../build/nyx/gui_component_summary.o
+Building ../build/nyx/gui_interactive.o
+Building ../build/nyx/gui_emmc_tools.o
+Building ../build/nyx/gui_emummc_tools.o
+./nyx_gui/frontend/gui_interactive.c:66:13: warning: 'gui_uart_puts' defined but not used [-Wunused-function]
+   66 | static void gui_uart_puts(const char *text){(void)text;}
+      |             ^~~~~~~~~~~~~
+Building ../build/nyx/gui_tools_partition_manager.o
+Building ../build/nyx/fe_emummc_tools.o
+Building ../build/nyx/fe_emmc_tools.o
+Building ../build/nyx/gui_bluetooth.o
+[100%] Linking nyx.elf[KC:/devkitPro/devkitARM/bin/../lib/gcc/arm-none-eabi/16.1.0/../../../../arm-none-eabi/bin/ld.exe: warning: ../build/nyx/nyx.elf has a LOAD segment with RWX permissions
+
+nyx was built with the following flags:
+CFLAGS:  -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -O2 -g -gdwarf-4 -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -std=gnu11 -DNYX_LOAD_ADDR=0x81000000 -DNYX_MAGIC=0x43544347  -DNYX_VER_MJ=1 -DNYX_VER_MN=9 -DNYX_VER_HF=5 -DNYX_VER_RL=0 -DBDK_MINERVA_CFG_FROM_RAM -DBDK_HW_EXTRA_DEINIT -DBDK_SDMMC_EXTRA_PRINT -DGFX_INC='../nyx/nyx_gui/gfx/gfx.h' -DFFCFG_INC='../nyx/nyx_gui/libs/fatfs/ffconf.h' -DHAVE_CPU_STUB=1
+LDFLAGS: -march=armv4t -mtune=arm7tdmi -mthumb-interwork -Wall -Wsign-compare -Wtype-limits -Wno-array-bounds -Wno-stringop-overread -Wno-stringop-overflow -nostartfiles -lgcc -Wl,--nmagic,--gc-sections -Xlinker --defsym=NYX_LOAD_ADDR=0x81000000
+--------------------------------------
+Nyx size: 2400873 Bytes
+--------------------------------------
+make[1]: warning: -j4 forced in submake: resetting jobserver mode.
+--------------------------------------
+hekate size:
+Uncompr:  139273 Bytes
+Payload:  110870 Bytes
+--------------------------------------

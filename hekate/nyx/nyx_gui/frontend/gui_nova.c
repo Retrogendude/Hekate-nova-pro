@@ -512,6 +512,16 @@ void nyx_nova_refresh_halos(void)
     }
 }
 
+/* Keep persisted effect/theme refreshes aligned with pointer selection. */
+void nyx_nova_home_focus(lv_obj_t *frame)
+{
+    for(u32 i=0;i<5;++i)if(nova_home_cards[i]==frame){
+        nova_home_selected=i;
+        for(u32 j=0;j<5;++j)if(nova_home_cards[j])lv_cont_set_style(nova_home_cards[j],i==j?&nova_selected:&nova_panel);
+        return;
+    }
+}
+
 static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t action, int x, int y, int width, int height, bool hero)
 {
     const nova_item *item = &nova_reference_home[index];
@@ -551,6 +561,7 @@ static lv_obj_t *nova_home_action(lv_obj_t *parent, u32 index, lv_action_t actio
         lv_obj_t *dot = lv_cont_create(card, NULL); lv_cont_set_style(dot, &nova_dot); lv_cont_set_fit(dot, false, false);
         lv_obj_set_size(dot, 5, 5); lv_obj_set_pos(dot, width - 22, 18); lv_obj_set_click(dot, false);
     }
+    nyx_nova_selectable(button,card,nova_home_icons[index]);
     nyx_nova_reflect(card,hero);
     return button;
 }
@@ -823,7 +834,8 @@ lv_obj_t *nyx_nova_action(lv_obj_t *parent,const char *title,const char *descrip
     lv_obj_set_size(button,width,height);lv_obj_set_pos(button,0,0);lv_obj_set_free_num(button,id);
     lv_btn_set_action(button,LV_BTN_ACTION_CLICK,action);lv_btn_set_action(button,LV_BTN_ACTION_LONG_PR,nova_action_help);
     lv_obj_t *label=nyx_nova_text(button,nyx_nova_caption(title),76,18,width-94,NOVA_BODY);nyx_nova_fit_text(label,height<120?44:58);
-    nyx_nova_icon_box(card,icon,18,20,42,false);
+    lv_obj_t *icon_box=nyx_nova_icon_box(card,icon,18,20,42,false);
     if(description&&*description){int top=22+lv_obj_get_height(label);lv_obj_t *detail=nyx_nova_text(card,description,76,top,width-94,NOVA_SMALL);lv_label_set_style(detail,&nova_dim);nyx_nova_fit_text(detail,height-top-16);}
+    nyx_nova_selectable(button,card,icon_box);
     return button;
 }

@@ -1,0 +1,3 @@
+# Hekate Nova Pro v34 alpha 6
+
+Servizio TV durante operazioni lunghe e attese dei pulsanti. Immagini complete e registri differiti senza accesso SD rientrante. Impostazioni e protezioni mantenute. Verifica hardware da eseguire. Fino a tre tentativi distanziati dopo un errore; nessun reset PD forzato e arresto manuale prioritario. Conferma aggiornata della sincronizzazione entro 1 s; errore esplicito senza sincronizzazione/AUX/HPD. Versione registro corretta. Alpha6: uscita controllata dalla modalità DP ereditata prima di identificare il dock; ripetizione del collegamento video a HBR/RBR dopo mancata sincronizzazione, verificando le linee. 429 verifiche del driver e 54 scenari superati su PC; prova console necessaria.

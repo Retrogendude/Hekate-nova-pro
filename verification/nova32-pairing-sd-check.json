@@ -1,7 +1,0 @@
-{
-  "passed": true,
-  "physical_card_io": false,
-  "rollback_and_backup": true,
-  "logs": "PASS: real SD pairing save/load, backup fallback, rename rollback, six write faults, five read faults, exact sizes, mount restoration, RAM preservation and active-radio guard\n",
-  "source_sha256": "806eb570608b78cfa8634baaaac2fdc2e4d0c146cab4adb2a615911b60f9ff57"
-}

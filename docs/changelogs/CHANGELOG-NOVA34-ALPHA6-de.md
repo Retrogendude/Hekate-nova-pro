@@ -1,0 +1,3 @@
+# Hekate Nova Pro v34 alpha 6
+
+TV-Dienst während langer Vorgänge und Tastenwartezeiten. Fertige Bilder übertragen, Protokolle ohne rekursiven SD-Zugriff verzögern. Einstellungen und Schutzabschaltungen bleiben erhalten. Hardwareprüfung ausstehend. Bis zu drei zeitversetzte Versuche nach Verbindungsfehler; kein erzwungener PD-Reset, manueller Stopp hat Vorrang. Frische Videosynchronisation innerhalb 1 s erforderlich; Fehler bei fehlendem Sync/AUX/HPD. Protokollversion korrigiert. Alpha6: geerbten DP-Modus vor der Erkennung verlassen; bei fehlender Videosynchronisation nur den Videolink mit HBR/RBR neu starten und aktuelle Lane-Statuswerte prüfen. 429 Treiberprüfungen und 54 Dienstszenarien auf PC bestanden; Konsolentest erforderlich.

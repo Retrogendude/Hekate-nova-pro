@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "cases": 192,
+  "locales": 8,
+  "sizes": [
+    20,
+    30,
+    36
+  ],
+  "coverage": [
+    "pointer hover",
+    "unchanged click actions",
+    "disabled cards skipped and deselected",
+    "cleanup",
+    "complete active bottom border pixels",
+    "animations on and off"
+  ],
+  "physical_console_test": false,
+  "failures": [],
+  "source_sha256": {
+    "frontend/gui_nova.c": "0fb7ff24ffa60c456d912d450eb8c3e71f97cb02b09eecaab0676bc1200dc39f",
+    "frontend/gui_nova_reflection.c": "6a44b6d2ee503d80188d291e51e18ad04a2d90edf14b3fd2513fe0cb13de2510",
+    "frontend/gui_nova.h": "6945652d6a546af1252c89b0207776a4af8d6ce25a78a5d12b0b1c3030883101",
+    "frontend/gui_tools.c": "3df5985a10cdae9777e9050edaef50db9c60ec10ab9a16a6aeea2ccf9e817876",
+    "frontend/gui_emmc_tools.c": "21ff2e8f03589239247a1bb773a2d72e0bfc199fd2b0eca9d3ae67d8af4537eb",
+    "frontend/gui.c": "f64197c15870555185e931924d95faf6711f1f1cfa2734bba98b3783c4e8affc"
+  }
+}

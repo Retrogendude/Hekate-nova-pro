@@ -1,0 +1,3 @@
+# Hekate Nova Pro v34 alpha 5
+
+Maintien du service TV pendant les opérations longues, rafraîchissement après chaque image terminée, journaux TV différés pour éviter tout accès SD réentrant. Attentes de boutons coopératives. Réglages et arrêts matériels conservés. Validation matérielle à effectuer. Jusqu’à trois tentatives espacées après échec de connexion ; aucun reset PD forcé et arrêt manuel prioritaire. Confirmation fraîche de synchronisation vidéo (attente bornée à 1 s) ; échec explicite sans synchronisation/AUX/HPD. Numéro de journal corrigé.
