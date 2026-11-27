@@ -59,6 +59,7 @@ const char *dpout_rate_name(u8 rate);
  * own size. The picture stays until dpout_video_stop(). */
 typedef struct {
     bool in_sync;             /* the sink says its port 0 is in sync       */
+    bool sync_via_crc;        /* stream confirmed by fresh sink CRC frames */
     bool assr;                /* alternate scrambler reset in use          */
     u32  margin_errors;       /* symbol errors in 20 ms of idle, last train */
     u32  margin_retries;      /* trainings again from a higher swing        */
@@ -76,6 +77,7 @@ typedef struct {
     u16  sym_err[2];          /* DPCD 210..213, lanes 0 and 1                */
     u32  pclk_khz;            /* the pixel clock the SOR measures (MVID)    */
     bool sink_crc_test;       /* the sink has the DPCD test CRC             */
+    bool sink_crc_valid;      /* fresh advancing counter; AUX/start/stop OK */
     u8   sink_crc_frames;     /* frames it counted in 100 ms                 */
     u16  sink_crc[3];
     char why[96];

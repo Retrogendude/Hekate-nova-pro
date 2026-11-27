@@ -1,7 +1,7 @@
 """Run both broken and fixed config writers against actual Nyx FatFs on virtual media."""
 from pathlib import Path
 import re,subprocess,json,hashlib
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha6';D=W/'nova34a6-fatfs-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha7';D=W/'nova34a7-fatfs-check';D.mkdir(exist_ok=True)
 def fn(path):
  s=path.read_text();a=s.index('int save_emummc_cfg_checked(');b=s.index('\nvoid save_emummc_cfg(',a);return s[a:b]
 fixed=fn(P/'nyx/nyx_gui/frontend/fe_emummc_tools.c');broken=fn(W/'hekate-nova-pro-v34-alpha3/nyx/nyx_gui/frontend/fe_emummc_tools.c').replace('save_emummc_cfg_checked','save_emummc_cfg_broken')
@@ -55,5 +55,5 @@ r=subprocess.run(args,capture_output=True,text=True)
 if r.returncode:print(r.stderr);raise SystemExit(r.returncode)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
 report={'passed':True,'real_nyx_fatfs_c':True,'real_nyx_ffconf':True,'virtual_disk_only':True,'physical_sd_written':False,'result':r.stdout.strip(),'source_sha256':{n:hashlib.sha256((P/n).read_bytes()).hexdigest()for n in ['nyx/nyx_gui/frontend/fe_emummc_tools.c','nyx/nyx_gui/libs/fatfs/ffconf.h','bdk/libs/fatfs/ff.c','bdk/libs/fatfs/ffunicode.c']}}
-(W/'nova34a6-fatfs-check.json').write_text(json.dumps(report,indent=2))
+(W/'nova34a7-fatfs-check.json').write_text(json.dumps(report,indent=2))
 

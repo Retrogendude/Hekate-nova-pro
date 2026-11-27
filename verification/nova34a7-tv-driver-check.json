@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "tests": {
+    "driver-sync": "PASS: 815 sync assertions, including lost equalization, stale sync, AUX/HPD and timer wrap.",
+    "driver-fallback": "PASS: 30 fallback assertions; HBR2/HBR/RBR, cleanup order, sink cap, early error and unplug.",
+    "driver-crc-capture": "PASS: 88 fresh-CRC capture assertions; reset counter, wrap, zero CRC, stale data and every AUX failure.",
+    "driver-pd": "PASS: 17 inherited-DP assertions; clean boot, stale mode, ack/busy, timeout, refusal and timer wrap.",
+    "driver-link-budget": "PASS: 7 real 720p60 link-budget/TU assertions at all fallback rates."
+  },
+  "real_driver_helpers": true,
+  "hardware_validated": false,
+  "source_sha256": {
+    "bdk/display/tv/dpout.c": "dcbcd75f4e8b3f9761ad487a778b199f13ca2d775400f28f3ee6e1030b5f2050",
+    "bdk/display/tv/usbpd.c": "31a00106b356a68c7f66750eb1acb0134cf5596696c1c818162b0f6962dcef35"
+  }
+}

@@ -83,3 +83,27 @@ de voies et du budget : https://github.com/torvalds/linux/blob/master/drivers/gp
 Ces changements ne modifient pas les tensions ou les tables de réglage des
 pads et n'ajoutent aucun reset PD automatique. Tests PC sur les fonctions
 réelles avec registres simulés et compilation ARM réussis ; HDMI à valider.
+
+## Alpha7 — ne pas couper une image reçue (27 novembre 2026)
+
+Retour utilisateur alpha6 : activation régulière, image qui apparaît puis
+disparaît. Dans run-025/027/029, le lien RBR a des voies alignées (77/81),
+des compteurs de symboles valides à zéro (8000/8000) et trois captures CRC
+rapportées, mais SINK_STATUS reste nul. L'alpha6 détruisait alors la session.
+Le verdict exigeant ce bit seul était trop strict pour ce convertisseur.
+
+Une validation alternative exige maintenant des captures CRC nouvelles,
+une source active et cinq lectures alignées consécutives, sans erreurs de
+symboles. La capture lit son compteur de départ après activation ; toutes
+les lectures/écritures AUX, y compris l'arrêt, doivent réussir. Ni une CRC
+ancienne, ni un compteur inchangé ou illisible ne valident le flux.
+
+Le mécanisme de lecture d'une CRC nouvelle par changement du compteur suit
+le principe de drm_dp_aux_get_crc ; son utilisation comme preuve alternative
+avec les gardes ci-dessus est une adaptation Nova, à valider sur console :
+https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/display/drm_dp_helper.c
+
+Correction supplémentaire : SIGNAL_ON seul peut indiquer une TV connectée,
+pas un mode DP actif. run-026/028 refusent Exit DP avec DP=4182. La préparation
+n'envoie donc Exit DP que si DP_EN est réellement haut, et conserve l'attente
+d'acquittement pour ce cas. Les niveaux électriques restent inchangés.

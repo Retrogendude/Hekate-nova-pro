@@ -90,7 +90,7 @@ static void _cmd_fail(dock_t *d, const char *what, int r)
 }
 static bool _prepare_existing_dp(dock_t *d)
 {
-    u16 active = d->dp & (PD_DP_EN | PD_DP_SIGNAL_ON);
+    u16 active = d->dp & PD_DP_EN;
     if (!d->dp_prepared) {
         d->dp_prepared = true;
         if (active) {
@@ -121,22 +121,23 @@ static void reset(dock_t*d){memset(d,0,sizeof(*d));d->state=DOCK_WAIT_PLUG;d->dp
 int main(void){dock_t d;
  C(sizeof(s_state_name)/sizeof(s_state_name[0])==DOCK_FAILED+1);
  reset(&d);C(_prepare_existing_dp(&d)&&!commands&&d.dp_prepared); // clean boot unchanged
- reset(&d);d.dp=0x4182;d.alerts=PD_AL_CMD_DONE;
+ reset(&d);d.dp=0xC082;d.alerts=PD_AL_CMD_DONE;
  C(!_prepare_existing_dp(&d)&&commands==1&&last_cmd==0x3B3B&&d.state==DOCK_EXIT_DP_SENT&&d.dp_on);
  C(!(d.alerts&PD_AL_CMD_DONE));_finish_existing_dp(&d);C(d.state==DOCK_EXIT_DP_SENT); // stale completion cannot acknowledge exit
  d.alerts=PD_AL_CMD_DONE;d.s1=PD_S1_CMD_BUSY;_finish_existing_dp(&d);C(d.state==DOCK_EXIT_DP_SENT);
  d.s1=PD_S1_INSERT;d.dp=0x4000;d.plug_seen=true;_finish_existing_dp(&d);
  C(d.state==DOCK_WAIT_PLUG&&!d.dp_on&&!d.plug_seen&&d.dp_prepared);
- C(_prepare_existing_dp(&d)&&commands==1); // run-021/022 inherited mode cleaned before Discover Identity
+ C(_prepare_existing_dp(&d)&&commands==1); // actual enabled mode cleaned before Discover Identity
  d.dp=0x4182;C(_prepare_existing_dp(&d)&&commands==1); // TV-connected signal may stay high after acknowledged exit
  reset(&d);d.dp=0xC082;C(!_prepare_existing_dp(&d));d.alerts=PD_AL_CMD_DONE;_finish_existing_dp(&d);
  C(!_prepare_existing_dp(&d)&&d.state==DOCK_FAILED&&strstr(d.fail,"did not exit")); // no repeated commands if bits remain
- reset(&d);d.dp=0x4182;_prepare_existing_dp(&d);now+=2501;_finish_existing_dp(&d);
+ reset(&d);d.dp=0xC082;_prepare_existing_dp(&d);now+=2501;_finish_existing_dp(&d);
  C(d.state==DOCK_FAILED&&d.dp_on); // caller must still clean a timed out exit
- reset(&d);d.dp=0x4182;_prepare_existing_dp(&d);d.alerts=PD_AL_CMD_DONE;d.s1=2<<PD_S1_LASTCMD_SHIFT;_finish_existing_dp(&d);
+ reset(&d);d.dp=0xC082;_prepare_existing_dp(&d);d.alerts=PD_AL_CMD_DONE;d.s1=2<<PD_S1_LASTCMD_SHIFT;_finish_existing_dp(&d);
  C(d.state==DOCK_FAILED&&strstr(d.fail,"refused"));
- reset(&d);now=UINT32_MAX-100;d.dp=0x4182;_prepare_existing_dp(&d);now=50;_finish_existing_dp(&d);C(d.state==DOCK_EXIT_DP_SENT);
+ reset(&d);now=UINT32_MAX-100;d.dp=0xC082;_prepare_existing_dp(&d);now=50;_finish_existing_dp(&d);C(d.state==DOCK_EXIT_DP_SENT);
  now=3000;_finish_existing_dp(&d);C(d.state==DOCK_FAILED);
  reset(&d);d.dp=0x4002;C(_prepare_existing_dp(&d)&&!commands); // configured pin latch alone is not active video
+ reset(&d);d.dp=0x4182;d.s1=0x46F0;C(_prepare_existing_dp(&d)&&!commands&&!d.dp_on); // run-026/028: TV connected with DP already disabled must not issue refused exit
  printf("PASS: %u inherited-DP assertions; clean boot, stale mode, ack/busy, timeout, refusal and timer wrap.\n",checks);
 }

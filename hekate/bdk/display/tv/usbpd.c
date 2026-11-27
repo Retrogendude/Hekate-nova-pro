@@ -621,7 +621,7 @@ static void _cmd_fail(dock_t *d, const char *what, int r)
  * reset, then wait for completion and the ordinary cable settling delay. */
 static bool _prepare_existing_dp(dock_t *d)
 {
-    u16 active = d->dp & (PD_DP_EN | PD_DP_SIGNAL_ON);
+    u16 active = d->dp & PD_DP_EN;
     if (!d->dp_prepared) {
         d->dp_prepared = true;
         if (active) {

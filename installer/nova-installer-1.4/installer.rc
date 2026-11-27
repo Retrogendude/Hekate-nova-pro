@@ -1,11 +1,11 @@
 #include <windows.h>
 1 ICON "nova.ico"
 1 RT_MANIFEST "app.manifest"
-101 RCDATA "C:/Users/Retrogen/Documents/Codex/2026-11-04/je-s/work/nova-installer-1.3/build/payload4.cab"
-102 RCDATA "C:/Users/Retrogen/Documents/Codex/2026-11-04/je-s/work/nova-installer-1.3/build/payload8.cab"
+101 RCDATA "C:/Users/Retrogen/Documents/Codex/2026-11-04/je-s/work/nova-installer-1.4/build/payload4.cab"
+102 RCDATA "C:/Users/Retrogen/Documents/Codex/2026-11-04/je-s/work/nova-installer-1.4/build/payload8.cab"
 1 VERSIONINFO
-FILEVERSION 34,0,6,3
-PRODUCTVERSION 34,0,6,3
+FILEVERSION 34,0,7,4
+PRODUCTVERSION 34,0,7,4
 FILEOS VOS_NT_WINDOWS32
 FILETYPE VFT_APP
 BEGIN
@@ -15,9 +15,9 @@ BEGIN
   BEGIN
    VALUE "CompanyName", "Retrogen\0"
    VALUE "FileDescription", "Hekate Nova Pro - installation sur carte SD\0"
-   VALUE "FileVersion", "34 alpha 6 - Installer 1.3\0"
+   VALUE "FileVersion", "34 alpha 7 - Installer 1.4\0"
    VALUE "ProductName", "Hekate Nova Pro\0"
-   VALUE "ProductVersion", "34 alpha 6\0"
+   VALUE "ProductVersion", "34 alpha 7\0"
   END
  END
  BLOCK "VarFileInfo"

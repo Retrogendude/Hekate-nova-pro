@@ -1,7 +1,7 @@
 """Compile actual checked copier/activation code against fault-injected fake I/O."""
 from pathlib import Path
 import re,subprocess,json,hashlib
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha6';D=W/'nova34a6-copy-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha7';D=W/'nova34a7-copy-check';D.mkdir(exist_ok=True)
 source=(P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_text()
 def fn(name):
  m=re.search(r'^(?:static )?(?:int|bool|void) '+name+r'\(',source,re.M);assert m,name
@@ -95,4 +95,4 @@ int main(void){
 (D/'test.c').write_text(code)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-Wall','-Wextra',str(D/'test.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a6-copy-check.json').write_text(json.dumps({'passed':True,'result':r.stdout.strip(),'actual_c':True,'raw_data_transfer_mocked':True,'hardware_test':False,'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_bytes()).hexdigest()},indent=2))
+(W/'nova34a7-copy-check.json').write_text(json.dumps({'passed':True,'result':r.stdout.strip(),'actual_c':True,'raw_data_transfer_mocked':True,'hardware_test':False,'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/fe_emummc_tools.c').read_bytes()).hexdigest()},indent=2))

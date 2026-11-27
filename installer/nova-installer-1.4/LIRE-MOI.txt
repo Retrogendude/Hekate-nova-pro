@@ -1,0 +1,15 @@
+HEKATE NOVA PRO v34 alpha 7 — INSTALLATEUR WINDOWS 1.4
+
+1. Lancez Hekate-Nova-Pro-v34-alpha7-Installation-v1.4.exe sur Windows 64 bits.
+2. Choisissez la lettre SD, vérifiez son nom et sa capacité puis gardez Standard pour une console normale. 8 Go expérimental est réservé à une console physiquement modifiée en RAM.
+3. Installez, attendez la confirmation puis éjectez la carte. Démarrez avec le payload alpha7 de ce pack.
+
+L'installateur copie et vérifie les 167 fichiers intégrés. Il ne formate pas et n'injecte pas le payload. Configurations, appairages et personnalisations existants sont conservés. Les composants remplacés sont sauvegardés dans nova-backups avec rapport installation.txt. Carte FAT32/exFAT requise ; aucun téléchargement supplémentaire. Exécutable non signé.
+
+Cette alpha corrige le contrôle qui coupait une image reçue avec certains docks malgré SINK_STATUS nul. Elle utilise alors une preuve supplémentaire : progression fraîche du compteur CRC du récepteur, lectures/écritures AUX réussies, source active, erreurs valides à zéro et cinq lectures consécutives de voies alignées. Les simples valeurs CRC anciennes ne suffisent pas. Exit DP n'est plus envoyé pour SIGNAL_ON seul quand le mode DP est déjà arrêté.
+
+Débits de repli, service TV dans les opérations longues, journaux différés et protections restent présents. Aucun reset PD forcé ni modification des tensions.
+
+Compilation ARM, en-têtes, 54 scénarios de service, 957 assertions du pilote et intégration aux boucles longues réussis sur PC. Contrôles de stockage repris de l'alpha6 sur sources identiques vérifiées. L'installateur est testé sur dossiers Windows avec les deux vrais packs, sans écriture sur SD physique. Aucun essai HDMI de cette alpha ici.
+
+Tester d'abord une image permanente au démarrage sur dock officiel puis après retrait/remise. En cas de coupure, transmettre bootloader/tv-test/last-run.txt et les derniers run-*.txt. Les rapports doivent indiquer 34-alpha7 ; la preuve alternative est signalée par 'video stream confirmed by fresh sink CRC frames and stable lanes'. La stabilité de cette version reste à confirmer sur console avant les essais de partitionnement/copie ; sauvegarder la SD avant partitionnement.

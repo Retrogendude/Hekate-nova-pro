@@ -1,0 +1,14 @@
+Hekate Nova Pro v34 alpha 7 — maintien d'une image réellement reçue
+
+Retours alpha6 run-025 à run-029 : l'image apparaît puis disparaît, activation régulière. HBR2 perd l'égalisation. En HBR/RBR, les voies sont alignées, les compteurs d'erreurs valides sont à zéro et le récepteur compte des captures CRC en RBR, mais SINK_STATUS reste nul. L'alpha6 coupait alors la sortie : son contrôle de synchronisation était trop strict pour ce dock.
+
+- Validation alternative par des captures CRC fraîches du récepteur si SINK_STATUS reste nul. Exiger l'avancement du compteur après activation de la capture, toutes les lectures/écritures AUX réussies, une source active, des compteurs d'erreurs valides à zéro et cinq lectures consécutives de voies alignées (80 ms). Une ancienne valeur CRC non nulle ne suffit pas.
+- Le début du compteur est lu après activation, pour éviter de prendre sa remise à zéro pour des images reçues. La capture est arrêtée après le contrôle et un échec de cet arrêt invalide la preuve.
+- La présence d'une TV seule (SIGNAL_ON, cas 4182 des run-026/028) ne déclenche plus Exit DP lorsque DP_EN est déjà nul. Cela évite la commande refusée par le contrôleur pour un mode déjà arrêté.
+- Conservation du débit initial puis des replis HBR/RBR, du nettoyage d'un vrai mode DP actif et des arrêts au retrait/commande manuelle. Service TV pendant les opérations longues et journaux différés conservés.
+
+Compilation ARM, en-têtes, 54 scénarios du service, 957 assertions du pilote et intégration aux boucles longues vérifiés sur PC. Les contrôles de copie/partitionnement/FatFs de l'alpha6 restent applicables aux sources identiques, vérifiées par empreintes. Aucun essai HDMI ni écriture sur une SD physique ici. Le retour d'image alpha6 est celui rapporté par l'utilisateur ; la stabilité alpha7 reste à confirmer.
+
+Installer le pack complet et employer son payload alpha7. Garder les réglages existants et Standard pour une console non modifiée en RAM. Tester d'abord la permanence de l'image au démarrage et après retrait/remise sur dock officiel. Les nouveaux journaux doivent indiquer 34-alpha7 ; si la validation alternative est utilisée, ils contiennent 'video stream confirmed by fresh sink CRC frames and stable lanes'. En cas de coupure, transmettre les derniers run-*.txt et last-run.txt de bootloader/tv-test. Valider l'affichage avant de tester les opérations longues. Sauvegarder les données SD avant partitionnement.
+
+Le pack 8GB expérimental reste destiné aux consoles physiquement modifiées. Aucun upload GitHub de cette alpha.

@@ -1498,8 +1498,10 @@ static int _sor_attach(dpout_video_t *v, const dpout_mode_t *m)
 static int _wait_sink_sync(dpout_video_t *v)
 {
     u32 start = get_tmr_ms();
+    u32 aligned_samples = 0;
     bool answered = false;
     v->in_sync = false;
+    v->sync_via_crc = false;
     do {
         u8 status[4] = { 0 };
         if (!dpout_hpd()) {
@@ -1510,14 +1512,26 @@ static int _wait_sink_sync(dpout_video_t *v)
             answered = true;
             memcpy(v->lane_status, status, 3);
             memcpy(v->dpcd_200 + 2, status, sizeof(status));
-            bool aligned = (status[2] & ALIGN_DONE) != 0;
+            bool aligned = v->lanes >= 1 && v->lanes <= 2 && (status[2] & ALIGN_DONE) != 0;
             for (u32 lane = 0; lane < v->lanes; lane++)
                 aligned &= ((status[lane / 2] >> (4 * (lane & 1))) & 7) == 7;
             if (aligned && (status[3] & SINK_PORT0_IN_SYNC)) {
                 v->in_sync = true;
                 return 0;
             }
-        }
+            aligned_samples = aligned ? aligned_samples + 1 : 0;
+            /* Some converters keep SINK_STATUS clear even while delivering
+             * pictures. Accept freshly counted sink CRC frames only with a
+             * working source, zero valid symbol counters and five consecutive
+             * aligned lane reads (80 ms). A stale/nonzero CRC alone is not proof. */
+            if (aligned_samples >= 5 && v->sink_crc_valid && v->sink_crc_frames && v->dc_frames &&
+                v->sor_crc_valid && v->sym_err[0] == 0x8000 &&
+                (v->lanes == 1 || v->sym_err[1] == 0x8000)) {
+                v->sync_via_crc = true;
+                return 0;
+            }
+        } else
+            aligned_samples = 0;
         msleep(20);
     } while ((u32)(get_tmr_ms() - start) < 1000);
     s_printf(v->why, answered ? "video stream not synchronized after 1000 ms"
@@ -1525,9 +1539,47 @@ static int _wait_sink_sync(dpout_video_t *v)
     return 12;
 }
 
+/* Capture real progress after enabling CRC, rather than subtracting a count
+ * left over from a previous capture. Every read/write must succeed; always
+ * attempt to stop our capture. Missing/unchanged counters or all-ones control
+ * bytes never verify a stream. Zero CRC components can be valid. */
+static void _read_sink_crc(dpout_video_t *v)
+{
+    u8 b = 0, c0, d[6] = { 0 };
+    const u8 allowed = TEST_CRC_SUPPORTED | TEST_CRC_COUNT_MASK;
+    v->sink_crc_test = v->sink_crc_valid = false;
+    v->sink_crc_frames = 0;
+    memset(v->sink_crc, 0, sizeof(v->sink_crc));
+    if (dpout_dpcd_read(DPCD_TEST_SINK_MISC, &b, 1) ||
+        !(b & TEST_CRC_SUPPORTED) || (b & ~allowed))
+        return;
+    v->sink_crc_test = true;
+    b = TEST_SINK_START;
+    if (dpout_dpcd_write(DPCD_TEST_SINK, &b, 1))
+        goto stop;
+    if (dpout_dpcd_read(DPCD_TEST_SINK_MISC, &b, 1) ||
+        !(b & TEST_CRC_SUPPORTED) || (b & ~allowed))
+        goto stop;
+    c0 = b & TEST_CRC_COUNT_MASK;
+    msleep(100);
+    if (dpout_dpcd_read(DPCD_TEST_SINK_MISC, &b, 1) ||
+        !(b & TEST_CRC_SUPPORTED) || (b & ~allowed) ||
+        dpout_dpcd_read(DPCD_TEST_CRC, d, sizeof(d)))
+        goto stop;
+    v->sink_crc_frames = ((b & TEST_CRC_COUNT_MASK) - c0) & TEST_CRC_COUNT_MASK;
+    v->sink_crc[0] = d[0] | (d[1] << 8);
+    v->sink_crc[1] = d[2] | (d[3] << 8);
+    v->sink_crc[2] = d[4] | (d[5] << 8);
+    v->sink_crc_valid = v->sink_crc_frames != 0;
+stop:
+    b = 0;
+    if (dpout_dpcd_write(DPCD_TEST_SINK, &b, 1))
+        v->sink_crc_valid = false;
+}
+
 static void _video_check(dpout_video_t *v)
 {
-    u8 b = 0, d[6];
+    u8 d[6] = { 0 };
     char line[160];
 
     /* The head: frame-end and underflow events over three frames, and
@@ -1577,30 +1629,18 @@ static void _video_check(dpout_video_t *v)
      * dock did, every time) and lock again: the later read counts too. */
     if (v->dpcd_200[5] & SINK_PORT0_IN_SYNC)
         v->in_sync = true;
-    dpout_dpcd_read(DPCD_SYMBOL_ERRORS, d, 4);
+    memset(d, 0xFF, sizeof(d));
+    if (dpout_dpcd_read(DPCD_SYMBOL_ERRORS, d, 4))
+        memset(d, 0xFF, sizeof(d));
     v->sym_err[0] = d[0] | (d[1] << 8);
     v->sym_err[1] = d[2] | (d[3] << 8);
-    if (!dpout_dpcd_read(DPCD_TEST_SINK_MISC, &b, 1) && (b & TEST_CRC_SUPPORTED)) {
-        u8 c0 = b & TEST_CRC_COUNT_MASK;
-        v->sink_crc_test = true;
-        b = TEST_SINK_START;
-        dpout_dpcd_write(DPCD_TEST_SINK, &b, 1);
-        msleep(100);
-        dpout_dpcd_read(DPCD_TEST_SINK_MISC, &b, 1);
-        v->sink_crc_frames = ((b & TEST_CRC_COUNT_MASK) - c0) & TEST_CRC_COUNT_MASK;
-        dpout_dpcd_read(DPCD_TEST_CRC, d, 6);
-        v->sink_crc[0] = d[0] | (d[1] << 8);
-        v->sink_crc[1] = d[2] | (d[3] << 8);
-        v->sink_crc[2] = d[4] | (d[5] << 8);
-        b = 0;
-        dpout_dpcd_write(DPCD_TEST_SINK, &b, 1);
-    }
+    _read_sink_crc(v);
     s_printf(line, "check: dc frames %d pclk %d kHz int %08X crc %08X, sor crc %08X valid %d, dpcd 200 %02X %02X %02X %02X %02X %02X",
              v->dc_frames, v->pclk_khz, v->dc_int, v->dc_crc, v->sor_crc, v->sor_crc_valid, v->dpcd_200[0], v->dpcd_200[1],
              v->dpcd_200[2], v->dpcd_200[3], v->dpcd_200[4], v->dpcd_200[5]);
     _vlog(v, line);
-    s_printf(line, "check: symbol errors %04X %04X, sink crc test %d frames %d crc %04X %04X %04X",
-             v->sym_err[0], v->sym_err[1], v->sink_crc_test, v->sink_crc_frames, v->sink_crc[0],
+    s_printf(line, "check: symbol errors %04X %04X, sink crc test %d valid %d frames %d crc %04X %04X %04X",
+             v->sym_err[0], v->sym_err[1], v->sink_crc_test, v->sink_crc_valid, v->sink_crc_frames, v->sink_crc[0],
              v->sink_crc[1], v->sink_crc[2]);
     _vlog(v, line);
 }
@@ -1945,7 +1985,8 @@ static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb, u8 max_
         _vlog(v, v->why);
         return 12; /* Caller tears down the head before a bounded restart. */
     }
-    _vlog(v, "video stream synchronization confirmed");
+    _vlog(v, v->sync_via_crc ? "video stream confirmed by fresh sink CRC frames and stable lanes"
+                           : "video stream synchronization confirmed");
     return 0;
 }
 

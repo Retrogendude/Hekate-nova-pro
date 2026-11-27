@@ -4,5 +4,6 @@
   "storage_and_ui_mocked": true,
   "hardware_test": false,
   "result": "PASS: 3664 actual-C transaction/table assertions: 56 model/OS/layout cases, cancel, all 16 write failures, 19 read failures, readback corruption, card change and manual exclusion",
-  "source_sha256": "8f131c15fae94d20c0b528f724bb948195db02c7444431cad15f589b8f83bc04"
+  "source_sha256": "8f131c15fae94d20c0b528f724bb948195db02c7444431cad15f589b8f83bc04",
+  "inherited_from": "34-alpha6; verified identical tested source files"
 }

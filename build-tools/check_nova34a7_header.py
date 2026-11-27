@@ -1,7 +1,7 @@
 """Check the actual loader contract and exercise the linker placement guard."""
 from pathlib import Path
 import subprocess,json,re,hashlib
-w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v34-alpha6';d=w/'nova34a6-tests';d.mkdir(exist_ok=True)
+w=Path(__file__).resolve().parent;p=w/'hekate-nova-pro-v34-alpha7';d=w/'nova34a7-tests';d.mkdir(exist_ok=True)
 arm=Path('C:/devkitPro/devkitARM/bin');cc=arm/'arm-none-eabi-gcc.exe'
 nyx=(p/'output/nyx.bin').read_bytes();assert nyx[0x98:0x9f]==b'GCTC195'
 for name in ('hekate.bin','hekate_unc.bin'):assert (p/'output'/name).read_bytes()[0x118:0x11f]==b'ICTC655'
@@ -22,5 +22,5 @@ for section,should_pass in [('.text._start',True),('.text.nyx_entry',False)]:
 result={'passed':True,'nyx_metadata_offset':'0x98','nyx_version':'1.9.5','loader_metadata_offset':'0x118','loader_version':'6.5.5',
     'old_defect_reproduced':True,'extra_c_callback_does_not_shift_header':True,'invalid_entry_growth_rejected_by_linker':True,
     'source_sha256':{n:hashlib.sha256((p/n).read_bytes()).hexdigest()for n in ('nyx/nyx_gui/start.S','nyx/nyx_gui/link.ld')}}
-(w/'nova34a6-header-check.json').write_text(json.dumps(result,indent=2))
+(w/'nova34a7-header-check.json').write_text(json.dumps(result,indent=2))
 print('PASS: Nyx/loader binary versions and fixed offsets; old defect reproduced; linker rejects shifted headers.')

@@ -1,6 +1,6 @@
 from pathlib import Path
 import subprocess,json,re
-w=Path('work').resolve();p=w/'hekate-nova-pro-v34-alpha6';d=w/'nova34a6-tv-tests'
+w=Path('work').resolve();p=w/'hekate-nova-pro-v34-alpha7';d=w/'nova34a7-tv-tests'
 def fn(s,name):
  m=re.search(r'^(?:static )?(?:void|u8) '+name+r'\([^;]*?\)\s*\n\{',s,re.M);assert m,name
  a=m.start();b=s.index('\n}',m.end())+2;return s[a:b]
@@ -45,4 +45,4 @@ r=subprocess.run([str(w/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2',str
 r=subprocess.run([str(d/'integration.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
 for name in ('frontend/fe_emummc_tools.c','frontend/gui_tools_partition_manager.c'):
  assert 'manual_system_maintenance(true)'in(p/'nyx/nyx_gui'/name).read_text()
-(w/'nova34a6-tv-integration.json').write_text(json.dumps({'passed':True,'actual_c':True,'physical_hardware':False,'result':r.stdout.strip()},indent=2))
+(w/'nova34a7-tv-integration.json').write_text(json.dumps({'passed':True,'actual_c':True,'physical_hardware':False,'result':r.stdout.strip()},indent=2))

@@ -10,5 +10,6 @@
     "nyx/nyx_gui/libs/fatfs/ffconf.h": "018b5ce41e55cffc35ec4103185ae0db9ed03c24bf6a40eac9bc7fbbf3cc6bae",
     "bdk/libs/fatfs/ff.c": "e5e843024ca2fb184f0b904aff247dee2d89b4394b41149c82e923a250678309",
     "bdk/libs/fatfs/ffunicode.c": "95d027eb07ccf9cd8767ae0944253d655c2247ba69da0255c9094e266b5c63a2"
-  }
+  },
+  "inherited_from": "34-alpha6; verified identical tested source files"
 }
