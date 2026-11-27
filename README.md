@@ -4,9 +4,9 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Préversion v34-alpha3 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha3)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Préversion v34-alpha4 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha4)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-Choix Linux/Android 16 Go minimum ou 32 Go recommandé, accord d’effacement, aide et erreurs de stockage détaillées. Signalement des cartes suspectes selon l’indicateur Hekate existant. Les essais PC et retours console sont distingués dans les notes de chaque version.
+Correction du faux échec emummc.ini causé par les fins de ligne FatFs ; installateur Windows autonome et correction du dossier Payloads. Les essais PC et retours console sont distingués dans les notes de chaque version.
 
 ![Halo à deux couleurs — rendu du code sur PC](docs/images/preview-v33.3/colors.png)
 
@@ -60,7 +60,7 @@ Aucune affiliation avec Nintendo, CTCaer, Creased ou BlueKitchen n’est revendi
 
 ## Rapports TV
 
-La v34-alpha3 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
+La v34-alpha4 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
 
 ## Rapports Bluetooth
 

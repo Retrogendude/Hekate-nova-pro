@@ -5,5 +5,5 @@
   "storage_mocked": true,
   "hardware_test": false,
   "result": "PASS: 76 actual-C full-size transfer assertions: write-before-readback, all 3 areas, multi-chunk, retries, cancel, corrupt/unreadable SD",
-  "source_sha256": "e875e96a62f1f9a04c76582141f9361cdfb8dcef3da68165b353243f4a17c05a"
+  "source_sha256": "bc6459e47ef502aae6e0dfe2cf013f57f4201f3a0200ee4d3b2632f4f04d0be3"
 }

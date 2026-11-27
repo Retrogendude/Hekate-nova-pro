@@ -84,10 +84,13 @@ int save_emummc_cfg_checked(u32 part_idx,u32 sector_start,const char *path)
     s_printf(text+strlen(text),"\nid=0x%X\nnintendo_path=%s%s\n",id,path?path:"",path?"/Nintendo":"");
     FIL fp;
     if(f_open(&fp,"emuMMC/emummc.ini.nova.tmp",FA_WRITE|FA_CREATE_ALWAYS)!=FR_OK)return 1;
-    if(f_puts(text,&fp)!=(int)strlen(text))goto fail;
+    /* f_puts converts LF to CRLF with Nyx FF_USE_STRFUNC=2. Use raw bytes
+     * so the byte count and the subsequent readback compare exactly. */
+    UINT written=0;u32 length=strlen(text);
+    if(f_write(&fp,text,length,&written)!=FR_OK||written!=length)goto fail;
     if(f_sync(&fp)!=FR_OK){f_close(&fp);return 1;}
     if(f_close(&fp)!=FR_OK)return 1;
-    char check[512];UINT received=0;u32 length=strlen(text);
+    char check[512];UINT received=0;
     if(f_open(&fp,"emuMMC/emummc.ini.nova.tmp",FA_READ)!=FR_OK)return 1;
     bool matches=f_read(&fp,check,length,&received)==FR_OK&&received==length&&!memcmp(check,text,length);
     if(f_close(&fp)!=FR_OK||!matches)return 1;

@@ -1,5 +1,5 @@
 {
-  "version": "34-alpha3",
+  "version": "34-alpha4",
   "passed": true,
   "base": "Hekate 6.5.5 / Nyx 1.9.5",
   "wizard_cases": 696,
@@ -8,7 +8,9 @@
   "planner_assertions": 3539,
   "transaction_assertions": 3664,
   "transfer_assertions": 76,
-  "copy_activation_assertions": 254,
+  "copy_activation_assertions": 246,
+  "real_nyx_fatfs_assertions": 147,
+  "gui_plan_checks_inherited_from": "34-alpha3",
   "automatic_emummc_copy": true,
   "linux_android_installation": false,
   "partitioning_requires_existing_confirmations": true,
@@ -30,7 +32,7 @@
   ],
   "source_sha256": {
     ".gitignore": "2888f5a39500c55ca6e3ce1dc51758281a20ef0d9c42a5b5f7dcc31360937db2",
-    "ASSISTANT-V34-ALPHA3.txt": "5b97e6b12a0e18dfc589f6d7ca4ba8b84ab6bf4a0eec68d12e3cf48b1a7f6140",
+    "ASSISTANT-V34-ALPHA4.txt": "3daf2b6f212a2ab0dc1708ee5e990bdc56babb34979dcd2ba7d7adbed832e902",
     "AUDIT-NOVA30-CORE.md": "214b6bd340b1ac4b78ef3336d6f4eca1553cba39e13004f60d3bb3353cd8c5c8",
     "AUDIT-NOVA30-GUI.md": "bcc8ade1b6cb90049a5e9dad62c4c099f802b4b91f1202280859c71e17cfcd8b",
     "AUDIT-NOVA30-WIRELESS.md": "bbe7ec7c41e8ff72b59d2b114e5121cdb554f24ab7bf4dca75f6cdb42d96aa5e",
@@ -172,7 +174,7 @@
     "nyx/nyx_gui/localization_tv_v19.json": "9fa8e2826699b26aab7729d79b5c79449cf1334fc47b378ca8f2a5b3655c369b",
     "nyx/nyx_gui/localization_zh_draft.json": "47937521bd1960169775ab1babf7714c6651e054d9af7c4739ec47591b94475d",
     "nyx/nyx_gui/localization_zh_reviewed.json": "8823feaa7e04ec3357d54d3ced588dcf9c3f9d9906edb39d9a7634e861318e71",
-    "nyx/nyx_gui/nova_version.h": "8e2f6d356fea16d99e4ff5db7604db0fd4674b46f8588fcf2d5c345cd12711ad",
+    "nyx/nyx_gui/nova_version.h": "298323886169789a4672a39fc9fd850cc2701ecbc53853045ac9b65d91658303",
     "nyx/nyx_gui/nyx.c": "7d198cbf3ad348f22c90f707dc793864a3568e5b7b6719aa09e2b382423dcaab",
     "nyx/nyx_gui/start.S": "7f7102bd8399cefd219d780cf2aa2f40d9c42f6969dbb53e948bb3cab9c87956",
     "nyx/resources/icon_lakka.bmp": "5b00a2f6b58569ddaa5c9475a94794a59dbdefd979ba0cbef2fbb43dc3ed1f39",
@@ -202,7 +204,7 @@
     "nyx/nyx_gui/fonts/unicode_fonts.h": "d80abd94184b43bb7f611a2b93d19f7d3525aa81dd26839be0378cbb8f25c756",
     "nyx/nyx_gui/frontend/fe_emmc_tools.c": "78195d28cb66275607e34276d60042fd659636dc721bbead27353281f4f5d3c4",
     "nyx/nyx_gui/frontend/fe_emmc_tools.h": "8bf89ad8f517eac74fe898df6855db7e1ecb819664a201f72bf7f5d27cfab9b1",
-    "nyx/nyx_gui/frontend/fe_emummc_tools.c": "e875e96a62f1f9a04c76582141f9361cdfb8dcef3da68165b353243f4a17c05a",
+    "nyx/nyx_gui/frontend/fe_emummc_tools.c": "bc6459e47ef502aae6e0dfe2cf013f57f4201f3a0200ee4d3b2632f4f04d0be3",
     "nyx/nyx_gui/frontend/fe_emummc_tools.h": "1e8af802745878d63a1575d1f2369da680acf8cdf533f312ac0d0cce94cf92d5",
     "nyx/nyx_gui/frontend/gui.c": "f64197c15870555185e931924d95faf6711f1f1cfa2734bba98b3783c4e8affc",
     "nyx/nyx_gui/frontend/gui.h": "0567a3d285f75cd75201282494b50aff62d55fc43d0142829128d7f6003cba6e",
@@ -948,8 +950,8 @@
       "sha256": "ed851685e6248e0e1219a6b60ac04808234cf6e3a0a75c7a8a4d1e94946c6484"
     },
     "nyx.bin": {
-      "bytes": 2448177,
-      "sha256": "cc6b5c3f7fb9dc1c0aeab4e18cda27a4f15faa975d0825221917a0a8c67a7932"
+      "bytes": 2448209,
+      "sha256": "69d1811722ec56cebdf50c02371fd872442d135077b0e0d9d09328b16e2f9172"
     }
   }
 }

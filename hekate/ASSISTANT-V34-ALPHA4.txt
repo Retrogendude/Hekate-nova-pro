@@ -1,4 +1,16 @@
-Hekate Nova Pro v34 alpha 3 — assistant d’installation automatisé
+CORRECTIF V34 ALPHA 4 — BLOCAGE AVANT PARTITIONNEMENT
+
+La v34 alpha 3 pouvait afficher une impossibilité d’enregistrer emuMMC/emummc.ini sur une carte pourtant accessible. La conversion automatique des fins de ligne par la fonction d’écriture de texte ne correspondait pas à la comparaison de relecture : le contrôle échouait à tort avant le formatage.
+
+La configuration est désormais écrite en octets exacts, avec contrôle du nombre d’octets, synchronisation, fermeture puis relecture identique avant remplacement. Les protections contre les erreurs réelles restent actives.
+
+Installer en fusionnant le dossier bootloader fourni et utiliser le payload de ce pack. Garder ses configurations et fichiers personnels. Il n’est pas nécessaire d’effacer emummc.ini, de supprimer ses sauvegardes ou de formater manuellement pour installer ce correctif.
+
+Validation ciblée : 147 assertions avec le vrai code FatFs et la configuration de Nyx, sur des disques virtuels FAT32 et exFAT. Le défaut de la v34 alpha 3 est reproduit, puis sa correction contrôlée : première désactivation, désactivations répétées, activation brute et par fichiers, remplacement d’un ancien fichier CRLF et refus réel d’écriture protégée. 246 assertions de copie/activation avec erreurs et écritures courtes simulées ; 3664 de transaction/tables et 76 de transfert. Les contrôles de l’interface et du calcul des tailles sont repris de l’alpha 3 car ces sources sont inchangées ; ils ne constituent pas une nouvelle validation sur console.
+
+Aucun disque physique n’a été écrit par les tests. L’essai sur Switch reste à effectuer avec une SD entièrement sauvegardée avant toute confirmation de partitionnement.
+
+Hekate Nova Pro v34 alpha 4 — assistant d’installation automatisé
 
 Nouveautés
 Le bouton Accueil est agrandi et porte le texte « Assistant d’installation automatisé » avec une icône. Il existe dans les vues tuiles et carrousel.
@@ -26,7 +38,7 @@ Conserver vos nyx.ini, hekate_ipl.ini, appairages, fonds et icônes. Fusionner l
 Pack standard : consoles à mémoire normale. Pack 8GB : uniquement consoles physiquement modifiées, expérimental ; ce changement ne valide pas le matériel 8 Go.
 
 Validation et limites
-Compilation ARM et en-têtes Hekate 6.5.5 / Nyx 1.9.5 vérifiés. 696 cas de parcours et accueil en huit langues, 48 scènes d’aide et de blocage sur carte suspecte, 683 scènes de régression, 3539 assertions du calcul et des cibles, 3664 assertions de transaction/écriture des tables, 76 assertions de transfert et 254 assertions de copie/activation avec erreurs simulées réussis sur PC.
+Compilation ARM et en-têtes Hekate 6.5.5 / Nyx 1.9.5 vérifiés. 696 cas de parcours et accueil en huit langues, 48 scènes d’aide et de blocage sur carte suspecte, 683 scènes de régression, 3539 assertions du calcul et des cibles, 3664 assertions de transaction/écriture des tables, 76 assertions de transfert et 246 assertions de copie/activation avec erreurs simulées réussis sur PC.
 Les interfaces sont rendues depuis le code LVGL. Les entrées/sorties des tests sont simulées ; aucun effacement ou transfert réel sur une Switch n’a été exécuté ici. Faire d’abord un essai avec une carte intégralement sauvegardée. Cette alpha locale n’est pas publiée sur GitHub.
 
 Aide et tailles personnalisées

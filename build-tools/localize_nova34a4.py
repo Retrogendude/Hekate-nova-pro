@@ -1,6 +1,6 @@
 from pathlib import Path
 import json,re,struct
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha3/nyx/nyx_gui'
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha4/nyx/nyx_gui'
 rows=[
 ['Installation assistant','Assistant d’installation','Asistente de instalación','Assistente installazione','Мастер установки','Einrichtungsassistent','Assistente de instalação','安装向导'],
 ['Step %d / 3','Étape %d / 3','Paso %d / 3','Passaggio %d / 3','Шаг %d / 3','Schritt %d / 3','Passo %d / 3','第 %d 步 / 共 3 步'],
@@ -35,5 +35,5 @@ for row in rows:assert len(row)==8;c[row[0]]=row
 q=lambda s:json.dumps(s,ensure_ascii=False);keys=sorted(c);lines=['/* Nova v34 alpha: en fr es it ru de pt zh-CN. */','static const locale_entry locale_catalog[] = {']
 for k in keys:lines.append('    {'+q(k)+', {'+', '.join(map(q,c[k]))+'}},')
 lines.append('};');r=[i for i,k in enumerate(keys)if '%'in k and len(re.findall('[A-Za-z]',k))>=5];lines.append('static const uint16_t locale_pattern_rows[] = {'+', '.join(map(str,r))+'};');first=[keys[i].encode()[0]for i in r];lines.append('static const uint16_t locale_pattern_start[257] = {'+', '.join(str(sum(ch<code for ch in first))for code in range(257))+'};');(P/'localization_catalog.inc').write_text('\n'.join(lines)+'\n',encoding='utf-8')
-characters=sorted({ord(ch)for v in c.values()for ch in v[7]if ord(ch)>=32});(W/'nova34a3-zh-characters.json').write_text(json.dumps(characters))
+characters=sorted({ord(ch)for v in c.values()for ch in v[7]if ord(ch)>=32});(W/'nova34a4-zh-characters.json').write_text(json.dumps(characters))
 print('Added',len(rows),'wizard strings in 8 locales; Chinese corpus',len(characters))

@@ -24,5 +24,7 @@
     "nyx/nyx_gui/frontend/gui_nova.c": "ffd36d31a611e14e41446688420bd43487106846ddf2c6d8c598484aa2c1c924",
     "nyx/nyx_gui/frontend/gui_nova_theme.c": "78f70433af95af8be353e2d4975daee2abb6f8ab235d4ab27f88533eba20551b",
     "nyx/nyx_gui/localization_catalog.inc": "7119cd44a4bd2fe28479c8ba6209d9e04a6c1a57ff9dd84dd66c4fa0d2af6bbe"
-  }
+  },
+  "inherited_from": "34-alpha3",
+  "inherited_reason": "Tested GUI/planning inputs are byte-identical; hotfix changes config writer only. Version label incremented."
 }

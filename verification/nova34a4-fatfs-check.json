@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "real_nyx_fatfs_c": true,
+  "real_nyx_ffconf": true,
+  "virtual_disk_only": true,
+  "physical_sd_written": false,
+  "result": "PASS: 147 actual Nyx FatFs assertions; v34-alpha3 CRLF false failure reproduced on FAT32/exFAT; fixed writer, first/repeated disable, raw/file activation, old CRLF backup and real write-protect refusal",
+  "source_sha256": {
+    "nyx/nyx_gui/frontend/fe_emummc_tools.c": "bc6459e47ef502aae6e0dfe2cf013f57f4201f3a0200ee4d3b2632f4f04d0be3",
+    "nyx/nyx_gui/libs/fatfs/ffconf.h": "018b5ce41e55cffc35ec4103185ae0db9ed03c24bf6a40eac9bc7fbbf3cc6bae",
+    "bdk/libs/fatfs/ff.c": "e5e843024ca2fb184f0b904aff247dee2d89b4394b41149c82e923a250678309",
+    "bdk/libs/fatfs/ffunicode.c": "95d027eb07ccf9cd8767ae0944253d655c2247ba69da0255c9094e266b5c63a2"
+  }
+}

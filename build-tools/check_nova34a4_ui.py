@@ -2,8 +2,8 @@
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor,as_completed
 import os,subprocess,json,hashlib,shutil,time
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha3';D=W/'lvgl-preview-nova34a3'
-F=W/'test-sd-nova34a3/nyx/nyx_gui/fonts/sd'
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha4';D=W/'lvgl-preview-nova34a4'
+F=W/'test-sd-nova34a4/nyx/nyx_gui/fonts/sd'
 for p in (P/'nyx/nyx_gui/fonts/sd').glob('*.nyxf'):shutil.copy2(p,F/p.name)
 modes=[('home',0),('carousel',0),('tools',0),('info',0),('options',0),('diagnostics',0),('boot-options',0),('appearance',0),('appearance',1),('appearance',2),('nyx',0),('nyx',1),('nyx',2),('about',0),('about',4),('usb',0),('colors',0),('ram-service',0),('partition-expert',0)]
 modes += [('backup',0),('backup',1),('restore',0),('restore',1),('about',3),('colors',3)]
@@ -27,6 +27,6 @@ with ThreadPoolExecutor(max_workers=4)as pool:
 failures=[x for x in results if not x['passed']]
 files=['nyx/nyx_gui/fonts/font_manager.c','nyx/nyx_gui/frontend/gui_options.c','nyx/nyx_gui/frontend/gui_appearance.c','nyx/nyx_gui/frontend/gui_nova.c','nyx/nyx_gui/frontend/gui_nova_theme.c','nyx/nyx_gui/localization_catalog.inc']
 report={'passed':not failures,'native_scenes':len(results),'failed_scenes':len(failures),'seconds':round(time.time()-started,2),'locales':8,'font_sizes':[20,22,24,26,28,30,32,34,36],'physical_console_test':False,'failures':failures,'source_sha256':{n:hashlib.sha256((P/n).read_bytes()).hexdigest()for n in files}}
-(W/'nova34a3-ui-check.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+(W/'nova34a4-ui-check.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 assert not failures,str(len(failures))+' native scene failures'
 print('PASS:',len(results),'native LVGL scenes including Chinese locking, original fonts and paged boot selection')

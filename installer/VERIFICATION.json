@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "nova_version": "34-alpha4",
+  "installer_version": "1.1",
+  "architecture": "Windows x64",
+  "standalone": true,
+  "needs_admin": false,
+  "physical_sd_written": false,
+  "original_firmware_bundles_unchanged": true,
+  "files_per_variant": 151,
+  "added_payloads": {
+    "4": {
+      "path": "bootloader/payloads/hekate_nova_pro_6.5.5_v34_alpha4.bin",
+      "sha256": "a6f1e99574b26e590b752d5401aa8c2ee2471b2af3426d461879689fe32943d6",
+      "bytes": 110876
+    },
+    "8": {
+      "path": "bootloader/payloads/hekate_nova_pro_6.5.5_v34_alpha4_8GB_EXPERIMENTAL.bin",
+      "sha256": "38565cae34f69307c122606dac47bb2bf351fd712ef38525f23015a6cd4490c8",
+      "bytes": 110876
+    }
+  },
+  "final_audit_and_report": true,
+  "post_copy_missing_file_failure_tested": true,
+  "installer_sha256": "5db03a38ed9d20387180b8421841abdf002cb683f22b7e53f6cac0decdee010c",
+  "installer_bytes": 29505989,
+  "native_tests": {
+    "passed": true,
+    "result": "PASS: 352 native assertions; real embedded CAB extraction, exact standard/8GB hashes, custom files preserved, backups, reinstall, commit rollback, staging failure, cancel, system-volume/path/junction refusal. No physical SD written.",
+    "fixture_root": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\ni11-tests-509162700",
+    "physical_sd_written": false
+  },
+  "system_dll_imports": [
+    "ADVAPI32.dll",
+    "COMCTL32.dll",
+    "GDI32.dll",
+    "KERNEL32.dll",
+    "msvcrt.dll",
+    "SETUPAPI.dll",
+    "USER32.dll"
+  ],
+  "source_sha256": {
+    "app.manifest": "3ac1226e4d50dcbb06e34dcb65d5bf9a29e32989ef271965d4392db1a5c4525b",
+    "build_installer.py": "e20820e5eb9a8feab53f54a521f4a35061885457d28d238b77e897409c61a142",
+    "install.c": "d3155fc459a0130ef870515a2d9ceec067e85e55ef861c49524a30d9790db562",
+    "install.h": "d99470538c57e84fee76cb9d5424f174dba0dbb3a91e37f43cff55e039dcce87",
+    "installer.rc": "b819160bc9426b2afb7de9648c5655bd1714d0ea0937d56cc21c1e851380a4f6",
+    "main.c": "9512a2c13a2f41e4611406bab476174a6f6d6e8414c416e11bec77ca4e7f838b",
+    "payload.h": "c9a848dc390f6c88a9a7a41e7b9c89ef913b0b9610ced1ea4790e8b078164747",
+    "test.c": "8ad3efe49c49495b8ee10c3577b6f447612d5634c5ae94d41faf2c669dd7843a",
+    "test_installer.py": "01cb759628864a76d313bca5a3748ca8a7e2aa7346618b0d07db1cc9bcf03b5a"
+  }
+}

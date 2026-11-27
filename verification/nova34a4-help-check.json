@@ -8,5 +8,7 @@
     "Hekate manufacturer-ID 0 suspect flag blocks Next",
     "8 locales, 3 text sizes"
   ],
-  "failures": []
+  "failures": [],
+  "inherited_from": "34-alpha3",
+  "inherited_reason": "Tested GUI/planning inputs are byte-identical; hotfix changes config writer only. Version label incremented."
 }

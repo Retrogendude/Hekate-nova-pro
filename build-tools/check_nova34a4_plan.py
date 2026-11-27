@@ -1,7 +1,7 @@
 """Actual C installation plan tests; no storage I/O."""
 from pathlib import Path
 import subprocess,json
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha3';D=W/'nova34a3-plan-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha4';D=W/'nova34a4-plan-check';D.mkdir(exist_ok=True)
 c=r'''
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,4 +66,4 @@ int main(void){
 (D/'test.c').write_text(c)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-I'+str(P/'bdk'),'-I'+str(P/'nyx/nyx_gui/frontend'),str(D/'test.c'),str(P/'nyx/nyx_gui/frontend/gui_partition_plan.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a3-plan-check.json').write_text(json.dumps({'passed':True,'actual_c':True,'result':r.stdout.strip(),'physical_storage_test':False},indent=2))
+(W/'nova34a4-plan-check.json').write_text(json.dumps({'passed':True,'actual_c':True,'result':r.stdout.strip(),'physical_storage_test':False},indent=2))

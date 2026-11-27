@@ -1,5 +1,5 @@
 {
-  "file": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-nova-pro-v34-alpha3\\nyx\\nyx_gui\\fonts\\sd\\Nova-Chinese-Simplified.nyxf",
+  "file": "C:\\Users\\Retrogen\\Documents\\Codex\\2026-11-04\\je-s\\work\\hekate-nova-pro-v34-alpha4\\nyx\\nyx_gui\\fonts\\sd\\Nova-Chinese-Simplified.nyxf",
   "bytes": 6343606,
   "glyphs": 1885,
   "coverage": [
@@ -1975,5 +1975,6 @@
       "cjk_font_pixels": 33
     }
   ],
-  "sha256": "95f1f6885ce6a4d020bb3a67a32853f6d0b4971ea62f424e3a8b3f8f6857c2ce"
+  "sha256": "95f1f6885ce6a4d020bb3a67a32853f6d0b4971ea62f424e3a8b3f8f6857c2ce",
+  "inherited_from": "34-alpha3"
 }
