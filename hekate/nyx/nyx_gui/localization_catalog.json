@@ -42588,25 +42588,5 @@
     "Save & reload (R)",
     "Save & reload (R)",
     "保存并重新加载 (R)"
-  ],
-  "v33.1 · Interface and 8GB RAM\nIndependent Launch icon and background; refined settings and emuMMC frames.\nSeparate 8GB payload and capacity-aware RAM diagnostic (hardware validation pending).": [
-    "v33.1 · Interface and 8GB RAM\nIndependent Launch icon and background; refined settings and emuMMC frames.\nSeparate 8GB payload and capacity-aware RAM diagnostic (hardware validation pending).",
-    "v33.1 · Interface et RAM 8 Go\nIcône et fond Launch indépendants ; cadres réglages et emuMMC corrigés.\nPayload 8 Go séparé et diagnostic adapté (validation matérielle à faire).",
-    "v33.1 · Interfaz y RAM de 8 GB\nIcono y fondo Launch independientes; marcos de ajustes y emuMMC corregidos.\nPayload de 8 GB separado y diagnóstico adaptado (pendiente de validar en consola).",
-    "v33.1 · Interfaccia e RAM da 8 GB\nIcona e sfondo Launch indipendenti; cornici impostazioni ed emuMMC corrette.\nPayload 8 GB separato e diagnostica adattata (da verificare su console).",
-    "v33.1 · Интерфейс и 8 ГБ ОЗУ\nОтдельные значок и фон Launch; исправлены рамки настроек и emuMMC.\nОтдельный загрузчик 8 ГБ и диагностика памяти (требуется проверка на консоли).",
-    "v33.1 · Oberfläche und 8 GB RAM\nUnabhängiges Launch-Symbol und Hintergrund; korrigierte Einstellungs- und emuMMC-Rahmen.\nSeparater 8-GB-Payload und angepasster Speichertest (Konsolentest ausstehend).",
-    "v33.1 · Interface e RAM de 8 GB\nÍcone e fundo Launch independentes; molduras de opções e emuMMC corrigidas.\nPayload de 8 GB separado e diagnóstico adaptado (validação na consola pendente).",
-    "v33.1 · 界面与 8GB 内存\n启动图标与背景独立设置；修正设置及 emuMMC 边框。\n独立的 8GB 引导文件及内存检测，尚待实机验证。"
-  ],
-  " - memory capacity mismatch; test stopped\n": [
-    " - memory capacity mismatch; test stopped\n",
-    " - capacité mémoire incohérente ; test arrêté\n",
-    " - capacidad de memoria incompatible; prueba detenida\n",
-    " - capacità memoria non coerente; test interrotto\n",
-    " - несоответствие объёма памяти; тест остановлен\n",
-    " - Speicherkapazität stimmt nicht überein; Test gestoppt\n",
-    " - capacidade de memória incompatível; teste interrompido\n",
-    " - 内存容量不匹配，测试已停止\n"
   ]
 }

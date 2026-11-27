@@ -267,10 +267,6 @@ int nyx_launch_ram_service(u32 mode,u32 mask)
 	return_image[0x95] = 0;
 	return_image[0x96] = 0;
 	return_image[0x97] = 0;
-	/* Keep the running payload's documented DRAM override on return from the
-	 * isolated test. The standard build must not inherit an SD file's 8GB bit. */
-	if(return_size>0x122)
-		return_image[0x122]=(return_image[0x122]&~RSVD_FLAG_DRAM_8GB)|(nyx_str->info_ex.rsvd_flags&RSVD_FLAG_DRAM_8GB);
 	memcpy((void *)NYX_RAM_RETURN_ADDR, return_image, return_size);
 	nyx_ram_handoff_t request = {0};
 	request.version = NYX_RAM_VERSION;

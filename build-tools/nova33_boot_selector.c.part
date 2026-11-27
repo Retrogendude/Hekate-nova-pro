@@ -1,0 +1,104 @@
+/* Paged boot entries retain their original INI index; no vertical list. */
+typedef struct nova_boot_entry { struct nova_boot_entry *next; u32 index; char name[]; } nova_boot_entry;
+static struct {
+    lv_obj_t *win,*parent_close,*panels[2];
+    nova_boot_entry *entries[2];
+    u32 count[2],page[2];
+} nova_boot;
+#define NOVA_BOOT_PAGE_SIZE 6
+
+static void nova_boot_release(void)
+{
+    for(u32 side=0;side<2;++side) {
+        nova_boot_entry *entry=nova_boot.entries[side];
+        while(entry){nova_boot_entry *next=entry->next;free(entry);entry=next;}
+    }
+}
+static lv_res_t nova_boot_finish(void)
+{
+    lv_obj_t *win=nova_boot.win,*parent=nova_boot.parent_close;
+    nova_boot_release();memset(&nova_boot,0,sizeof(nova_boot));
+    if(win)lv_obj_del(win);
+    close_btn=parent;
+    if(autoboot_btn){lv_btn_set_state(autoboot_btn,h_cfg.autoboot?LV_BTN_STATE_TGL_REL:LV_BTN_STATE_REL);nyx_generic_onoff_toggle(autoboot_btn);}
+    return LV_RES_INV;
+}
+static lv_res_t _win_autoboot_close_action(lv_obj_t *button)
+{ (void)button;return nova_boot_finish(); }
+static lv_res_t _autoboot_disable_action(lv_obj_t *button)
+{ (void)button;h_cfg.autoboot=h_cfg.autoboot_list=0;ini_changes_made=true;return nova_boot_finish(); }
+static lv_res_t nova_boot_select(lv_obj_t *button)
+{
+    u32 selection=lv_obj_get_free_num(button);
+    h_cfg.autoboot=selection&0x7FFFFFFFu;h_cfg.autoboot_list=selection>>31;
+    ini_changes_made=true;return nova_boot_finish();
+}
+static void nova_boot_draw(u32 side);
+static lv_res_t nova_boot_page(lv_obj_t *button)
+{
+    u32 action=lv_obj_get_free_num(button),side=action>>1;
+    if(side>1)return LV_RES_OK;
+    u32 pages=(nova_boot.count[side]+NOVA_BOOT_PAGE_SIZE-1)/NOVA_BOOT_PAGE_SIZE;
+    if(!pages)return LV_RES_OK;
+    nova_boot.page[side]=(nova_boot.page[side]+(action&1?1:pages-1))%pages;
+    nova_boot_draw(side);return LV_RES_INV;
+}
+static void nova_boot_draw(u32 side)
+{
+    lv_obj_t *panel=nova_boot.panels[side];lv_obj_clean(panel);
+    int width=lv_obj_get_width(panel),height=lv_obj_get_height(panel);
+    nyx_nova_text(panel,side?"Ini folder configurations":"Main configurations",18,16,width-36,NOVA_TITLE);
+    nova_boot_entry *entry=nova_boot.entries[side];
+    u32 first=nova_boot.page[side]*NOVA_BOOT_PAGE_SIZE;
+    for(u32 i=0;i<first&&entry;++i)entry=entry->next;
+    int row_height=(height-116)/NOVA_BOOT_PAGE_SIZE;
+    for(u32 row=0;row<NOVA_BOOT_PAGE_SIZE&&entry;++row,entry=entry->next) {
+        lv_obj_t *button=lv_btn_create(panel,NULL);lv_btn_set_fit(button,false,false);lv_btn_set_layout(button,LV_LAYOUT_OFF);
+        lv_obj_set_pos(button,18,64+row*row_height);lv_obj_set_size(button,width-36,row_height-6);
+        lv_obj_set_free_num(button,(side<<31)|entry->index);lv_btn_set_action(button,LV_BTN_ACTION_CLICK,nova_boot_select);
+        if(h_cfg.autoboot_list==side&&h_cfg.autoboot==entry->index)lv_btn_set_state(button,LV_BTN_STATE_TGL_REL);
+        lv_obj_t *label=nyx_nova_text(button,"",12,8,width-60,NOVA_BODY);
+        /* Configuration names belong to the user, not to the locale catalog. */
+        (lv_label_set_text)(label,entry->name);nyx_nova_fit_text(label,row_height-16);
+    }
+    if(!nova_boot.count[side])nyx_nova_text(panel,"No configurations found.",18,82,width-36,NOVA_BODY);
+    u32 pages=(nova_boot.count[side]+NOVA_BOOT_PAGE_SIZE-1)/NOVA_BOOT_PAGE_SIZE;if(!pages)pages=1;
+    char value[32];s_printf(value,"%d / %d",nova_boot.page[side]+1,pages);
+    lv_obj_t *counter=nyx_nova_text(panel,value,width/2-64,height-42,128,NOVA_SMALL);lv_label_set_align(counter,LV_LABEL_ALIGN_CENTER);
+    for(u32 direction=0;direction<2;++direction) {
+        lv_obj_t *button=lv_btn_create(panel,NULL);lv_btn_set_fit(button,false,false);
+        lv_obj_set_pos(button,direction?width-100:18,height-50);lv_obj_set_size(button,82,36);
+        lv_obj_set_free_num(button,side*2+direction);lv_btn_set_action(button,LV_BTN_ACTION_CLICK,nova_boot_page);
+        lv_obj_set_click(button,pages>1);if(pages==1)lv_btn_set_state(button,LV_BTN_STATE_INA);
+        lv_obj_t *label=lv_label_create(button,NULL);lv_label_set_text(label,direction?">":"<");
+    }
+}
+static bool nova_boot_read(u32 side,const char *path,bool directory)
+{
+    LIST_INIT(sections);nova_boot_entry **tail=&nova_boot.entries[side];
+    if(ini_parse(&sections,path,directory))return true;
+    bool valid=true;u32 index=0;
+    LIST_FOREACH_ENTRY(ini_sec_t,section,&sections,link) {
+        if(!strcmp(section->name,"config")||section->type!=INI_CHOICE)continue;
+        ++index;u32 length=strlen(section->name);
+        nova_boot_entry *entry=malloc(sizeof(*entry)+length+1);
+        if(!entry){valid=false;break;}
+        entry->next=NULL;entry->index=index;memcpy(entry->name,section->name,length+1);
+        *tail=entry;tail=&entry->next;++nova_boot.count[side];
+    }
+    ini_free(&sections);return valid;
+}
+static void _create_autoboot_window(void)
+{
+    if(nova_boot.win)return;
+    memset(&nova_boot,0,sizeof(nova_boot));nova_boot.parent_close=close_btn;
+    bool mounted=sd_get_card_mounted(),ok=!sd_mount();
+    if(ok)ok=nova_boot_read(0,"bootloader/hekate_ipl.ini",false)&&nova_boot_read(1,"bootloader/ini",true);
+    if(!mounted)sd_unmount();
+    if(!ok){nova_boot_release();memset(&nova_boot,0,sizeof(nova_boot));nyx_show_help("Could not read boot configurations. Check the SD card and retry.");return;}
+    nova_boot.win=nyx_create_standard_window("Auto Boot",_win_autoboot_close_action);
+    lv_win_add_btn(nova_boot.win,NULL,nyx_tr("Disable"),_autoboot_disable_action);
+    lv_obj_t *page=lv_win_get_content(nova_boot.win);nyx_nova_fixed_page(page);
+    int width=(lv_obj_get_width(page)-72)/2,height=lv_obj_get_height(page)-32;
+    for(u32 side=0;side<2;++side){nova_boot.panels[side]=nyx_nova_panel(page,24+side*(width+24),16,width,height);nova_boot_draw(side);}
+}

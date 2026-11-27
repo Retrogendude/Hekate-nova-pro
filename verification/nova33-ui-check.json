@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "native_scenes": 539,
+  "failed_scenes": 0,
+  "seconds": 9.77,
+  "locales": 8,
+  "font_sizes": [
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    34,
+    36
+  ],
+  "physical_console_test": false,
+  "failures": [],
+  "source_sha256": {
+    "nyx/nyx_gui/fonts/font_manager.c": "7e8c90398ea4abb8b678daa4d8201838f0f0f489e93b21f410cc6f3a582fc63b",
+    "nyx/nyx_gui/frontend/gui_options.c": "9c23e7ca82c157a50179cab621f7f037bcd4d93334c81dda4f3ab6b714328739",
+    "nyx/nyx_gui/frontend/gui_appearance.c": "e048cff1bcd650dca20986a1f84daa2cc84badf4b65362588833f96a938d5e5c",
+    "nyx/nyx_gui/frontend/gui_nova.c": "6ad72a15640fbb18ecc7eb9a2a769239b4a4682272f11f724eaac738ab67567b",
+    "nyx/nyx_gui/frontend/gui_nova_theme.c": "2a5c32770c2f46312167a5accaa3529bad245f4b65a75b6adbd5aecafea8cf8e",
+    "nyx/nyx_gui/localization_catalog.inc": "1b4906a271875137fd486e8b223d86bf0c7201cdd1f22dcef5060a0058547706"
+  }
+}

@@ -119,7 +119,10 @@ void nyx_nova_custom_icon(lv_obj_t *box,u32 index)
     if(index>=5)return;
     bool mounted=sd_get_card_mounted();lv_img_dsc_t *pixels=NULL;
     u32 size=lv_obj_get_width(box)-8;
-    if(!sd_mount())pixels=icon_read(names[index],size,size,false);
+    if(!sd_mount()) {
+        if(index==0 && !strcmp(n_cfg.launch_image,"Launcher.png")) pixels=icon_read("Launcher.png",size,size,false);
+        if(!pixels) pixels=icon_read(names[index],size,size,false);
+    }
     if(!mounted)sd_unmount();if(!pixels)return;
     lv_obj_t *old=NULL;
     for(lv_obj_t *child=lv_obj_get_child(box,NULL);child;child=lv_obj_get_child(box,child)){
@@ -135,6 +138,8 @@ void nyx_nova_custom_icon(lv_obj_t *box,u32 index)
 static bool launch_image_place(lv_obj_t *card,const char *file)
 {
     if(!file||!*file)return true;
+    /* The bundled Launcher is a tile icon, never a foreground wallpaper. */
+    if(!strcmp(file,"Launcher.png"))return true;
     bool mounted=sd_get_card_mounted();lv_img_dsc_t *pixels=NULL;
     if(!sd_mount())pixels=wallpaper_read(file,lv_obj_get_width(card)-4,lv_obj_get_height(card)-4);
     if(!mounted)sd_unmount();
@@ -368,8 +373,7 @@ static void launch_preview_refresh(void)
     if(nova_theme.launch_card)lv_obj_del(nova_theme.launch_card);
     nova_theme.launch_card=nyx_nova_panel(nova_theme.launch_preview,20,70,476,292);
     bool valid=launch_image_place(nova_theme.launch_card,nova_theme.pending.launch_image);
-    lv_obj_t *icon=nyx_nova_icon_box(nova_theme.launch_card,"play",24,24,56,false);
-    nyx_nova_custom_icon(icon,0);
+    nyx_nova_icon_box(nova_theme.launch_card,"rocket",24,24,56,false);
     nyx_nova_text(nova_theme.launch_card,"Launch",24,166,428,NOVA_TITLE);
     lv_obj_t *caption=nyx_nova_text(nova_theme.launch_card,"Choisir un système",24,214,428,NOVA_BODY);nyx_nova_fit_text(caption,50);
     (lv_label_set_text)(nova_theme.launch_file,nova_theme.pending.launch_image[0]?nova_theme.pending.launch_image:nyx_tr("Aucune image"));
@@ -398,7 +402,7 @@ static lv_res_t theme_save(lv_obj_t *button)
     (void)button;bool mounted=sd_get_card_mounted();
     if(sd_mount()){theme_notice("SD card unavailable. Nothing was saved.");return LV_RES_OK;}
     if(f_stat("bootloader/sys/nyx.bin",NULL)!=FR_OK){if(!mounted)sd_unmount();theme_notice("Nyx is missing. Nothing was saved.");return LV_RES_OK;}
-    if(nova_theme.pending.launch_image[0]){
+    if(nova_theme.pending.launch_image[0] && strcmp(nova_theme.pending.launch_image,"Launcher.png")){
         lv_img_dsc_t *check=wallpaper_read(nova_theme.pending.launch_image,32,18);
         if(!check){if(!mounted)sd_unmount();theme_notice("Image introuvable ou invalide. Utilisez un PNG dans icone ou un BMP non compressé dans wallpapers.");return LV_RES_OK;}
         wallpaper_free(check);

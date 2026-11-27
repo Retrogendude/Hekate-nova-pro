@@ -1,0 +1,122 @@
+{
+  "fr": {
+    "title": "Hekate Nova Pro v33 — bêta de test",
+    "items": [
+      "Ajout du chinois simplifié comme huitième langue, dans les réglages et au premier démarrage.",
+      "Police chinoise dédiée et imposée uniquement pour cette langue. Le choix de police personnel est conservé et rétabli pour les autres langues ; la taille reste réglable.",
+      "Lecture.nyxf devient la police automatique des langues latines ; le russe utilise par défaut la famille intégrée. La police Hekate d’origine est disponible dans le sélecteur.",
+      "Trois fonds fixes et cinq icônes Nova sont inclus, ainsi que le fichier Launcher fourni pour la tuile principale.",
+      "Nouveaux réglages d’installation : français, Carbon Cyan, opacités des fenêtres et icônes à 75 %, texte de 30 px, couleurs fournies et logo de démarrage clair. L’horloge d’origine reste à régler sur la console.",
+      "Accès explicite aux options de démarrage : Auto Boot, délai, Auto NoGC et Auto HOS Power Off. Le lien de luminosité rejoint le réglage existant, sans deuxième curseur.",
+      "Sélecteur Auto Boot paginé dans le thème Nova, sans liste verticale ; les indices des configurations principales et supplémentaires restent ceux de Hekate.",
+      "Test mémoire séparé : interface chinoise et glyphes 16 × 16, compatibilité conservée avec les sept packs de langues précédents.",
+      "Repli lisible en anglais si la ressource chinoise est absente ou invalide, sans remplacer la police personnelle. Les réglages déjà enregistrés ne sont pas écrasés par le pack."
+    ],
+    "validation": "Bêta à essayer sur console. Les contrôles PC ne remplacent pas cet essai. Les libellés principaux, les avertissements ciblés et le test mémoire chinois ont été revus ; les longs rapports comprennent encore une traduction automatique à faire relire. La publication GitHub attend le retour du testeur."
+  },
+  "en": {
+    "title": "Hekate Nova Pro v33 — test beta",
+    "items": [
+      "Simplified Chinese is now the eighth language in Settings and first-start setup.",
+      "Chinese uses a required dedicated font. Personal font selection is preserved for other languages, while text size remains adjustable.",
+      "Lecture.nyxf is the automatic font for Latin-script languages; Russian defaults to the built-in family. The original Hekate font is available in the selector.",
+      "Includes three static wallpapers, five Nova icons and the supplied Launcher image for the main tile.",
+      "Fresh-install defaults: French, Carbon Cyan, 75% panel and icon opacity, 30px text, the requested colors and a light startup logo. The original clock setup remains console-specific.",
+      "Clearly marked boot options: Auto Boot, delay, Auto NoGC and Auto HOS Power Off. Backlight links to the existing setting without a second slider.",
+      "Paged Nova-style Auto Boot selector without vertical scrolling, preserving Hekate's main and extra configuration indices.",
+      "Standalone memory test: Chinese UI with 16 × 16 glyphs and compatibility with the previous seven language packs.",
+      "Readable English fallback if the Chinese font resource is missing or invalid, preserving the personal font. Existing saved settings are not overwritten by the bundle."
+    ],
+    "validation": "Beta for console testing. PC checks do not replace hardware testing. Main labels, selected warnings and the Chinese RAM UI have been reviewed; longer reports still include machine translations requiring linguistic review. GitHub publication awaits tester feedback."
+  },
+  "es": {
+    "title": "Hekate Nova Pro v33 — beta de prueba",
+    "items": [
+      "Chino simplificado como octavo idioma en Ajustes y en la configuración inicial.",
+      "Fuente dedicada obligatoria solo para chino. Se conserva la fuente personal para los demás idiomas y el tamaño sigue siendo ajustable.",
+      "Lecture.nyxf es la fuente automática para los idiomas latinos; ruso utiliza la familia integrada. La fuente original de Hekate está disponible en el selector.",
+      "Incluye tres fondos estáticos, cinco iconos Nova y la imagen Launcher facilitada para la tarjeta principal.",
+      "Instalación nueva: francés, Carbon Cyan, opacidad del 75 % en paneles e iconos, texto de 30 px, colores solicitados y logotipo de inicio claro. Se mantiene el ajuste original del reloj.",
+      "Acceso visible a Auto Boot, tiempo de espera, Auto NoGC y Auto HOS Power Off. El brillo enlaza con el ajuste existente, sin duplicar el deslizador.",
+      "Selector Auto Boot paginado con estilo Nova, sin desplazamiento vertical y conservando los índices de Hekate.",
+      "Prueba de memoria independiente con interfaz china y caracteres de 16 × 16; compatibilidad con los siete paquetes anteriores.",
+      "Si la fuente china falta o no es válida, se utiliza inglés sin sustituir la fuente personal. El paquete conserva los ajustes guardados."
+    ],
+    "validation": "Beta para probar en consola. Los controles en PC no sustituyen las pruebas reales. Se han revisado los textos principales, algunos avisos y la prueba RAM china; los informes largos aún incluyen traducción automática pendiente de revisión. La publicación en GitHub espera el resultado del ensayo."
+  },
+  "it": {
+    "title": "Hekate Nova Pro v33 — beta di prova",
+    "items": [
+      "Cinese semplificato come ottava lingua nelle impostazioni e al primo avvio.",
+      "Carattere dedicato obbligatorio solo in cinese. Il carattere personale viene conservato per le altre lingue e la dimensione resta regolabile.",
+      "Lecture.nyxf è il carattere automatico per le lingue latine; il russo usa la famiglia integrata. Il carattere originale Hekate è disponibile nel selettore.",
+      "Inclusi tre sfondi statici, cinque icone Nova e l’immagine Launcher fornita per il riquadro principale.",
+      "Nuova installazione: francese, Carbon Cyan, opacità di pannelli e icone al 75%, testo di 30 px, colori richiesti e logo iniziale chiaro. Rimane la regolazione originale dell’orologio.",
+      "Accesso evidente ad Auto Boot, ritardo, Auto NoGC e Auto HOS Power Off. La luminosità rimanda al controllo esistente senza duplicarlo.",
+      "Selettore Auto Boot a pagine in stile Nova, senza scorrimento verticale e con gli indici originali di Hekate.",
+      "Test di memoria separato con interfaccia cinese e glifi 16 × 16; compatibilità con i sette pacchetti precedenti.",
+      "Ripristino temporaneo dell’inglese se la risorsa cinese manca o non è valida, senza sostituire il carattere personale. Le impostazioni salvate restano intatte."
+    ],
+    "validation": "Beta da provare sulla console. I controlli su PC non sostituiscono i test hardware. Rivisti testi principali, alcuni avvisi e test RAM cinese; i rapporti lunghi includono traduzioni automatiche ancora da verificare. La pubblicazione GitHub attende il risultato della prova."
+  },
+  "ru": {
+    "title": "Hekate Nova Pro v33 — тестовая бета-версия",
+    "items": [
+      "Упрощённый китайский добавлен как восьмой язык в настройках и при первом запуске.",
+      "Только для китайского используется обязательный специальный шрифт. Личный шрифт сохраняется для других языков, размер текста можно менять.",
+      "Lecture.nyxf автоматически используется для языков на латинице; для русского по умолчанию выбран встроенный шрифт. Исходный шрифт Hekate доступен в списке.",
+      "В комплекте три статичных фона, пять значков Nova и предоставленное изображение Launcher для главной плитки.",
+      "Настройки новой установки: французский язык, Carbon Cyan, непрозрачность окон и значков 75%, текст 30 пикселей, заданные цвета и светлый загрузочный логотип. Сохранена исходная настройка часов.",
+      "Заметный доступ к Auto Boot, задержке, Auto NoGC и Auto HOS Power Off. Яркость открывает существующий регулятор без дублирования.",
+      "Постраничный выбор Auto Boot в стиле Nova без вертикального списка с сохранением индексов конфигураций Hekate.",
+      "Отдельный тест памяти получил китайский интерфейс и символы 16 × 16; сохранена совместимость с семью прежними языковыми пакетами.",
+      "При отсутствии или повреждении китайского шрифта временно используется английский. Личный шрифт и ранее сохранённые настройки не перезаписываются."
+    ],
+    "validation": "Бета-версия для проверки на консоли. Тесты на ПК не заменяют испытания оборудования. Проверены основные надписи, отдельные предупреждения и китайский интерфейс теста памяти; длинные отчёты содержат машинный перевод и требуют языковой проверки. Публикация на GitHub ожидает результатов испытания."
+  },
+  "de": {
+    "title": "Hekate Nova Pro v33 — Test-Beta",
+    "items": [
+      "Vereinfachtes Chinesisch als achte Sprache in den Einstellungen und bei der Ersteinrichtung.",
+      "Nur Chinesisch verwendet eine festgelegte eigene Schrift. Die persönliche Schrift bleibt für andere Sprachen gespeichert; die Textgröße bleibt einstellbar.",
+      "Lecture.nyxf ist die automatische Schrift für lateinische Sprachen; Russisch nutzt standardmäßig die integrierte Schrift. Die ursprüngliche Hekate-Schrift ist auswählbar.",
+      "Drei statische Hintergründe, fünf Nova-Symbole und das bereitgestellte Launcher-Bild für die Hauptkachel sind enthalten.",
+      "Vorgaben für neue Installationen: Französisch, Carbon Cyan, 75% Deckkraft für Fenster und Symbole, 30px Text, gewünschte Farben und helles Startlogo. Die ursprüngliche Uhreinstellung bleibt erhalten.",
+      "Deutlicher Zugang zu Auto Boot, Startverzögerung, Auto NoGC und Auto HOS Power Off. Helligkeit öffnet den vorhandenen Regler ohne Duplikat.",
+      "Seitenweiser Auto-Boot-Selektor im Nova-Stil ohne vertikale Liste und mit unveränderten Hekate-Konfigurationsindizes.",
+      "Separater Speichertest mit chinesischer Oberfläche und 16 × 16 Zeichen; kompatibel mit den bisherigen sieben Sprachpaketen.",
+      "Bei fehlender oder ungültiger chinesischer Schrift wird vorübergehend Englisch verwendet. Persönliche Schrift und gespeicherte Einstellungen bleiben erhalten."
+    ],
+    "validation": "Beta zum Testen auf der Konsole. PC-Prüfungen ersetzen keine Hardwaretests. Haupttexte, ausgewählte Warnungen und die chinesische RAM-Oberfläche wurden geprüft; längere Berichte enthalten noch maschinelle Übersetzungen zur sprachlichen Prüfung. Die GitHub-Veröffentlichung wartet auf das Testergebnis."
+  },
+  "pt": {
+    "title": "Hekate Nova Pro v33 — beta de teste",
+    "items": [
+      "Chinês simplificado como oitavo idioma nas definições e na configuração inicial.",
+      "Fonte dedicada obrigatória apenas em chinês. A fonte pessoal é guardada para os restantes idiomas e o tamanho continua ajustável.",
+      "Lecture.nyxf é a fonte automática dos idiomas latinos; o russo usa a família integrada. A fonte original do Hekate está disponível no seletor.",
+      "Inclui três fundos estáticos, cinco ícones Nova e a imagem Launcher fornecida para o mosaico principal.",
+      "Nova instalação: francês, Carbon Cyan, opacidade de 75% em janelas e ícones, texto de 30 px, cores pedidas e logótipo inicial claro. Mantém-se o ajuste original do relógio.",
+      "Acesso visível a Auto Boot, atraso, Auto NoGC e Auto HOS Power Off. O brilho abre o controlo existente, sem duplicar o cursor.",
+      "Seletor Auto Boot por páginas, no estilo Nova, sem lista vertical e com os índices originais do Hekate.",
+      "Teste de memória separado com interface chinesa e caracteres de 16 × 16; compatível com os sete pacotes anteriores.",
+      "Se a fonte chinesa estiver ausente ou inválida, é usado inglês nesta sessão. A fonte pessoal e as definições guardadas não são substituídas."
+    ],
+    "validation": "Beta para testar na consola. Os testes no PC não substituem ensaios reais. Revistos os textos principais, alguns avisos e o teste RAM chinês; os relatórios longos ainda incluem tradução automática por rever. A publicação no GitHub aguarda o resultado do teste."
+  },
+  "zh-CN": {
+    "title": "Hekate Nova Pro v33 — 测试版",
+    "items": [
+      "新增简体中文，现支持八种语言，可在设置和首次启动时选择。",
+      "中文模式使用专用字体，并禁用自定义字体选择。其他语言的个人字体设置会保留，文字大小仍可调整。",
+      "拉丁字母语言默认使用 Lecture.nyxf；俄语默认使用内置字体。字体列表中也可选择 Hekate 原版字体。",
+      "内含三张静态壁纸、五个 Nova 图标，以及用户提供的主磁贴 Launcher 图像。",
+      "全新安装的默认设置：法语、Carbon Cyan 壁纸、窗口与图标不透明度 75%、30 像素文字、指定配色及浅色启动标志。首次启动仍需在主机上设置日期和时间。",
+      "启动选项入口更加明确，包含自动启动、启动延时、Auto NoGC 和 HOS 自动关机。亮度入口打开原有调节器，不重复创建。",
+      "自动启动配置改为 Nova 风格分页选择，取消纵向列表，保留 Hekate 原有的主配置与附加配置索引。",
+      "独立内存测试新增中文界面和 16 × 16 字符，并兼容原有七种语言的数据包。",
+      "中文字体文件缺失或无效时，本次会话使用英语，保留个人字体设置。安装包不会覆盖已有配置文件。"
+    ],
+    "validation": "本版本供主机实测使用，电脑检查不能代替硬件测试。主要界面文字、部分警告和中文内存测试界面已复核；较长的诊断报告仍含机器翻译，尚需语言校对。收到测试反馈后再发布到 GitHub。"
+  }
+}

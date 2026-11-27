@@ -1,0 +1,13 @@
+Hekate Nova Pro v33 beta: devkitARM, GNU make and Python/Pillow.
+Restore hekate-nova-pro-v33, HWTest-RCM-nova33, HWTest-RCM-0.15, assets and build-tools contents under a common work directory.
+The Windows scripts expect their own directory to be work/. Adjust the local toolchain paths for another computer.
+Generated Chinese translations, reviewed overrides and NYXF files are included; no machine-translation runtime is needed to compile.
+To rebuild the CJK font, restore build-tools/nova33-language-resources next to build_nova33_chinese_font.py, then run finalize_nova33_catalog.py and build_nova33_chinese_font.py.
+The font builder requires Pillow. Regenerating draft MT additionally needs Argos English-Chinese 1.9, CTranslate2 and SentencePiece; these are build-time tools, not console dependencies.
+run_build_nova33.py builds Hekate/Nyx; build_ram_nova33.py builds the separate RAM service without modifying its training/test logic.
+The RAM recipe uses the previous HWTest third_party dependencies supplied in HWTest-RCM-0.15.
+Run prepare_nova33_test_sd.py to prepare isolated host-test assets. Native UI checks need the public official 6.5.4 release ZIP for res.pak and the native GCC described in the renderer.
+check_nova33_fonts.py and check_nova33_ram_locale.py compile and exercise the real C readers.
+verify_nova33.py compares against the preceding public v32 source tree; the header negative test uses the v21 nyx.bin fixture available in the v32 source archive.
+The package script also expects the preceding v32 bundle, source archive and visual collection. Read LIRE-MOI-V33.md and all licenses.
+PC tests do not establish console hardware operation or translation quality. Publication is held for user console testing.

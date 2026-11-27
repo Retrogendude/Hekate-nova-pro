@@ -37,13 +37,11 @@ typedef struct _emmc_backup_buttons_t
 	lv_obj_t *emmc_raw_gpp;
 	lv_obj_t *emmc_sys;
 	lv_obj_t *emmc_usr;
-	lv_obj_t *partition_panel;
 	bool raw_emummc;
 	bool restore;
 } emmc_backup_buttons_t;
 
 static emmc_backup_buttons_t emmc_btn_ctxt;
-static lv_style_t emmc_partition_normal,emmc_partition_active;
 
 static void _create_window_backup_restore(emmcPartType_t type, const char* win_label)
 {
@@ -181,9 +179,6 @@ static lv_res_t _emmc_backup_buttons_raw_toggle(lv_obj_t *btn)
 	}
 	/* Keep the new card titles and disabled state consistent when the target
 	 * changes. The single-label button contract is preserved for the decider. */
-	/* The active outline belongs to the outer panel, never the inset row. */
-	if(emmc_btn_ctxt.partition_panel)
-		lv_cont_set_style(emmc_btn_ctxt.partition_panel,emmc_btn_ctxt.raw_emummc?&emmc_partition_active:&emmc_partition_normal);
 	lv_obj_t *cards[]={emmc_btn_ctxt.emmc_boot,emmc_btn_ctxt.emmc_raw_gpp,emmc_btn_ctxt.emmc_sys,emmc_btn_ctxt.emmc_usr};
 	for(u32 i=0;i<4;++i)if(cards[i]){
 		lv_obj_t *label=lv_obj_get_child(cards[i],NULL);
@@ -214,14 +209,7 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
     emmc_btn_ctxt.emmc_sys=nyx_nova_action(win,emmc_btn_ctxt.restore?"eMMC ALL":"eMMC SYS",descriptions[2],"boxes",_emmc_backup_buttons_decider,0,34,34+height,594,height);
     emmc_btn_ctxt.emmc_usr=emmc_btn_ctxt.restore?NULL:nyx_nova_action(win,"eMMC USER",descriptions[3],"folder-open",_emmc_backup_buttons_decider,0,652,34+height,594,height);
     lv_obj_t *panel=nyx_nova_panel(win,34,50+height*2,1212,64);
-    emmc_btn_ctxt.partition_panel=panel;
-    lv_style_copy(&emmc_partition_normal,lv_cont_get_style(panel));
-    lv_style_copy(&emmc_partition_active,&emmc_partition_normal);
-    emmc_partition_active.body.border.color=nyx_nova_color(NOVA_COLOR_REFLECTION);
-    lv_cont_set_style(panel,&emmc_partition_normal);
-    lv_obj_t *row=nyx_nova_switch_row(panel,"SD emuMMC Raw Partition","Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.","database",_emmc_backup_buttons_raw_toggle,false,18,0,1176,64);
-    if(row)for(u32 state=LV_BTN_STYLE_REL;state<=LV_BTN_STYLE_INA;++state)
-        lv_btn_set_style(row,state,&lv_style_transp_tight);
+    nyx_nova_switch_row(panel,"SD emuMMC Raw Partition","Utiliser emuMMC sur la carte SD à la place de l’eMMC physique.","database",_emmc_backup_buttons_raw_toggle,false,18,0,1176,64);
     emmc_btn_ctxt.raw_emummc=false;
     return LV_RES_OK;
 }

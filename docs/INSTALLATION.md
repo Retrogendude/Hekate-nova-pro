@@ -10,3 +10,6 @@ Le partitionnement modifie le support uniquement après les confirmations prévu
 
 
 Version actuelle : [notice v33.1](releases/v33.1.md), [guide mémoire 8 Go](RAM-8GO-V33.1.md).
+
+
+Préversion documentée : [v33](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33). Lire les confirmations de l’assistant et sauvegarder la SD avant partitionnement. [Historique détaillé](RELEASES-V33-V34.md).

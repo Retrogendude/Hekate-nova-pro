@@ -1446,18 +1446,13 @@ static lv_obj_t *_nova_chip(lv_obj_t *panel, const char *text, int x, int y, int
     lv_label_set_align(label, LV_LABEL_ALIGN_CENTER); nyx_nova_fit_text(label, 24); return button;
 }
 
-/* Only the two system switch rows are transparent. Their text and switch
- * children keep their own opacity; the surrounding panel keeps its border. */
+/* The system column keeps its fill and switch state, with no surrounding
+ * outlines. Other settings retain their normal selection feedback. */
 static void nova_system_flat(lv_obj_t *button)
 {
     static lv_style_t styles[4];
     const u32 states[]={LV_BTN_STYLE_REL,LV_BTN_STYLE_PR,LV_BTN_STYLE_TGL_REL,LV_BTN_STYLE_TGL_PR};
-    for(u32 i=0;i<4;++i){
-        lv_style_copy(&styles[i],lv_btn_get_style(button,states[i]));
-        styles[i].body.empty=1;styles[i].body.opa=LV_OPA_TRANSP;
-        styles[i].body.border.width=0;styles[i].body.shadow.width=0;
-        lv_btn_set_style(button,states[i],&styles[i]);
-    }
+    for(u32 i=0;i<4;++i){lv_style_copy(&styles[i],lv_btn_get_style(button,states[i]));styles[i].body.border.width=0;lv_btn_set_style(button,states[i],&styles[i]);}
 }
 void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
 {
@@ -1467,7 +1462,10 @@ void create_tab_options(lv_theme_t *theme, lv_obj_t *parent)
     int right_width = LV_HOR_RES - 68 - 22 - left_width;
     lv_obj_t *system = nyx_nova_panel(parent, 34, 140, left_width, height);
     lv_obj_t *reading = nyx_nova_panel(parent, 34 + left_width + 22, 140, right_width, height);
-    _nova_heading_button(system,"Options système","toggle-right",_nova_boot_options);
+    static lv_style_t flat_panel,flat_heading;
+    lv_style_copy(&flat_panel,lv_cont_get_style(system));flat_panel.body.border.width=0;lv_cont_set_style(system,&flat_panel);
+    lv_obj_t *system_heading=_nova_heading_button(system,"Options système","toggle-right",_nova_boot_options);
+    lv_style_copy(&flat_heading,lv_btn_get_style(system_heading,LV_BTN_STYLE_PR));flat_heading.body.border.width=0;lv_btn_set_style(system_heading,LV_BTN_STYLE_PR,&flat_heading);
     _nova_heading_button(reading, "Apparence et lecture", "paintbrush", create_win_nyx_options);
     int row_height = (height - 64 - 16) / 4;
     lv_obj_t *boot_access = lv_btn_create(system,NULL);
