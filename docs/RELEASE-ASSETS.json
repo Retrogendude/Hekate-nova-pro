@@ -1,0 +1,702 @@
+{
+  "v33": {
+    "assets": {
+      "hekate-nova-pro-v33-beta.zip": {
+        "bytes": 16099016,
+        "sha256": "0f47d4f9a06d4184a31b8bba638c3701c533035a70bca173530b81b0df960f7e"
+      },
+      "hekate-nova-pro-v33-beta-sources.zip": {
+        "bytes": 29866579,
+        "sha256": "edab307d9c4f8485e46640b8fcf18c9e53d65dcc46fd503217391321abb1e1ca"
+      },
+      "LIRE-MOI-NOVA33.txt": {
+        "bytes": 6027,
+        "sha256": "4578819e879c1207638a17a380b4b1f06ceb97118a02e043e5270285360bb64b"
+      },
+      "CHANGELOG-NOVA33-fr.md": {
+        "bytes": 1828,
+        "sha256": "fb42c90f5aa2c0e89fd79b2be39301f674b7ce39dc07aec60b6f43a5ab43387b"
+      },
+      "CHANGELOG-NOVA33-en.md": {
+        "bytes": 1540,
+        "sha256": "9edfc234d7503cebada4e816c02025b336ea1284915a8103fc6e1e64eb602e3e"
+      },
+      "CHANGELOG-NOVA33-es.md": {
+        "bytes": 1575,
+        "sha256": "bd2ca391c4953c75d1da8b31bd92625c4a141c3878cec7b0b17abab3e9facb3e"
+      },
+      "CHANGELOG-NOVA33-it.md": {
+        "bytes": 1540,
+        "sha256": "7b5f963fc3556c76217022b3853c117614a7c87825fbf6e0dd69da833c0afbe0"
+      },
+      "CHANGELOG-NOVA33-de.md": {
+        "bytes": 1686,
+        "sha256": "9646eca693c179fdad11d30effd5f9dab47198d3d6b6da706f3e6af7b8e6707c"
+      },
+      "CHANGELOG-NOVA33-pt.md": {
+        "bytes": 1500,
+        "sha256": "8f9764e9f62ac13cf1eb63f115a5e3e7ca9bd3fe409d2fb6c7417ac751f83d17"
+      },
+      "CHANGELOG-NOVA33-ru.md": {
+        "bytes": 2755,
+        "sha256": "4169c21b0c8d250887cd9148f6a8b0c739ad0eacfa4449a25f25b2e03b5eeb5e"
+      },
+      "CHANGELOG-NOVA33-zh-CN.md": {
+        "bytes": 1498,
+        "sha256": "b3ec9a6ee7e38430276a334ab63f6ee8c49db3177ef29fb71cd1dbbac987fcb1"
+      },
+      "hekate-nova-pro-v33-beta-SHA256.txt": {
+        "bytes": 200,
+        "sha256": "8c85c8cbe9348ebeeb5d2c57d99588d18b4502b0f0c8590d7716234ad90261c9"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1113,
+        "sha256": "bee29e827810e6f396aeb048c37b5b6c4b869f6a703e1757ad0261f4828bb8ff"
+      }
+    }
+  },
+  "v33.2": {
+    "assets": {
+      "hekate-nova-pro-v33.2-beta.zip": {
+        "bytes": 16117786,
+        "sha256": "3e6866f3113aa77cd7afce882bb1dc6088b0dfba20b60827c4fb3a915685f96e"
+      },
+      "hekate-nova-pro-v33.2-beta-8GB.zip": {
+        "bytes": 16117846,
+        "sha256": "a5d2e34f7b0d3c12cbc02406991a287dce158850c6a7806596ee6e77dca99ee7"
+      },
+      "hekate-nova-pro-v33.2-beta-sources.zip": {
+        "bytes": 29966193,
+        "sha256": "84f07d566a785e5d406ffbc3bdcf3b33b67ce0abe65a8c50d3380d2190136464"
+      },
+      "LIRE-MOI-NOVA33.2.txt": {
+        "bytes": 1436,
+        "sha256": "a0a534bc89d17e31454afbeacedd5c90ab6bad6230e8bcb1d40dd1dc9895490c"
+      },
+      "CHANGELOG-NOVA33.2-fr.md": {
+        "bytes": 763,
+        "sha256": "23d1415cc91168ca56a5140fe0a7857c72e978122da7e5e163f9163081a712b9"
+      },
+      "CHANGELOG-NOVA33.2-en.md": {
+        "bytes": 653,
+        "sha256": "e25ca86f554f9e9056e2a3c709c8433f552aacba603fbdddef235275de334102"
+      },
+      "CHANGELOG-NOVA33.2-es.md": {
+        "bytes": 657,
+        "sha256": "28801966c0153c43d59725c873003f1722a87b72d4646fa2568fb9d5f73ef827"
+      },
+      "CHANGELOG-NOVA33.2-it.md": {
+        "bytes": 629,
+        "sha256": "6fb5e462e15b40254a994563b50e7ca9b419bc3fbbd6d85db224aee6bfc6060c"
+      },
+      "CHANGELOG-NOVA33.2-de.md": {
+        "bytes": 691,
+        "sha256": "c071fd5b9b48acc69f031cbb09236304e33b082e2ab5a3aefa4e1bec062639f4"
+      },
+      "CHANGELOG-NOVA33.2-pt.md": {
+        "bytes": 632,
+        "sha256": "27c2da11a7b1a23e79c7e2c92a16ed998f478f3ae7463fe48d16fd71cf17e932"
+      },
+      "CHANGELOG-NOVA33.2-ru.md": {
+        "bytes": 975,
+        "sha256": "8ec0cb4c68bc18b99c07b1951c66ac9a42c96eb9e8ada2aac345843660b313df"
+      },
+      "CHANGELOG-NOVA33.2-zh-CN.md": {
+        "bytes": 605,
+        "sha256": "b56ec26578273a4e853dd157bd2a5de4acc376760ffc915a9c09bc31e94ea38a"
+      },
+      "hekate-nova-pro-v33.2-beta-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "9e8efc345fea31dc5353a65688928774f21f34585014a3805e3dd350162981a4"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1239,
+        "sha256": "824cb6bfa12d196cd0b90b0cad8165167e4f8ae66edeff0375bde5b1c2875632"
+      }
+    }
+  },
+  "v33.3": {
+    "assets": {
+      "hekate-nova-pro-v33.3-beta.zip": {
+        "bytes": 16168668,
+        "sha256": "1c1b315cfcf2f4072b5f655bd6b418e62d284a6c1cff5d963b8d48147c4e554d"
+      },
+      "hekate-nova-pro-v33.3-beta-8GB.zip": {
+        "bytes": 16168727,
+        "sha256": "ec6ccfb1448bc4b93d41ccad8fb5cc6d00b28a1564fed753ce46569cf04d1bfd"
+      },
+      "hekate-nova-pro-v33.3-beta-sources.zip": {
+        "bytes": 30055483,
+        "sha256": "a7271b398a968c4b9d2c49348ec776ff58401312d8c008a78ec9d3c2c6bbd9a9"
+      },
+      "LIRE-MOI-NOVA33.3.txt": {
+        "bytes": 1359,
+        "sha256": "c0ec4961a52989c21fec1f550dd06920a14bbb8a575b66cd6fd87b4c110993b6"
+      },
+      "CHANGELOG-NOVA33.3-fr.md": {
+        "bytes": 1486,
+        "sha256": "6fd70fb424dc712addcf0b27db938e1865e56aab49482dc6d89509f7575145e7"
+      },
+      "CHANGELOG-NOVA33.3-en.md": {
+        "bytes": 1286,
+        "sha256": "f769f416d90baf9d2bde0747a7fc2508fbc20c901bc33b7e496b409a168cc2f7"
+      },
+      "CHANGELOG-NOVA33.3-es.md": {
+        "bytes": 1244,
+        "sha256": "8620486a5f1b3cb5c025ab24062ee8c0bf03d723408743ca2f8ed8a83e071046"
+      },
+      "CHANGELOG-NOVA33.3-it.md": {
+        "bytes": 1224,
+        "sha256": "e338db28f2ff7fe3c97dd7fac582ab7077916769f511233ba54882e2d07bb37f"
+      },
+      "CHANGELOG-NOVA33.3-de.md": {
+        "bytes": 1289,
+        "sha256": "c68b5e3764ae7918aaca3a8b82d68872e5351bc5ce7d76f52ef3f7ed9921e833"
+      },
+      "CHANGELOG-NOVA33.3-pt.md": {
+        "bytes": 1226,
+        "sha256": "5e8cfc1dd676e63668c7b1451f41c24c7263a8bea1b243fbe159834ec9445f17"
+      },
+      "CHANGELOG-NOVA33.3-ru.md": {
+        "bytes": 1746,
+        "sha256": "b1fdcbd072bfc8a2770a2fe7b9dd5ed9d89cc3c5113724e2523abc4a8bbeee5b"
+      },
+      "CHANGELOG-NOVA33.3-zh-CN.md": {
+        "bytes": 1154,
+        "sha256": "8e241864549150d393485d28436bba619b5e9cc2f3b3190c62a7e7ae1e2a24eb"
+      },
+      "hekate-nova-pro-v33.3-beta-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "05b37ee5c26e94835e5ca3fe4f6343b75728c611eab93a39af5de9d852b813bc"
+      },
+      "colors.png": {
+        "bytes": 681093,
+        "sha256": "814fedc12c63559531617b1a6f6e9c82a2701c2898ef3cc055683c081d4c2ee8"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1317,
+        "sha256": "9494dbe7134aa5c7ffa158bedbeb0d9a797c6b0727e9b05ae2fe92262da76f76"
+      }
+    }
+  },
+  "v34-alpha1": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha1.zip": {
+        "bytes": 16232105,
+        "sha256": "ebc35e9ca323a1555b8130c5ee0b3ede5e1bf0d5ab21851d407331bc91a0fe49"
+      },
+      "hekate-nova-pro-v34-alpha1-8GB.zip": {
+        "bytes": 16232165,
+        "sha256": "2ac6f9690ced92fcc3ea24a2b562e07301c642f2f69c652eb229d3410e13e93e"
+      },
+      "hekate-nova-pro-v34-alpha1-sources.zip": {
+        "bytes": 30182879,
+        "sha256": "c4ecdffc88762c97a225a2901c6cc0f1a2299cc6c5b9767030f897169f5dadf5"
+      },
+      "LIRE-MOI-NOVA34-ALPHA1.txt": {
+        "bytes": 2689,
+        "sha256": "7510ccb24eadf68aa37edeb3b2a1717deedc67ac5335a88b4cce7d1bfb194f7e"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-fr.md": {
+        "bytes": 402,
+        "sha256": "f27d055995d04e239d0d4b43e9a14210184c2aed6730089f2df435de8fa9395c"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-en.md": {
+        "bytes": 359,
+        "sha256": "30e3da1d9bb063e4fe157ed3fc187d2e406958f274cd8312cb9c55d62ee11e96"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-es.md": {
+        "bytes": 344,
+        "sha256": "919c16712a8ba64ef27a6dadfe7cd04338bda9dc97d546e37a712a9955adb16d"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-it.md": {
+        "bytes": 344,
+        "sha256": "2702505ac7e61d57c7601f44417aa4a9ba5fd257ac7aac981dc71e16f85d0b86"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-de.md": {
+        "bytes": 362,
+        "sha256": "5c7242b98b416eb6965252171d010a91c7f44bd6c2b4377a8a43e712357f9c06"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-pt.md": {
+        "bytes": 349,
+        "sha256": "c5182da7155a95ccb0f23aa7095afa062c7084ed190e72f43b852970bad986db"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-ru.md": {
+        "bytes": 483,
+        "sha256": "6ce42d1c6cab51dd18e3ba2556b03b99101e21b1e38de54faaa6d14daacf069f"
+      },
+      "CHANGELOG-NOVA34-ALPHA1-zh-CN.md": {
+        "bytes": 339,
+        "sha256": "8a3760933b0ea393461fe3b05c4868cc10f630ac6022a30c3328ecf2e3510f3c"
+      },
+      "hekate-nova-pro-v34-alpha1-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "912973521197a1aeef75ad3383b8e7fc70886e48aad71e398f174760beddb203"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1284,
+        "sha256": "6042f82b4055066230f8067f7cf658ca18b67e2d07b2518047817b74173ab5f8"
+      }
+    }
+  },
+  "v34-alpha2": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha2.zip": {
+        "bytes": 16242515,
+        "sha256": "f03ccf52521933c1f824c59d60793ba87dff8b192fd1a369f1f1dcb5cacac686"
+      },
+      "hekate-nova-pro-v34-alpha2-8GB.zip": {
+        "bytes": 16242572,
+        "sha256": "efcb57ba2590bd78a3626ccdeb61903c2280bfa875ae0647e1340b4624877fdc"
+      },
+      "hekate-nova-pro-v34-alpha2-sources.zip": {
+        "bytes": 30207108,
+        "sha256": "78faa0667691c4c52c17e746a655899b93f7a7624110860f5650a71fad6f20ea"
+      },
+      "LIRE-MOI-NOVA34-ALPHA2.txt": {
+        "bytes": 4198,
+        "sha256": "d35b3e92f979324432d01af4e364524514726df5e2ced4bba17eb06344a78609"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-fr.md": {
+        "bytes": 497,
+        "sha256": "811d5a97e6337295adb18eae9d6bf5da24cef2495eb953d000a8a4e0e29ca0ed"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-en.md": {
+        "bytes": 443,
+        "sha256": "9f9bdc04242c36a9ed5c7f9b0a8da5a2447296e7c5bf56d339bf001569da0ed9"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-es.md": {
+        "bytes": 492,
+        "sha256": "6c5a4841f97764d194d2da90f1f123f4ff6cec82da8cdd82166ef3362c67a473"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-it.md": {
+        "bytes": 489,
+        "sha256": "1921c09971968fbb6f6e224d2bb29d049e8057920fea495d4ffb8e87abcdf148"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-de.md": {
+        "bytes": 492,
+        "sha256": "84496881f91c9097b84a844bb36807d955e5f97b4a64ae38c7c8bc5540ade686"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-pt.md": {
+        "bytes": 487,
+        "sha256": "6e4b74cf5c9e9622f3a61ab83ca58e369b5b45331659f34487bc87583296ee90"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-ru.md": {
+        "bytes": 848,
+        "sha256": "25a45cb7ec2b989e100e26d4016a7ebef27e10224198a9a7558651f1071aca3d"
+      },
+      "CHANGELOG-NOVA34-ALPHA2-zh-CN.md": {
+        "bytes": 423,
+        "sha256": "5c4cb9842994ed147592a2488c98ee7e1432b3ff248d8e16e40e111fe97f1db3"
+      },
+      "hekate-nova-pro-v34-alpha2-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "1d5a3c7e61c55469b5d0d9e0b3d350d55a4a17546b7c1648dc58cb2eb5e9458c"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1284,
+        "sha256": "99208e6a96accf4c33936d906fae4e312f4d615473558a529e293480badb0b2d"
+      }
+    }
+  },
+  "v34-alpha3": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha3.zip": {
+        "bytes": 16256822,
+        "sha256": "cb69a3dfe0c853efadcbd74bc3fd37c2cf8884c8a4aee1cb8d8ebc8b344f7a00"
+      },
+      "hekate-nova-pro-v34-alpha3-8GB.zip": {
+        "bytes": 16256880,
+        "sha256": "f5844f804ca382c62860c928be20574277e1d983bdf8d3682ca25790d5a81e73"
+      },
+      "hekate-nova-pro-v34-alpha3-sources.zip": {
+        "bytes": 30232139,
+        "sha256": "57f032c3eb0caaca800ca35703af743c23875a579272beaf449b344b15eb4f36"
+      },
+      "LIRE-MOI-NOVA34-ALPHA3.txt": {
+        "bytes": 6266,
+        "sha256": "40028618af15ae831e0f981055b7cf5867618cadcc86de9076036282565af91d"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-fr.md": {
+        "bytes": 622,
+        "sha256": "53c92a16c08d2ba9253df4df7971b3b584a2acc3dd657b0001c89595cffb3c55"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-en.md": {
+        "bytes": 559,
+        "sha256": "87398d2b7af6015558a74b1c8fd10248945e85346b44cf5203b2e57b5b880ea3"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-es.md": {
+        "bytes": 553,
+        "sha256": "77e34d05a95a6bb68ba142cab543327a98af2b2dde1c13333df93d2120b1a1c6"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-it.md": {
+        "bytes": 547,
+        "sha256": "b76182d3140681fbbe8b9aea397e1e9f9dc0a2fdcb35e1a3a4e5bd6540ef3f1a"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-de.md": {
+        "bytes": 573,
+        "sha256": "bd7abc26e5a200a61efa5abf488af889309d8ed9b26815b7caf95639e4d7e7c9"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-pt.md": {
+        "bytes": 573,
+        "sha256": "86286631cb069dbf97d191f65bc6be38968212ac5b4a85082462e17accbbde89"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-ru.md": {
+        "bytes": 827,
+        "sha256": "c38335e610c9aad47b422c172c5e366f3217d5cfca46717c01730b2f443c5873"
+      },
+      "CHANGELOG-NOVA34-ALPHA3-zh-CN.md": {
+        "bytes": 557,
+        "sha256": "3f34bd1bcdd723053a2ec05c828b11f249f4d065e12fc6aa51627c63054a1626"
+      },
+      "hekate-nova-pro-v34-alpha3-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "56f882555a18aeda68ec4337fbc4c97785f77daf96c78a7329d2b78e91fa93b0"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1284,
+        "sha256": "e152e1ebc9e91f9f7660ab8ef5471a8f1653f62ce3609a8485ac9c67a2436bf2"
+      }
+    }
+  },
+  "v34-alpha4": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha4.zip": {
+        "bytes": 16258537,
+        "sha256": "77cec9952729356409b0975ec722a8eac4699ac2bdc1a2794d74ae512760a217"
+      },
+      "hekate-nova-pro-v34-alpha4-8GB.zip": {
+        "bytes": 16258594,
+        "sha256": "bb751f7520fe84da074bcc9b136730f96b4d4b950c64d5f5f37e369979904adc"
+      },
+      "hekate-nova-pro-v34-alpha4-sources.zip": {
+        "bytes": 30238920,
+        "sha256": "16868d3d4aa8eeda6a0bc3aed044a5cd3724d249be3ced43ad8f41c46860161c"
+      },
+      "LIRE-MOI-NOVA34-ALPHA4.txt": {
+        "bytes": 8002,
+        "sha256": "ed7df5bd7b5c9e274354afe6196315417481aea9028dbd1afb5b6e7e1b19cedb"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-fr.md": {
+        "bytes": 542,
+        "sha256": "1164242023bb8c1fc0987b2220b204523fd41ecd0e0dd13ccdab285f06e343c2"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-en.md": {
+        "bytes": 444,
+        "sha256": "e81a6d88d4bf129524802f9ea41358abb6980cd4f51e7eb9af32f6c62a9b8347"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-es.md": {
+        "bytes": 463,
+        "sha256": "30395773a54fafb56a79167fb806d14c547c6a288056e377f21cab1197607bac"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-it.md": {
+        "bytes": 476,
+        "sha256": "e3dc44b448d858b0cc4a89ef4255f9bccc11046fdaf08ee9159d5040d10ddfb8"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-de.md": {
+        "bytes": 503,
+        "sha256": "644adb4a507ae0b58d43e6200d2d8eb61173291fe5558e95985b8dae1d6b04b5"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-pt.md": {
+        "bytes": 448,
+        "sha256": "2edcfbb898c46e76dd1879c9e50809e18c3ffee7233724df3736f5984fb7fe11"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-ru.md": {
+        "bytes": 750,
+        "sha256": "d280a64ab3323f1a2e6c51e5690da5b6fce9da26892c7f7175c5150ffe3fbf80"
+      },
+      "CHANGELOG-NOVA34-ALPHA4-zh-CN.md": {
+        "bytes": 409,
+        "sha256": "5b309a67ce6f2c82b1101acc179b8116bbf1bc6dcb656862d8d38c4e17af951c"
+      },
+      "hekate-nova-pro-v34-alpha4-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "d0d77e02cf679879a039813ea9f3a17aa29f315da92bfe62e3c7e6ea3586c40f"
+      },
+      "Hekate-Nova-Pro-v34-alpha4-Installation.exe": {
+        "bytes": 29322594,
+        "sha256": "95abbe58f479e46019b19f43a60cb3f7631da81c76472ba43b42935fa8f54181"
+      },
+      "Hekate-Nova-Pro-v34-alpha4-Installateur.zip": {
+        "bytes": 29188746,
+        "sha256": "df1518a68d2ee0b5c2989c4cdd3513b23dab93f1861f5c7f31ef62229d976ed6"
+      },
+      "Hekate-Nova-Pro-Installateur-sources.zip": {
+        "bytes": 57659,
+        "sha256": "637787552e3855b9d174ab842b6a0c11763624de859ebb71bfbbb09ed7b3b324"
+      },
+      "INSTALLATEUR-NOVA-LIRE-MOI.txt": {
+        "bytes": 2884,
+        "sha256": "f9b8d90fd092f0f329e694f4d8b4754eefbb1bf9ef450bd01b0201dcf3544d71"
+      },
+      "INSTALLATEUR-NOVA-VERIFICATION.json": {
+        "bytes": 2364,
+        "sha256": "b0ff142bbcf480a2bda8a30e126c31b7587afd8aef7a62ba0611d3258c91baa5"
+      },
+      "Hekate-Nova-Pro-v34-alpha4-Installation-v1.1.exe": {
+        "bytes": 29505989,
+        "sha256": "5db03a38ed9d20387180b8421841abdf002cb683f22b7e53f6cac0decdee010c"
+      },
+      "Hekate-Nova-Pro-v34-alpha4-Installateur-v1.1.zip": {
+        "bytes": 29370826,
+        "sha256": "c66f03d95d3c021428e6c16a0c74103bde2914b56912cc3163fefad3e33d6e97"
+      },
+      "Hekate-Nova-Pro-Installateur-v1.1-sources.zip": {
+        "bytes": 59272,
+        "sha256": "55c3e949d2eddc74c08bec077f12eee180da6facf50cc1c5d7991d4ef9ef4dc6"
+      },
+      "INSTALLATEUR-NOVA-v1.1-LIRE-MOI.txt": {
+        "bytes": 4471,
+        "sha256": "33cd9dcb0148a0c87baab503cd6abaf2106a6578c1647e1c21083521975e248d"
+      },
+      "INSTALLATEUR-NOVA-v1.1-VERIFICATION.json": {
+        "bytes": 2367,
+        "sha256": "63b8d67ad49b61b1af8882d13e4925c4bf7020e5ff699b3d2a4d4bbc1df3a022"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 2371,
+        "sha256": "5c0038e83de94d88a3e90b107c5a5d21cb6e6294175e7fab68d9f5c7e3bba8cc"
+      }
+    }
+  },
+  "v34-alpha5": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha5.zip": {
+        "bytes": 16360601,
+        "sha256": "b0196e0d868331099afcadbd6f56832f783ad38498756f6e5d3629a4d7bd2184"
+      },
+      "hekate-nova-pro-v34-alpha5-8GB.zip": {
+        "bytes": 16360701,
+        "sha256": "898dc8761d7998ba8263a0f0cd2d6e5be76f3e7eaa7b9ab825be9d68fbe722c4"
+      },
+      "hekate-nova-pro-v34-alpha5-sources.zip": {
+        "bytes": 30280740,
+        "sha256": "d6a1038ce6c3a59af1153bca5bb3d31769da2cf4971abbd4675972bec2c70e89"
+      },
+      "LIRE-MOI-NOVA34-ALPHA5.txt": {
+        "bytes": 3019,
+        "sha256": "87f76453507634e37d919f7c0b6f8e1e05bf09704640414c61cc6dc39fa957c5"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-fr.md": {
+        "bytes": 585,
+        "sha256": "9818ebf170c8643a1ae5c8dbc9857c52d41767839a6286780731ef55e67da86c"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-en.md": {
+        "bytes": 465,
+        "sha256": "0227517f26ce20f0ec05a4290e4faa385281eba389354e14c7174d1257a1e93a"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-es.md": {
+        "bytes": 463,
+        "sha256": "fac742fd11df965325f053fb6f5da19be3d793ffe466556c41cf892dd95085be"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-it.md": {
+        "bytes": 463,
+        "sha256": "d9318d43193f7cbcf220ecace4bd49c20dc4dba4c403ecbae3b454cde691a659"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-de.md": {
+        "bytes": 489,
+        "sha256": "e04b558782f5b9fa22b46f4425c798d31c7b1b1db54b71cb672cab79ff4ea234"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-pt.md": {
+        "bytes": 442,
+        "sha256": "f8c457bf43984429d88b7fc114d6573866dbed5f6f2efb0442e91729dbe819c4"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-ru.md": {
+        "bytes": 869,
+        "sha256": "5bd1ed1250a23401d3b31d01eb8be21dab853247c5992d92111e4bc267bb392d"
+      },
+      "CHANGELOG-NOVA34-ALPHA5-zh-CN.md": {
+        "bytes": 413,
+        "sha256": "cac44fa6ec08a981793007b4f8866696cb96fd53a37bed57436ba335bc31da1c"
+      },
+      "hekate-nova-pro-v34-alpha5-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "5c3f740a0c2a74d8c26e288a1c132adca95eac32996b779b5d649f534cf2c9a6"
+      },
+      "Hekate-Nova-Pro-v34-alpha5-Installation-v1.2.exe": {
+        "bytes": 29506501,
+        "sha256": "66f230d957192a7b18d87fac19769f1803ccbd8206a217d0a63e6213f0d882ac"
+      },
+      "INSTALLATEUR-NOVA-v1.2-LIRE-MOI.txt": {
+        "bytes": 2040,
+        "sha256": "0a62a89f7f3d4ee0ba3a7c219b96aac2042f2ff7551e8b36d1dab4a43a949cc7"
+      },
+      "INSTALLATEUR-NOVA-v1.2-VERIFICATION.json": {
+        "bytes": 1920,
+        "sha256": "c3a2e9d7f45993282815304a6c3a83a6419975842dbc8abaa78c266f491b6cf7"
+      },
+      "Hekate-Nova-Pro-v34-alpha5-Installateur-v1.2.zip": {
+        "bytes": 29367866,
+        "sha256": "e4fd6c30b68ce2dd15af7c9c1b3538ee24c50f480f17d4765cfd597d2216fa67"
+      },
+      "Hekate-Nova-Pro-Installateur-v1.2-sources.zip": {
+        "bytes": 65485,
+        "sha256": "04796152c895cd6d59fbfb462013ae8b1e28dc7bb27e366ae25f21026783d21a"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1840,
+        "sha256": "69d70e6c3483d94aa271facb138801e24705a23607249ded845c54b282be2600"
+      }
+    }
+  },
+  "v34-alpha6": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha6.zip": {
+        "bytes": 16362053,
+        "sha256": "3bfbbe877015749534678849a0afeba0ee08ae61b98e8360f77c6a556541de9a"
+      },
+      "hekate-nova-pro-v34-alpha6-8GB.zip": {
+        "bytes": 16362157,
+        "sha256": "6ee28bcb14fae39880c2f3718ea7adef29cbee409058eb7665b148567b55af2e"
+      },
+      "hekate-nova-pro-v34-alpha6-sources.zip": {
+        "bytes": 30295028,
+        "sha256": "29b76456e210c74881e4a56ccaedbc4ac0b47721c98c20f1531789305be38bee"
+      },
+      "LIRE-MOI-NOVA34-ALPHA6.txt": {
+        "bytes": 2576,
+        "sha256": "33bf1b77f55860278e3310f0f9137a7a936ffd849bcbd4ed556a0c12f4011238"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-fr.md": {
+        "bytes": 863,
+        "sha256": "0779526ce5d26f663f0fe82ccc952cb22cf0cce2864f06786d3d0efcd4709e52"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-en.md": {
+        "bytes": 693,
+        "sha256": "6aa34fbe69bb54e7dab269a432a6c79d778e391c9decda13598ed01af46c4a57"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-es.md": {
+        "bytes": 731,
+        "sha256": "b2282697b46f4ac6ae087be967b38bdf05adeaa17f0344029f344d888990cf23"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-it.md": {
+        "bytes": 728,
+        "sha256": "868fd6829deddd55391a0494a5d21fb907da5a5a5492ad02d4cff63e16824f98"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-de.md": {
+        "bytes": 750,
+        "sha256": "1c44f6ee4cb7450e5b63d2f5b182ca33d7f2081d1584806bcc7121f7e01570bf"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-pt.md": {
+        "bytes": 712,
+        "sha256": "3545ffe4fef961d11884740f803e714d993336d201f59c8ff529ca71607a20c1"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-ru.md": {
+        "bytes": 1312,
+        "sha256": "78820a7b1ae86e1f48bc012d27c24a9e53df24d5e5138b8dd40b2115123b8d87"
+      },
+      "CHANGELOG-NOVA34-ALPHA6-zh-CN.md": {
+        "bytes": 637,
+        "sha256": "44ccbc96ede7c944cce0e15541098af27c58b144ebb4896d52a334349610d51b"
+      },
+      "hekate-nova-pro-v34-alpha6-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "c088a513edcdd199f8d774c9a0c466c7a6d65f8e156e2dbdcb067d440641dd2f"
+      },
+      "Hekate-Nova-Pro-v34-alpha6-Installation-v1.3.exe": {
+        "bytes": 29515205,
+        "sha256": "39143c188cc41a4b8f7fddd8a8e0aee5cf298448adb167a23385f96dbbce6d5e"
+      },
+      "INSTALLATEUR-NOVA-v1.3-LIRE-MOI.txt": {
+        "bytes": 2145,
+        "sha256": "87b51a67f84174787baac1fe4e78fc173c5252da627947be658ca5ca79e1bbf3"
+      },
+      "INSTALLATEUR-NOVA-v1.3-VERIFICATION.json": {
+        "bytes": 1920,
+        "sha256": "a1a57369fc926050bb61690b58016c7a092d242f37c49b50ac7838bc4910ae08"
+      },
+      "Hekate-Nova-Pro-v34-alpha6-Installateur-v1.3.zip": {
+        "bytes": 29378238,
+        "sha256": "e005ff11ab873511e84b769437fe903fa236d8ac31f189dbc7c81f6124280c19"
+      },
+      "Hekate-Nova-Pro-Installateur-v1.3-sources.zip": {
+        "bytes": 66504,
+        "sha256": "4f88d0cc67ffc4f6babe81a66102afa3461cdad4f4d71772032001fe49b5653b"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1840,
+        "sha256": "c61e2b48959a877f5cb728a69634f918d96630e797853c8325e6c493cb301b66"
+      }
+    }
+  },
+  "v34-alpha7": {
+    "assets": {
+      "hekate-nova-pro-v34-alpha7.zip": {
+        "bytes": 16364175,
+        "sha256": "2bc879e75f3587e06a96482361833dad1bf23a6fca227044026adc00fa22a0b5"
+      },
+      "hekate-nova-pro-v34-alpha7-8GB.zip": {
+        "bytes": 16364276,
+        "sha256": "f2bfa1a1ab5cafd0f8286c139a3f625b73475ef41bf80ac63e3f0b7c1e9aa9d8"
+      },
+      "hekate-nova-pro-v34-alpha7-sources.zip": {
+        "bytes": 30299618,
+        "sha256": "8ffdc84eb3238d74a14d2041a41654b213723c62caf9e9ff6994a2be4738d45b"
+      },
+      "LIRE-MOI-NOVA34-ALPHA7.txt": {
+        "bytes": 2632,
+        "sha256": "7302d0a9aa6e139c1d97d877e786a6df55a7e540925afa45a2a2fd3933ad4631"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-fr.md": {
+        "bytes": 1220,
+        "sha256": "18202545cea3bcf03201133eaa1072fca17fe9a3f90052f002a4aa4e75f4e82e"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-en.md": {
+        "bytes": 1010,
+        "sha256": "c461205c250da3e446ef3c807a19b8fbb36eca0ba86042cf27da03458d2b684f"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-es.md": {
+        "bytes": 1046,
+        "sha256": "f9bd1482dd4fc847633102bd84a6f4b1652a6c52a6a3d8035110080c3f825f56"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-it.md": {
+        "bytes": 1034,
+        "sha256": "267fe66d11e9bdd7b11f3e8f3045a121f84ca8a3dd77a90fa9a8b021e5a41b92"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-de.md": {
+        "bytes": 1071,
+        "sha256": "50f1908dd7db668cfb953d6101ea5ebf81c73fb35537ff5bc9dfe65e40f99626"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-pt.md": {
+        "bytes": 1023,
+        "sha256": "886004e2a98d00277cbfc5dac7ed58440927aa35d1ef7e1e1fc95b8ed3d3ccca"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-ru.md": {
+        "bytes": 1849,
+        "sha256": "2e90c657a010696a561ae6ff554b4f690570e8437fb04773f3bdfc1e72663cb4"
+      },
+      "CHANGELOG-NOVA34-ALPHA7-zh-CN.md": {
+        "bytes": 961,
+        "sha256": "dec85da9d012d43a1a11faeb1a3afc4e78fe52bcd2099c5c9161f2f9a38e54b8"
+      },
+      "hekate-nova-pro-v34-alpha7-SHA256.txt": {
+        "bytes": 306,
+        "sha256": "5e68709e40f6898ddec49b540a7079b8c231c264cb72c97885914cdbf98871bc"
+      },
+      "Hekate-Nova-Pro-v34-alpha7-Installation-v1.4.exe": {
+        "bytes": 29518277,
+        "sha256": "7312e09c768f1eda2663ae0c7697eec27e4a65d47c08ad960ff18c6d6e71b182"
+      },
+      "INSTALLATEUR-NOVA-v1.4-LIRE-MOI.txt": {
+        "bytes": 2294,
+        "sha256": "9ad827d68ed49f27bcf1e873445e7d829d2bb8c1b92cff7fdca32324b36c64a5"
+      },
+      "INSTALLATEUR-NOVA-v1.4-VERIFICATION.json": {
+        "bytes": 1920,
+        "sha256": "75cfe8ddad8b74d377e04a1be2302503a1e4626643ea3b3d9e8d93d5fc6df4cd"
+      },
+      "Hekate-Nova-Pro-v34-alpha7-Installateur-v1.4.zip": {
+        "bytes": 29381689,
+        "sha256": "c3fde610cc6f421f2103ff93ba9f31215a879b8eb81803853ba1522c81c546c5"
+      },
+      "Hekate-Nova-Pro-Installateur-v1.4-sources.zip": {
+        "bytes": 68091,
+        "sha256": "84afc01d2deb8a8f22c13cac4b7bcc34957b4c58ad07862393cef95bd1f63eb9"
+      },
+      "RELEASE-SHA256.txt": {
+        "bytes": 1840,
+        "sha256": "67a9f9cd9929db3b4020a5d199e886dbae9dd159d2bbbac54500d902fe593d39"
+      }
+    }
+  }
+}

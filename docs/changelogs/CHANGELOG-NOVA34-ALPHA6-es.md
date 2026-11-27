@@ -1,0 +1,3 @@
+# Hekate Nova Pro v34 alpha 6
+
+Servicio TV durante operaciones largas y esperas de botones. Presentación de imágenes completas y registros diferidos sin acceso SD simultáneo. Ajustes y protecciones conservados. Falta validación física. Hasta tres intentos espaciados tras fallo; sin reinicio PD forzado y parada manual prioritaria. Confirmación nueva de sincronización en 1 s; error explícito sin sincronización/AUX/HPD. Versión del registro corregida. Alpha6: salir del modo DP heredado antes de identificar el dock; reintentar el enlace de vídeo a HBR/RBR tras un fallo de sincronización, comprobando las vías. 429 comprobaciones del controlador y 54 escenarios de servicio superados en PC; falta prueba en consola.

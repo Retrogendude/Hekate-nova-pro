@@ -202,3 +202,16 @@ Le diagnostic préserve le mode 8 Go au lancement et au retour. Il accède aux a
 ## v33.3 — Halo à deux couleurs
 
 Dans Interface > Thèmes et couleurs > Couleurs, Halo remplace le choix Fond. Choisir Couleur 1, régler la palette, puis Couleur 2. L’aperçu affiche le dégradé immédiatement ; les deux choix sont conservés entre onglets. Enregistrer et recharger applique et conserve les couleurs. Fermer sans sauvegarder abandonne les modifications. Les anciennes configurations gardent le bleu/violet par défaut et leur fond existant. Les corrections des contours de la v33.2 sont incluses.
+
+
+## v34 — assistant et installateur Windows
+
+L’assistant sur l’accueil prépare le partitionnement et, depuis alpha2, enchaîne la copie/relecture emuMMC après réussite. Depuis alpha3, 16 Go minimum ou 32 Go recommandé pour Linux et Android sont des choix explicites ; il n’y a pas de réduction silencieuse. L’accord autorise la suite et ne certifie pas une sauvegarde. Le partitionnement efface les données non sauvegardées. Linux/Android restent des partitions réservées, leur installation n’est pas automatisée. L’alpha4 corrige le faux échec de configuration emuMMC.
+
+L’installateur Windows x64 propose la lettre de la SD et copie le pack, sans partitionner ni injecter de payload. Réglages, appairages et personnalisations existants sont conservés ; les fichiers remplacés sont sauvegardés dans nova-backups avec installation.txt. Utiliser Standard pour une console normale. Le payload du même pack est fourni à la racine et dans bootloader/payloads.
+
+## v34 alpha5–alpha7 — TV pendant les opérations longues
+
+Le service TV est entretenu pendant les maintenances de copie/partitionnement et les attentes des boutons ; les rapports sont différés pour éviter les accès SD concurrents. Les replis HBR/RBR sont bornés. En alpha7, des captures CRC nouvelles, une source active, des compteurs valides sans erreur et des voies stables peuvent confirmer le flux lorsque SINK_STATUS reste nul. Le signal de TV branchée seul n’entraîne plus de commande Exit DP. Ces changements sont testés sur PC ; la stabilité alpha7 sur dock reste à confirmer.
+
+Tester d’abord une image permanente au démarrage et après retrait/remise sur dock officiel. En cas de coupure, conserver les derniers bootloader/tv-test/run-*.txt et last-run.txt avec la version et le branchement. Consulter [l’historique](RELEASES-V33-V34.md) pour les différences de chaque alpha.

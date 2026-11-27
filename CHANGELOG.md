@@ -1,4 +1,192 @@
-# Historique de Hekate Nova Pro
+# Changelog Hekate Nova Pro
+
+# Hekate Nova Pro v34-alpha7 — préversion
+
+Validation alternative par captures CRC fraîches quand SINK_STATUS reste nul, avec source active et voies stables. Ne pas envoyer Exit DP pour une TV simplement détectée. Stabilité TV à confirmer sur console.
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Maintien du service TV pendant les opérations longues, rafraîchissement après chaque image terminée, journaux TV différés pour éviter tout accès SD réentrant. Attentes de boutons coopératives. Réglages et arrêts matériels conservés. Validation matérielle à effectuer. Jusqu’à trois tentatives espacées après échec de connexion ; aucun reset PD forcé et arrêt manuel prioritaire. Confirmation fraîche de synchronisation vidéo (attente bornée à 1 s) ; échec explicite sans synchronisation/AUX/HPD. Numéro de journal corrigé. Alpha6 : sortie contrôlée du mode DP hérité avant identification ; repli du seul lien vidéo vers HBR/RBR après perte de synchronisation, avec contrôle frais de toutes les voies. 429 assertions du pilote et 54 scénarios du service réussis sur PC ; essai console requis. Alpha7 : éviter la coupure d’un flux reçu lorsque SINK_STATUS reste nul. Confirmation alternative par compteur CRC frais, source active, compteurs d’erreurs valides à zéro et cinq lectures de voies alignées. Contrôle des erreurs AUX et du redémarrage du compteur. Ne plus envoyer Exit DP pour SIGNAL_ON seul. Stabilité sur console à confirmer.
+
+
+
+
+# Hekate Nova Pro v34-alpha6 — préversion
+
+Replis vidéo HBR/RBR et reprise de connexion. L’image a été rapportée puis coupée par la validation logicielle ; cette limite est traitée en alpha7.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Maintien du service TV pendant les opérations longues, rafraîchissement après chaque image terminée, journaux TV différés pour éviter tout accès SD réentrant. Attentes de boutons coopératives. Réglages et arrêts matériels conservés. Validation matérielle à effectuer. Jusqu’à trois tentatives espacées après échec de connexion ; aucun reset PD forcé et arrêt manuel prioritaire. Confirmation fraîche de synchronisation vidéo (attente bornée à 1 s) ; échec explicite sans synchronisation/AUX/HPD. Numéro de journal corrigé. Alpha6 : sortie contrôlée du mode DP hérité avant identification ; repli du seul lien vidéo vers HBR/RBR après perte de synchronisation, avec contrôle frais de toutes les voies. 429 assertions du pilote et 54 scénarios du service réussis sur PC ; essai console requis.
+
+
+
+
+# Hekate Nova Pro v34-alpha5 — préversion
+
+Service TV pendant les opérations longues, journaux différés et tentatives limitées. Version TV historique : son contrôle de synchronisation trop strict est corrigé en alpha7.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Maintien du service TV pendant les opérations longues, rafraîchissement après chaque image terminée, journaux TV différés pour éviter tout accès SD réentrant. Attentes de boutons coopératives. Réglages et arrêts matériels conservés. Validation matérielle à effectuer. Jusqu’à trois tentatives espacées après échec de connexion ; aucun reset PD forcé et arrêt manuel prioritaire. Confirmation fraîche de synchronisation vidéo (attente bornée à 1 s) ; échec explicite sans synchronisation/AUX/HPD. Numéro de journal corrigé.
+
+
+
+
+# Hekate Nova Pro v34-alpha4 — préversion
+
+Correction du faux échec emummc.ini causé par les fins de ligne FatFs ; installateur Windows autonome et correction du dossier Payloads.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Correction du faux échec d’enregistrement emuMMC/emummc.ini avant le partitionnement : écriture en octets exacts, sans conversion automatique des fins de ligne. Synchronisation et relecture conservées. Défaut reproduit et correctif testé avec le vrai FatFs Nyx sur FAT32/exFAT virtuels. Écritures courtes et protection en écriture toujours refusées. Interface et fonctions de l’alpha 3 conservées ; essai réel sur console à effectuer.
+
+PC checks passed; physical console validation pending.
+
+
+
+
+# Hekate Nova Pro v34-alpha3 — préversion
+
+Choix Linux/Android 16 Go minimum ou 32 Go recommandé, accord d’effacement, aide et erreurs de stockage détaillées. Signalement des cartes suspectes selon l’indicateur Hekate existant.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Choix Linux et Android indépendants : 16 Go minimum / 32 Go recommandé, sans réduction automatique. Aide : emuMMC 29 Go V1/V2/Lite ou 58 Go OLED et renvoi vers le mode expert. Accord explicite « J’accepte / Je n’accepte pas ». Suivant en bas à droite uniquement dans l’assistant. Erreurs de stockage détaillées ; blocage sur l’indicateur SD suspecte de Hekate (fabricant 0x00). Cet indicateur ne détecte pas toutes les fausses capacités. Copie emuMMC vérifiée conservée. Linux/Android : partitions seulement.
+
+PC checks passed; physical console validation pending.
+
+
+
+
+# Hekate Nova Pro v34-alpha2 — préversion
+
+Assistant agrandi ; partitionnement suivi de la copie et de la relecture intégrale de BOOT0, BOOT1 et de l’emuMMC, avec activation conditionnelle.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Bouton Assistant d’installation automatisé agrandi avec icône ; confirmation obligatoire de sauvegarde et avertissement d’effacement ; après un partitionnement réussi, copie complète emuMMC avec relecture avant activation. Vérifications de capacité, modèle, identité SD et cible ; arrêt sur erreur. Linux/Android : partitions seulement. Tests PC réussis ; validation physique à effectuer.
+
+PC checks passed; physical console validation pending.
+
+
+
+
+# Hekate Nova Pro v34-alpha1 — préversion
+
+Première ébauche de l’assistant : présentation, modèle/OS et plan de partitionnement. La copie emuMMC automatique n’est pas encore raccordée.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+L’assistant peut lancer un partitionnement destructif après confirmation : sauvegarder les données SD. Linux et Android ne sont pas installés automatiquement ; seules leurs partitions sont réservées. Le pack 8GB est exclusivement destiné aux consoles physiquement modifiées et reste expérimental.
+
+## Modifications
+
+
+Premier assistant sur l’accueil : présentation, modèle et choix indépendants emuMMC/Linux/Android, récapitulatif et passage protégé vers le partitionneur. Tailles automatiques avec validation de capacité et de modèle. Copie emuMMC automatique et installation des OS non raccordées dans cette alpha.
+
+PC checks passed; physical console validation pending.
+
+
+
+
+# Hekate Nova Pro v33.3 — préversion
+
+Halo à deux couleurs avec aperçu et sauvegarde, et corrections des contours de la v33.2.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+## Modifications
+
+
+- Le choix Fond est remplacé par Halo dans Interface > Thèmes et couleurs > Couleurs.
+- Couleur 1 et Couleur 2 permettent de personnaliser indépendamment les deux couleurs du contour sélectionné. L’aperçu affiche le dégradé sans appliquer les changements avant sauvegarde.
+- Les deux valeurs sont conservées entre les onglets, enregistrées dans nyx.ini et utilisées après rechargement. Bleu/violet reste le réglage par défaut ; le fond existant est conservé.
+
+PC: 98 configuration checks + 24 Halo scenes + 192 selection/outline cases + 683 regression scenes; ARM build and binary metadata verified. Console test pending. RAM 8GB remains experimental, as in v33.2.
+
+
+# Hekate Nova Pro v33.2 beta
+
+- Contours lumineux de sélection sur toutes les tuiles de l’accueil, les trois actions Gestion emuMMC, les quatre actions Sauvegarde, les trois actions Restauration et les huit actions Outils USB.
+- Le contour suit le curseur Joy-Con ou la sélection tactile ; les boutons conservent leurs actions et les cases désactivées perdent leur contour.
+- Contour extérieur complet pour Partition SD emuMMC brute et Lecture seule lorsqu’ils sont activés, y compris le bord inférieur auparavant incomplet. Les contours d’état restent visibles sans animations.
+
+PC: 192 selection/outline cases + 683 regression scenes; ARM build and binary metadata verified. Console test pending. RAM 8GB remains experimental, as in v33.1.
+
+
+
+
+# Hekate Nova Pro v33.2 — préversion
+
+Contours de sélection complets sur les tuiles et options actives, dont Sauvegarde, Restauration et Outils USB. Version historique remplacée par la v33.3.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+## Modifications
+
+
+- Contours lumineux de sélection sur toutes les tuiles de l’accueil, les trois actions Gestion emuMMC, les quatre actions Sauvegarde, les trois actions Restauration et les huit actions Outils USB.
+- Le contour suit le curseur Joy-Con ou la sélection tactile ; les boutons conservent leurs actions et les cases désactivées perdent leur contour.
+- Contour extérieur complet pour Partition SD emuMMC brute et Lecture seule lorsqu’ils sont activés, y compris le bord inférieur auparavant incomplet. Les contours d’état restent visibles sans animations.
+
+PC: 192 selection/outline cases + 683 regression scenes; ARM build and binary metadata verified. Console test pending. RAM 8GB remains experimental, as in v33.1.
+
+
+
+
+# Hekate Nova Pro v33 — préversion
+
+Chinois simplifié, police dédiée, ressources et options de démarrage visibles. Première bêta historique, remplacée par les versions suivantes.
+
+**Version historique.** Les versions suivantes sont disponibles dans [les releases](https://github.com/Retrogendude/Hekate-nova-pro/releases). Pour les derniers travaux TV, consulter [v34-alpha7](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha7).
+
+## Modifications
+
+
+- Ajout du chinois simplifié comme huitième langue, dans les réglages et au premier démarrage.
+- Police chinoise dédiée et imposée uniquement pour cette langue. Le choix de police personnel est conservé et rétabli pour les autres langues ; la taille reste réglable.
+- Lecture.nyxf devient la police automatique des langues latines ; le russe utilise par défaut la famille intégrée. La police Hekate d’origine est disponible dans le sélecteur.
+- Trois fonds fixes et cinq icônes Nova sont inclus, ainsi que le fichier Launcher fourni pour la tuile principale.
+- Nouveaux réglages d’installation : français, Carbon Cyan, opacités des fenêtres et icônes à 75 %, texte de 30 px, couleurs fournies et logo de démarrage clair. L’horloge d’origine reste à régler sur la console.
+- Accès explicite aux options de démarrage : Auto Boot, délai, Auto NoGC et Auto HOS Power Off. Le lien de luminosité rejoint le réglage existant, sans deuxième curseur.
+- Sélecteur Auto Boot paginé dans le thème Nova, sans liste verticale ; les indices des configurations principales et supplémentaires restent ceux de Hekate.
+- Test mémoire séparé : interface chinoise et glyphes 16 × 16, compatibilité conservée avec les sept packs de langues précédents.
+- Repli lisible en anglais si la ressource chinoise est absente ou invalide, sans remplacer la police personnelle. Les réglages déjà enregistrés ne sont pas écrasés par le pack.
+
+Bêta à essayer sur console. Les contrôles PC ne remplacent pas cet essai. Les libellés principaux, les avertissements ciblés et le test mémoire chinois ont été revus ; les longs rapports comprennent encore une traduction automatique à faire relire. La publication GitHub attend le retour du testeur.
+
+
+
+
 
 # Hekate Nova Pro v33.3 beta
 

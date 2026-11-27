@@ -1,0 +1,25 @@
+"""Exercise actual LVGL wizard code and the guarded partition bridge on fake media."""
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor,as_completed
+import subprocess,os,json,hashlib
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha1';D=W/'lvgl-preview-nova34a1';F=W/'test-sd-nova34a1/nyx/nyx_gui/fonts/sd'
+jobs=[('wizard',language,size,step,0,128,1,False)for language in range(8)for size in (20,30,36)for step in range(3)]
+jobs += [(scene,language,size,0,0,128,1,False)for scene in ('home','carousel')for language in range(8)for size in (20,30,36)]
+jobs += [('wizard',language,30,0,model,capacity,mask,True)for language in (1,4,7)for model in range(4)for capacity in (0,32,64,128)for mask in range(1,8)]
+def run(job):
+ scene,language,size,step,model,capacity,mask,exercise=job;env=os.environ.copy()
+ env.update(NYX_PREVIEW_NO_DUMP='1',NYX_PREVIEW_WALLPAPER='Nova-Carbon-Cyan.bmp',NYX_TEST_MODEL=str(model),NYX_TEST_CAPACITY=str(capacity),NYX_WIZARD_SYSTEMS=str(mask))
+ if exercise:env['NYX_TEST_WIZARD']='1'
+ r=subprocess.run([str(D/'preview.exe'),str(F),str(D/'res.pak'),scene,str(language),str(size),str(step)],cwd=D,env=env,capture_output=True,text=True,timeout=45)
+ return {'case':job,'passed':r.returncode==0,'output':(r.stdout+r.stderr)[-1600:]}
+results=[]
+with ThreadPoolExecutor(max_workers=4)as pool:
+ for f in as_completed([pool.submit(run,j)for j in jobs]):
+  r=f.result();results.append(r)
+  if not r['passed']:print(r,flush=True)
+  if len(results)%100==0:print('Wizard cases',len(results),'/',len(jobs),flush=True)
+failed=[x for x in results if not x['passed']]
+names=['gui_nova.c','gui_nova.h','gui_install_wizard.inc','gui_partition_plan.c','gui_partition_plan.h','gui_tools_partition_manager.c']
+report={'passed':not failed,'cases':len(results),'locales':8,'sizes':[20,30,36],'physical_console_test':False,'destructive_partition_test':False,'automatic_emummc_copy_implemented':False,'coverage':['intro, model/system choice, review','all 7 system combinations','four hardware models','absent/too-small/sufficient SD','model mismatch','previous/next retains choices','empty selection blocked','confirmed plan passed to existing engine without executing it'],'failures':failed,'source_sha256':{n:hashlib.sha256((P/'nyx/nyx_gui/frontend'/n).read_bytes()).hexdigest()for n in names}}
+(W/'nova34a1-wizard-check.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');assert not failed
+print('PASS:',len(results),'actual-LVGL wizard/home/guarded-handoff cases')

@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "actual_c": true,
+  "result": "PASS: 2061 actual-C installation-plan assertions",
+  "physical_storage_test": false
+}

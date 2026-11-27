@@ -4,13 +4,16 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Bêta v33.3 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v33.3)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Préversion v34-alpha1 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha1)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-La v33.3 rassemble les corrections de sélection des v33.2 et v33.3 : contours lumineux sur les tuiles, cadres complets des options actives et halo à deux couleurs avec aperçu et sauvegarde. Essais matériels à confirmer ; RAM 8 Go et portée Bluetooth restent expérimentales.
+Première ébauche de l’assistant : présentation, modèle/OS et plan de partitionnement. La copie emuMMC automatique n’est pas encore raccordée. Les essais PC et retours console sont distingués dans les notes de chaque version.
 
 ![Halo à deux couleurs — rendu du code sur PC](docs/images/preview-v33.3/colors.png)
 
 [Corrections v33.3 et v33.2](docs/changelogs/CHANGELOG-NOVA33.3-fr.md) · [Guide RAM 8 Go](docs/RAM-8GO-V33.1.md) · [Notice actualisée](docs/NOTICE-UTILISATION.md)
+
+
+[Historique des nouvelles releases](docs/RELEASES-V33-V34.md) · [Changelogs en huit langues](docs/changelogs)
 
 ## Fonctions
 
@@ -18,7 +21,7 @@ La v33.3 rassemble les corrections de sélection des v33.2 et v33.3 : contours l
 - Huit langues : anglais, français, espagnol, italien, russe, allemand, portugais et chinois simplifié ; polices SD et taille de texte réglable.
 - Couleurs indépendantes, palette avec aperçu, fond d’écran, transparence, icônes PNG et reflet de sélection désactivable.
 - Diagnostics natifs issus de HWTest-RCM : 42 entrées, rapports exportables, bilan par composant, contrôles interactifs et test RAM séparé avec retour à Hekate.
-- Partitionnement simplifié / expert, lecture des tailles en Go, réserves et confirmations Hekate conservées.
+- Partitionnement simplifié / expert et première ébauche de l’assistant : modèle, choix et récapitulatif, puis ouverture du partitionneur. La copie automatique emuMMC n’est pas encore raccordée dans alpha1 ; elle arrive en alpha2.
 - Sortie TV via dock sur consoles compatibles : TV seule ou TV + écran console. La Switch Lite n’a pas de sortie TV.
 - Joy-Con Bluetooth : lecture des appairages, sauvegarde privée SD, chargement automatique sans Joy-Con sur les rails et traitement en arrière-plan. Connexion et portée restent expérimentales.
 
@@ -29,6 +32,8 @@ La v33.3 rassemble les corrections de sélection des v33.2 et v33.3 : contours l
 Télécharger le paquet compilé de la version choisie dans Releases. Console arrêtée, conserver une copie de bootloader puis fusionner les dossiers fournis avec la racine de la SD en remplaçant uniquement les fichiers livrés. Garder les configurations et appairages personnels. Utiliser le payload correspondant à la version, ou le bootloader/update.bin fourni selon la méthode de démarrage.
 
 Les instructions propres à chaque version, ses limites et ses vérifications figurent dans docs/releases et dans son archive. Les versions v1 à v5 sont conservées sous forme de sources uniquement dans les fichiers disponibles ici.
+
+L’installateur Windows copie le pack sur la lettre SD choisie ; il ne partitionne pas et n’injecte pas le payload. Les réglages et appairages existants sont conservés. Le partitionnement depuis Nova efface les données non sauvegardées.
 
 ## Sources et construction
 
@@ -52,6 +57,10 @@ Les aperçus natifs, tests à périphériques simulés et retours sur console so
 - LodePNG, icônes, polices et autres composants conservent leurs propres notices dans les sources et les paquets.
 
 Aucune affiliation avec Nintendo, CTCaer, Creased ou BlueKitchen n’est revendiquée. Les licences propres aux composants et les notices d’origine restent applicables.
+
+## Rapports TV
+
+La v34-alpha1 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
 
 ## Rapports Bluetooth
 

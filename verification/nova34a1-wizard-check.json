@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "cases": 456,
+  "locales": 8,
+  "sizes": [
+    20,
+    30,
+    36
+  ],
+  "physical_console_test": false,
+  "destructive_partition_test": false,
+  "automatic_emummc_copy_implemented": false,
+  "coverage": [
+    "intro, model/system choice, review",
+    "all 7 system combinations",
+    "four hardware models",
+    "absent/too-small/sufficient SD",
+    "model mismatch",
+    "previous/next retains choices",
+    "empty selection blocked",
+    "confirmed plan passed to existing engine without executing it"
+  ],
+  "failures": [],
+  "source_sha256": {
+    "gui_nova.c": "80f9bcdba23bdbac20304fe0b0ba0f4b0dde055a77ed14667f7933c5e55c78a0",
+    "gui_nova.h": "316a0a92bc9c8b01ed4e6cf353e9c65e01bd4cc7b775a545783ecfcf89213798",
+    "gui_install_wizard.inc": "b3237178f40a373250c115998ec7c94ead204b83ed4568b16d1ea52fafc8a0d8",
+    "gui_partition_plan.c": "13fa955109c593016967e2289b835333194edf43cfac924bb31cd1e5fc71d499",
+    "gui_partition_plan.h": "b2ed39bc4c2681122b35b4f310953146610509d8d8ca265bd6982d70e6dd17e6",
+    "gui_tools_partition_manager.c": "cab71f3ef032fac9ea66e648a672ebaf1db20e8fbd73c4656fbcf64f607fb727"
+  }
+}

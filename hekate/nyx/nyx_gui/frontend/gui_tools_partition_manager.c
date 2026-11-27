@@ -2966,3 +2966,55 @@ lv_res_t create_window_partition_manager(bool emmc)
 
 lv_res_t create_window_sd_partition_manager(lv_obj_t *btn)   { return create_window_partition_manager(false); }
 lv_res_t create_window_emmc_partition_manager(lv_obj_t *btn) { return create_window_partition_manager(true);  }
+
+/* Cheap model detection; opening the assistant does not mount or scan SD. */
+u32 nyx_nova_installation_model(void)
+{
+    switch(fuse_read_hw_type()){
+    case FUSE_NX_HW_TYPE_IOWA:return 1;
+    case FUSE_NX_HW_TYPE_HOAG:return 2;
+    case FUSE_NX_HW_TYPE_AULA:return 3;
+    default:return 0;
+    }
+}
+/* Read-only discovery for the installation assistant; retain mount ownership. */
+bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model)
+{
+    *sectors=*emmc_mib=0;*model=nyx_nova_installation_model();
+    bool mounted=sd_get_card_mounted();if(sd_mount())return false;
+    *sectors=sd_storage.sec_cnt;
+    if(!emmc_initialize(false)){
+        emmc_set_partition(EMMC_GPP);*emmc_mib=emmc_storage.sec_cnt>>11;emmc_end();
+    }
+    if(!mounted)sd_unmount();
+    return *sectors!=0;
+}
+
+lv_res_t nyx_nova_installation_partition(u32 model,u32 systems)
+{
+    create_window_partition_manager(false);
+    if(!partition_nova.ready)return LV_RES_OK;
+    nova_partition_plan plan={0};plan.total_sectors=part_info.total_sct;plan.fat_min_mib=part_info.hos_min_size;
+    nova_plan_result result=nova_partition_installation(&plan,partition_nova.actual_model,model,part_info.emmc_size_mb,systems);
+    if(result!=NOVA_PLAN_OK){
+        lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);
+        nyx_show_help(nova_partition_error(result));return LV_RES_OK;
+    }
+    partition_nova.mode=1;partition_nova.model=model;
+    part_info.emu_size=plan.emu_mib;part_info.emu_double=false;part_info.l4t_size=plan.linux_mib;part_info.and_size=plan.android_mib;
+    nova_partition_build_controls();
+    lv_win_set_title(partition_nova.win,nyx_tr("Installation assistant"));
+    lv_obj_set_hidden(partition_nova.mode_choices,true);lv_obj_set_hidden(partition_nova.content,true);
+    /* Keep unrelated USB/flash shortcuts out of this guided confirmation. */
+    for(lv_obj_t *child=lv_obj_get_child(lv_page_get_scrl(partition_nova.page),NULL);child;child=lv_obj_get_child(lv_page_get_scrl(partition_nova.page),child)){
+        lv_obj_type_t type;lv_obj_get_type(child,&type);
+        if(type.type[0]&&!strcmp(type.type[0],"lv_btn"))lv_obj_set_hidden(child,true);
+    }
+
+    lv_label_set_text(lv_obj_get_child(part_info.partition_button,NULL),"Next");
+    lv_obj_t *panel=nyx_nova_panel(partition_nova.page,34,140,1212,lv_obj_get_height(partition_nova.page)-278);
+    nyx_nova_fit_text(nyx_nova_text(panel,"Your partition layout is prepared.",24,18,1164,NOVA_TITLE),46);
+    nyx_nova_fit_text(nyx_nova_text(panel,"The original partition tool will ask for confirmation before erasing the card. Back up your files first.",24,84,1164,NOVA_BODY),84);
+    nyx_nova_fit_text(nyx_nova_text(panel,"First draft: partition setup is available. Automatic emuMMC copying is not enabled yet.",24,174,1164,NOVA_SMALL),48);
+    return LV_RES_OK;
+}

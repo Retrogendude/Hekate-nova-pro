@@ -1,0 +1,41 @@
+"""Actual C installation plan tests; no storage I/O."""
+from pathlib import Path
+import subprocess,json
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha1';D=W/'nova34a1-plan-check';D.mkdir(exist_ok=True)
+c=r'''
+#include <stdio.h>
+#include <stdlib.h>
+#include "gui_partition_plan.h"
+static unsigned checks;
+#define C(x) do{++checks;if(!(x)){fprintf(stderr,"line%d: %s\n",__LINE__,#x);exit(1);}}while(0)
+int main(void){
+ const u32 cards[]={4,8,16,32,64,128,256,512,1024},models[]={0,2,3};
+ for(u32 actual=0;actual<4;++actual)for(u32 m=0;m<3;++m)for(u32 systems=0;systems<8;++systems)for(u32 c=0;c<9;++c){
+  nova_partition_plan p={0};p.total_sectors=cards[c]*2097152u;p.fat_min_mib=2048;
+  u32 emmc=actual==3?59640:29820;bool same=actual==models[m]||(actual<2&&models[m]==0);
+  nova_plan_result result=nova_partition_installation(&p,actual,models[m],emmc,systems);
+  C(!systems?result==NOVA_PLAN_INVALID:!same?result==NOVA_PLAN_MODEL:result==NOVA_PLAN_OK||result==NOVA_PLAN_CAPACITY);
+  if(result!=NOVA_PLAN_OK)continue;
+  C(p.emu_mib==((systems&1)?(actual==3?59680u:29856u):0u));C(!p.emu_double);
+  C((p.linux_mib!=0)==((systems&2)!=0));C((p.android_mib!=0)==((systems&4)!=0));
+  C(!p.linux_mib||p.linux_mib==16384||p.linux_mib==32768);C(!p.android_mib||p.android_mib==16384||p.android_mib==32768);
+  C(p.fat_mib>=2048);C((u64)p.fat_mib+p.emu_mib+p.linux_mib+p.android_mib+16==cards[c]*1024u);
+ }
+ nova_partition_plan p={0};p.total_sectors=128*2097152u;p.fat_min_mib=2048;
+ C(nova_partition_installation(&p,0,0,0,2)==NOVA_PLAN_OK);C(!p.emu_mib&&p.linux_mib==32768);
+ C(nova_partition_installation(&p,0,0,0,1)==NOVA_PLAN_EMMC_UNAVAILABLE);
+ C(nova_partition_installation(&p,0,0,60000,1)==NOVA_PLAN_EMMC_UPGRADED);
+ C(nova_partition_installation(&p,0,0,29820,8)==NOVA_PLAN_INVALID);
+ C(nova_partition_installation(&p,4,0,29820,1)==NOVA_PLAN_INVALID);
+ C(nova_partition_installation(&p,0,1,29820,1)==NOVA_PLAN_INVALID);
+ C(nova_partition_installation(NULL,0,0,29820,1)==NOVA_PLAN_INVALID);
+ p.total_sectors=32*2097152u;C(nova_partition_installation(&p,0,0,29820,2)==NOVA_PLAN_OK);C(p.linux_mib==16384);
+ p.total_sectors=125000000u;C(nova_partition_installation(&p,0,0,29820,7)==NOVA_PLAN_CAPACITY);
+ p.total_sectors=128*2097152u;C(nova_partition_installation(&p,0,0,29820,7)==NOVA_PLAN_OK);C(p.linux_mib==32768&&p.android_mib==32768);
+ printf("PASS: %u actual-C installation-plan assertions\n",checks);
+}
+'''
+(D/'test.c').write_text(c)
+subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-I'+str(P/'bdk'),'-I'+str(P/'nyx/nyx_gui/frontend'),str(D/'test.c'),str(P/'nyx/nyx_gui/frontend/gui_partition_plan.c'),'-o',str(D/'test.exe')],check=True)
+r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
+(W/'nova34a1-plan-check.json').write_text(json.dumps({'passed':True,'actual_c':True,'result':r.stdout.strip(),'physical_storage_test':False},indent=2))

@@ -31,4 +31,8 @@ nova_plan_result nova_partition_validate(nova_partition_plan *plan);
 nova_plan_result nova_partition_simplified(nova_partition_plan *plan,
     u32 actual_model,u32 chosen_model,u32 emmc_data_mib,u32 linux_choice,u32 android_choice);
 void nova_partition_widths(const nova_partition_plan *plan,u32 width,u32 out[4]);
+/* Installation assistant: model family 0=V1/V2, 2=Lite, 3=OLED.
+ * Flags: bit0=emuMMC, bit1=Linux, bit2=Android. No storage I/O. */
+nova_plan_result nova_partition_installation(nova_partition_plan *plan,u32 actual_model,
+    u32 chosen_model,u32 emmc_data_mib,u32 systems);
 #endif

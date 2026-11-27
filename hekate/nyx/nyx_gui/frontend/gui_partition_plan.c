@@ -57,3 +57,29 @@ void nova_partition_widths(const nova_partition_plan *plan,u32 width,u32 out[4])
         out[i]=end-previous;previous=end;
     }
 }
+
+nova_plan_result nova_partition_installation(nova_partition_plan *plan,u32 actual_model,
+    u32 chosen_model,u32 emmc_data_mib,u32 systems)
+{
+    if(!plan)return NOVA_PLAN_INVALID;
+    plan->fat_mib=plan->emu_mib=plan->linux_mib=plan->android_mib=0;plan->emu_double=false;
+    if(!systems||(systems&~7u)||actual_model>3u||
+        (chosen_model!=0&&chosen_model!=2&&chosen_model!=3))return NOVA_PLAN_INVALID;
+    if(actual_model!=chosen_model&&!(actual_model<2&&chosen_model==0))return NOVA_PLAN_MODEL;
+    if(systems&1u){
+        if(!emmc_data_mib)return NOVA_PLAN_EMMC_UNAVAILABLE;
+        plan->emu_mib=chosen_model==3?NOVA_EMU_64_MIB:NOVA_EMU_32_MIB;
+        if((u64)emmc_data_mib+NOVA_EMU_RESERVE_MIB>plan->emu_mib)return NOVA_PLAN_EMMC_UPGRADED;
+    }
+    plan->linux_mib=(systems&2u)?32768u:0;
+    plan->android_mib=(systems&4u)?32768u:0;
+    nova_plan_result result=nova_partition_validate(plan);
+    /* Prefer 32GiB per OS; fall back together to the existing 16GiB presets.
+     * Never reduce a full emuMMC or the FAT32 minimum to force a fit. */
+    if(result==NOVA_PLAN_CAPACITY){
+        if(systems&2u)plan->linux_mib=16384u;
+        if(systems&4u)plan->android_mib=16384u;
+        result=nova_partition_validate(plan);
+    }
+    return result;
+}
