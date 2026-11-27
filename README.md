@@ -4,9 +4,9 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Préversion v34-alpha1 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha1)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Préversion v34-alpha2 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha2)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-Première ébauche de l’assistant : présentation, modèle/OS et plan de partitionnement. La copie emuMMC automatique n’est pas encore raccordée. Les essais PC et retours console sont distingués dans les notes de chaque version.
+Assistant agrandi ; partitionnement suivi de la copie et de la relecture intégrale de BOOT0, BOOT1 et de l’emuMMC, avec activation conditionnelle. Les essais PC et retours console sont distingués dans les notes de chaque version.
 
 ![Halo à deux couleurs — rendu du code sur PC](docs/images/preview-v33.3/colors.png)
 
@@ -21,7 +21,7 @@ Première ébauche de l’assistant : présentation, modèle/OS et plan de parti
 - Huit langues : anglais, français, espagnol, italien, russe, allemand, portugais et chinois simplifié ; polices SD et taille de texte réglable.
 - Couleurs indépendantes, palette avec aperçu, fond d’écran, transparence, icônes PNG et reflet de sélection désactivable.
 - Diagnostics natifs issus de HWTest-RCM : 42 entrées, rapports exportables, bilan par composant, contrôles interactifs et test RAM séparé avec retour à Hekate.
-- Partitionnement simplifié / expert et première ébauche de l’assistant : modèle, choix et récapitulatif, puis ouverture du partitionneur. La copie automatique emuMMC n’est pas encore raccordée dans alpha1 ; elle arrive en alpha2.
+- Partitionnement simplifié / expert et assistant automatisé : modèle et choix des partitions, contrôle des capacités, copie/relecture emuMMC après partitionnement. Linux/Android : réservation des partitions ; leur installation reste distincte.
 - Sortie TV via dock sur consoles compatibles : TV seule ou TV + écran console. La Switch Lite n’a pas de sortie TV.
 - Joy-Con Bluetooth : lecture des appairages, sauvegarde privée SD, chargement automatique sans Joy-Con sur les rails et traitement en arrière-plan. Connexion et portée restent expérimentales.
 
@@ -60,7 +60,7 @@ Aucune affiliation avec Nintendo, CTCaer, Creased ou BlueKitchen n’est revendi
 
 ## Rapports TV
 
-La v34-alpha1 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
+La v34-alpha2 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
 
 ## Rapports Bluetooth
 

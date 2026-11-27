@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "result": "PASS: 254 actual-C copier/activation assertions; 21 metadata failure positions, all copy-stage failures, CID/size/MBR rejection and readback corruption",
+  "actual_c": true,
+  "raw_data_transfer_mocked": true,
+  "hardware_test": false,
+  "source_sha256": "e875e96a62f1f9a04c76582141f9361cdfb8dcef3da68165b353243f4a17c05a"
+}

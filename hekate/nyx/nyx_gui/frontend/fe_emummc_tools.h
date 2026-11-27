@@ -33,6 +33,8 @@ void load_emummc_cfg(emummc_cfg_t *emu_info);
 void save_emummc_cfg(u32 part_idx, u32 sector_start, const char *path);
 void dump_emummc_file(emmc_tool_gui_t *gui);
 void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 resized_count);
+int dump_emummc_raw_checked(emmc_tool_gui_t *gui,int part_idx,u32 sector_start,const u8 *cid,u32 gpp);
+int save_emummc_cfg_checked(u32 part_idx,u32 sector_start,const char *path);
 void update_emummc_base_folder(char *outFilename, u32 sdPathLen, u32 currPartIdx);
 
 int  emummc_raw_derive_bis_keys();

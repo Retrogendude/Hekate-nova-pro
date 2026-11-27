@@ -1,7 +1,7 @@
 """Actual C installation plan tests; no storage I/O."""
 from pathlib import Path
 import subprocess,json
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha1';D=W/'nova34a1-plan-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha2';D=W/'nova34a2-plan-check';D.mkdir(exist_ok=True)
 c=r'''
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +19,22 @@ int main(void){
   C(p.emu_mib==((systems&1)?(actual==3?59680u:29856u):0u));C(!p.emu_double);
   C((p.linux_mib!=0)==((systems&2)!=0));C((p.android_mib!=0)==((systems&4)!=0));
   C(!p.linux_mib||p.linux_mib==16384||p.linux_mib==32768);C(!p.android_mib||p.android_mib==16384||p.android_mib==32768);
+  if(systems&1){
+   u32 index=p.linux_mib&&!p.android_mib?2:1;
+   u32 start=0x8000u+(p.fat_mib+p.linux_mib+p.android_mib)*2048u;
+   u32 size=p.emu_mib*2048u-0x800;
+   u32 gpp=emmc*2048u;
+   C(nova_install_target_valid(&p,p.total_sectors,gpp,index,0xE0,start,size));
+   C(!nova_install_target_valid(&p,p.total_sectors,gpp,index,0x0B,start,size));
+   C(!nova_install_target_valid(&p,p.total_sectors,gpp,index,0xE0,start+1,size));
+   C(!nova_install_target_valid(&p,p.total_sectors,gpp,index,0xE0,start,size-1));
+   C(!nova_install_target_valid(&p,p.total_sectors,gpp,index==1?2:1,0xE0,start,size));
+   C(!nova_install_target_valid(&p,p.total_sectors,0,index,0xE0,start,size));
+   C(!nova_install_target_valid(&p,p.total_sectors,size,index,0xE0,start,size));
+   C(!nova_install_target_valid(&p,p.total_sectors-0x10000,gpp,index,0xE0,start,size));
+   C(!nova_install_target_valid(NULL,p.total_sectors,gpp,index,0xE0,start,size));
+   p.emu_double=true;C(!nova_install_target_valid(&p,p.total_sectors,gpp,index,0xE0,start,size));p.emu_double=false;
+  }
   C(p.fat_mib>=2048);C((u64)p.fat_mib+p.emu_mib+p.linux_mib+p.android_mib+16==cards[c]*1024u);
  }
  nova_partition_plan p={0};p.total_sectors=128*2097152u;p.fat_min_mib=2048;
@@ -38,4 +54,4 @@ int main(void){
 (D/'test.c').write_text(c)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-I'+str(P/'bdk'),'-I'+str(P/'nyx/nyx_gui/frontend'),str(D/'test.c'),str(P/'nyx/nyx_gui/frontend/gui_partition_plan.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a1-plan-check.json').write_text(json.dumps({'passed':True,'actual_c':True,'result':r.stdout.strip(),'physical_storage_test':False},indent=2))
+(W/'nova34a2-plan-check.json').write_text(json.dumps({'passed':True,'actual_c':True,'result':r.stdout.strip(),'physical_storage_test':False},indent=2))

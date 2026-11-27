@@ -338,9 +338,9 @@ void nyx_nova_page(lv_obj_t *page, u32 tab)
     lv_page_set_sb_mode(page, LV_SB_MODE_OFF); lv_obj_set_pos(lv_page_get_scrl(page), 0, 0); lv_obj_set_drag(lv_page_get_scrl(page), false);
     if (tab >= 6) return;
     lv_obj_t *kicker = nyx_nova_text(page, kickers[tab], 34, 22, 940, NOVA_KICKER); nova_uppercase_label(kicker, kickers[tab]);
-    lv_obj_t *heading = nyx_nova_text(page, headings[tab], 34, 46, tab==1?900:940, NOVA_HEADING);
+    lv_obj_t *heading = nyx_nova_text(page, headings[tab], 34, 46, tab==1?740:940, NOVA_HEADING);
     nyx_nova_fit_text(heading, 44);
-    lv_obj_t *subtitle = nyx_nova_text(page, subtitles[tab], 34, 98, tab==1?900:1040, NOVA_BODY);
+    lv_obj_t *subtitle = nyx_nova_text(page, subtitles[tab], 34, 98, tab==1?740:1040, NOVA_BODY);
     lv_label_set_style(subtitle, &nova_dim); nyx_nova_fit_text(subtitle, 32);
 
 }
@@ -570,9 +570,11 @@ static void nova_installation_home_button(lv_obj_t *page)
 {
     lv_obj_t *button=lv_btn_create(page,NULL);lv_btn_set_fit(button,false,false);lv_btn_set_layout(button,LV_LAYOUT_OFF);
     lv_btn_set_style(button,LV_BTN_STYLE_REL,&nova_panel);lv_btn_set_style(button,LV_BTN_STYLE_PR,&nova_selected);
-    lv_obj_set_size(button,256,74);lv_obj_set_pos(button,990,24);
+    lv_obj_set_size(button,430,104);lv_obj_set_pos(button,816,18);
     lv_btn_set_action(button,LV_BTN_ACTION_CLICK,nyx_nova_installation_wizard);
-    lv_obj_t *label=nyx_nova_text(button,"Installation assistant",16,12,224,NOVA_SMALL);nyx_nova_fit_text(label,50);
+    nyx_nova_icon_box(button,"settings-2",18,28,48,false);
+    lv_obj_t *label=nyx_nova_text(button,"Automated installation assistant",84,14,326,NOVA_BODY);nyx_nova_fit_text(label,76);
+    lv_obj_align(label,button,LV_ALIGN_IN_LEFT_MID,84,0);
     nyx_nova_selectable(button,button,NULL);
 }
 

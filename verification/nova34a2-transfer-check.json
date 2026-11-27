@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "actual_full_size_transfer_loop": true,
+  "resize_only_tail_excluded": true,
+  "storage_mocked": true,
+  "hardware_test": false,
+  "result": "PASS: 76 actual-C full-size transfer assertions: write-before-readback, all 3 areas, multi-chunk, retries, cancel, corrupt/unreadable SD",
+  "source_sha256": "e875e96a62f1f9a04c76582141f9361cdfb8dcef3da68165b353243f4a17c05a"
+}

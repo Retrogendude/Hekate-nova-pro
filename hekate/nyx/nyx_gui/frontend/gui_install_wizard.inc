@@ -3,7 +3,8 @@
 #include "gui_partition_plan.h"
 
 static struct {
-    bool open,media_ready;
+    bool open,media_ready,backup_ack;
+    u8 cid[16];
     u32 step,model,actual,systems,sectors,emmc_mib;
     nova_partition_plan plan;
     nova_plan_result result;
@@ -43,6 +44,7 @@ static void install_wizard_check(void)
     install_wizard.media_ready=nyx_nova_installation_read_media(&install_wizard.sectors,&install_wizard.emmc_mib,&install_wizard.actual);
     memset(&install_wizard.plan,0,sizeof(install_wizard.plan));
     install_wizard.plan.total_sectors=install_wizard.sectors;install_wizard.plan.fat_min_mib=2048;
+    if(install_wizard.media_ready)install_wizard.media_ready=nyx_nova_installation_read_card(install_wizard.cid);
     install_wizard.result=install_wizard.media_ready?nova_partition_installation(&install_wizard.plan,
         install_wizard.actual,install_wizard.model,install_wizard.emmc_mib,install_wizard.systems):NOVA_PLAN_CAPACITY;
 }
@@ -52,23 +54,36 @@ static lv_res_t install_wizard_next(lv_obj_t *button)
     if(install_wizard.step==0){install_wizard.step=1;install_wizard_render();return LV_RES_OK;}
     if(!install_wizard.systems)return LV_RES_OK;
     if(install_wizard.step==1){install_wizard.step=2;install_wizard_check();install_wizard_render();return LV_RES_OK;}
+    if(install_wizard.step==2){if(install_wizard.result!=NOVA_PLAN_OK)return LV_RES_OK;install_wizard.backup_ack=false;install_wizard.step=3;install_wizard_render();return LV_RES_OK;}
+    if(!install_wizard.backup_ack)return LV_RES_OK;
+    u8 cid[16];
+    if(!nyx_nova_installation_read_card(cid)||memcmp(cid,install_wizard.cid,16)){
+        install_wizard.step=2;install_wizard_check();install_wizard_render();
+        nyx_show_help("Storage changed. Restart the installation assistant.");return LV_RES_OK;
+    }
     install_wizard_check();
     if(install_wizard.result!=NOVA_PLAN_OK){install_wizard_render();return LV_RES_OK;}
     u32 model=install_wizard.model,systems=install_wizard.systems;
+    memcpy(cid,install_wizard.cid,16);
     install_wizard_close(close_btn);
-    nyx_nova_installation_partition(model,systems);return LV_RES_INV;
+    nyx_nova_installation_partition(model,systems,cid);return LV_RES_INV;
 }
 static lv_res_t install_wizard_back(lv_obj_t *button)
 {
     (void)button;if(install_wizard.step)--install_wizard.step;
     install_wizard_render();return LV_RES_OK;
 }
+static lv_res_t install_wizard_backup(lv_obj_t *button)
+{
+    nyx_generic_onoff_toggle(button);install_wizard.backup_ack=(lv_btn_get_state(button)&LV_BTN_STATE_TGL_REL)!=0;
+    lv_obj_set_click(install_wizard.next,install_wizard.backup_ack);lv_btn_set_state(install_wizard.next,install_wizard.backup_ack?LV_BTN_STATE_REL:LV_BTN_STATE_INA);return LV_RES_OK;
+}
 static void install_wizard_render(void)
 {
     lv_obj_t *body=install_wizard.body;lv_obj_clean(body);
-    char text[320];s_printf(text,nyx_tr("Step %d / 3"),install_wizard.step+1);lv_label_set_text(install_wizard.progress,text);
+    char text[320];s_printf(text,nyx_tr("Step %d / 4"),install_wizard.step+1);lv_label_set_text(install_wizard.progress,text);
     lv_obj_set_hidden(install_wizard.back,!install_wizard.step);
-    bool valid=install_wizard.step!=2?install_wizard.step==0||install_wizard.systems!=0:install_wizard.result==NOVA_PLAN_OK;
+    bool valid=install_wizard.step<2?install_wizard.step==0||install_wizard.systems!=0:install_wizard.result==NOVA_PLAN_OK&&(install_wizard.step==2||install_wizard.backup_ack);
     lv_obj_set_click(install_wizard.next,valid);lv_btn_set_state(install_wizard.next,valid?LV_BTN_STATE_REL:LV_BTN_STATE_INA);
     if(install_wizard.step==0){
         nyx_nova_fit_text(nyx_nova_text(body,"Prepare your SD card",24,18,1164,NOVA_TITLE),44);
@@ -77,7 +92,7 @@ static void install_wizard_render(void)
         for(u32 i=0;i<3;++i){lv_obj_t *card=nyx_nova_panel(body,24+i*396,84,372,160);
             nyx_nova_fit_text(nyx_nova_text(card,titles[i],18,14,336,NOVA_BODY),54);
             nyx_nova_fit_text(nyx_nova_text(card,details[i],18,74,336,NOVA_SMALL),72);}
-        nyx_nova_fit_text(nyx_nova_text(body,"First draft: partition setup is available. Automatic emuMMC copying is not enabled yet.",24,266,1164,NOVA_SMALL),58);
+        nyx_nova_fit_text(nyx_nova_text(body,"After successful partitioning, emuMMC is copied and verified automatically when selected.",24,266,1164,NOVA_SMALL),58);
     }else if(install_wizard.step==1){
         nyx_nova_fit_text(nyx_nova_text(body,"Console model",24,18,1164,NOVA_TITLE),44);
         install_wizard.model_choices=nyx_choices_create(body,"Switch V1 V2\nSwitch Lite\nSwitch OLED",install_wizard.model?install_wizard.model-1:0,3,1164,50,install_wizard_model,86,false);
@@ -87,7 +102,7 @@ static void install_wizard_render(void)
         for(u32 i=0;i<3;++i){lv_obj_t *b=nyx_nova_toggle(body,names[i],install_wizard_system,(install_wizard.systems&(1u<<i))!=0,372,96);
             install_wizard.systems_buttons[i]=b;lv_obj_set_free_num(b,i);lv_obj_set_pos(b,24+i*396,196);}
         nyx_nova_fit_text(nyx_nova_text(body,"You can select more than one system.",24,302,1164,NOVA_SMALL),30);
-    }else{
+    }else if(install_wizard.step==2){
         nyx_nova_fit_text(nyx_nova_text(body,"Review your choices",24,18,1164,NOVA_TITLE),44);
         lv_obj_t *left=nyx_nova_panel(body,24,82,560,236),*right=nyx_nova_panel(body,604,82,584,236);
         const char *model=install_wizard.model==3?"Switch OLED":install_wizard.model==2?"Switch Lite":"Switch V1 / V2";
@@ -97,7 +112,13 @@ static void install_wizard_render(void)
         nyx_nova_fit_text(nyx_nova_text(left,text,18,64,524,NOVA_BODY),154);
         const char *status=!install_wizard.media_ready?"SD card unavailable.":install_wizard.result==NOVA_PLAN_OK?"The layout is ready. The next screen asks for confirmation before partitioning.":install_wizard.result==NOVA_PLAN_MODEL?"The selected model does not match this console.":install_wizard.result==NOVA_PLAN_EMMC_UPGRADED?"Modified internal storage: use the expert partition tool.":install_wizard.result==NOVA_PLAN_EMMC_UNAVAILABLE?"Internal memory unavailable.":"Not enough space. Change the selected systems or use a larger SD card.";
         nyx_nova_fit_text(nyx_nova_text(right,status,18,14,548,NOVA_BODY),96);
-        nyx_nova_fit_text(nyx_nova_text(right,"Back up the SD card first. Automatic emuMMC copying will be added after this first test.",18,130,548,NOVA_SMALL),90);
+        nyx_nova_fit_text(nyx_nova_text(right,"All data on the SD card will be lost unless backed up. Back up your files before continuing.",18,130,548,NOVA_SMALL),90);
+    }else{
+        lv_obj_t *title=nyx_nova_text(body,"Warning: the SD card will be erased",24,18,1164,NOVA_TITLE);
+        static lv_style_t warning;lv_style_copy(&warning,nyx_nova_text_style(NOVA_TITLE));warning.text.color=LV_COLOR_HEX(0xF4B85F);lv_label_set_style(title,&warning);nyx_nova_fit_text(title,54);
+        nyx_nova_fit_text(nyx_nova_text(body,"All data on the SD card will be lost unless backed up. Back up your files before continuing.",24,88,1164,NOVA_BODY),98);
+        nyx_nova_fit_text(nyx_nova_text(body,"After successful partitioning, emuMMC is copied and verified automatically when selected.",24,184,1164,NOVA_SMALL),54);
+        lv_obj_t *ack=nyx_nova_switch_row(body,"I have backed up my SD card.","Do not remove the SD card or interrupt power during installation.","shield-check",install_wizard_backup,install_wizard.backup_ack,24,250,1164,88);(void)ack;
     }
 }
 lv_res_t nyx_nova_installation_wizard(lv_obj_t *button)
@@ -106,7 +127,7 @@ lv_res_t nyx_nova_installation_wizard(lv_obj_t *button)
     memset(&install_wizard,0,sizeof(install_wizard));install_wizard.open=true;install_wizard.systems=1;
     install_wizard.actual=nyx_nova_installation_model();
     install_wizard.model=install_wizard.actual<2?0:install_wizard.actual;install_wizard.parent_close=close_btn;
-    lv_obj_t *win=nyx_create_standard_window("Installation assistant",install_wizard_close);install_wizard.window=win;
+    lv_obj_t *win=nyx_create_standard_window("Automated installation assistant",install_wizard_close);install_wizard.window=win;
     lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;nyx_nova_fixed_page(page);int height=lv_obj_get_height(page);
     install_wizard.progress=nyx_nova_text(page,"",34,24,1212,NOVA_KICKER);
     install_wizard.body=nyx_nova_panel(page,34,72,1212,height-160);

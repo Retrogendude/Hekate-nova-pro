@@ -42868,5 +42868,145 @@
     "Das Werkzeug verlangt Bestätigung vor dem Löschen der Karte. Dateien zuerst sichern.",
     "A ferramenta pedirá confirmação antes de apagar o cartão. Guarde primeiro os ficheiros.",
     "分区工具会在清除卡片前请求确认。请先备份文件。"
+  ],
+  "Automated installation assistant": [
+    "Automated installation assistant",
+    "Assistant d’installation automatisé",
+    "Asistente de instalación automática",
+    "Assistente installazione automatica",
+    "Мастер автоматической установки",
+    "Assistent für automatische Installation",
+    "Assistente de instalação automática",
+    "自动安装向导"
+  ],
+  "Step %d / 4": [
+    "Step %d / 4",
+    "Étape %d / 4",
+    "Paso %d / 4",
+    "Passaggio %d / 4",
+    "Шаг %d / 4",
+    "Schritt %d / 4",
+    "Passo %d / 4",
+    "第 %d 步 / 共 4 步"
+  ],
+  "Warning: the SD card will be erased": [
+    "Warning: the SD card will be erased",
+    "Attention : la carte SD sera effacée",
+    "Atención: se borrará la tarjeta SD",
+    "Attenzione: la scheda SD sarà cancellata",
+    "Внимание: карта SD будет стёрта",
+    "Achtung: Die SD-Karte wird gelöscht",
+    "Atenção: o cartão SD será apagado",
+    "警告：SD 卡将被清除"
+  ],
+  "All data on the SD card will be lost unless backed up. Back up your files before continuing.": [
+    "All data on the SD card will be lost unless backed up. Back up your files before continuing.",
+    "Toutes les données de la carte SD seront perdues si elles ne sont pas sauvegardées. Sauvegardez vos fichiers avant de continuer.",
+    "Se perderán todos los datos de la SD sin copia de seguridad. Guarda tus archivos antes de continuar.",
+    "Tutti i dati della SD andranno persi senza backup. Salva i file prima di continuare.",
+    "Без резервной копии все данные карты SD будут потеряны. Сохраните файлы перед продолжением.",
+    "Ohne Sicherung gehen alle Daten der SD-Karte verloren. Dateien vor dem Fortfahren sichern.",
+    "Sem cópia de segurança, todos os dados da SD serão perdidos. Guarde os ficheiros antes de continuar.",
+    "未备份的 SD 卡数据将全部丢失。继续前请备份文件。"
+  ],
+  "After successful partitioning, emuMMC is copied and verified automatically when selected.": [
+    "After successful partitioning, emuMMC is copied and verified automatically when selected.",
+    "Après un partitionnement réussi, l’emuMMC est copiée et vérifiée automatiquement si elle est sélectionnée.",
+    "Tras particionar correctamente, emuMMC se copia y verifica automáticamente si está seleccionada.",
+    "Dopo il partizionamento riuscito, emuMMC viene copiata e verificata automaticamente se selezionata.",
+    "После успешной разметки выбранная emuMMC копируется и проверяется автоматически.",
+    "Nach erfolgreicher Partitionierung wird eine ausgewählte emuMMC automatisch kopiert und geprüft.",
+    "Após particionar com sucesso, a emuMMC selecionada é copiada e verificada automaticamente.",
+    "分区成功后，自动复制并验证所选的 emuMMC。"
+  ],
+  "I have backed up my SD card.": [
+    "I have backed up my SD card.",
+    "J’ai sauvegardé les données de ma carte SD.",
+    "He guardado los datos de mi tarjeta SD.",
+    "Ho salvato i dati della scheda SD.",
+    "Я сохранил данные карты SD.",
+    "Ich habe die Daten der SD-Karte gesichert.",
+    "Guardei os dados do meu cartão SD.",
+    "我已备份 SD 卡数据。"
+  ],
+  "Do not remove the SD card or interrupt power during installation.": [
+    "Do not remove the SD card or interrupt power during installation.",
+    "Ne retirez pas la carte SD et ne coupez pas l’alimentation pendant l’installation.",
+    "No retires la SD ni interrumpas la alimentación durante la instalación.",
+    "Non rimuovere la SD né interrompere l’alimentazione durante l’installazione.",
+    "Не извлекайте SD и не отключайте питание во время установки.",
+    "Während der Installation weder SD-Karte entfernen noch Strom trennen.",
+    "Não retire a SD nem corte a alimentação durante a instalação.",
+    "安装期间请勿移除 SD 卡或断电。"
+  ],
+  "Storage changed. Restart the installation assistant.": [
+    "Storage changed. Restart the installation assistant.",
+    "Le support a changé. Relancez l’assistant d’installation.",
+    "El almacenamiento ha cambiado. Reinicia el asistente.",
+    "Il supporto è cambiato. Riavvia l’assistente.",
+    "Носитель изменён. Перезапустите мастер.",
+    "Speicher geändert. Assistenten neu starten.",
+    "O suporte mudou. Reinicie o assistente.",
+    "存储卡已更改，请重新启动安装向导。"
+  ],
+  "Storage unavailable. Automatic installation was not started.": [
+    "Storage unavailable. Automatic installation was not started.",
+    "Stockage indisponible. L’installation automatique n’a pas démarré.",
+    "Almacenamiento no disponible. No se inició la instalación automática.",
+    "Memoria non disponibile. Installazione automatica non avviata.",
+    "Носитель недоступен. Автоматическая установка не запущена.",
+    "Speicher nicht verfügbar. Automatische Installation nicht gestartet.",
+    "Armazenamento indisponível. Instalação automática não iniciada.",
+    "存储不可用，未启动自动安装。"
+  ],
+  "Copy target validation failed. Automatic installation stopped.": [
+    "Copy target validation failed. Automatic installation stopped.",
+    "La partition cible n’a pas pu être validée. Installation automatique arrêtée.",
+    "No se pudo validar el destino. Instalación automática detenida.",
+    "Destinazione non valida. Installazione automatica interrotta.",
+    "Целевой раздел не прошёл проверку. Установка остановлена.",
+    "Zielprüfung fehlgeschlagen. Automatische Installation gestoppt.",
+    "Não foi possível validar o destino. Instalação automática parada.",
+    "目标分区验证失败，自动安装已停止。"
+  ],
+  "Automated installation": [
+    "Automated installation",
+    "Installation automatisée",
+    "Instalación automática",
+    "Installazione automatica",
+    "Автоматическая установка",
+    "Automatische Installation",
+    "Instalação automática",
+    "自动安装"
+  ],
+  "Copying and verifying emuMMC. Do not remove the SD card.": [
+    "Copying and verifying emuMMC. Do not remove the SD card.",
+    "Copie et vérification de l’emuMMC. Ne retirez pas la carte SD.",
+    "Copiando y verificando emuMMC. No retires la SD.",
+    "Copia e verifica emuMMC. Non rimuovere la SD.",
+    "Копирование и проверка emuMMC. Не извлекайте SD.",
+    "emuMMC wird kopiert und geprüft. SD-Karte nicht entfernen.",
+    "A copiar e verificar emuMMC. Não retire a SD.",
+    "正在复制并验证 emuMMC，请勿移除 SD 卡。"
+  ],
+  "Installation stopped. emuMMC was not activated. Check the log.": [
+    "Installation stopped. emuMMC was not activated. Check the log.",
+    "Installation arrêtée. L’emuMMC n’a pas été activée. Consultez le journal.",
+    "Instalación detenida. emuMMC no se activó. Consulta el registro.",
+    "Installazione interrotta. emuMMC non attivata. Controlla il registro.",
+    "Установка остановлена. emuMMC не активирована. Проверьте журнал.",
+    "Installation gestoppt. emuMMC nicht aktiviert. Protokoll prüfen.",
+    "Instalação parada. emuMMC não ativada. Consulte o registo.",
+    "安装已停止，emuMMC 未启用。请查看日志。"
+  ],
+  "emuMMC copied, verified and activated. Linux/Android installation files are still required.": [
+    "emuMMC copied, verified and activated. Linux/Android installation files are still required.",
+    "emuMMC copiée, vérifiée et activée. Les fichiers d’installation Linux/Android restent nécessaires.",
+    "emuMMC copiada, verificada y activada. Aún se necesitan los archivos de instalación Linux/Android.",
+    "emuMMC copiata, verificata e attivata. Servono ancora i file di installazione Linux/Android.",
+    "emuMMC скопирована, проверена и активирована. Файлы установки Linux/Android всё ещё нужны.",
+    "emuMMC kopiert, geprüft und aktiviert. Linux/Android-Installationsdateien werden weiterhin benötigt.",
+    "emuMMC copiada, verificada e ativada. Os ficheiros de instalação Linux/Android continuam necessários.",
+    "emuMMC 已复制、验证并启用。仍需 Linux/Android 安装文件。"
   ]
 }

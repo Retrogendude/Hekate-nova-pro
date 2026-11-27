@@ -19,6 +19,8 @@
 #include <bdk.h>
 
 #include "gui.h"
+#include "gui_nova.h"
+#include "gui_choices.h"
 #include "fe_emummc_tools.h"
 #include "gui_tools_partition_manager.h"
 #include <libs/fatfs/ff.h>
@@ -39,6 +41,29 @@ static bool emummc_backup;
 static mbr_ctxt_t mbr_ctx;
 static lv_obj_t *emummc_manage_window;
 static lv_res_t (*emummc_tools)(lv_obj_t *btn);
+
+bool nyx_nova_installation_copy(u32 index,u32 start,u32 size,u32 sectors,u32 gpp,const u8 *cid)
+{
+    if(!cid||index<1||index>3||start<=0x8000||(u64)start+size>sectors||0xC000ULL+gpp>size||sd_mount()){
+        nyx_show_help("Copy target validation failed. Automatic installation stopped.");return false;
+    }
+    mbr_t table;bool valid=sd_storage.sec_cnt==sectors&&!memcmp(sd_storage.raw_cid,cid,16)&&
+        !sdmmc_storage_read(&sd_storage,0,1,&table);
+    if(valid)valid=table.boot_signature==0xAA55&&table.partitions[index].type==0xE0&&
+        table.partitions[index].start_sct==start&&table.partitions[index].size_sct==size;
+    if(emmc_initialize(false))valid=false;
+    else{emmc_set_partition(EMMC_GPP);valid=valid&&emmc_storage.sec_cnt==gpp;emmc_end();}
+    sd_unmount();
+    if(!valid){nyx_show_help("Copy target validation failed. Automatic installation stopped.");return false;}
+    lv_obj_t *win=nyx_create_standard_window("Automated installation",NULL);
+    emmc_tool_gui_t context={0};nyx_nova_transfer(win,&context);nyx_window_toggle_buttons(win,true);
+    lv_label_set_text(context.label_finish,"Copying and verifying emuMMC. Do not remove the SD card.");
+    int result=dump_emummc_raw_checked(&context,index,start+0x8000,cid,gpp);
+    lv_label_set_text(context.label_finish,result?
+        "Installation stopped. emuMMC was not activated. Check the log.":
+        "emuMMC copied, verified and activated. Linux/Android installation files are still required.");
+    nyx_window_toggle_buttons(win,false);return result==0;
+}
 
 static lv_res_t _action_emummc_window_close(lv_obj_t *btn)
 {

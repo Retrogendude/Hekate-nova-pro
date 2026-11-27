@@ -296,6 +296,34 @@ out:
 	return res;
 }
 
+/* A one-shot, card-bound installation transaction. Never persisted/replayed. */
+static struct {
+    bool armed,running;
+    u32 sectors,gpp,model,systems;u8 cid[16];nova_partition_plan plan;
+} install_job;
+static bool partition_write_failed;
+static bool nova_install_job_valid(void)
+{
+    if(!install_job.armed&&!install_job.running)return true;
+    if(part_info.emmc||nyx_nova_installation_model()!=install_job.model||sd_mount())return false;
+    bool valid=sd_storage.sec_cnt==install_job.sectors&&!memcmp(sd_storage.raw_cid,install_job.cid,16);
+    if(emmc_initialize(false))return false;
+    emmc_set_partition(EMMC_GPP);valid=valid&&emmc_storage.sec_cnt==install_job.gpp;emmc_end();
+    nova_partition_plan *p=&install_job.plan;
+    return valid&&part_info.hos_size>=0&&(u32)part_info.hos_size==p->fat_mib&&part_info.emu_size==p->emu_mib&&
+        part_info.l4t_size==p->linux_mib&&part_info.and_size==p->android_mib&&!part_info.emu_double;
+}
+static int nova_table_write(sdmmc_storage_t *device,u32 sector,u32 count,const void *data)
+{
+    if(install_job.running&&(device!=&sd_storage||!count||count>0x10000||(u64)sector+count>install_job.sectors))return 1;
+    if(sdmmc_storage_write(device,sector,count,(void *)data))return 1;
+    if(install_job.running){
+        void *check=(void *)(SDMMC_ALT_DMA_BUFFER+SZ_32M);
+        if(sdmmc_storage_read(device,sector,count,check)||memcmp(data,check,count*512u))return 1;
+    }
+    return 0;
+}
+
 static void _create_gpt_partition(gpt_t *gpt, u8 *gpt_idx, u32 *curr_part_lba, u32 size_lba, const char *name, int name_size)
 {
 	static const u8 linux_part_guid[] = { 0xAF, 0x3D, 0xC6, 0x0F,  0x83, 0x84,  0x72, 0x47,  0x8E, 0x79,  0x3D, 0x69, 0xD8, 0x47, 0x7D, 0xE4 };
@@ -323,20 +351,24 @@ static void _create_gpt_partition(gpt_t *gpt, u8 *gpt_idx, u32 *curr_part_lba, u
 	memcpy(gpt->entries[*gpt_idx].name, name_utf16, name_lenth * sizeof(u16));
 
 	// Wipe the first 1MB to sanitize it as raw-empty partition.
-	sdmmc_storage_write(part_info.storage, *curr_part_lba, 0x800, (void *)SDMMC_ALT_DMA_BUFFER);
+	if(part_info.emmc)sdmmc_storage_write(part_info.storage,*curr_part_lba,0x800,(void *)SDMMC_ALT_DMA_BUFFER);
+    else{
+        if(partition_write_failed)return;
+        if(nova_table_write(part_info.storage,*curr_part_lba,0x800,(void *)SDMMC_ALT_DMA_BUFFER)){partition_write_failed=true;return;}
+    }
 
 	// Prepare for next.
 	(*curr_part_lba) += size_lba;
 	(*gpt_idx)++;
 }
 
-static void _sd_prepare_and_flash_mbr_gpt()
+static bool _sd_prepare_and_flash_mbr_gpt()
 {
-	mbr_t mbr;
+	mbr_t mbr;gpt_t *gpt=NULL;partition_write_failed=false;
 	u8 random_number[SE_RNG_BLOCK_SIZE];
 
 	// Read current MBR.
-	sdmmc_storage_read(&sd_storage, 0, 1, &mbr);
+	if(sdmmc_storage_read(&sd_storage,0,1,&mbr))return false;
 
 	// Copy over metadata if they exist.
 	if (*(u32 *)&part_info.mbr_old.bootstrap[0x80])
@@ -346,7 +378,7 @@ static void _sd_prepare_and_flash_mbr_gpt()
 
 	// Clear the first 16MB.
 	memset((void *)SDMMC_ALT_DMA_BUFFER, 0, AU_ALIGN_BYTES);
-	sdmmc_storage_write(&sd_storage, 0, AU_ALIGN_SECTORS, (void *)SDMMC_ALT_DMA_BUFFER);
+	if(nova_table_write(&sd_storage, 0, AU_ALIGN_SECTORS, (void *)SDMMC_ALT_DMA_BUFFER)){free(gpt);return false;}
 
 	// Set disk signature.
 	se_rng_pseudo(random_number, sizeof(u32));
@@ -361,7 +393,7 @@ static void _sd_prepare_and_flash_mbr_gpt()
 		mbr.partitions[mbr_idx].type = 0x83; // Linux system partition.
 		mbr.partitions[mbr_idx].start_sct = AU_ALIGN_SECTORS + ((u32)part_info.hos_size << 11);
 		mbr.partitions[mbr_idx].size_sct = part_info.l4t_size << 11;
-		sdmmc_storage_write(&sd_storage, mbr.partitions[mbr_idx].start_sct, 0x800, (void *)SDMMC_ALT_DMA_BUFFER); // Clear the first 1MB.
+		if(nova_table_write(&sd_storage, mbr.partitions[mbr_idx].start_sct, 0x800, (void *)SDMMC_ALT_DMA_BUFFER)){free(gpt);return false;} // Clear the first 1MB.
 		mbr_idx++;
 	}
 
@@ -388,7 +420,7 @@ static void _sd_prepare_and_flash_mbr_gpt()
 
 	if (part_info.and_size)
 	{
-		gpt_t *gpt = zalloc(sizeof(gpt_t));
+		gpt = zalloc(sizeof(gpt_t));if(!gpt)return false;
 		gpt_header_t gpt_hdr_backup = { 0 };
 
 		// Set GPT protective partition in MBR.
@@ -477,7 +509,7 @@ static void _sd_prepare_and_flash_mbr_gpt()
 
 			// Android Encryption partition. 16MB.
 			// Note: 16MB size is for aligning UDA. If any other tiny partition must be added, it should split the MDA one.
-			sdmmc_storage_write(&sd_storage, curr_part_lba, 0x8000, (void *)SDMMC_ALT_DMA_BUFFER); // Clear the whole of it.
+			if(nova_table_write(&sd_storage, curr_part_lba, 0x8000, (void *)SDMMC_ALT_DMA_BUFFER)){free(gpt);return false;} // Clear the whole of it.
 			_create_gpt_partition(gpt, &gpt_idx, &curr_part_lba,   0x8000, "MDA", 6);
 
 			// Android Cache partition. 700MB.
@@ -538,19 +570,22 @@ static void _sd_prepare_and_flash_mbr_gpt()
 		gpt_hdr_backup.crc32 = crc32_calc(0, (const u8 *)&gpt_hdr_backup, gpt_hdr_backup.size);
 
 		// Write main GPT.
-		sdmmc_storage_write(&sd_storage, gpt->header.my_lba, sizeof(gpt_t) >> 9, gpt);
+		if(partition_write_failed){free(gpt);return false;}
+		if(nova_table_write(&sd_storage, gpt->header.my_lba, sizeof(gpt_t) >> 9, gpt)){free(gpt);return false;}
 
 		// Write backup GPT partition table.
-		sdmmc_storage_write(&sd_storage, gpt_hdr_backup.part_ent_lba, ((sizeof(gpt_entry_t) * 128) >> 9), gpt->entries);
+		if(nova_table_write(&sd_storage, gpt_hdr_backup.part_ent_lba, ((sizeof(gpt_entry_t) * 128) >> 9), gpt->entries)){free(gpt);return false;}
 
 		// Write backup GPT header.
-		sdmmc_storage_write(&sd_storage, gpt_hdr_backup.my_lba, 1, &gpt_hdr_backup);
+		if(nova_table_write(&sd_storage, gpt_hdr_backup.my_lba, 1, &gpt_hdr_backup)){free(gpt);return false;}
 
-		free(gpt);
+		free(gpt);gpt=NULL;
 	}
 
+	if(partition_write_failed)return false;
 	// Write MBR.
-	sdmmc_storage_write(&sd_storage, 0, 1, &mbr);
+	if(nova_table_write(&sd_storage, 0, 1, &mbr)){free(gpt);return false;}
+    return true;
 }
 
 static int _emmc_prepare_and_flash_mbr_gpt()
@@ -1604,7 +1639,9 @@ static int _backup_and_restore_files(bool backup, lv_obj_t **labels)
 
 static lv_res_t _sd_create_mbox_start_partitioning()
 {
-	if(!nova_partition_preflight())return LV_RES_OK;
+    bool automated=install_job.armed,partition_ok=false;
+    install_job.running=automated;install_job.armed=false;
+    if(!nova_partition_preflight()){install_job.running=false;return LV_RES_OK;}
 	lv_obj_t *dark_bg = lv_obj_create(lv_scr_act(), NULL);
 	lv_obj_set_style(dark_bg, &mbox_darken);
 	lv_obj_set_size(dark_bg, LV_HOR_RES, LV_VER_RES);
@@ -1651,6 +1688,9 @@ static lv_res_t _sd_create_mbox_start_partitioning()
 	if (!(btn_wait() & BTN_POWER))
 		goto exit;
 
+    if(automated&&(!nova_install_job_valid()||save_emummc_cfg_checked(0,0,NULL))){
+        lv_mbox_set_text(mbox,"Storage check failed. Automatic installation stopped.");goto exit;
+    }
 	// Start partitioning.
 	lv_mbox_set_text(mbox, "#FF8000 SD Partition Manager#");
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -1680,7 +1720,7 @@ static lv_res_t _sd_create_mbox_start_partitioning()
 	FATFS ram_fs;
 
 	// Read current MBR.
-	sdmmc_storage_read(part_info.storage, 0, 1, &part_info.mbr_old);
+	if(sdmmc_storage_read(part_info.storage,0,1,&part_info.mbr_old)){lv_label_set_text(lbl_status,"Partition read failed.");goto error;}
 
 	lv_label_set_text(lbl_status, "#00DDFF Status:# Initializing Ramdisk...");
 	lv_label_set_text(lbl_paths[0], "Please wait...");
@@ -1779,7 +1819,7 @@ mkfs_no_error:
 	free(buf);
 
 	// Remount sd card as it was unmounted from formatting it.
-	f_mount(&sd_fs, "sd:", 1); // Mount SD card.
+	if(f_mount(&sd_fs,"sd:",1)!=FR_OK){lv_label_set_text(lbl_status,"FAT32 mount failed.");goto error;}
 
 	lv_label_set_text(lbl_status, "#00DDFF Status:# Restoring files...");
 	manual_system_maintenance(true);
@@ -1808,7 +1848,8 @@ mkfs_no_error:
 	manual_system_maintenance(true);
 
 	// Prepare MBR and GPT header and partition entries and flash them.
-	_sd_prepare_and_flash_mbr_gpt();
+	if(!_sd_prepare_and_flash_mbr_gpt()){lv_label_set_text(lbl_status,"Partition write or verification failed.");goto error;}
+    partition_ok=true;
 
 	// Enable/Disable buttons depending on partition layout.
 	if (part_info.l4t_size)
@@ -1839,14 +1880,14 @@ mkfs_no_error:
 	manual_system_maintenance(true);
 
 	// Set buttons depending on what user chose to create.
-	if (part_info.l4t_size && part_info.and_size)
+	if (!automated && part_info.l4t_size && part_info.and_size)
 		lv_mbox_add_btns(mbox, mbox_btn_map1, _action_part_manager_flash_options0);
-	else if (part_info.l4t_size)
+	else if (!automated && part_info.l4t_size)
 		lv_mbox_add_btns(mbox, mbox_btn_map2, _action_part_manager_flash_options1);
-	else if (part_info.and_size)
+	else if (!automated && part_info.and_size)
 		lv_mbox_add_btns(mbox, mbox_btn_map3, _action_part_manager_flash_options2);
 
-	if (part_info.l4t_size || part_info.and_size)
+	if (!automated && (part_info.l4t_size || part_info.and_size))
 		buttons_set = true;
 
 	goto out;
@@ -1867,6 +1908,20 @@ exit:
 	if (part_info.partition_button)
 		lv_btn_set_state(part_info.partition_button, LV_BTN_STATE_INA);
 
+    install_job.running=false;
+    if(automated&&partition_ok&&(install_job.systems&1u)){
+        mbr_t table;bool valid=!sd_mount()&&sd_storage.sec_cnt==install_job.sectors&&!memcmp(sd_storage.raw_cid,install_job.cid,16)&&
+            !sdmmc_storage_read(&sd_storage,0,1,&table);
+        u32 idx=install_job.plan.linux_mib&&!install_job.plan.android_mib?2:1;
+        if(valid)valid=nova_install_target_valid(&install_job.plan,sd_storage.sec_cnt,install_job.gpp,idx,
+            table.partitions[idx].type,table.partitions[idx].start_sct,table.partitions[idx].size_sct);
+        sd_unmount();
+        if(valid){
+            u32 start=table.partitions[idx].start_sct,size=table.partitions[idx].size_sct;
+            lv_obj_del(dark_bg);
+            nyx_nova_installation_copy(idx,start,size,install_job.sectors,install_job.gpp,install_job.cid);
+        }else lv_mbox_set_text(mbox,"Partition validation failed. emuMMC was not copied.");
+    }
 	return LV_RES_OK;
 }
 
@@ -2919,6 +2974,7 @@ out:
 
 lv_res_t create_window_partition_manager(bool emmc)
 {
+    memset(&install_job,0,sizeof install_job);
     partition_nova.ready=false;
     lv_obj_t *win=nyx_create_standard_window(emmc?SYMBOL_CHIP" eMMC Partition Manager":SYMBOL_SD" SD Partition Manager",NULL);
     lv_obj_t *page=((lv_win_ext_t *)lv_obj_get_ext_attr(win))->page;
@@ -2990,7 +3046,14 @@ bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model)
     return *sectors!=0;
 }
 
-lv_res_t nyx_nova_installation_partition(u32 model,u32 systems)
+bool nyx_nova_installation_read_card(u8 *cid)
+{
+    bool mounted=sd_get_card_mounted();if(sd_mount())return false;
+    memcpy(cid,sd_storage.raw_cid,16);u32 bits=0;for(u32 i=0;i<16;++i)bits|=cid[i];
+    if(!mounted)sd_unmount();
+    return bits!=0;
+}
+lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid)
 {
     create_window_partition_manager(false);
     if(!partition_nova.ready)return LV_RES_OK;
@@ -3000,6 +3063,15 @@ lv_res_t nyx_nova_installation_partition(u32 model,u32 systems)
         lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);
         nyx_show_help(nova_partition_error(result));return LV_RES_OK;
     }
+    if(sd_mount()||emmc_initialize(false)){
+        lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);
+        nyx_show_help("Storage unavailable. Automatic installation was not started.");return LV_RES_OK;
+    }
+    if(!cid||memcmp(cid,sd_storage.raw_cid,16)){emmc_end();lv_obj_set_click(part_info.partition_button,false);lv_btn_set_state(part_info.partition_button,LV_BTN_STATE_INA);nyx_show_help("Storage changed. Restart the installation assistant.");return LV_RES_OK;}
+    emmc_set_partition(EMMC_GPP);
+    install_job.sectors=sd_storage.sec_cnt;install_job.gpp=emmc_storage.sec_cnt;install_job.model=nyx_nova_installation_model();
+    memcpy(install_job.cid,sd_storage.raw_cid,16);install_job.systems=systems;install_job.plan=plan;
+    emmc_end();install_job.armed=true;
     partition_nova.mode=1;partition_nova.model=model;
     part_info.emu_size=plan.emu_mib;part_info.emu_double=false;part_info.l4t_size=plan.linux_mib;part_info.and_size=plan.android_mib;
     nova_partition_build_controls();
@@ -3015,6 +3087,6 @@ lv_res_t nyx_nova_installation_partition(u32 model,u32 systems)
     lv_obj_t *panel=nyx_nova_panel(partition_nova.page,34,140,1212,lv_obj_get_height(partition_nova.page)-278);
     nyx_nova_fit_text(nyx_nova_text(panel,"Your partition layout is prepared.",24,18,1164,NOVA_TITLE),46);
     nyx_nova_fit_text(nyx_nova_text(panel,"The original partition tool will ask for confirmation before erasing the card. Back up your files first.",24,84,1164,NOVA_BODY),84);
-    nyx_nova_fit_text(nyx_nova_text(panel,"First draft: partition setup is available. Automatic emuMMC copying is not enabled yet.",24,174,1164,NOVA_SMALL),48);
+    nyx_nova_fit_text(nyx_nova_text(panel,"After successful partitioning, emuMMC is copied and verified automatically when selected.",24,174,1164,NOVA_SMALL),48);
     return LV_RES_OK;
 }

@@ -83,3 +83,15 @@ nova_plan_result nova_partition_installation(nova_partition_plan *plan,u32 actua
     }
     return result;
 }
+
+bool nova_install_target_valid(const nova_partition_plan *p,u32 sectors,u32 gpp,
+    u32 index,u32 type,u32 start,u32 size)
+{
+    if(!p||!p->emu_mib||p->emu_double||!gpp||type!=0xE0)return false;
+    u64 expected=0x8000ULL+((u64)p->fat_mib+p->linux_mib+p->android_mib)*2048;
+    u64 expected_size=(u64)p->emu_mib*2048-0x800;
+    u32 expected_index=p->linux_mib&&!p->android_mib?2:1;
+    return index==expected_index&&start==expected&&size==expected_size&&
+        expected+expected_size<=sectors&&0xC000ULL+gpp<=expected_size&&
+        (sectors-sectors%NOVA_DISK_ALIGN_SECTORS)==p->total_sectors;
+}

@@ -2,7 +2,7 @@
   "passed": true,
   "native_scenes": 683,
   "failed_scenes": 0,
-  "seconds": 13.12,
+  "seconds": 19.09,
   "locales": 8,
   "font_sizes": [
     20,
@@ -21,8 +21,8 @@
     "nyx/nyx_gui/fonts/font_manager.c": "7e8c90398ea4abb8b678daa4d8201838f0f0f489e93b21f410cc6f3a582fc63b",
     "nyx/nyx_gui/frontend/gui_options.c": "d29b6714aada7981fedbcdd0e7d4bc27af25526e00484744f01875d341e7366b",
     "nyx/nyx_gui/frontend/gui_appearance.c": "e048cff1bcd650dca20986a1f84daa2cc84badf4b65362588833f96a938d5e5c",
-    "nyx/nyx_gui/frontend/gui_nova.c": "80f9bcdba23bdbac20304fe0b0ba0f4b0dde055a77ed14667f7933c5e55c78a0",
+    "nyx/nyx_gui/frontend/gui_nova.c": "ffd36d31a611e14e41446688420bd43487106846ddf2c6d8c598484aa2c1c924",
     "nyx/nyx_gui/frontend/gui_nova_theme.c": "78f70433af95af8be353e2d4975daee2abb6f8ab235d4ab27f88533eba20551b",
-    "nyx/nyx_gui/localization_catalog.inc": "04de9fbf15645fae4d37a2d1bb0b11d9e422357d22590bf2e4c15e578dc02975"
+    "nyx/nyx_gui/localization_catalog.inc": "46adf574b66560b242487d17ccfd80596d42a1233abd90ce6d71c7487ccf024b"
   }
 }

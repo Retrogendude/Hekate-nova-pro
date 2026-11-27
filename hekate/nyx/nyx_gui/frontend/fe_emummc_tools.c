@@ -73,61 +73,38 @@ void load_emummc_cfg(emummc_cfg_t *emu_info)
 	ini_free(&ini_sections);
 }
 
-void save_emummc_cfg(u32 part_idx, u32 sector_start, const char *path)
+int save_emummc_cfg_checked(u32 part_idx,u32 sector_start,const char *path)
 {
-	sd_mount();
-
-	char lbuf[16];
-	FIL fp;
-
-	if (f_open(&fp, "emuMMC/emummc.ini", FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
-		return;
-
-	// Add config entry.
-	f_puts("[emummc]\nenabled=", &fp);
-	if (part_idx && sector_start)
-	{
-		itoa(part_idx, lbuf, 10);
-		f_puts(lbuf, &fp);
-	}
-	else if (path)
-		f_puts("1", &fp);
-	else
-		f_puts("0", &fp);
-
-	if (!sector_start)
-		f_puts("\nsector=0x0", &fp);
-	else
-	{
-		f_puts("\nsector=0x", &fp);
-		itoa(sector_start, lbuf, 16);
-		f_puts(lbuf, &fp);
-	}
-	if (path)
-	{
-		f_puts("\npath=", &fp);
-		f_puts(path, &fp);
-	}
-
-	// Get ID from path.
-	u32 id_from_path = 0;
-	if (path && strlen(path) >= 4)
-		memcpy(&id_from_path, path + strlen(path) - 4, 4);
-	f_puts("\nid=0x", &fp);
-	itoa(id_from_path, lbuf, 16);
-	f_puts(lbuf, &fp);
-
-	f_puts("\nnintendo_path=", &fp);
-	if (path)
-	{
-		f_puts(path, &fp);
-		f_puts("/Nintendo\n", &fp);
-	}
-	else
-		f_puts("\n", &fp);
-
-	f_close(&fp);
+    if((path&&strlen(path)>128)||sd_mount())return 1;
+    f_mkdir("emuMMC");
+    char text[512];u32 id=0;
+    if(path&&strlen(path)>=4)memcpy(&id,path+strlen(path)-4,4);
+    s_printf(text,"[emummc]\nenabled=%d\nsector=0x%X",part_idx&&sector_start?part_idx:path?1:0,sector_start);
+    if(path)s_printf(text+strlen(text),"\npath=%s",path);
+    s_printf(text+strlen(text),"\nid=0x%X\nnintendo_path=%s%s\n",id,path?path:"",path?"/Nintendo":"");
+    FIL fp;
+    if(f_open(&fp,"emuMMC/emummc.ini.nova.tmp",FA_WRITE|FA_CREATE_ALWAYS)!=FR_OK)return 1;
+    if(f_puts(text,&fp)!=(int)strlen(text))goto fail;
+    if(f_sync(&fp)!=FR_OK){f_close(&fp);return 1;}
+    if(f_close(&fp)!=FR_OK)return 1;
+    char check[512];UINT received=0;u32 length=strlen(text);
+    if(f_open(&fp,"emuMMC/emummc.ini.nova.tmp",FA_READ)!=FR_OK)return 1;
+    bool matches=f_read(&fp,check,length,&received)==FR_OK&&received==length&&!memcmp(check,text,length);
+    if(f_close(&fp)!=FR_OK||!matches)return 1;
+    bool previous=f_stat("emuMMC/emummc.ini",NULL)==FR_OK;
+    if(f_stat("emuMMC/emummc.ini.nova.bak",NULL)==FR_OK&&f_unlink("emuMMC/emummc.ini.nova.bak")!=FR_OK)return 1;
+    if(previous&&f_rename("emuMMC/emummc.ini","emuMMC/emummc.ini.nova.bak")!=FR_OK)return 1;
+    if(f_rename("emuMMC/emummc.ini.nova.tmp","emuMMC/emummc.ini")!=FR_OK){
+        if(previous)f_rename("emuMMC/emummc.ini.nova.bak","emuMMC/emummc.ini");
+        return 1;
+    }
+    return 0;
+fail:
+    f_close(&fp);return 1;
 }
+void save_emummc_cfg(u32 index,u32 start,const char *path)
+{(void)save_emummc_cfg_checked(index,start,path);}
+
 
 void update_emummc_base_folder(char *outFilename, u32 sdPathLen, u32 currPartIdx)
 {
@@ -503,7 +480,13 @@ out:
 	sd_unmount();
 }
 
-static int _dump_emummc_raw_part(emmc_tool_gui_t *gui, int active_part, int part_idx, u32 sd_part_off, emmc_part_t *part, u32 resized_count)
+static bool emummc_verify_raw_chunk(u32 sector,u32 count,const u8 *expected)
+{
+    u8 *check=(u8 *)SDMMC_ALT_DMA_BUFFER;
+    return !sdmmc_storage_read(&sd_storage,sector,count,check)&&!memcmp(expected,check,count*512u);
+}
+
+static int _dump_emummc_raw_part(emmc_tool_gui_t *gui, int active_part, int part_idx, u32 sd_part_off, emmc_part_t *part, u32 resized_count, bool verify)
 {
 	u32 num = 0;
 	u32 pct = 0;
@@ -626,6 +609,11 @@ static int _dump_emummc_raw_part(emmc_tool_gui_t *gui, int active_part, int part
 			}
 		}
 
+        if(verify){
+            if(!emummc_verify_raw_chunk(sd_sector_off+lba_curr,num,buf)){
+                lv_label_ins_text(gui->label_log,LV_LABEL_POS_LAST,"Copy verification failed. emuMMC remains disabled.\n");return 1;
+            }
+        }
 		manual_system_maintenance(false);
 
 		pct = (u64)((u64)(lba_curr - part->lba_start) * 100u) / (u64)(part->lba_end - part->lba_start);
@@ -650,9 +638,9 @@ static int _dump_emummc_raw_part(emmc_tool_gui_t *gui, int active_part, int part
 	if (active_part == 2)
 	{
 		mbr_t mbr;
-		sdmmc_storage_read(&sd_storage, 0, 1, &mbr);
+		if(sdmmc_storage_read(&sd_storage,0,1,&mbr))return 1;
 		mbr.partitions[part_idx].type = 0xE0;
-		sdmmc_storage_write(&sd_storage, 0, 1, &mbr);
+		if(sdmmc_storage_write(&sd_storage,0,1,&mbr))return 1;
 	}
 
 	if (resized_count)
@@ -823,7 +811,7 @@ error:
 	return 1;
 }
 
-void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 resized_count)
+static int dump_emummc_raw_impl(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 resized_count,bool verify,const u8 *cid,u32 expected_gpp)
 {
 	int res = 1;
 	u32 timer = 0;
@@ -849,6 +837,16 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 		goto out;
 	}
 
+    if(verify){
+        mbr_t table;
+        if(!cid||part_idx<1||part_idx>3||sector_start<0x10000||emmc_storage.sec_cnt!=expected_gpp||
+            memcmp(sd_storage.raw_cid,cid,16)||sdmmc_storage_read(&sd_storage,0,1,&table)||
+            table.boot_signature!=0xAA55||table.partitions[part_idx].type!=0xE0||
+            table.partitions[part_idx].start_sct!=sector_start-0x8000||
+            (u64)table.partitions[part_idx].start_sct+table.partitions[part_idx].size_sct>sd_storage.sec_cnt||
+            0xC000ULL+expected_gpp>table.partitions[part_idx].size_sct)goto out_failed;
+    }
+
 	if (resized_count && !emummc_raw_derive_bis_keys())
 	{
 		s_printf(gui->txt_buf, "#FFDD00 For formatting USER partition,#\n#FFDD00 BIS keys are needed!#\n");
@@ -860,9 +858,9 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 	int i = 0;
 	char sdPath[OUT_FILENAME_SZ];
 	// Create Restore folders, if they do not exist.
-	f_mkdir("emuMMC");
+	FRESULT directory=f_mkdir("emuMMC");if(directory!=FR_OK&&directory!=FR_EXIST)goto out_failed;
 	s_printf(sdPath, "emuMMC/RAW%d", part_idx);
-	f_mkdir(sdPath);
+	directory=f_mkdir(sdPath);if(directory!=FR_OK&&directory!=FR_EXIST)goto out_failed;
 	strcat(sdPath, "/");
 	strcpy(gui->base_path, sdPath);
 
@@ -876,7 +874,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 
 	// Clear partition start.
 	memset((u8 *)MIXD_BUF_ALIGNED, 0, SZ_16M);
-	sdmmc_storage_write(&sd_storage, sector_start - 0x8000, 0x8000, (u8 *)MIXD_BUF_ALIGNED);
+	if(sdmmc_storage_write(&sd_storage,sector_start-0x8000,0x8000,(u8 *)MIXD_BUF_ALIGNED))goto out_failed;
 
 	for (i = 0; i < 2; i++)
 	{
@@ -894,7 +892,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 		emmc_set_partition(i + 1);
 
 		strcat(sdPath, bootPart.name);
-		res = _dump_emummc_raw_part(gui, i, part_idx, sector_start, &bootPart, 0);
+		res = _dump_emummc_raw_part(gui, i, part_idx, sector_start, &bootPart, 0,verify);
 
 		if (res)
 		{
@@ -928,7 +926,7 @@ void dump_emummc_raw(emmc_tool_gui_t *gui, int part_idx, u32 sector_start, u32 r
 		lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, txt_buf);
 		manual_system_maintenance(true);
 
-		res = _dump_emummc_raw_part(gui, 2, part_idx, sector_start, &rawPart, resized_count);
+		res = _dump_emummc_raw_part(gui, 2, part_idx, sector_start, &rawPart, resized_count,verify);
 
 		if (res)
 			s_printf(txt_buf, "#FFDD00 Failed!#\n");
@@ -943,18 +941,36 @@ out_failed:
 	timer = get_tmr_s() - timer;
 	emmc_end();
 
+    if(!res&&verify){
+        mbr_t table;
+        if(sdmmc_storage_read(&sd_storage,0,1,&table)||table.boot_signature!=0xAA55||
+            table.partitions[part_idx].type!=0xE0||table.partitions[part_idx].start_sct!=sector_start-0x8000||
+            (u64)table.partitions[part_idx].start_sct+table.partitions[part_idx].size_sct>sd_storage.sec_cnt||
+            0xC000ULL+expected_gpp>table.partitions[part_idx].size_sct)res=1;
+    }
 	if (!res)
 	{
 		s_printf(txt_buf, "Time taken: %dm %ds.\nFinished!", timer / 60, timer % 60);
 		strcpy(sdPath, gui->base_path);
 		strcat(sdPath, "raw_based");
 		FIL fp;
-		f_open(&fp, sdPath, FA_CREATE_ALWAYS | FA_WRITE);
-		f_write(&fp, &sector_start, 4, NULL);
-		f_close(&fp);
-
-		gui->base_path[strlen(gui->base_path) - 1] = 0;
-		save_emummc_cfg(part_idx, sector_start, gui->base_path);
+        UINT written=0;
+        if(f_open(&fp,sdPath,FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)res=1;
+        else{
+            if(f_write(&fp,&sector_start,4,&written)!=FR_OK||written!=4||f_sync(&fp)!=FR_OK)res=1;
+            if(f_close(&fp)!=FR_OK)res=1;
+        }
+        if(!res&&verify){
+            u32 saved_sector=0;UINT received=0;
+            if(f_open(&fp,sdPath,FA_READ)!=FR_OK)res=1;
+            else{
+                if(f_read(&fp,&saved_sector,4,&received)!=FR_OK||received!=4||saved_sector!=sector_start)res=1;
+                if(f_close(&fp)!=FR_OK)res=1;
+            }
+        }
+        gui->base_path[strlen(gui->base_path)-1]=0;
+        if(!res&&save_emummc_cfg_checked(part_idx,sector_start,gui->base_path))res=1;
+        if(res)strcpy(txt_buf,"Copy metadata could not be saved. emuMMC remains disabled.");
 	}
 	else
 		s_printf(txt_buf, "Time taken: %dm %ds.", timer / 60, timer % 60);
@@ -965,4 +981,10 @@ out:
 	free(txt_buf);
 	free(gui->base_path);
 	sd_unmount();
+    return res;
 }
+
+void dump_emummc_raw(emmc_tool_gui_t *gui,int index,u32 start,u32 resized)
+{(void)dump_emummc_raw_impl(gui,index,start,resized,false,NULL,0);}
+int dump_emummc_raw_checked(emmc_tool_gui_t *gui,int index,u32 start,const u8 *cid,u32 gpp)
+{return dump_emummc_raw_impl(gui,index,start,0,true,cid,gpp);}

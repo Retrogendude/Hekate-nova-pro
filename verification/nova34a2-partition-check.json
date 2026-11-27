@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "actual_transaction_and_table_writers": true,
+  "storage_and_ui_mocked": true,
+  "hardware_test": false,
+  "result": "PASS: 3651 actual-C transaction/table assertions: 56 model/OS/layout cases, cancel, all 16 write failures, 19 read failures, readback corruption, card change and manual exclusion",
+  "source_sha256": "f28725871463bafd10683d82664f7b1e4dbb701bcf967cddb2f41d05256101d2"
+}

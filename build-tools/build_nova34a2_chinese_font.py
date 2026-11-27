@@ -2,10 +2,10 @@
 from pathlib import Path
 import struct,json,hashlib,importlib.util
 from PIL import Image,ImageDraw,ImageFont
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha1/nyx/nyx_gui/fonts'
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha2/nyx/nyx_gui/fonts'
 spec=importlib.util.spec_from_file_location('converter',P/'tools/convert_font.py');c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
 base=(P/'sd/Lecture.nyxf').read_bytes()
-extra=json.loads((W/'nova34a1-zh-characters.json').read_text())
+extra=json.loads((W/'nova34a2-zh-characters.json').read_text())
 points=sorted(set(c.CODEPOINTS)|set(extra))
 assert len(points)<=2048
 source=W/'nova33-language-resources/NotoSansCJKsc-Regular.otf'
@@ -44,5 +44,5 @@ header=struct.pack('<4sHH5I',b'NYXF',1,32,offset,len(sections),32,0,c.fnv(table)
 blob=header+table+payload
 assert len(blob)<=16*1024*1024 and max(x['section_bytes']for x in report)<=2*1024*1024
 destination=P/'sd/Nova-Chinese-Simplified.nyxf';destination.write_bytes(blob)
-(W/'nova34a1-chinese-font.json').write_text(json.dumps({'file':str(destination),'bytes':len(blob),'glyphs':len(points),'coverage':points,'sections':report,'sha256':hashlib.sha256(blob).hexdigest()},indent=2))
+(W/'nova34a2-chinese-font.json').write_text(json.dumps({'file':str(destination),'bytes':len(blob),'glyphs':len(points),'coverage':points,'sections':report,'sha256':hashlib.sha256(blob).hexdigest()},indent=2))
 print(destination.name,len(blob),'bytes;',len(points),'glyphs;',len(sections),'sizes')

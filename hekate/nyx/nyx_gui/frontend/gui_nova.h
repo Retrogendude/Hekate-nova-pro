@@ -45,7 +45,10 @@ void nyx_nova_home_focus(lv_obj_t *frame);
 lv_res_t nyx_nova_installation_wizard(lv_obj_t *button);
 u32 nyx_nova_installation_model(void);
 bool nyx_nova_installation_read_media(u32 *sectors,u32 *emmc_mib,u32 *model);
-lv_res_t nyx_nova_installation_partition(u32 model,u32 systems);
+bool nyx_nova_installation_read_card(u8 *cid);
+lv_res_t nyx_nova_installation_partition(u32 model,u32 systems,const u8 *cid);
+bool nyx_nova_installation_copy(u32 index,u32 start,u32 size,u32 sectors,u32 gpp,
+    const u8 *cid);
 void nyx_nova_active_outline(lv_obj_t *frame,bool enabled);
 void nyx_nova_halo_preview(lv_obj_t *frame,u32 color1,u32 color2);
 void nyx_nova_reflection_pause(bool pause);

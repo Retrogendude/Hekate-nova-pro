@@ -14,8 +14,8 @@ import sys
 from PIL import Image
 
 work=Path(__file__).resolve().parent
-project=work/'hekate-nova-pro-v34-alpha1'
-directory=work/'lvgl-preview-nova34a1';directory.mkdir(exist_ok=True)
+project=work/'hekate-nova-pro-v34-alpha2'
+directory=work/'lvgl-preview-nova34a2';directory.mkdir(exist_ok=True)
 lvgl=project/'bdk/libs/lvgl'
 config=(project/'bdk/libs/lv_conf.h').read_text()
 config=config.replace('#include <soc/timer.h>','#include <utils/types.h>').replace('#include <memory_map.h>','')
@@ -229,11 +229,12 @@ body+=function(tools,'_create_window_usb_tools').replace('_create_window_usb_too
 partition=(nyx/'frontend/gui_tools_partition_manager.c').read_text(encoding='utf-8')
 body+='\n#define AU_ALIGN_SECTORS 0x8000\n#define ALIGN_DOWN(x,a) ((x)&~((a)-1))\n#define HOS_USER_SECTOR 0x53C000\n'
 body+='\n'.join(re.findall(r'^#define (?:EMU_|AND_SYS_)[^\n]*',partition,re.M))+'\n'
-body+='\ntypedef struct{u32 sec_cnt;}sdmmc_storage_t;\ntypedef struct{u32 unused;}mbr_t;\nstatic sdmmc_storage_t sd_storage,emmc_storage;\n'
+body+='\ntypedef struct{u32 sec_cnt;u8 raw_cid[16];}sdmmc_storage_t;\ntypedef struct{u32 unused;}mbr_t;\nstatic sdmmc_storage_t sd_storage,emmc_storage;\n'
 start=partition.index('typedef struct _partition_ctxt_t');end=partition.index('typedef struct _l4t_flasher_ctxt_t',start)
 body+=partition[start:end]
 body+='\nstatic partition_ctxt_t part_info;static lv_obj_t *btn_flash_l4t,*btn_flash_android;\nstatic u32 fixture_model;\nenum{FUSE_NX_HW_TYPE_IOWA=1,FUSE_NX_HW_TYPE_HOAG=2,FUSE_NX_HW_TYPE_AULA=3,EMMC_GPP=0};\nstatic u32 fuse_read_hw_type(void){return fixture_model;}\nstatic int emmc_initialize(bool b){(void)b;return 0;}\nstatic void emmc_set_partition(u32 p){(void)p;}\nstatic void emmc_end(void){}\nACTION(_action_part_manager_ums_sd) ACTION(_action_check_flash_linux) ACTION(_action_flash_android) ACTION(_action_fix_mbr_gpt) ACTION(_create_mbox_partitioning_next_legacy)\nstatic void nova_partition_refresh(void);\n'
 body+=function(partition,'_update_partition_bar')+function(partition,'_action_slider_emu')+function(partition,'_action_slider_l4t')+function(partition,'_action_slider_and')
+body+=partition[partition.index('/* A one-shot, card-bound'):partition.index('static int nova_table_write')]
 body+=stripped(nyx/'frontend/gui_partition_plan.c')+(nyx/'frontend/gui_partition_nova.inc').read_text(encoding='utf-8')
 body+=r"""
 static lv_res_t preview_partition(const char *mode,u32 options){
@@ -716,10 +717,11 @@ else if(!strcmp(argv[3],"touch-grid"))nyx_touch_test(NULL);
 else if(!strcmp(argv[3],"screen-patterns"))nyx_screen_patterns(NULL);
 else if(!strcmp(argv[3],"wizard")){
  fixture_model=getenv("NYX_TEST_MODEL")?atoi(getenv("NYX_TEST_MODEL")):0;
+ sd_storage.raw_cid[0]=42;
  sd_storage.sec_cnt=(getenv("NYX_TEST_CAPACITY")?atoi(getenv("NYX_TEST_CAPACITY")):128)*2097152u;
  emmc_storage.sec_cnt=(fixture_model==3?59640u:29820u)<<11;
  nyx_nova_installation_wizard(NULL);
- if(atoi(argv[6])>0){install_wizard_next(NULL);if(atoi(argv[6])>1)install_wizard_next(NULL);}
+ if(atoi(argv[6])>0){install_wizard_next(NULL);if(atoi(argv[6])>1)install_wizard_next(NULL);if(atoi(argv[6])>2)install_wizard_next(NULL);}
 }
 else if(!strcmp(argv[3],"usb"))preview_usb_tools(NULL);
 else if(!strcmp(argv[3],"bluetooth")){
@@ -1067,7 +1069,14 @@ if(!strcmp(argv[3],"wizard")&&getenv("NYX_TEST_WIZARD")){
  lv_obj_t *right=find_choice(install_wizard.window,86,actual<2?0:actual-1);assert(right);lv_btn_get_action(right,LV_BTN_ACTION_CLICK)(right);
  install_wizard_next(NULL);assert(install_wizard.step==2&&install_wizard.model==(actual<2?0:actual));
  if(install_wizard.result==NOVA_PLAN_OK){
-  nova_partition_plan plan=install_wizard.plan;install_wizard_next(NULL);assert(!install_wizard.open&&partition_nova.ready);
+  nova_partition_plan plan=install_wizard.plan;install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.backup_ack);
+  install_wizard_next(NULL);assert(install_wizard.open);
+  lv_obj_t*ack=find_action(install_wizard.window,install_wizard_backup);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_backup(ack);
+  assert(install_wizard.backup_ack);
+  sd_storage.raw_cid[0]++;install_wizard_next(NULL);assert(install_wizard.open&&install_wizard.step==2&&!install_job.armed);
+  install_wizard_next(NULL);assert(install_wizard.step==3&&!install_wizard.backup_ack);
+  ack=find_action(install_wizard.window,install_wizard_backup);assert(ack);lv_btn_set_state(ack,LV_BTN_STATE_TGL_REL);install_wizard_backup(ack);
+  install_wizard_next(NULL);assert(!install_wizard.open&&partition_nova.ready&&install_job.armed);
   assert(part_info.emu_size==plan.emu_mib&&part_info.l4t_size==plan.linux_mib&&part_info.and_size==plan.android_mib&&part_info.hos_size==plan.fat_mib);
   assert(partition_nova.mode==1&&lv_obj_get_hidden(partition_nova.content)&&lv_obj_get_hidden(partition_nova.mode_choices));
   assert(lv_btn_get_action(part_info.partition_button,LV_BTN_ACTION_CLICK)==nova_partition_review);
@@ -1190,6 +1199,7 @@ part_info.l4t_size=16384;""")
 body+='\nstatic lv_res_t create_window_partition_manager(bool emmc){return preview_partition(emmc?"partition-emmc":"partition-expert",0); }\n'
 body+=function(partition,'nyx_nova_installation_model')
 body+=function(partition,'nyx_nova_installation_read_media')
+body+=function(partition,'nyx_nova_installation_read_card')
 body+=function(partition,'nyx_nova_installation_partition')
 (directory/'preview.c').write_text(body,encoding='utf-8')
 cc=work/'toolchains/w64devkit/bin/gcc.exe'
@@ -1229,7 +1239,7 @@ for screen,language,size,tab in jobs:
         (directory/('nova-performance-'+screen+'.json')).write_text(json.dumps(result,indent=2));(directory/'nova-performance.json').write_text(json.dumps(result,indent=2))
         print('PASS: white diagonal full-tile sheen; '+performance[0],flush=True)
     if '--check-all' not in sys.argv:
-        target=work/f'preview-nova34a1-{screen}-{language}-{size}-{tab}.png'
+        target=work/f'preview-nova34a2-{screen}-{language}-{size}-{tab}.png'
         Image.open(directory/'preview.ppm').save(target)
         print(target.name,run.stdout.strip(),flush=True)
 print(f'PASS: real-LVGL UI geometry and selector checks across {len(jobs)} screens; visible controls stay above the status bar; two-tap actions, independent colors and bounded reflections checked.',flush=True)

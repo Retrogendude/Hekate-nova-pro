@@ -1,0 +1,30 @@
+Hekate Nova Pro v34 alpha 2 — assistant d’installation automatisé
+
+Nouveautés
+Le bouton Accueil est agrandi et porte le texte « Assistant d’installation automatisé » avec une icône. Il existe dans les vues tuiles et carrousel.
+L’assistant enchaîne désormais le partitionnement réussi et, si elle a été sélectionnée, la création d’une emuMMC complète. BOOT0, BOOT1 et la zone principale de la mémoire interne sont copiés puis relus pour comparaison avant activation.
+
+AVANT TOUT PARTITIONNEMENT
+Sauvegarder sur un PC tous les fichiers utiles de la carte SD. Le partitionnement est destructif : toute donnée non sauvegardée peut être perdue. La sauvegarde limitée effectuée par le partitionneur Hekate ne remplace pas une sauvegarde personnelle complète.
+
+Parcours
+1. Depuis Accueil, ouvrir Assistant d’installation automatisé et lire la présentation.
+2. Choisir le modèle réel de la console : Switch V1/V2, Lite ou OLED ; sélectionner emuMMC/emuNAND, Linux et/ou Android.
+3. Lire le récapitulatif. Les tailles sont calculées avec la capacité réelle : emuMMC complète de 29 Go environ sur V1/V2/Lite ou 58 Go sur OLED, réserves techniques et au moins 2 Go de FAT32. Linux et Android utilisent les préréglages de 32 Go, ou 16 Go si nécessaire. Une carte absente, une capacité insuffisante, un modèle incorrect ou une mémoire interne incompatible bloquent la poursuite.
+4. Lire la mise en garde et activer « J’ai sauvegardé les données de ma carte SD. ». Suivant reste bloqué avant cette confirmation.
+5. Le partitionneur existant reçoit le plan préparé. Choisir Suivant et conserver la confirmation matérielle Hekate : après le délai de sécurité, POWER confirme et VOL annule. Jusqu’à cette confirmation, aucun partitionnement n’est lancé.
+6. Après réussite du formatage, de la restauration des fichiers et de l’écriture vérifiée des tables, la copie emuMMC démarre automatiquement si elle a été choisie. Ne retirer ni la SD ni l’alimentation. La relecture intégrale prend du temps. L’emuMMC n’est activée qu’après réussite de la copie, de la vérification et de l’enregistrement de ses métadonnées.
+7. En cas d’erreur ou d’annulation pendant le partitionnement ou la copie, la suite automatique s’arrête. Après le début de l’opération, l’emuMMC reste désactivée jusqu’à une copie complètement réussie. Lire les messages de l’écran. Il n’y a pas de reprise automatique après interruption.
+
+Le processus vérifie l’identité de la carte, sa capacité, le modèle, la capacité interne et la partition cible à plusieurs étapes. Remplacer la carte impose de revoir le plan et de reconfirmer la sauvegarde. Aucun fichier personnel de configuration ou d’appairage n’est fourni par ce pack.
+
+Portée
+Cette alpha automatise la préparation de la carte et la copie emuMMC. Linux et Android sont seulement réservés dans la table de partitions : leurs fichiers et leur installation restent nécessaires. Aucun téléchargement ni installation automatique de ces OS n’est annoncé.
+
+Installation du pack de test
+Conserver vos nyx.ini, hekate_ipl.ini, appairages, fonds et icônes. Fusionner le dossier bootloader fourni avec celui de la carte, puis utiliser le payload de ce même pack. Ne pas effacer les configurations pour installer cette alpha.
+Pack standard : consoles à mémoire normale. Pack 8GB : uniquement consoles physiquement modifiées, expérimental ; ce changement ne valide pas le matériel 8 Go.
+
+Validation et limites
+Compilation ARM et en-têtes Hekate 6.5.5 / Nyx 1.9.5 vérifiés. 480 cas de parcours et accueil en huit langues, 683 scènes de régression, 2861 assertions du calcul et des cibles, 3651 assertions de transaction/écriture des tables, 76 assertions de transfert et 254 assertions de copie/activation avec erreurs simulées réussis sur PC.
+Les interfaces sont rendues depuis le code LVGL. Les entrées/sorties des tests sont simulées ; aucun effacement ou transfert réel sur une Switch n’a été exécuté ici. Faire d’abord un essai avec une carte intégralement sauvegardée. Cette alpha locale n’est pas publiée sur GitHub.
