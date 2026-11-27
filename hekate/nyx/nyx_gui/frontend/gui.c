@@ -363,6 +363,7 @@ static void _disp_fb_present(uint32_t elapsed, uint32_t pixels)
 	}
 	display_frame_dirty = false;
 	display_frame_ready = false;
+	gui_tv_present();
 }
 
 static touch_event_t touchpad;
@@ -809,6 +810,7 @@ void manual_system_maintenance(bool refresh)
 	}
 	if (refresh)
 		lv_refr_now();
+	gui_tv_service();
 }
 
 lv_img_dsc_t *bmp_to_lvimg_obj(const char *path)

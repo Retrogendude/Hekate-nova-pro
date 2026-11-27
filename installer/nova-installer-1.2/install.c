@@ -173,7 +173,7 @@ static BOOL WriteReport(InstallContext*c,const PackageFile*files,int count,const
     wchar_t path[MAX_PATH];if(!SafePath(c->backup,L"installation.txt",TRUE,path))return FALSE;
     HANDLE out=CreateFileW(path,GENERIC_WRITE,0,NULL,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,NULL);
     if(out==INVALID_HANDLE_VALUE)return FALSE;
-    const char*header="Hekate Nova Pro v34 alpha4 - Installer 1.1\r\nFinal verification successful. COPIE=copied, CONSERVE=existing asset kept, IDENTIQUE=already current.\r\n";
+    const char*header="Hekate Nova Pro v34 alpha5 - Installer 1.2\r\nFinal verification successful. COPIE=copied, CONSERVE=existing asset kept, IDENTIQUE=already current.\r\n";
     DWORD n=0;BOOL ok=WriteFile(out,header,(DWORD)strlen(header),&n,NULL)&&n==strlen(header);
     for(int i=0;ok&&i<count;++i){
         char name[512],line[700];

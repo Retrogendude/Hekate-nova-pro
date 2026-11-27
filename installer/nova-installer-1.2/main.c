@@ -70,7 +70,7 @@ static LRESULT CALLBACK WindowProc(HWND h,UINT msg,WPARAM w,LPARAM l){
         small=CreateFontW(-16,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
         title=CreateFontW(-29,0,0,0,FW_SEMIBOLD,0,0,0,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
         HWND label=Control(L"STATIC",L"HEKATE NOVA PRO",0,100,26,700,42,0);SendMessageW(label,WM_SETFONT,(WPARAM)title,TRUE);
-        Control(L"STATIC",L"Installation sur carte SD  ·  v34 alpha 4  ·  installateur 1.1",0,102,72,710,28,0);
+        Control(L"STATIC",L"Installation sur carte SD  ·  v34 alpha 5  ·  installateur 1.2",0,102,72,710,28,0);
         Control(L"STATIC",L"1   Choisissez votre carte SD",0,28,130,790,28,0);
         drives=Control(L"COMBOBOX",L"",CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_HASSTRINGS|WS_VSCROLL|WS_TABSTOP,28,170,628,220,10);SendMessageW(drives,CB_SETITEMHEIGHT,(WPARAM)-1,32);SendMessageW(drives,CB_SETITEMHEIGHT,0,32);
         refresh=Control(L"BUTTON",L"Actualiser",BS_OWNERDRAW|WS_TABSTOP,674,170,158,36,11);
@@ -125,7 +125,7 @@ int WINAPI wWinMain(HINSTANCE instance,HINSTANCE previous,PWSTR command,int show
     (void)previous;(void)command;INITCOMMONCONTROLSEX cc={sizeof cc,ICC_PROGRESS_CLASS|ICC_STANDARD_CLASSES};InitCommonControlsEx(&cc);
     WNDCLASSW cls={0};cls.hInstance=instance;cls.lpfnWndProc=WindowProc;cls.lpszClassName=L"HekateNovaInstaller";cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hIcon=LoadIconW(instance,MAKEINTRESOURCEW(1));cls.hbrBackground=CreateSolidBrush(bg);RegisterClassW(&cls);
     RECT r={0,0,860,712};DWORD style=WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX;AdjustWindowRect(&r,style,FALSE);
-    win=CreateWindowExW(0,cls.lpszClassName,L"Hekate Nova Pro — installation v34 alpha 4 · installateur 1.1",style,CW_USEDEFAULT,CW_USEDEFAULT,r.right-r.left,r.bottom-r.top,NULL,NULL,instance,NULL);if(!win)return 1;
+    win=CreateWindowExW(0,cls.lpszClassName,L"Hekate Nova Pro — installation v34 alpha 5 · installateur 1.2",style,CW_USEDEFAULT,CW_USEDEFAULT,r.right-r.left,r.bottom-r.top,NULL,NULL,instance,NULL);if(!win)return 1;
 #ifdef INSTALLER_PREVIEW
     /* Off-screen rendering; does not open or install to any SD. */
     (void)show;

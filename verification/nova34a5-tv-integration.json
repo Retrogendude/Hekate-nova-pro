@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "actual_c": true,
+  "physical_hardware": false,
+  "result": "PASS: actual maintenance/frame-present/button-wait functions pump TV; diagnostics guard preserved; no LVGL scheduler reentry."
+}

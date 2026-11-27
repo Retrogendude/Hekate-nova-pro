@@ -13,6 +13,7 @@
 #include "gui_nova.h"
 #include "../localization.h"
 #include "../config.h"
+#include "../nova_version.h"
 
 #define TV_LOG_SIZE 32768
 #define TV_RUN_LIMIT_MS 45000
@@ -33,7 +34,9 @@ static struct {
     bool pad_saved, hpd_gpio, hpd_oe;
     bool auto_attempted, auto_suspended, resume_arm;
     bool console_dark, hardware_exit;
-    u32 auto_since, auto_poll_at, auto_samples, auto_errors;
+    u32 auto_since, auto_poll_at, auto_samples, auto_errors, service_at;
+    bool cooperative, servicing, report_pending, retry_pending, retry_start;
+    u32 retry_at,retry_delay,retries_left;
     u32 hpd_mux;
     u8 rails[2];
     int dirty_first, dirty_last;
@@ -43,6 +46,7 @@ static struct {
 static lv_res_t _cancel(lv_obj_t *btn);
 static lv_res_t _begin(bool automatic);
 static void _tick(void *param);
+static void _retry(void);
 
 bool gui_tv_console_dark(void)
 {
@@ -183,6 +187,14 @@ static int _write_report(FIL *fp)
 
 static bool _save(void)
 {
+    /* Never mount, write or unmount SD from a storage-loop service call. */
+    if(tv.cooperative){
+        if(tv.log_size){
+            tv.report_pending=true;
+            if(!tv.task)tv.task=lv_task_create(_tick,40,LV_TASK_PRIO_MID,NULL);
+        }
+        return false;
+    }
     if (!tv.log_size || sd_mount() != 0)
         return false;
     f_mkdir("bootloader/tv-test");
@@ -250,6 +262,7 @@ static void _stop(void)
 void gui_tv_shutdown(bool save_report)
 {
     bool was_active = tv.running || tv.mirrored || tv.clock_saved;
+    tv.report_pending=false;tv.retry_pending=false;tv.retries_left=0;
     tv.resume_arm |= was_active && n_cfg.tv_auto == 1;
     tv.auto_suspended = true;
     if (was_active)
@@ -285,8 +298,61 @@ void gui_tv_dirty(int y1, int y2)
     if (y2 > tv.dirty_last) tv.dirty_last = y2;
 }
 
+/* Called only after the completed LVGL frame has been presented. No UI or SD access. */
+void gui_tv_present(void)
+{
+    if(!tv.mirrored||!tv.fb)return;
+        if (tv.dirty_last >= tv.dirty_first) {
+            u32 first = tv.dirty_first * 1280;
+            u32 count = (tv.dirty_last - tv.dirty_first + 1) * 1280;
+            memcpy(tv.fb + first, (u32 *)NYX_FB2_ADDRESS + first, count * 4);
+            bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_PHY, false);
+            tv.dirty_first = 720;
+            tv.dirty_last = -1;
+        }
+}
+
+/* Safe from synchronous copy loops and physical-button waits. No LVGL scheduler. */
+void gui_tv_service(void)
+{
+    if(tv.servicing||(!tv.task&&!tv.running&&!tv.mirrored))return;
+    tv.servicing=true;
+    if((u32)(get_tmr_ms()-tv.service_at)>=40){
+        tv.cooperative=true;_tick(NULL);tv.cooperative=false;
+    }
+    tv.servicing=false;
+}
+void btn_wait_service(void){gui_tv_service();}
+
+/* Bounded restarts of the existing handshake; never force-reset the PD chip. */
+static void _retry(void)
+{
+    if(!tv.retries_left||tv.auto_suspended||(tv.dock.s1&PD_S1_FAULT_MASK)||(tv.snap.status1&PD_S1_FAULT_MASK))return;
+    tv.retry_delay=tv.retries_left==2?1500:3000;tv.retries_left--;
+    tv.retry_at=get_tmr_ms();tv.retry_pending=true;
+    if(!tv.task)tv.task=lv_task_create(_tick,40,LV_TASK_PRIO_MID,NULL);
+    _log("Connection failed; a bounded retry is scheduled after cleanup.");
+}
+
 static void _tick(void *param)
 {
+    tv.service_at=get_tmr_ms();
+    if(tv.report_pending&&!tv.cooperative){
+        tv.report_pending=false;
+        _save();
+        if(!tv.running&&!tv.mirrored&&!tv.win&&!tv.retry_pending&&!_auto_enabled()&&tv.task){lv_task_del(tv.task);tv.task=NULL;}
+    }
+    if(tv.retry_pending&&!tv.running&&!tv.mirrored){
+        if(btn_read_vol()&BTN_VOL_DOWN){_cancel(NULL);return;}
+        if(tv.report_pending||((u32)(get_tmr_ms()-tv.retry_at)<tv.retry_delay))return;
+        bool inserted=false,dock=false;
+        bpmp_freq_t clock=bpmp_fid_current;bpmp_clk_rate_set(BPMP_CLK_NORMAL);
+        int r=pd_dock_attached(&inserted,&dock);bpmp_clk_rate_set(clock);
+        if(r){tv.retry_pending=false;tv.retries_left=0;return;} /* No reset or busy retry loop on an unreadable controller. */
+        tv.retry_pending=false;
+        if(!inserted||!dock){tv.retries_left=0;return;}
+        tv.retry_start=true;_begin(false);tv.retry_start=false;return;
+    }
     if ((tv.running || tv.mirrored) && (btn_read_vol() & BTN_VOL_DOWN)) {
         _cancel(NULL);
         return;
@@ -300,14 +366,7 @@ static void _tick(void *param)
             _show("TV disconnected. Output stopped. Start it again after docking.");
             return;
         }
-        if (tv.dirty_last >= tv.dirty_first) {
-            u32 first = tv.dirty_first * 1280;
-            u32 count = (tv.dirty_last - tv.dirty_first + 1) * 1280;
-            memcpy(tv.fb + first, (u32 *)NYX_FB2_ADDRESS + first, count * 4);
-            bpmp_mmu_maintenance(BPMP_MMU_MAINT_CLEAN_PHY, false);
-            tv.dirty_first = 720;
-            tv.dirty_last = -1;
-        }
+        gui_tv_present();
         return;
     }
     if (!tv.running) {
@@ -322,6 +381,7 @@ static void _tick(void *param)
         _stop();
         _save();
         _show("Dock negotiation timed out. Check power and HDMI, then start again.");
+        _retry();
         return;
     }
     dock_step(&tv.dock);
@@ -338,6 +398,7 @@ static void _tick(void *param)
         _stop();
         _save();
         _show(tv.message);
+        _retry();
         return;
     }
     if (tv.dock.state != DOCK_DONE)
@@ -347,6 +408,7 @@ static void _tick(void *param)
         _stop();
         _save();
         _show("No TV signal after negotiation. Check the dock and HDMI connection.");
+        _retry();
         return;
     }
     int r = dpout_aux_init();
@@ -366,9 +428,10 @@ static void _tick(void *param)
     }
     _log(tv.message);
     tv.running = false;
-    if (r)
+    if (r) {
         _stop();
-    else {
+    } else {
+        tv.retry_pending=false;tv.retries_left=0;
         tv.mirrored = true;
         tv.dirty_first = 0;
         tv.dirty_last = 719;
@@ -378,7 +441,8 @@ static void _tick(void *param)
     }
     bool saved = _save();
     _show(tv.message);
-    _log(saved ? "Report saved to SD." : "Report not saved (SD unavailable or write failed).");
+    if(r)_retry();
+    _log(saved ? "Report saved to SD." : tv.report_pending ? "Report deferred until storage operation completes." : "Report not saved (SD unavailable or write failed).");
 }
 
 static lv_res_t _begin(bool automatic)
@@ -395,6 +459,7 @@ static lv_res_t _begin(bool automatic)
         _show("Switch Lite does not support TV output.");
         return LV_RES_OK;
     }
+    if(!tv.retry_start){tv.retry_pending=false;tv.retries_left=2;}
     tv.auto_attempted = true;
     tv.log_size = 0;
     tv.log_full = false;
@@ -402,8 +467,10 @@ static lv_res_t _begin(bool automatic)
     tv.started = get_tmr_ms();
     memset(&tv.sink, 0, sizeof(tv.sink));
     memset(&tv.video, 0, sizeof(tv.video));
-    _log(automatic ? "Hekate Nova Pro 20-Dock - automatic dock output" : "Hekate Nova Pro 20-Dock - manual dock output");
+    _log(automatic ? "Hekate Nova Pro " NYX_NOVA_VERSION " - automatic dock output"
+                   : "Hekate Nova Pro " NYX_NOVA_VERSION " - manual dock output");
     _log("HWTest-RCM upstream 3731bfb471515a5f83709aa496c9cdb0a9aeff83");
+    char attempt[64];s_printf(attempt,"Connection attempt %d of 3.",3-tv.retries_left);_log(attempt);
     tv.clock = bpmp_fid_current;
     tv.clock_saved = true;
     bpmp_clk_rate_set(BPMP_CLK_NORMAL);
@@ -456,6 +523,7 @@ static lv_res_t _start(lv_obj_t *btn)
 
 static lv_res_t _cancel(lv_obj_t *btn)
 {
+    tv.retry_pending=false;tv.retries_left=0;
     tv.auto_attempted = true;
     tv.auto_samples = 0;
     if (!tv.log_size) {
@@ -465,7 +533,7 @@ static lv_res_t _cancel(lv_obj_t *btn)
     _log("User stopped the session.");
     _stop();
     bool saved = _save();
-    _show(saved ? "TV stopped. Report: bootloader/tv-test/last-run.txt" :
+    _show(saved ? "TV stopped. Report: bootloader/tv-test/last-run.txt" : tv.report_pending ? "TV output stopped." :
                  "TV stopped. Report could not be saved to SD.");
     return LV_RES_OK;
 }
@@ -478,7 +546,7 @@ static lv_res_t _signal(lv_obj_t *obj, lv_signal_t sign, void *param)
         tv.win = NULL;
         tv.status = NULL;
         tv.panel = NULL;
-        if (!tv.running && !tv.mirrored && !_auto_enabled()) {
+        if (!tv.running && !tv.mirrored && !tv.report_pending && !tv.retry_pending && !_auto_enabled()) {
             if (tv.task) lv_task_del(tv.task);
             tv.task = NULL;
             dpout_set_logger(NULL);

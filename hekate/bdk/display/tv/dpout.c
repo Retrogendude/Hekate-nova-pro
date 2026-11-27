@@ -1492,6 +1492,35 @@ static int _sor_attach(dpout_video_t *v, const dpout_mode_t *m)
 /* How far the picture gets: frames out of the head, the raster into the
  * SOR, the video into the dock's converter. Read only, apart from arming
  * the CRCs and the sink's CRC test, which are stopped again. */
+/* Link training confirms the lanes, not reception of the video stream.
+ * Give the converter time to lock, then require a fresh port status before
+ * reporting success. A missing AUX reply must never reuse a stale sync bit. */
+static int _wait_sink_sync(dpout_video_t *v)
+{
+    u32 start = get_tmr_ms();
+    bool answered = false;
+    v->in_sync = false;
+    do {
+        u8 status = 0;
+        if (!dpout_hpd()) {
+            s_printf(v->why, "HPD went away while waiting for video sync");
+            return 12;
+        }
+        if (!dpout_dpcd_read(DPCD_SINK_STATUS, &status, 1)) {
+            answered = true;
+            v->dpcd_200[5] = status;
+            if (status & SINK_PORT0_IN_SYNC) {
+                v->in_sync = true;
+                return 0;
+            }
+        }
+        msleep(20);
+    } while ((u32)(get_tmr_ms() - start) < 1000);
+    s_printf(v->why, answered ? "video stream not synchronized after 1000 ms"
+                              : "AUX did not answer the video sync check");
+    return 12;
+}
+
 static void _video_check(dpout_video_t *v)
 {
     u8 b = 0, d[6];
@@ -1889,6 +1918,11 @@ static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb)
              v->lane_status[0], v->lane_status[1], v->lane_status[2]);
     _vlog(v, line);
     _video_check(v);
+    if (_wait_sink_sync(v)) {
+        _vlog(v, v->why);
+        return 12; /* Caller tears down the head before a bounded restart. */
+    }
+    _vlog(v, "video stream synchronization confirmed");
     return 0;
 }
 

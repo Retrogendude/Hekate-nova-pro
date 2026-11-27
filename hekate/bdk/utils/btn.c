@@ -50,6 +50,9 @@ u8 btn_read_home()
 	return (!gpio_read(GPIO_PORT_Y, GPIO_PIN_1)) ? BTN_HOME : 0;
 }
 
+/* Nyx overrides this to keep dock output alive during blocking prompts. */
+void __attribute__((weak)) btn_wait_service(void) {}
+
 u8 btn_wait()
 {
 	u8 res = 0, btn = btn_read();
@@ -64,6 +67,7 @@ u8 btn_wait()
 
 	do
 	{
+		btn_wait_service();
 		res = btn_read();
 		//Power button up, remove filter.
 		if (!(res & BTN_POWER) && pwr)
@@ -82,6 +86,7 @@ u8 btn_wait_timeout(u32 time_ms, u8 mask)
 
 	while (get_tmr_ms() < timeout)
 	{
+		btn_wait_service();
 		if (res == mask)
 			break;
 		else
@@ -101,6 +106,7 @@ u8 btn_wait_timeout_single(u32 time_ms, u8 mask)
 
 	while (get_tmr_ms() < timeout)
 	{
+		btn_wait_service();
 		if ((res & mask) == mask)
 		{
 			if (single_button && (res & ~mask)) // Undesired button detected.

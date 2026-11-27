@@ -1,0 +1,7 @@
+{
+  "result": "PASS: 54 TV lifecycle scenarios; no physical hardware exercised.",
+  "source_sha256": "0bffe3bd2b6854265d5e3c88f6a5236df5cb070a578ded874dbd9b4d1c5ba5b5",
+  "hardware_validation": false,
+  "real_bdk_formatter": true,
+  "pointer_alignment_cast_widened_for_64_bit_host": true
+}

@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "result": "PASS: 9 stream-sync scenarios; real function, simulated AUX/HPD/timer; hardware pending.",
+  "source_sha256": "29d99e38c71ed43272d018116b5b448f0d8ed72049c0562c027cfcc7d5d6a94d",
+  "hardware_validated": false,
+  "success_path_requires_fresh_sync": true
+}
