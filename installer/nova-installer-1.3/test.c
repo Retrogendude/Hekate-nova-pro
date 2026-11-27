@@ -28,7 +28,7 @@ int wmain(int argc,wchar_t**argv){
     WriteFixture(c.root,L"bootloader/payloads/User-Tool.bin","PERSONAL PAYLOAD");
     C(InstallPackage(&c));C(c.copied>100&&c.preserved==3);
     C(Equals(c.root,L"bootloader/payloads/User-Tool.bin","PERSONAL PAYLOAD"));
-    C(Has(c.backup,L"installation.txt","bootloader/payloads/hekate_nova_pro_6.5.5_v34_alpha5.bin"));
+    C(Has(c.backup,L"installation.txt","bootloader/payloads/hekate_nova_pro_6.5.5_v34_alpha6.bin"));
     C(Equals(c.root,L"bootloader/nyx.ini","USER SETTINGS"));C(Equals(c.root,L"bootloader/hekate_ipl.ini","USER BOOT"));C(Equals(c.root,L"bootloader/bluetooth/pairing.bin","USER PAIRING"));C(Equals(c.root,L"emuMMC/emummc.ini","USER EMUMMC"));C(Equals(c.root,L"Nintendo/save.dat","USER SAVE"));
     C(Equals(c.root,L"fonts/Lecture.nyxf","USER FONT"));C(Equals(c.root,L"wallpapers/Nova-Carbon-Cyan.bmp","USER WALL"));C(Equals(c.root,L"icone/Launcher.png","USER ICON"));C(Equals(c.backup,L"bootloader/sys/nyx.bin","OLD NYX"));
     int count;const PackageFile*files=PackageFiles(0,&count);for(int i=0;i<count;++i){if(!wcscmp(files[i].name,L"fonts/Lecture.nyxf")||!wcscmp(files[i].name,L"wallpapers/Nova-Carbon-Cyan.bmp")||!wcscmp(files[i].name,L"icone/Launcher.png"))continue;wchar_t p[MAX_PATH];C(SafePath(c.root,files[i].name,FALSE,p)&&HashFileMatches(p,files[i].sha256));}

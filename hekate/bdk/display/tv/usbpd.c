@@ -528,7 +528,7 @@ void pd_reset_step(pd_reset_t *r)
 /* ---- the handshake ----------------------------------------------------- */
 
 static const char *s_state_name[] = {
-    "idle", "waiting for a cable", "asking for power", "sink ready",
+    "idle", "waiting for a cable", "leaving the previous DisplayPort mode", "asking for power", "sink ready",
     "asking to be the data host", "asking who it is", "reading who it is",
     "entering the dock's mode", "the dock's mode", "asking for DisplayPort",
     "reading DisplayPort support", "asking for DisplayPort mode",
@@ -613,6 +613,41 @@ static void _cmd_fail(dock_t *d, const char *what, int r)
     else
         s_printf(why, "%s was refused (last command %s)", what, pd_lastcmd_name(d->s1));
     _fail(d, why);
+}
+
+/* A warm boot/retry may inherit configured DP pins even though this new
+ * session has not entered DP yet. Repeating Discover Identity in that state
+ * is not a fresh handshake. Use the existing Exit DP command, never a chip
+ * reset, then wait for completion and the ordinary cable settling delay. */
+static bool _prepare_existing_dp(dock_t *d)
+{
+    u16 active = d->dp & (PD_DP_EN | PD_DP_SIGNAL_ON);
+    if (!d->dp_prepared) {
+        d->dp_prepared = true;
+        if (active) {
+            d->dp_on = true; /* Stop must also clean a failed exit. */
+            _cmd_go(d, STOP_HPD_EXIT_DP_CMD, DOCK_EXIT_DP_SENT);
+            return false;
+        }
+    } else if (d->dp & PD_DP_EN) {
+        /* SIGNAL_ON may remain set while the TV is still connected. It is
+         * not proof that the controller failed to leave its DP mode. */
+        _fail(d, "the previous DisplayPort mode did not exit");
+        return false;
+    }
+    return true;
+}
+
+static void _finish_existing_dp(dock_t *d)
+{
+    int r = _cmd_done(d);
+    if (r < 0)
+        _cmd_fail(d, "leaving the previous DisplayPort mode", r);
+    else if (r) {
+        d->dp_on = false;
+        d->plug_seen = false;
+        _go(d, DOCK_WAIT_PLUG);
+    }
 }
 
 static void _send_vdm(dock_t *d, const u8 *msg, u32 len, dock_state_t next)
@@ -797,6 +832,8 @@ void dock_step(dock_t *d)
         }
         if (get_tmr_ms() - d->since < 300)
             break;                      /* let the source announce itself */
+        if (!_prepare_existing_dp(d))
+            break;
         d->pdo_n = _read_pdos(d->pdo_mv, d->pdo_ma, NULL);
         if (!d->pdo_n) {
             if (_timed_out(d))
@@ -809,6 +846,10 @@ void dock_step(dock_t *d)
         }
         d->alerts = 0;
         _send_rdo(d);
+        break;
+
+    case DOCK_EXIT_DP_SENT:
+        _finish_existing_dp(d);
         break;
 
     case DOCK_RDO_SENT:

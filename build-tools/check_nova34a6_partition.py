@@ -1,7 +1,7 @@
 """Actual partition transaction/table writers with fake I/O and injected failures."""
 from pathlib import Path
 import re,subprocess,json,hashlib
-W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha5';D=W/'nova34a5-partition-check';D.mkdir(exist_ok=True)
+W=Path(__file__).resolve().parent;P=W/'hekate-nova-pro-v34-alpha6';D=W/'nova34a6-partition-check';D.mkdir(exist_ok=True)
 s=(P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_text()
 def fn(n):
  m=re.search(r'^static (?:int|bool|void|lv_res_t) '+n+r'\(',s,re.M);assert m,n
@@ -139,4 +139,4 @@ int main(void){
 (D/'test.c').write_text(c)
 subprocess.run([str(W/'toolchains/w64devkit/bin/gcc.exe'),'-std=c11','-O2','-I'+str(P/'bdk'),'-I'+str(P/'nyx/nyx_gui/frontend'),str(D/'test.c'),str(P/'nyx/nyx_gui/frontend/gui_partition_plan.c'),'-o',str(D/'test.exe')],check=True)
 r=subprocess.run([str(D/'test.exe')],capture_output=True,text=True);print(r.stdout+r.stderr);assert not r.returncode
-(W/'nova34a5-partition-check.json').write_text(json.dumps({'passed':True,'actual_transaction_and_table_writers':True,'storage_and_ui_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_bytes()).hexdigest()},indent=2))
+(W/'nova34a6-partition-check.json').write_text(json.dumps({'passed':True,'actual_transaction_and_table_writers':True,'storage_and_ui_mocked':True,'hardware_test':False,'result':r.stdout.strip(),'source_sha256':hashlib.sha256((P/'nyx/nyx_gui/frontend/gui_tools_partition_manager.c').read_bytes()).hexdigest()},indent=2))

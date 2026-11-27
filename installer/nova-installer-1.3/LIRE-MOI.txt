@@ -1,0 +1,16 @@
+HEKATE NOVA PRO v34 alpha 6 — INSTALLATEUR WINDOWS 1.3
+
+1. Lancez Hekate-Nova-Pro-v34-alpha6-Installation-v1.3.exe sous Windows 64 bits.
+2. Choisissez la lettre SD et vérifiez le nom et la capacité du lecteur.
+3. Gardez Standard pour une console normale. 8 Go expérimental est réservé à une console physiquement modifiée en RAM.
+4. Installez, attendez la confirmation puis éjectez la carte. Utilisez le payload alpha6 de ce pack.
+
+Les 167 fichiers sont intégrés et vérifiés. Aucun téléchargement nécessaire. L'installateur copie le pack ; il ne formate pas et n'injecte pas le payload. Configurations, appairages et personnalisations sont conservés. Les composants remplacés sont sauvegardés dans nova-backups, avec rapport installation.txt. Le lecteur doit être en FAT32 ou exFAT. Exécutable non signé.
+
+Cette alpha ajoute une sortie contrôlée d'un ancien mode DisplayPort avant identification du dock. Si le premier lien perd la synchronisation, le pilote reprend seulement le lien vidéo à 2,7 puis 1,62 Gbit/s, sans couper toute la session PD entre ces replis. La confirmation fraîche porte sur l'ensemble des voies et le flux. Le signal TV-branchée seul ne bloque pas la reprise après une sortie DP confirmée.
+
+Le service TV reste actif pendant les opérations longues ; ses journaux sont différés pendant l'accès au stockage. Les limites de tentatives et les arrêts matériels sont conservés. Aucun reset PD forcé ni modification des tensions.
+
+Contrôles PC : compilation ARM, en-têtes, 54 scénarios du service, 429 assertions du pilote, intégration aux opérations longues, copie/partitionnement/FatFs et installation native des deux packs. Aucun test HDMI ni écriture sur une carte physique ici.
+
+Tester d'abord le démarrage directement dans le dock officiel, puis retirer/remettre la console. La LED verte seule ne confirme pas l'image. En cas d'échec, transmettre bootloader/tv-test/last-run.txt et les derniers run-*.txt. Le journal doit indiquer 34-alpha6. Attendre la validation de l'image avant de tester les opérations longues ; sauvegarder la SD avant partitionnement.

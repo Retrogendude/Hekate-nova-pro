@@ -136,6 +136,7 @@ const char *pd_reset_state_name(pd_reset_state_t s);
 typedef enum {
     DOCK_IDLE,
     DOCK_WAIT_PLUG,       /* a cable                                      */
+    DOCK_EXIT_DP_SENT,    /* leave a mode inherited from an earlier run   */
     DOCK_RDO_SENT,        /* asked for a power profile                    */
     DOCK_PS_RDY_SENT,     /* told it the sink is ready                    */
     DOCK_DR_SWAP_SENT,    /* asked to become the data host                */
@@ -167,7 +168,7 @@ typedef struct {
     u16  alerts;              /* alert bits seen and not yet consumed     */
     u16  s1, s2, dp;          /* the last status registers                */
     /* what was found */
-    bool plugged, plug_seen;
+    bool plugged, plug_seen, dp_prepared;
     u32  pdo_n, pdo_mv[7], pdo_ma[7];
     u32  pick;                /* the profile asked for, 1-based           */
     bool dock_power;          /* the dock's 5 V 0.5 A then 15 V offer      */

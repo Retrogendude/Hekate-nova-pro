@@ -57,3 +57,29 @@ de rétroéclairage juste avant la fin du pilote LCD.
 Aucun service Bluetooth nouveau n'est intégré : voir l'étude Joy-Con dédiée.
 La nouvelle détection automatique et la commutation d'écran restent à valider
 sur console, séparément du succès du prototype01 en dock direct.
+
+## Alpha6 — reprise d'état et de lien vidéo (27 novembre 2026)
+
+Les rapports Nova alpha5 run-021 à run-024 montrent des échecs d'identification
+avec DP=4182 ; un départ de DP=4000 aboutit à l'identification, puis perd
+l'égalisation après entraînement HBR2 (77/81 devient 11/80). L'utilisateur
+confirme une LED brève mais aucune image. Cette corrélation motive les essais
+suivants ; elle ne prouve pas à elle seule la cause de tous les échecs.
+
+Le service quitte un ancien état DP avec la commande 0x3B3B existante, attend
+son acquittement et le délai de stabilisation. L'indication SIGNAL_ON peut
+rester haute avec une TV connectée : elle n'est pas exigée basse après sortie.
+Les définitions BM92T et la fonction Exit DP sont documentées par le pilote
+amont : https://lkml.rescloud.iu.edu/hypermail/linux/kernel/2605.1/03297.html
+
+Le lien conserve son débit initial ; si le flux ne synchronise pas après
+entraînement, il est arrêté proprement et repris aux débits standards
+inférieurs HBR puis RBR, sans recréer la session PD entre ces essais. Le budget
+720p60 et les paramètres TU sont recalculés à chaque débit. La confirmation
+lit ensemble les voies, l'alignement et la synchronisation ; ni l'entraînement
+ni un bit de synchronisation ancien ne suffisent. Référence des contrôles
+de voies et du budget : https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/tegra/dp.c
+
+Ces changements ne modifient pas les tensions ou les tables de réglage des
+pads et n'ajoutent aucun reset PD automatique. Tests PC sur les fonctions
+réelles avec registres simulés et compilation ARM réussis ; HDMI à valider.

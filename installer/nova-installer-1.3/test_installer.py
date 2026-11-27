@@ -1,6 +1,6 @@
 from pathlib import Path
 import subprocess,time,json
-w=Path.cwd();d=w/'work/nova-installer-1.2';b=d/'build';t=w/'work/toolchains/w64devkit/bin';root=w/'work'/('ni11-tests-'+str(time.time_ns())[-9:]);root.mkdir();(root/'links').mkdir();(root/'sentinel').mkdir();(root/'sentinel/keep.txt').write_text('EXTERNAL SENTINEL')
+w=Path.cwd();d=w/'work/nova-installer-1.3';b=d/'build';t=w/'work/toolchains/w64devkit/bin';root=w/'work'/('ni11-tests-'+str(time.time_ns())[-9:]);root.mkdir();(root/'links').mkdir();(root/'sentinel').mkdir();(root/'sentinel/keep.txt').write_text('EXTERNAL SENTINEL')
 cmd="New-Item -ItemType Junction -Path '"+str(root/'links/bootloader')+"' -Target '"+str(root/'sentinel')+"' | Out-Null"
 subprocess.run(['powershell.exe','-NoProfile','-Command',cmd],check=True)
 args=[str(t/'gcc.exe'),'-std=gnu11','-O2','-static','-municode','-DINSTALLER_TEST','-I'+str(d),str(d/'install.c'),str(d/'test.c'),str(b/'resources.o'),'-o',str(b/'test.exe'),'-lsetupapi','-ladvapi32']

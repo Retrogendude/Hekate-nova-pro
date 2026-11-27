@@ -4,9 +4,9 @@ Personnalisation expérimentale de Hekate / Nyx : interface Nova, diagnostics ma
 
 ## Télécharger
 
-**[Préversion v34-alpha5 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha5)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
+**[Préversion v34-alpha6 : fichiers et sources](https://github.com/Retrogendude/Hekate-nova-pro/releases/tag/v34-alpha6)** · [Toutes les versions](https://github.com/Retrogendude/Hekate-nova-pro/releases) · [Changelog complet](CHANGELOG.md) · [Notice d’utilisation](docs/NOTICE-UTILISATION.md)
 
-Service TV pendant les opérations longues, journaux différés et tentatives limitées. Version TV historique : son contrôle de synchronisation trop strict est corrigé en alpha7. Les essais PC et retours console sont distingués dans les notes de chaque version.
+Replis vidéo HBR/RBR et reprise de connexion. L’image a été rapportée puis coupée par la validation logicielle ; cette limite est traitée en alpha7. Les essais PC et retours console sont distingués dans les notes de chaque version.
 
 ![Halo à deux couleurs — rendu du code sur PC](docs/images/preview-v33.3/colors.png)
 
@@ -60,7 +60,7 @@ Aucune affiliation avec Nintendo, CTCaer, Creased ou BlueKitchen n’est revendi
 
 ## Rapports TV
 
-La v34-alpha5 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
+La v34-alpha6 reste une préversion. Tester d’abord l’image permanente au démarrage puis après retrait/remise sur dock officiel. En cas de coupure, joindre les derniers `bootloader/tv-test/run-*.txt` et `last-run.txt`. L’alpha7 peut confirmer le flux par captures CRC fraîches lorsque l’indicateur de synchronisation du dock reste nul ; cela reste à valider sur console.
 
 ## Rapports Bluetooth
 

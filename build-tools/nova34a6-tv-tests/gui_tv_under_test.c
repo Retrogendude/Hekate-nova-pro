@@ -1,4 +1,4 @@
-#define NYX_NOVA_VERSION "34-alpha5"
+#define NYX_NOVA_VERSION "34-alpha6"
 static void gui_bluetooth_shutdown(void){}
 /* Optional dock service. Automatic detection is disabled unless enabled in Nyx.
  * Integration code licensed under GPL-2.0, as Hekate.

@@ -7,10 +7,10 @@ from pathlib import Path
 import subprocess, hashlib, json
 
 work = Path(__file__).resolve().parent
-tests = work / 'nova34a5-tv-tests'
-project = work / 'hekate-nova-pro-v34-alpha5'
+tests = work / 'nova34a6-tv-tests'
+project = work / 'hekate-nova-pro-v34-alpha6'
 source = project / 'nyx/nyx_gui/frontend/gui_tv.c'
-code = '#define NYX_NOVA_VERSION "34-alpha5"\nstatic void gui_bluetooth_shutdown(void){}\n' + source.read_text()
+code = '#define NYX_NOVA_VERSION "34-alpha6"\nstatic void gui_bluetooth_shutdown(void){}\n' + source.read_text()
 for header in ('gui_tv.h', 'gui_bluetooth.h', 'gui_nova.h', '../localization.h', '../config.h', '../nova_version.h'):
     code = code.replace('#include \"' + header + '\"', '')
 assert code.count('(u32)tv.allocation') == 1
@@ -25,7 +25,7 @@ command = [str(work / 'toolchains/w64devkit/bin/gcc.exe'),
 subprocess.run(command, check=True)
 result = subprocess.run([str(tests / 'lifecycle.exe')], check=True, text=True, capture_output=True)
 print(result.stdout.strip())
-(work / 'nova34a5-tv-lifecycle-check.json').write_text(json.dumps({
+(work / 'nova34a6-tv-lifecycle-check.json').write_text(json.dumps({
     'result': result.stdout.strip(),
     'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
     'hardware_validation': False,

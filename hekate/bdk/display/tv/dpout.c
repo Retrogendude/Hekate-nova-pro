@@ -1501,15 +1501,19 @@ static int _wait_sink_sync(dpout_video_t *v)
     bool answered = false;
     v->in_sync = false;
     do {
-        u8 status = 0;
+        u8 status[4] = { 0 };
         if (!dpout_hpd()) {
             s_printf(v->why, "HPD went away while waiting for video sync");
             return 12;
         }
-        if (!dpout_dpcd_read(DPCD_SINK_STATUS, &status, 1)) {
+        if (!dpout_dpcd_read(DPCD_LANE0_1_STATUS, status, sizeof(status))) {
             answered = true;
-            v->dpcd_200[5] = status;
-            if (status & SINK_PORT0_IN_SYNC) {
+            memcpy(v->lane_status, status, 3);
+            memcpy(v->dpcd_200 + 2, status, sizeof(status));
+            bool aligned = (status[2] & ALIGN_DONE) != 0;
+            for (u32 lane = 0; lane < v->lanes; lane++)
+                aligned &= ((status[lane / 2] >> (4 * (lane & 1))) & 7) == 7;
+            if (aligned && (status[3] & SINK_PORT0_IN_SYNC)) {
                 v->in_sync = true;
                 return 0;
             }
@@ -1714,17 +1718,34 @@ static void _dump(dpout_video_t *v)
 }
 
 static bool s_plls_started;
-static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb);
+static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb, u8 max_rate);
 
 int dpout_video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb)
 {
-    int r = _video_start(v, s, fb);
+    u8 max_rate = 0x14;
+    int r;
+    /* Training may pass but lose equalization when the video stream begins.
+     * Retry the video link at the next lower standard rate before tearing
+     * down the PD/dock session. Keep the first, previously working rate. */
+    for (;;) {
+        r = _video_start(v, s, fb, max_rate);
+        if (r != 12 || s_stage < 3 || !dpout_hpd() || v->rate <= 0x06)
+            break;
+        u8 next = v->rate > 0x0A ? 0x0A : 0x06;
+        char line[160];
+        s_printf(line, "video did not synchronize at %s: lanes %02X %02X %02X; retrying %s",
+                 dpout_rate_name(v->rate), v->lane_status[0], v->lane_status[1],
+                 v->lane_status[2], dpout_rate_name(next));
+        _vlog(v, line);
+        dpout_video_stop();
+        max_rate = next;
+    }
     if (s_stage)
         _dump(v);
     return r;
 }
 
-static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb)
+static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb, u8 max_rate)
 {
     dpout_link_t *l = &s_link;
     char line[160];
@@ -1749,6 +1770,8 @@ static int _video_start(dpout_video_t *v, const dpout_sink_t *s, u32 fb)
      * 1.62, 2.7 or 5.4 Gbps (lower ones follow if training fails). */
     {
         u8 max = DPCD_MAX_RATE(s);
+        if (max > max_rate)
+            max = max_rate;
         l->bw = max >= 0x14 ? 0x14 : max >= 0x0A ? 0x0A : 0x06;
     }
     l->enhanced = DPCD_ENHANCED(s);
